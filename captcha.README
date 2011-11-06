@@ -1,0 +1,24 @@
+howto include in another page:
+  <table><tr><td><img src="./captcha.php"></td>
+             <td> <?php echo _("Please fill in the code displayed here"); ?><br>
+                  <input type="text" name="captcha_check"></td>
+  </table>
+
+and to check the result in the form submit page:
+
+  require_once(ESP_BASE.'public/captcha_check.php');
+  $msg = response_check_captcha("captcha_check",1);
+  if(!empty($msg)) {
+    ... print your error
+    exit;
+  }
+
+The function response_check_captcha() receives 2 parameters:
+- first: the name of the input field that has the captcha value
+- second:
+      whether or not to cleanup the captcha session var and the input var
+      after positive evaluation (so the captcha is correct). This prevents
+      from entering the same value again by eg. reloading the page.
+      Possible values: 0|1 (default: 1, cleanup)
+      In some cases the cleanup is not immediately desired (like the way I
+      use it in phpESP, so that's why this variable is there).
