@@ -159,3 +159,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: when paypal was active, rsvp field validation results were ignored
 * Bugfix: ampersand character in event title breaks RSS feed
 * Bugfix: make sure that we apply the the_content filter only once
+
+= 1.0.1 =
+* Bugfix: fix replacement in menu for page title by events title when viewing a single event

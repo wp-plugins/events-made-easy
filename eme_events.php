@@ -751,8 +751,13 @@ add_filter ( 'the_content', 'eme_filter_events_page' );
 
 function eme_page_title($data) {
    global $wp_query;
+   $events_page_id = get_option('eme_events_page' );
+   $events_page = get_page ( $events_page_id );
+   $events_page_title = $events_page->post_title;
 
-   if (in_the_loop() && eme_is_events_page()) {
+   // make sure we only replace the title for the events page, not anything
+   // from the menu (which is also in the loop ...)
+   if (($data == $events_page_title) && in_the_loop() && eme_is_events_page()) {
       if (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
          
          $date = eme_sanitize_request($wp_query->query_vars['calendar_day']);
