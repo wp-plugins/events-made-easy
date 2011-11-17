@@ -247,7 +247,7 @@ function eme_locations_edit_layout($location, $message = "") {
               ?>
          </div>
          <div id="eme-admin-map-not-found"><p><?php _e('Map not found','eme') ?></p></div>
-         <div id="eme-admin-location-map"</div>
+         <div id="eme-admin-location-map"></div>
          <br style="clear:both;" />
          <?php endif; ?>
          <div id="loc_description">
