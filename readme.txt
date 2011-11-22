@@ -163,3 +163,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.1 =
 * Bugfix: fix replacement in menu for page title by events title when viewing a single event
 * Bugfix: fixed a closing-div tag, preventing the rich html-editor to appear sometimes for locations
+
+= 1.0.2 =
+* Bugfix: typo fix in eme_events.php influencing location showing

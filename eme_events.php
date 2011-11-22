@@ -660,7 +660,7 @@ function eme_options_page() {
 //This is the content of the event page
 function eme_events_page_content() {
    global $wpdb,$wp_query;
-   if (isset ( $wp_query->query_vars ['location_id'] ) && $wp_query->query_vars ['location_id'] |= '') {
+   if (isset ( $wp_query->query_vars ['location_id'] ) && $wp_query->query_vars ['location_id'] != '') {
       $location = eme_get_location ( intval($wp_query->query_vars ['location_id']));
       $single_location_format = get_option('eme_single_location_format' );
       $page_body = eme_replace_locations_placeholders ( $single_location_format, $location );
