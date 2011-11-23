@@ -1103,6 +1103,11 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = eme_get_available_seats($event['event_id']);
          }
 
+      } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)$/', $result)) {
+         if ($rsvp_is_active && $event['event_rsvp']) {
+            $replacement = $event['event_seats'];
+         }
+
       } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          if ($rsvp_is_active && $event['event_rsvp']) {
             $replacement = eme_get_booked_seats($event['event_id']);

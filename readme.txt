@@ -165,4 +165,5 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: fixed a closing-div tag, preventing the rich html-editor to appear sometimes for locations
 
 = 1.0.2 =
+* Feature: placeholders #_TOTALSPACES and #_TOTALSEATS added (gives the total amount of spaces for an event)
 * Bugfix: typo fix in eme_events.php influencing location showing
