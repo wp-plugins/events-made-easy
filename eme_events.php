@@ -2980,7 +2980,7 @@ $j_eme_event(document).ready( function() {
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
       if($j_eme_event(this).val() == '')
          $j_eme_event(this).val(tmp_value);
-   })
+   });
    $j_eme_event('textarea#event_contactperson_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
