@@ -337,7 +337,12 @@ function eme_book_seats($event) {
          $booking_id=eme_record_booking($event_id, $booker['person_id'], $bookedSeats,$bookerComment);
       
          $result = __('Your booking has been recorded','eme');
-         eme_email_rsvp_booking($booking_id);
+         if (is_admin()) {
+            $action="approveRegistration";
+         } else {
+            $action="";
+         }
+         eme_email_rsvp_booking($booking_id,$action);
 
          // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
          unset($_POST['bookerName']);
