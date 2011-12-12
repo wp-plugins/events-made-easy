@@ -169,3 +169,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: typo fix in eme_events.php influencing location showing
 * Bugfix: typo fix in eme_events.php for a jquery statement
 * Bugfix: when adding a registration via the backend and approval was required, the registered person would get a pending message although it was already approved
+* Bugfix: #_USER_RESERVEDSPACES wasn't working correctly for the attendees format setting

@@ -718,7 +718,7 @@ function eme_get_bookings_list_for($event_id) {
 }
 
 function eme_replace_attendees_placeholders($format, $attendee, $event_id, $target="html") {
-   preg_match_all("/#_?[A-Za-z0)9_]+/", $format, $placeholders);
+   preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
    foreach($placeholders[0] as $result) {
       $replacement='';
       $found = 1;
