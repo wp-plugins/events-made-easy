@@ -573,12 +573,14 @@ function eme_get_town_location_ids($towns) {
 }
 
 function eme_image_url_for_location_id($location_id) {
-   $file_name= IMAGE_UPLOAD_DIR."/location-".$location_id;
+   $image_basepath= IMAGE_UPLOAD_DIR."/location-".$location_id;
+   $image_baseurl= IMAGE_UPLOAD_URL."/location-".$location_id;
    $mime_types = array('gif','jpg','png');
-   foreach($mime_types as $type) { 
-      $file_path = "$file_name.$type";
+   foreach($mime_types as $type) {
+      $file_path = $image_basename.".".$type;
+      $file_url = $image_baseurl.".".$type;
       if (file_exists($file_path)) {
-         return $file_path;
+         return $file_url;
       }
    }
    return '';
