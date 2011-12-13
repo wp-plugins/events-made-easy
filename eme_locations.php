@@ -573,7 +573,7 @@ function eme_get_town_location_ids($towns) {
 }
 
 function eme_image_url_for_location_id($location_id) {
-   $image_basepath= IMAGE_UPLOAD_DIR."/location-".$location_id;
+   $image_basename= IMAGE_UPLOAD_DIR."/location-".$location_id;
    $image_baseurl= IMAGE_UPLOAD_URL."/location-".$location_id;
    $mime_types = array('gif','jpg','png');
    foreach($mime_types as $type) {
