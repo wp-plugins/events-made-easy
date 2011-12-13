@@ -45,6 +45,7 @@ function eme_new_event_page() {
       "event_respondent_email_body" => '',
       "event_registration_pending_email_body" => '',
       "event_slug" => '',
+      "event_image_url" => '',
       "event_url" => '',
       "recurrence_id" => 0,
       "recurrence_freq" => '',
@@ -276,7 +277,6 @@ function eme_events_page() {
       } else {
          $event ['event_category_ids']="";
       }
-      $validation_result = eme_validate_event ( $event );
       
       $event_attributes = array();
       for($i=1 ; isset($_POST["mtm_{$i}_ref"]) && trim($_POST["mtm_{$i}_ref"])!='' ; $i++ ) {
@@ -286,6 +286,7 @@ function eme_events_page() {
       }
       $event['event_attributes'] = serialize($event_attributes);
       
+      $validation_result = eme_validate_event ( $event );
       if ($validation_result == "OK") {
          // validation successful
          if(isset($_POST['location-select-id']) && $_POST['location-select-id'] != "") {
@@ -309,9 +310,12 @@ function eme_events_page() {
             // new event or new recurrence
             if (isset($_POST ['repeated_event']) && $_POST ['repeated_event']) {
                //insert new recurrence
-               eme_db_insert_recurrence ( $event, $recurrence );
-               $feedback_message = __ ( 'New recurrent event inserted!', 'eme' );
-               //if (has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
+               if (!eme_db_insert_recurrence ( $event, $recurrence )) {
+                  $feedback_message = __ ( 'Database insert failed!', 'eme' );
+               } else {
+                  $feedback_message = __ ( 'New recurrent event inserted!', 'eme' );
+                  //if (has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
+               }
             } else {
                // INSERT new event 
                if (!eme_db_insert_event($event)) {
@@ -1779,6 +1783,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 
          $this_event ['event_attributes'] = @unserialize($this_event ['event_attributes']);
          $this_event ['event_attributes'] = (!is_array($this_event ['event_attributes'])) ?  array() : $this_event ['event_attributes'] ;
+         $this_event ['event_image_url'] = eme_image_url_for_event($this_event);
          array_push ( $inflated_events, $this_event );
       }
       if (has_filter('eme_event_list_filter')) $inflated_events=apply_filters('eme_event_list_filter',$inflated_events);
@@ -1835,7 +1840,8 @@ function eme_get_event($event_id) {
 
       $event ['event_attributes'] = @unserialize($event ['event_attributes']);
       $event ['event_attributes'] = (!is_array($event ['event_attributes'])) ?  array() : $event ['event_attributes'] ;
-   }
+   }   
+   $event['event_image_url'] = eme_image_url_for_event($event);
    if (has_filter('eme_event_filter')) $event=apply_filters('eme_event_filter',$event);
    return $event;
 }
@@ -2274,7 +2280,7 @@ function eme_event_form($event, $title, $element) {
    
    ob_start();
    ?>
-   <form id="eventForm" method="post"  action="<?php echo $form_destination; ?>">
+   <form id="eventForm" method="post" enctype="multipart/form-data" action="<?php echo $form_destination; ?>">
       <div class="wrap">
          <div id="icon-events" class="icon32"><br /></div>
          <h2><?php echo eme_trans_sanitize_html($title); ?></h2>
@@ -2681,8 +2687,8 @@ function eme_event_form($event, $title, $element) {
                         <table id="eme-location-data">
                            <tr>
                            <?php  if($use_select_for_locations) {
-			      $location_0['location_id']=0;
-			      $location_0['location_name']= '';
+                              $location_0['location_id']=0;
+                              $location_0['location_name']= '';
                               $locations = eme_get_locations();
                            ?>
                               <th><?php _e('Location','eme') ?></th>
@@ -2777,6 +2783,25 @@ function eme_event_form($event, $title, $element) {
                         <?php _e ( 'Details about the event', 'eme' )?>
                      </div>
                   </div>
+                  <div id="div_event_image" class="postbox">
+                     <h3>
+                        <?php _e ( 'Event image', 'eme' ); ?>
+                     </h3>
+                     <div class="inside">
+                        <div id="event_current_image" class="postarea">
+                        <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
+                                 _e('Current image:', 'eme');
+                                 echo "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+                              }
+                        ?>
+                        </div>
+                        <br />
+                        <input id="event_image" name="event_image" type="file" size="35" />
+                        <?php _e ( 'Select an image to upload', 'eme' )?><br />
+                        <input id="eme_remove_old_image" name="eme_remove_old_image" type="checkbox" value="1" />
+                        <?php _e ( 'Remove existing image', 'eme' )?>
+                     </div>
+                  </div>
                   <?php if(get_option('eme_attributes_enabled')) : ?>
                   <div id="div_event_attributes" class="postbox">
                      <h3>
@@ -2811,9 +2836,8 @@ function eme_event_form($event, $title, $element) {
 }
 
 function eme_validate_event($event) {
-   // Only for emergencies, when JS is disabled
    global $required_fields;
-   $errors = Array ();
+   $errors = array ();
    foreach ( $required_fields as $field ) {
       if ($event [$field] == "") {
          $errors [] = $field;
@@ -2824,6 +2848,22 @@ function eme_validate_event($event) {
       $error_message = __ ( 'Missing fields: ','eme' ) . implode ( ", ", $errors ) . ". ";
    if (isset($_POST ['repeated_event']) && $_POST ['repeated_event'] == "1" && (!isset($_POST ['recurrence_end_date']) || $_POST ['recurrence_end_date'] == ""))
       $error_message .= __ ( 'Since the event is repeated, you must specify an event date for the recurrence.', 'eme' );
+   if (isset($_FILES['event_image']) && ($_FILES['event_image']['size'] > 0) ) {
+      if (is_uploaded_file($_FILES['event_image']['tmp_name'])) {
+         $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
+         $maximum_size = get_option('eme_image_max_size');
+         if ($_FILES['event_image']['size'] > $maximum_size)
+               $error_message .= "<li>".__('The image file is too big! Maximum size:', 'eme')." $maximum_size</li>";
+         list($width, $height, $type, $attr) = getimagesize($_FILES['event_image']['tmp_name']);
+         $maximum_width = get_option('eme_image_max_width');
+         $maximum_height = get_option('eme_image_max_height');
+         if (($width > $maximum_width) || ($height > $maximum_height))
+               $error_message .= "<li>". __('The image is too big! Maximum size allowed:')." $maximum_width x $maximum_height</li>";
+         if (($type!=1) && ($type!=2) && ($type!=3))
+                  $error_message .= "<li>".__('The image is in a wrong format!')."</li>";
+      }
+   }
+
    if ($error_message != "")
       return $error_message;
    else
@@ -3479,6 +3519,7 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
       $event['event_id']=$event_ID;
       // the eme_insert_event_action is only executed for single events, not those part of a recurrence
       if (!$event_is_part_of_recurrence && has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
+      eme_upload_event_picture($event);
       return $event_ID;
    }
 }
@@ -3518,6 +3559,8 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
       $wpdb->print_error();
       return false;
    } else {
+      $event['event_id']=$event_id;
+      eme_upload_event_picture($event);
       // the eme_update_event_action is only executed for single events, not those part of a recurrence
       if (!$event_is_part_of_recurrence && has_action('eme_update_event_action')) {
          // we do this call so all parameters for the event are filled, otherwise for an update this might not be the case
@@ -3532,6 +3575,9 @@ function eme_db_delete_event($event) {
    global $wpdb;
    $table_name = $wpdb->prefix . EVENTS_TBNAME;
    $sql = "DELETE FROM $table_name WHERE event_id = '".$event['event_id']."';";
+   // also delete associated image
+   $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
+   eme_delete_image_files($image_basename);
    if ($wpdb->query ( $sql )) {
       if (has_action('eme_delete_event_action')) do_action('eme_delete_event_action',$event);
    }
@@ -3597,5 +3643,42 @@ function eme_countdown() {
    return eme_daydifference($now,$end_date);
 }
 add_shortcode('events_countdown', 'eme_countdown');
+
+function eme_image_url_for_event($event) {
+   if ($event['recurrence_id']>0) {
+      $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
+      $image_baseurl= IMAGE_UPLOAD_URL."/recurrence-".$event['recurrence_id'];
+   } else {
+      $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
+      $image_baseurl= IMAGE_UPLOAD_URL."/event-".$event['event_id'];
+   }
+   $mime_types = array('gif','jpg','png');
+   foreach($mime_types as $type) {
+      $file_path = $image_basename.".".$type;
+      $file_url = $image_baseurl.".".$type;
+      if (file_exists($file_path)) {
+         return $file_url;
+      }
+   }
+   return '';
+}
+
+function eme_upload_event_picture($event) {
+   if(!file_exists(IMAGE_UPLOAD_DIR))
+            mkdir(IMAGE_UPLOAD_DIR, 0777);
+   if ($event['recurrence_id']>0)
+      $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
+   else
+      $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
+   if (isset ($_POST['eme_remove_old_image']) && ($_POST['eme_remove_old_image']==1))
+      eme_delete_image_files($image_basename);
+   $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
+   if (isset($_FILES['event_image']) && isset($_FILES['event_image']['tmp_name']) && !empty($_FILES['event_image']['tmp_name'])) {
+      list($width, $height, $type, $attr) = getimagesize($_FILES['event_image']['tmp_name']);
+      $image_path = $image_basename.".".$mime_types[$type];
+      if (!move_uploaded_file($_FILES['event_image']['tmp_name'], $image_path))
+         $msg = "<p>".__('The image could not be loaded','eme')."</p>";
+   }
+}
 
 ?>

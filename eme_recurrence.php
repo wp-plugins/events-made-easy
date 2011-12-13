@@ -112,12 +112,16 @@ function eme_db_insert_recurrence($event, $recurrence ){
 
    //$wpdb->show_errors(true);
    $wpdb->insert($recurrence_table, $recurrence);
+   $recurrence_id = $wpdb->insert_id;
+
    //print_r($recurrence);
 
-   $recurrence['recurrence_id'] = mysql_insert_id();
+   $recurrence['recurrence_id'] = $recurrence_id;
    $event['recurrence_id'] = $recurrence['recurrence_id'];
+   eme_upload_event_picture($event);
    eme_insert_events_for_recurrence($event,$recurrence);
    if (has_action('eme_insert_recurrence_action')) do_action('eme_insert_recurrence_action',$event,$recurrence);
+   return $recurrence_id;
 }
 
 function eme_insert_events_for_recurrence($event,$recurrence) {
@@ -162,6 +166,7 @@ function eme_db_update_recurrence($event, $recurrence) {
    $wpdb->show_errors(true);
    $wpdb->update($recurrence_table, $recurrence, $where); 
    $event['recurrence_id'] = $recurrence['recurrence_id'];
+   eme_upload_event_picture($event);
    eme_update_events_for_recurrence($event,$recurrence); 
    if (has_action('eme_update_recurrence_action')) do_action('eme_update_recurrence_action',$event,$recurrence);
    return 1;
@@ -228,6 +233,8 @@ function eme_remove_recurrence($recurrence_id) {
    $sql = "DELETE FROM $recurrence_table WHERE recurrence_id = '$recurrence_id';";
    $wpdb->query($sql);
    eme_remove_events_for_recurrence_id($recurrence_id);
+   $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$recurrence_id;
+   eme_delete_image_files($image_basename);
 }
 
 function eme_remove_events_for_recurrence_id($recurrence_id) {

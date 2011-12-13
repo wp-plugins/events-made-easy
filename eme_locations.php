@@ -574,11 +574,11 @@ function eme_get_town_location_ids($towns) {
 
 function eme_image_url_for_location_id($location_id) {
    $file_name= IMAGE_UPLOAD_DIR."/location-".$location_id;
-   $mime_types = array('gif','jpg','png');foreach($mime_types as $type) { 
+   $mime_types = array('gif','jpg','png');
+   foreach($mime_types as $type) { 
       $file_path = "$file_name.$type";
       if (file_exists($file_path)) {
-         $result = IMAGE_UPLOAD_URL."/location-$location_id.$type";
-         return $result;
+         return $file_path;
       }
    }
    return '';
@@ -601,7 +601,7 @@ function eme_validate_location($location) {
          $troubles .= "<li>".$description.__(" is missing!", "eme")."</li>";
       }
    }
-   if ($_FILES['location_image']['size'] > 0 ) { 
+   if (isset($_FILES['location_image']) && ($_FILES['location_image']['size'] > 0) ) { 
       if (is_uploaded_file($_FILES['location_image']['tmp_name'])) {
          $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
          $maximum_size = get_option('eme_image_max_size'); 
@@ -674,7 +674,8 @@ function eme_delete_location($location) {
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME;
    $sql = "DELETE FROM $table_name WHERE location_id = '$location';";
    $wpdb->query($sql);
-   eme_delete_image_files_for_location_id($location);
+   $image_basename= IMAGE_UPLOAD_DIR."/location-".$location['location_id'];
+   eme_delete_image_files($image_basename);
 }
 
 function eme_location_has_events($location_id) {
@@ -696,21 +697,13 @@ function eme_location_has_events($location_id) {
 function eme_upload_location_picture($location) {
    if(!file_exists(IMAGE_UPLOAD_DIR))
             mkdir(IMAGE_UPLOAD_DIR, 0777);
-   eme_delete_image_files_for_location_id($location['location_id']);
    $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
    list($width, $height, $type, $attr) = getimagesize($_FILES['location_image']['tmp_name']);
-   $image_path = IMAGE_UPLOAD_DIR."/location-".$location['location_id'].".".$mime_types[$type];
+   $image_basename= IMAGE_UPLOAD_DIR."/location-".$location['location_id'];
+   eme_delete_image_files($image_basename);
+   $image_path = $image_basename.".".$mime_types[$type];
    if (!move_uploaded_file($_FILES['location_image']['tmp_name'], $image_path)) 
       $msg = "<p>".__('The image could not be loaded','eme')."</p>";
-}
-
-function eme_delete_image_files_for_location_id($location_id) {
-   $file_name= IMAGE_UPLOAD_DIR."/location-".$location_id;
-   $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-   foreach($mime_types as $type) { 
-      if (file_exists($file_name.".".$type))
-      unlink($file_name.".".$type);
-   }
 }
 
 function eme_global_map($atts) {
