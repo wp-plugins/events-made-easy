@@ -70,8 +70,7 @@ function eme_locations_page() {
          if ($validation_result == "OK") {
             if (eme_update_location($location)) {
                $message = __('The location has been updated.', 'eme');
-               if ($_FILES['location_image']['size'] > 0 )
-                  eme_upload_location_picture($location);
+               eme_upload_location_picture($location);
             } else {
                $message = __('The location update failed.', 'eme');
             }
@@ -122,8 +121,7 @@ function eme_locations_page() {
             if ($new_location) {
                $message = __('The location has been added.', 'eme'); 
                // uploading the image
-               if ($_FILES['location_image']['size'] > 0 )
-                  eme_upload_location_picture($new_location);
+               eme_upload_location_picture($new_location);
             } else {
                $message = __('There has been a problem adding the location.', 'eme'); 
             }      
@@ -700,12 +698,14 @@ function eme_upload_location_picture($location) {
    if(!file_exists(IMAGE_UPLOAD_DIR))
             mkdir(IMAGE_UPLOAD_DIR, 0777);
    $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-   list($width, $height, $type, $attr) = getimagesize($_FILES['location_image']['tmp_name']);
-   $image_basename= IMAGE_UPLOAD_DIR."/location-".$location['location_id'];
-   eme_delete_image_files($image_basename);
-   $image_path = $image_basename.".".$mime_types[$type];
-   if (!move_uploaded_file($_FILES['location_image']['tmp_name'], $image_path)) 
-      $msg = "<p>".__('The image could not be loaded','eme')."</p>";
+   if (isset($_FILES['location_image']) && isset($_FILES['location_image']['tmp_name']) && ($_FILES['location_image']['size'] > 0)) {
+      list($width, $height, $type, $attr) = getimagesize($_FILES['location_image']['tmp_name']);
+      $image_basename= IMAGE_UPLOAD_DIR."/location-".$location['location_id'];
+      eme_delete_image_files($image_basename);
+      $image_path = $image_basename.".".$mime_types[$type];
+      if (!move_uploaded_file($_FILES['location_image']['tmp_name'], $image_path)) 
+         $msg = "<p>".__('The image could not be loaded','eme')."</p>";
+   }
 }
 
 function eme_global_map($atts) {

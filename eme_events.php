@@ -3673,7 +3673,7 @@ function eme_upload_event_picture($event) {
    if (isset ($_POST['eme_remove_old_image']) && ($_POST['eme_remove_old_image']==1))
       eme_delete_image_files($image_basename);
    $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-   if (isset($_FILES['event_image']) && isset($_FILES['event_image']['tmp_name']) && !empty($_FILES['event_image']['tmp_name'])) {
+   if (isset($_FILES['event_image']) && isset($_FILES['event_image']['tmp_name']) && ($_FILES['event_image']['size'] > 0)) {
       list($width, $height, $type, $attr) = getimagesize($_FILES['event_image']['tmp_name']);
       $image_path = $image_basename.".".$mime_types[$type];
       if (!move_uploaded_file($_FILES['event_image']['tmp_name'], $image_path))
