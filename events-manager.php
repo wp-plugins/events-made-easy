@@ -921,9 +921,9 @@ function eme_create_events_submenu () {
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       # just in case: make sure the Settings page can be reached if something is not correct with the security settings
       if (get_option('eme_cap_settings') =='') {
-         $plugin_page = add_submenu_page('events-manager', __('Events Manager Settings','eme'),__('Settings','eme'), DEFAULT_CAP_SETTINGS, "events-manager-options", 'eme_options_page');
+         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), DEFAULT_CAP_SETTINGS, "events-manager-options", 'eme_options_page');
       } else {
-         $plugin_page = add_submenu_page('events-manager', __('Events Manager Settings','eme'),__('Settings','eme'), get_option('eme_cap_settings'), "events-manager-options", 'eme_options_page');
+         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), get_option('eme_cap_settings'), "events-manager-options", 'eme_options_page');
       }
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
    }
