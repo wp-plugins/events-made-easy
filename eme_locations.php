@@ -162,7 +162,7 @@ function eme_locations_edit_layout($location, $message = "") {
          <?php endif; ?>
          <div id="ajax-response"></div>
    
-         <form enctype="multipart/form-data" name="editcat" id="editcat" method="post" action="<?php echo admin_url("admin.php?page=events-manager-locations"); ?>" class="validate">
+         <form enctype="multipart/form-data" name="editcat" id="editcat" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>" class="validate">
          <input type="hidden" name="action" value="editedlocation" />
          <input type="hidden" name="location_ID" value="<?php echo $location['location_id'] ?>"/>
          
@@ -302,7 +302,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
          <div id="col-container">
             <div id="col-right">
              <div class="col-wrap">
-                <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=events-manager-locations"); ?>">
+                <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
                   <input type="hidden" name="action" value="delete"/>
                   <?php if (count($locations)>0) : ?>
                   <table class="widefat">
@@ -326,7 +326,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                         <?php foreach ($locations as $this_location) : ?>  
                         <tr>
                            <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id'] ?>" name="locations[]"/></td>
-                           <td><a href="<?php echo admin_url("admin.php?page=events-manager-locations&amp;action=edit&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;action=edit&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_town']); ?></td>
                         </tr>
@@ -354,7 +354,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                   <div class="form-wrap"> 
                      <div id="ajax-response"/>
                   <h3><?php _e('Add location', 'eme') ?></h3>
-                      <form enctype="multipart/form-data" name="addlocation" id="addlocation" method="post" action="<?php echo admin_url("admin.php?page=events-manager-locations"); ?>" class="add:the-list: validate">
+                      <form enctype="multipart/form-data" name="addlocation" id="addlocation" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>" class="add:the-list: validate">
                         <input type="hidden" name="action" value="addlocation" />
                         <div id="titlediv" class="form-field form-required">
                           <label><?php _e('Location name', 'eme') ?></label>
@@ -894,7 +894,7 @@ function get_locations_shortcode($atts) {
    //if (!$link)
    //   $out .= "<li class=\"location-0\">All</li>";
    foreach ($locations as $location) {
-      $location_name = $location['location_name'];
+      $location_name = eme_trans_sanitize_html($location['location_name']);
       if ($link) {
          $location_page_link = eme_location_url($location);
          $location_name = "<a href=\"{$location_page_link}\" title=\"{$location_name}\">{$location_name}</a>";  
@@ -1197,7 +1197,7 @@ function eme_locations_autocomplete() {
       $use_select_for_locations=1;
    }
 
-   if ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'events-manager-new_event')) {
+   if ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) {
       ?>
       <link rel="stylesheet" href="<?php echo EME_PLUGIN_URL; ?>js/jquery-autocomplete/jquery.autocomplete.css" type="text/css"/>
 

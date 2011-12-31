@@ -41,7 +41,7 @@ function eme_cleanup_form($message = "") {
 
    <form id="posts-filter" action="" method="post">
 <?php _e('Remove events older than','eme'); ?>
-   <input type='hidden' name='page' value='events-manager-cleanup' />
+   <input type='hidden' name='page' value='eme-cleanup' />
    <input type='hidden' name='eme_action' value='eme_cleanup' />
    <div class="tablenav">
 

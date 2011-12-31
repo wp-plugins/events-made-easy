@@ -2035,8 +2035,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
                echo "<br /><span title='".__('Category','eme').": ".eme_trans_sanitize_html($category['category_name'])."'>".eme_trans_sanitize_html($category['category_name'])."</span>";
          }
          if ($event ['event_rsvp']) {
-            $printable_address = admin_url("/admin.php?page=events-manager-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
-            $csv_address = admin_url("/admin.php?page=events-manager-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
+            $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
+            $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
             $available_seats = eme_get_available_seats($event['event_id']);
             $pending_seats = eme_get_pending_seats($event['event_id']);
             $total_seats = $event ['event_seats'];
@@ -2168,7 +2168,7 @@ function eme_event_form($event, $title, $element) {
    } else {
       $pref = "event_";
       if ($is_new_event)
-         $form_destination = "admin.php?page=events-manager-new_event&amp;action=insert_event";
+         $form_destination = "admin.php?page=eme-new_event&amp;action=insert_event";
       else
          $form_destination = "admin.php?page=events-manager&amp;action=update_event&amp;event_id=" . $element;
 
@@ -3156,12 +3156,12 @@ $j_eme_event(document).ready( function() {
 
 function eme_admin_map_script() {
    // when the action is the POST of a new event, don't do the javascript
-   if (isset ( $_GET ['page'] ) && $_GET ['page'] == 'events-manager-new_event' && isset ( $_REQUEST ['action'] ) && $_REQUEST ['action'] == 'insert_event') {
+   if (isset ( $_GET ['page'] ) && $_GET ['page'] == 'eme-new_event' && isset ( $_REQUEST ['action'] ) && $_REQUEST ['action'] == 'insert_event') {
       return;
    }
 
    # we also do this for locations, since the locations page also needs the loadMap javascript function
-   if ((isset ( $_GET ['page'] ) && ($_GET ['page'] == 'events-manager-locations' || $_GET ['page'] == 'events-manager-new_event')) ||
+   if ((isset ( $_GET ['page'] ) && ($_GET ['page'] == 'eme-locations' || $_GET ['page'] == 'eme-new_event')) ||
        (isset ( $_REQUEST ['action'] ) && ($_REQUEST ['action'] == 'edit_event' || $_REQUEST ['action'] == 'edit_recurrence'))) {
          if (isset($_REQUEST ['event_id']))
             $event_ID = intval($_REQUEST ['event_id']);
@@ -3239,7 +3239,7 @@ function eme_admin_map_script() {
             // We check on the new/edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             if (
-               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'events-manager-new_event')) && 
+               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) && 
                      (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage'))) { ?>
             eventLocation = $j_eme_admin("input[name='location-select-name']").val(); 
             eventTown = $j_eme_admin("input[name='location-select-town']").val();
@@ -3586,7 +3586,7 @@ function eme_db_delete_event($event) {
 add_filter ( 'favorite_actions', 'eme_favorite_menu' );
 function eme_favorite_menu($actions) {
    // add quick link to our favorite plugin
-   $actions ['admin.php?page=events-manager-new_event'] = array (__ ( 'Add an event', 'eme' ), get_option('eme_cap_add_event') );
+   $actions ['admin.php?page=eme-new_event'] = array (__ ( 'Add an event', 'eme' ), get_option('eme_cap_add_event') );
    return $actions;
 }
 
@@ -3594,7 +3594,7 @@ function eme_alert_events_page() {
    global $pagenow;
    $events_page_id = get_option('eme_events_page' );
    if ($pagenow == 'post.php' && ( get_query_var('post_type') && 'page' == get_query_var('post_type') ) && isset ( $_GET ['action'] ) && $_GET ['action'] == 'edit' && isset ( $_GET ['post'] ) && $_GET ['post'] == "$events_page_id") {
-      $message = sprintf ( __ ( "This page corresponds to <strong>Events Made Easy</strong> events page. Its content will be overriden by <strong>Events Made Easy</strong>. If you want to display your content, you can can assign another page to <strong>Events Made Easy</strong> in the the <a href='%s'>Settings</a>. ", 'eme' ), 'admin.php?page=events-manager-options' );
+      $message = sprintf ( __ ( "This page corresponds to <strong>Events Made Easy</strong> events page. Its content will be overriden by <strong>Events Made Easy</strong>. If you want to display your content, you can can assign another page to <strong>Events Made Easy</strong> in the the <a href='%s'>Settings</a>. ", 'eme' ), 'admin.php?page=eme-options' );
       $notice = "<div class='error'><p>$message</p></div>";
       echo $notice;
    }
@@ -3604,7 +3604,7 @@ add_action ( 'admin_notices', 'eme_alert_events_page' );
 //This adds the tinymce editor
 function eme_tinymce(){
    global $plugin_page;
-   if ( in_array( $plugin_page, array('events-manager-locations', 'events-manager-new_event', 'events-manager') ) ) {
+   if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
       add_action( 'admin_print_footer_scripts', 'wp_tiny_mce', 25 );
       if (function_exists('wp_tiny_mce_preload_dialogs')) {
          add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );

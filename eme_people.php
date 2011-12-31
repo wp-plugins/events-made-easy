@@ -232,7 +232,7 @@ function eme_printable_booking_report($event_id) {
 
 function eme_people_table($message="") {
    $persons = eme_get_persons();
-   $destination = admin_url("admin.php?page=events-manager-people");
+   $destination = admin_url("admin.php?page=eme-people");
    if (count($persons) < 1 ) {
       _e("No people have responded to your events yet!", 'eme');
    } else { 

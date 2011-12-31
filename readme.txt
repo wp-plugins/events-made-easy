@@ -27,7 +27,7 @@ For more information visit the [Documentation Page](http://www.e-dynamics.be/wor
 == Installation ==
 
 Always take a backup of your db before doing the upgrade, just in case ...  
-1. Upload the `events-manager-extended` folder to the `/wp-content/plugins/` directory  
+1. Upload the `events-made-easy` folder to the `/wp-content/plugins/` directory  
 2. Activate the plugin through the 'Plugins' menu in WordPress  
 3. Add events list or calendars following the instructions in the Usage section.  
 == Upgrade from the older Events Manager plugin ==
@@ -172,3 +172,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: typo fix in eme_events.php for a jquery statement
 * Bugfix: when adding a registration via the backend and approval was required, the registered person would get a pending message although it was already approved
 * Bugfix: #_USER_RESERVEDSPACES wasn't working correctly for the attendees format setting
+* Bugfix: location title was not qtranslate-ready in the [events_location] shortcode

@@ -609,8 +609,8 @@ function eme_bookings_compact_table($event_id) {
    } else {
       $booked_seats_info=$booked_seats;
    }
-   $printable_address = admin_url("/admin.php?page=events-manager-people&amp;action=booking_printable&amp;event_id=$event_id");
-   $csv_address = admin_url("/admin.php?page=events-manager-people&amp;action=booking_csv&amp;event_id=$event_id");
+   $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=$event_id");
+   $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=$event_id");
    $count_respondents=count($bookings);
    if ($count_respondents>0) { 
       $table = 
@@ -866,7 +866,7 @@ function eme_registration_seats_form_table($event_id=0) {
 <h2><?php _e ('Change reserved spaces or cancel registrations','eme'); ?></h2>
 <?php admin_show_warnings();?>
    <form id='add-booking' action="" method="post">
-   <input type='hidden' name='page' value='events-manager-registration-seats' />
+   <input type='hidden' name='page' value='eme-registration-seats' />
    <input type='hidden' name='action' value='addRegistration' />
    <table class="widefat">
    <tbody>
@@ -898,7 +898,7 @@ function eme_registration_seats_form_table($event_id=0) {
    <div class="clear"></div>
 
    <form id="posts-filter" action="" method="post">
-   <input type='hidden' name='page' value='events-manager-registration-seats' />
+   <input type='hidden' name='page' value='eme-registration-seats' />
    <div class="tablenav">
 
    <div class="alignleft actions">
@@ -1054,7 +1054,7 @@ function eme_registration_approval_form_table($event_id=0) {
 <h2><?php _e ('Pending Approvals','eme'); ?></h2>
 <?php admin_show_warnings();?>
    <form id="posts-filter" action="" method="post">
-   <input type='hidden' name='page' value='events-manager-registration-approval' />
+   <input type='hidden' name='page' value='eme-registration-approval' />
    <div class="tablenav">
 
    <div class="alignleft actions">

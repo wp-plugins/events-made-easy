@@ -58,7 +58,7 @@ function eme_categories_page() {
 
 function eme_categories_table_layout($message = "") {
    $categories = eme_get_categories();
-   $destination = admin_url("admin.php?page=events-manager-categories"); 
+   $destination = admin_url("admin.php?page=eme-categories"); 
    $table = "
       <div class='wrap nosubsub'>\n
          <div id='icon-edit' class='icon32'>
@@ -102,8 +102,8 @@ function eme_categories_table_layout($message = "") {
                         $table .= "    
                            <tr>
                            <td><input type='checkbox' class ='row-selector' value='".$this_category['category_id']."' name='categories[]'/></td>
-                           <td><a href='".admin_url("admin.php?page=events-manager-categories&amp;action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_id']."</a></td>
-                           <td><a href='".admin_url("admin.php?page=events-manager-categories&amp;action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_name']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_id']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_name']."</a></td>
                            </tr>
                         ";
                      }
@@ -171,7 +171,7 @@ function eme_categories_edit_layout($message = "") {
       $layout .= "
       <div id='ajax-response'></div>
 
-      <form name='editcat' id='editcat' method='post' action='".admin_url("admin.php?page=events-manager-categories")."' class='validate'>
+      <form name='editcat' id='editcat' method='post' action='".admin_url("admin.php?page=eme-categories")."' class='validate'>
       <input type='hidden' name='action' value='edit' />
       <input type='hidden' name='category_ID' value='".$category['category_id']."'/>";
       

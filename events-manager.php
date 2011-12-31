@@ -3,7 +3,7 @@
 Plugin Name: Events Made Easy
 Version: 1.0.1
 Plugin URI: http://www.e-dynamics.be/wordpress
-Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal. <a href="admin.php?page=events-manager-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
+Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
 Author URI: http://www.e-dynamics.be/
 */
@@ -901,29 +901,29 @@ function eme_create_events_submenu () {
       // edit event also needs just "add" as capability, otherwise you will not be able to edit own created events
       $plugin_page = add_submenu_page('events-manager', __('Edit'),__('Edit'),get_option('eme_cap_add_event'),'events-manager','eme_events_page');
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
-      $plugin_page = add_submenu_page('events-manager', __('Add new', 'eme'), __('Add new','eme'), get_option('eme_cap_add_event'), 'events-manager-new_event', "eme_new_event_page");
+      $plugin_page = add_submenu_page('events-manager', __('Add new', 'eme'), __('Add new','eme'), get_option('eme_cap_add_event'), 'eme-new_event', "eme_new_event_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
-      $plugin_page = add_submenu_page('events-manager', __('Locations', 'eme'), __('Locations', 'eme'), get_option('eme_cap_add_locations'), 'events-manager-locations', "eme_locations_page");
+      $plugin_page = add_submenu_page('events-manager', __('Locations', 'eme'), __('Locations', 'eme'), get_option('eme_cap_add_locations'), 'eme-locations', "eme_locations_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       if (get_option('eme_categories_enabled')) {
-         $plugin_page = add_submenu_page('events-manager', __('Event Categories','eme'),__('Categories','eme'), get_option('eme_cap_categories'), "events-manager-categories", 'eme_categories_page');
+         $plugin_page = add_submenu_page('events-manager', __('Event Categories','eme'),__('Categories','eme'), get_option('eme_cap_categories'), "eme-categories", 'eme_categories_page');
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       }
       if (get_option('eme_rsvp_enabled')) {
-         $plugin_page = add_submenu_page('events-manager', __('People', 'eme'), __('People', 'eme'), get_option('eme_cap_people'), 'events-manager-people', "eme_people_page");
+         $plugin_page = add_submenu_page('events-manager', __('People', 'eme'), __('People', 'eme'), get_option('eme_cap_people'), 'eme-people', "eme_people_page");
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
-         $plugin_page = add_submenu_page('events-manager', __('Pending Approvals', 'eme'), __('Pending Approvals', 'eme'), get_option('eme_cap_approve'), 'events-manager-registration-approval', "eme_registration_approval_page");
+         $plugin_page = add_submenu_page('events-manager', __('Pending Approvals', 'eme'), __('Pending Approvals', 'eme'), get_option('eme_cap_approve'), 'eme-registration-approval', "eme_registration_approval_page");
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
-         $plugin_page = add_submenu_page('events-manager', __('Change Registration', 'eme'), __('Change Registration', 'eme'), get_option('eme_cap_registrations'), 'events-manager-registration-seats', "eme_registration_seats_page");
+         $plugin_page = add_submenu_page('events-manager', __('Change Registration', 'eme'), __('Change Registration', 'eme'), get_option('eme_cap_registrations'), 'eme-registration-seats', "eme_registration_seats_page");
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
       }
-      $plugin_page = add_submenu_page('events-manager', __('Cleanup', 'eme'), __('Cleanup', 'eme'), get_option('eme_cap_cleanup'), 'events-manager-cleanup', "eme_cleanup_page");
+      $plugin_page = add_submenu_page('events-manager', __('Cleanup', 'eme'), __('Cleanup', 'eme'), get_option('eme_cap_cleanup'), 'eme-cleanup', "eme_cleanup_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       # just in case: make sure the Settings page can be reached if something is not correct with the security settings
       if (get_option('eme_cap_settings') =='') {
-         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), DEFAULT_CAP_SETTINGS, "events-manager-options", 'eme_options_page');
+         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), DEFAULT_CAP_SETTINGS, "eme-options", 'eme_options_page');
       } else {
-         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), get_option('eme_cap_settings'), "events-manager-options", 'eme_options_page');
+         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), get_option('eme_cap_settings'), "eme-options", 'eme_options_page');
       }
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
    }
@@ -1549,7 +1549,7 @@ function admin_show_warnings() {
       // the warning is already given via admin_notice, we just want
       // to prevent people to do anything in EME without deactivation/activation first
       // But we allow access to the settings page ...
-      if ((isset($_GET['page']) && $_GET['page'] != 'events-manager-options'))
+      if ((isset($_GET['page']) && $_GET['page'] != 'eme-options'))
          exit(1);
    } else {
       // the normal warnings
@@ -1603,7 +1603,7 @@ function eme_hello_to_new_user() {
    $advice = sprintf ( __ ( "<p>Hey, <strong>%s</strong>, welcome to <strong>Events Made Easy</strong>! We hope you like it around here.</p> 
    <p>Now it's time to insert events lists through  <a href=\"%s\" title=\"Widgets page\">widgets</a>, <a href=\"%s\" title=\"Template tags documentation\">template tags</a> or <a href=\"%s\" title=\"Shortcodes documentation\">shortcodes</a>.</p>
    <p>By the way, have you taken a look at the <a href=\"%s\" title=\"Change settings\">Settings page</a>? That's where you customize the way events and locations are displayed.</p>
-   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), $current_user->display_name, admin_url("widgets.php"), 'http://www.e-dynamics.be/wordpress/#template-tags', 'http://www.e-dynamics.be/wordpress/#shortcodes', admin_url("admin.php?page=events-manager-options"), admin_url("admin.php?page=events-manager&amp;disable_hello_to_user=true") );
+   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), $current_user->display_name, admin_url("widgets.php"), 'http://www.e-dynamics.be/wordpress/#template-tags', 'http://www.e-dynamics.be/wordpress/#shortcodes', admin_url("admin.php?page=eme-options"), admin_url("admin.php?page=events-manager&amp;disable_hello_to_user=true") );
    ?>
 <div id="message" class="updated">
       <?php
