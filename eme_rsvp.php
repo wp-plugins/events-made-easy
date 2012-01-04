@@ -323,33 +323,42 @@ function eme_book_seats($event) {
    } elseif (!is_admin() && !$registration_wp_users_only && !$bookerPhone) {
       // no member of wordpress: we need a phonenumber then
       $result = __('Please fill in all the required fields','eme');
+   } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
+      // spammers might get here, but we catch them
+      $result = __('WP membership is required for registration','eme');
    } else {
       if (eme_are_seats_available_for($event_id, $bookedSeats)) {
          if (!$booker) {
-            $booker = eme_add_person($bookerName, $bookerEmail, $bookerPhone, $booker_wp_id, $registration_wp_users_only);
+            $booker = eme_add_person($bookerName, $bookerEmail, $bookerPhone, $booker_wp_id);
          }
 
-         // if the user enters a new phone numbe, update it
-         if ($booker['person_phone'] != $bookerPhone) {
-            eme_update_phone($booker,$bookerPhone);
-         }
+         // ok, just to be safe: check the person_id of the booker
+         if ($booker['person_id']>0) {
+            // if the user enters a new phone number, update it
+            if ($booker['person_phone'] != $bookerPhone) {
+               eme_update_phone($booker,$bookerPhone);
+            }
 
-         $booking_id=eme_record_booking($event_id, $booker['person_id'], $bookedSeats,$bookerComment);
-      
-         $result = __('Your booking has been recorded','eme');
-         if (is_admin()) {
-            $action="approveRegistration";
+            $booking_id=eme_record_booking($event_id, $booker['person_id'], $bookedSeats,$bookerComment);
+
+            $result = __('Your booking has been recorded','eme');
+            if (is_admin()) {
+               $action="approveRegistration";
+            } else {
+               $action="";
+            }
+            eme_email_rsvp_booking($booking_id,$action);
+
+            // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
+            unset($_POST['bookerName']);
+            unset($_POST['bookerEmail']);
+            unset($_POST['bookedSeats']);
+            unset($_POST['bookerComment']);
+            unset($_POST['bookerPhone']);
          } else {
-            $action="";
+            $result = __('No booker ID found, something is wrong here','eme');
+            unset($_POST['bookedSeats']);
          }
-         eme_email_rsvp_booking($booking_id,$action);
-
-         // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
-         unset($_POST['bookerName']);
-         unset($_POST['bookerEmail']);
-         unset($_POST['bookedSeats']);
-         unset($_POST['bookerComment']);
-         unset($_POST['bookerPhone']);
       } else {
          $result = __('Booking cannot be made: not enough seats available!', 'eme');
          // here we only unset the number of seats entered, so the user doesn't have to fill in the rest again

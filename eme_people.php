@@ -368,21 +368,17 @@ function eme_get_persons($person_ids="") {
    return $result;
 }
 
-function eme_add_person($name, $email, $phone, $wp_id, $registration_wp_users_only) {
+function eme_add_person($name, $email, $phone, $wp_id) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
-   $name = eme_sanitize_request($name);
-   $email = eme_sanitize_request($email);
-   $phone = eme_sanitize_request($phone);
-   $wp_id = eme_sanitize_request($wp_id);
-   $sql = "INSERT INTO $people_table (person_name, person_email, person_phone, wp_id) VALUES ('$name', '$email', '$phone', '$wp_id');";
-   $wpdb->query($sql);
-   if ($registration_wp_users_only) {
-      $new_person = eme_get_person_by_wp_id($wp_id);
-   } else {
-      $new_person = eme_get_person_by_name_and_email($name, $email);
-   }
-   return ($new_person);
+   $person=array();
+   $person['person_name'] = eme_sanitize_request($name);
+   $person['person_email'] = eme_sanitize_request($email);
+   $person['person_phone'] = eme_sanitize_request($phone);
+   $person['wp_id'] = eme_sanitize_request($wp_id);
+   $wpdb->insert($people_table,$person);
+   $person['person_id'] = $wpdb->insert_id;
+   return ($person);
 }
 
 // when editing other profiles then your own

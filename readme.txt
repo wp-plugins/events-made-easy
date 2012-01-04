@@ -173,3 +173,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: when adding a registration via the backend and approval was required, the registered person would get a pending message although it was already approved
 * Bugfix: #_USER_RESERVEDSPACES wasn't working correctly for the attendees format setting
 * Bugfix: location title was not qtranslate-ready in the [events_location] shortcode
+* Bugfix: better retreiving of new booker info, should resolve the booker being empty in some cases
