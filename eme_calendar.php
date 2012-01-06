@@ -230,20 +230,21 @@ function eme_get_calendar($args="") {
    foreach ($weeks as $week) { 
       $calendar .= "<tr>\n"; 
       foreach ($week as $d) { 
+         $text_dayofweek=date('D', strtotime("$year-$month-$d"));
          if ($i < $offset_count) { //if it is PREVIOUS month
-            $calendar .= "<td class='eventless-pre'>$d</td>\n"; 
+            $calendar .= "<td class='$text_dayofweek eventless-pre'>$d</td>\n"; 
          }
          if (($i >= $offset_count) && ($i < ($num_weeks * 7) - $outset)) {
             // if it is THIS month
             if($d == $curr_day && $month == $curr_month && $year == $curr_year) {
-               $calendar .= "<td class='eventless-today'>$d</td>\n"; 
+               $calendar .= "<td class='$text_dayofweek eventless-today'>$d</td>\n"; 
             } else { 
-               $calendar .= "<td class='eventless'>$d</td>\n"; 
+               $calendar .= "<td class='$text_dayofweek eventless'>$d</td>\n"; 
             } 
          } elseif(($outset > 0)) {
             //if it is NEXT month
             if(($i >= ($num_weeks * 7) - $outset)) { 
-               $calendar .= "<td class='eventless-post'>$d</td>\n"; 
+               $calendar .= "<td class='$text_dayofweek eventless-post'>$d</td>\n"; 
             } 
          } 
          $i++; 
