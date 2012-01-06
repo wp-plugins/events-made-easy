@@ -890,18 +890,22 @@ function get_locations_shortcode($atts) {
    $class = $class ? "class=\"{$class}\"" : "";
    $locations = eme_get_locations($eventful, $scope, $category, $offset);
 
-   $out = "<ul id=\"eme_locations\" {$class}>";
-   //if (!$link)
-   //   $out .= "<li class=\"location-0\">All</li>";
+   $locations_format_header = get_option('eme_location_list_format_header' );
+   $locations_format_header = ( $locations_format_header != '' ) ? $locations_format_header : "<ul class='eme_locations_list'>";
+   $locations_format_item = get_option('eme_location_list_format_item' );
+   $locations_format_item = ( $locations_format_item != '' ) ? $locations_format_item : "<li class=\"location-#_LOCATIONID\">#_LOCATIONNAME</li>";
+   $locations_format_footer = get_option('eme_location_list_format_footer' );
+   $locations_format_footer = ( $locations_format_footer != '' ) ? $locations_format_footer : "</ul>";
+
+   $out = $locations_format_header;
    foreach ($locations as $location) {
-      $location_name = eme_trans_sanitize_html($location['location_name']);
-      if ($link) {
-         $location_page_link = eme_location_url($location);
-         $location_name = "<a href=\"{$location_page_link}\" title=\"{$location_name}\">{$location_name}</a>";  
+      if ($locations_format_item == '') {
+         $out .= "<li class=\"location-{$location['location_id']}\">{$location_name}</li>";
+      } else {
+         $out .= eme_replace_locations_placeholders($locations_format_item,$location);
       }
-      $out .= "<li class=\"location-{$location['location_id']}\">{$location_name}</li>";
    }
-   $out .= "</ul>";
+   $out .= $locations_format_footer;
    $out .= <<<EOD
       <script type="text/javascript">
       //<![CDATA[

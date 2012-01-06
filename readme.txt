@@ -167,6 +167,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.2 =
 * Feature: placeholders #_TOTALSPACES and #_TOTALSEATS added (gives the total amount of spaces for an event)
 * Feature: events can now also have a featured image, like locations
+* Feature: location list formatting is now possible in the settings, when using the shortcode [events_locations], as it was already for [events_list]
 * Extra: included the plugin events-made-easy-frontend-submit, see the dir extras/plugins/events-made-easy-frontend-submit
 * Bugfix: typo fix in eme_events.php influencing location showing
 * Bugfix: typo fix in eme_events.php for a jquery statement
