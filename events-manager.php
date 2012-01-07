@@ -1326,6 +1326,18 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
+      } elseif (preg_match('/#_RECURRENCEDESC/', $result)) {
+         if ($event ['recurrence_id']) {
+            $replacement = eme_get_recurrence_desc ( $event ['recurrence_id'] );
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
       } elseif (preg_match('/#_IS_SINGLE_DAY/', $result)) {
          if (eme_is_single_day_page())
             $replacement = 1;
@@ -1358,6 +1370,12 @@ function eme_replace_placeholders($format, $event, $target="html") {
 
       } elseif (preg_match('/#_IS_PRIVATE_EVENT/', $result)) {
          if ($event ['event_status'] == STATUS_PRIVATE)
+            $replacement = 1;
+         else
+            $replacement = 0;
+
+      } elseif (preg_match('/#_IS_RECURRENT_EVENT/', $result)) {
+         if ($event ['recurrence_id']) {
             $replacement = 1;
          else
             $replacement = 0;
@@ -1487,6 +1505,7 @@ function eme_replace_placeholders($format, $event, $target="html") {
       }
       $format = str_replace($orig_result, $replacement ,$format );
    }
+
    return do_shortcode($format);   
 }
 
