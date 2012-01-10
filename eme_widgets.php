@@ -13,6 +13,7 @@ class WP_Widget_eme_list extends WP_Widget {
       $limit = isset( $instance['limit'] ) ? intval($instance['limit']) : 5;
       $scope = empty( $instance['scope'] ) ? 'future' : $instance['scope'];
       $showperiod = empty( $instance['showperiod'] ) ? '' : $instance['showperiod'];
+      $show_ongoing = isset( $instance['show_ongoing'] ) ? $instance['show_ongoing'] : true;
       $order = empty( $instance['order'] ) ? 'ASC' : $instance['order'];
       $header = empty( $instance['header'] ) ? '<ul>' : $instance['header'];
       $footer = empty( $instance['footer'] ) ? '</ul>' : $instance['footer'];
@@ -28,7 +29,7 @@ class WP_Widget_eme_list extends WP_Widget {
       if ( $title)
          echo $before_title . $title . $after_title;
 
-      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,$author);
+      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing);
       if ($events_list == get_option('eme_no_events_message' ))
          echo $events_list;
       else
@@ -50,6 +51,7 @@ class WP_Widget_eme_list extends WP_Widget {
       } else {
          $instance['order'] = 'ASC';
       }
+      $instance['ongoing'] = $new_instance['ongoing'];
       $instance['category'] = $new_instance['category'];
       $instance['format'] = $new_instance['format'];
       $instance['authorid'] = $new_instance['authorid'];
@@ -64,6 +66,7 @@ class WP_Widget_eme_list extends WP_Widget {
       $limit = isset( $instance['limit'] ) ? intval($instance['limit']) : 5;
       $scope = empty( $instance['scope'] ) ? 'future' : eme_sanitize_html($instance['scope']);
       $showperiod = empty( $instance['showperiod'] ) ? '' : eme_sanitize_html($instance['showperiod']);
+      $show_ongoing = isset( $instance['show_ongoing'] ) ? eme_sanitize_html($instance['show_ongoing']) : true;
       $order = empty( $instance['order'] ) ? 'ASC' : eme_sanitize_html($instance['order']);
       $header = empty( $instance['header'] ) ? '<ul>' : eme_sanitize_html($instance['header']);
       $footer = empty( $instance['footer'] ) ? '</ul>' : eme_sanitize_html($instance['footer']);
@@ -119,6 +122,10 @@ class WP_Widget_eme_list extends WP_Widget {
 <?php
   }
 ?>
+  <p>
+    <label for="<?php echo $this->get_field_id('show_ongoing'); ?>"><?php _e('Show Ongoing Events?', 'eme'); ?>:</label>
+    <input type="checkbox" id="<?php echo $this->get_field_id('show_ongoing'); ?>" name="<?php echo $this->get_field_name('show_ongoing'); ?>" value="1" <?php echo ($show_ongoing) ? 'checked="checked"':'' ;?> />
+  </p>
   <p>
     <label for="<?php echo $this->get_field_id('authorid'); ?>"><?php _e('Author','eme'); ?>:</label><br />
 <?php

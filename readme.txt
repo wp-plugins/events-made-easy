@@ -170,6 +170,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: events can now also have a featured image, like locations
 * Feature: location list formatting is now possible in the settings, when using the shortcode [events_locations], as it was already for [events_list]
 * Feature: each day in the calendar now also has the short day name as an extra class
+* Feature: list widget now also can choose to show ongoing events or not
 * Extra: included the plugin events-made-easy-frontend-submit, see the dir extras/plugins/events-made-easy-frontend-submit
 * Bugfix: typo fix in eme_events.php influencing location showing
 * Bugfix: typo fix in eme_events.php for a jquery statement
@@ -177,3 +178,5 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: #_USER_RESERVEDSPACES wasn't working correctly for the attendees format setting
 * Bugfix: location title was not qtranslate-ready in the [events_location] shortcode
 * Bugfix: better retreiving of new booker info, should resolve the booker being empty in some cases
+* Bugfix: datepicker images were not in svn
+* Bugfix: list widget was behaving incorrectly for the author option
