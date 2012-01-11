@@ -51,7 +51,7 @@ class WP_Widget_eme_list extends WP_Widget {
       } else {
          $instance['order'] = 'ASC';
       }
-      $instance['ongoing'] = $new_instance['ongoing'];
+      $instance['show_ongoing'] = $new_instance['show_ongoing'];
       $instance['category'] = $new_instance['category'];
       $instance['format'] = $new_instance['format'];
       $instance['authorid'] = $new_instance['authorid'];
@@ -61,12 +61,15 @@ class WP_Widget_eme_list extends WP_Widget {
    }
    function form( $instance ) {
       //Defaults
-      $instance = wp_parse_args( (array) $instance, array( 'limit' => 5, 'scope' => 'future', 'order' => 'ASC', 'format' => DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT, 'authorid' => '' ) );
+      $instance = wp_parse_args( (array) $instance, array( 'limit' => 5, 'scope' => 'future', 'order' => 'ASC', 'format' => DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT, 'authorid' => '', 'show_ongoing'=> 1 ) );
       $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
       $limit = isset( $instance['limit'] ) ? intval($instance['limit']) : 5;
       $scope = empty( $instance['scope'] ) ? 'future' : eme_sanitize_html($instance['scope']);
       $showperiod = empty( $instance['showperiod'] ) ? '' : eme_sanitize_html($instance['showperiod']);
-      $show_ongoing = isset( $instance['show_ongoing'] ) ? eme_sanitize_html($instance['show_ongoing']) : true;
+      if ( isset( $instance['show_ongoing'] ) && ( $instance['show_ongoing'] != false ))
+         $show_ongoing = true;
+      else
+         $show_ongoing = false;
       $order = empty( $instance['order'] ) ? 'ASC' : eme_sanitize_html($instance['order']);
       $header = empty( $instance['header'] ) ? '<ul>' : eme_sanitize_html($instance['header']);
       $footer = empty( $instance['footer'] ) ? '</ul>' : eme_sanitize_html($instance['footer']);
