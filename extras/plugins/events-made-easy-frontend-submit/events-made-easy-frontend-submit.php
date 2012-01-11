@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Events Manager Extended Frontend Submit
+Plugin Name: Events Made Easy Frontend Submit
 Plugin URI: https://github.com/halles/events-manager-extended-frontend-submit/
 Description: Displays a form in a page where users can submit events for publishing. Heavily Based on Code from malo.conny at http://bueltge.de/
 Author: Matías Halles
@@ -159,7 +159,7 @@ class EMEFS{
 		global $emefs_config;
 		
 		if($emefs_config['display_notice'] == true){
-			$message = __( "The Events Manager Extended Frontend Submit plugin is an extension to the Events Manager Extended, which has to be installed and activated first. The plugin has been deactivated." );
+			$message = __( "The Events Made Easy Frontend Submit plugin is an extension to the Events Made Easy plugin, which has to be installed and activated first. The plugin has been deactivated." );
 			echo sprintf('<div class="error"><p>%s</p></div>', $message);
 		}
 	}
@@ -350,7 +350,7 @@ class EMEFS{
 				<h2><?php _e('Basic Configuration is Missing', 'emefs'); ?></h2>
 				<p>You have to configure the page where successful submissions will be redirected to.</p>
 				<p>
-					Please refer to the <a href="https://github.com/halles/events-manager-extended-frontend-submit/wiki/Customization" title="Customization Page">Customization Page</a> in order to set the basic parameter with which <strong>Events Manager Extended Frontend Submit</strong> will run.
+					Please refer to the <a href="https://github.com/halles/events-manager-extended-frontend-submit/wiki/Customization" title="Customization Page">Customization Page</a> in order to set the basic parameter with which <strong>Events Made Easy Frontend Submit</strong> will run.
 				</p>
 			</div>
 			<?php
@@ -363,7 +363,7 @@ class EMEFS{
 				<h2><?php _e('Basic Configuration is Missing', 'emefs'); ?></h2>
 				<p>Since you have chosen no to accept public submissions. You have to select a page where to redirect unauthorized users.</p>
 				<p>
-					Please refer to the <a href="https://github.com/halles/events-manager-extended-frontend-submit/wiki/Customization" title="Customization Page">Customization Page</a> in order to set the basic parameter with which <strong>Events Manager Extended Frontend Submit</strong> will run.
+					Please refer to the <a href="https://github.com/halles/events-manager-extended-frontend-submit/wiki/Customization" title="Customization Page">Customization Page</a> in order to set the basic parameter with which <strong>Events Made Easy Frontend Submit</strong> will run.
 				</p>
 			</div>
 			<?php
