@@ -606,6 +606,7 @@ function eme_options_page() {
    eme_options_input_text ( __ ( 'Add booking form submit text', 'eme' ), 'eme_rsvp_addbooking_submit_string', __ ( "The string of the submit button on the add booking form", 'eme' ) );
    eme_options_input_text ( __ ( 'Delete booking form submit text', 'eme' ), 'eme_rsvp_delbooking_submit_string', __ ( "The string of the submit button on the delete booking form", 'eme' ) );
    eme_options_input_text ( __ ( 'Attendees list format', 'eme' ), 'eme_attendees_list_format', __ ( "The format for the attendees list when using the <code>#_ATTENDEES</code> placeholder. Use <code>#_NAME</code>, <code>#_EMAIL</code>, <code>#_PHONE</code>, <code>#_ID</code>.", 'eme' ). __("Use <code>#_USER_RESERVEDSPACES</code> to show the number of seats for that person.", 'eme' ) );
+   eme_options_input_text ( __ ( 'Booking recorded message', 'eme' ), 'eme_registration_recorded_ok_html', __ ( "The text (html allowed) shown to the user when the booking has been made successfully.", 'eme' ) );
    ?>
 </table>
 
@@ -688,34 +689,45 @@ function eme_events_page_content() {
       $scope = eme_sanitize_request($wp_query->query_vars ['calendar_day']);
       $events_N = eme_events_count_for ( $scope );
       if ($events_N > 1) {
-         $stored_format = get_option('eme_event_list_item_format' );
+         $event_list_item_format = get_option('eme_event_list_item_format' );
          //Add headers and footers to the events list
-         $single_event_format_header = get_option('eme_event_list_item_format_header' );
-         $single_event_format_header = ( $single_event_format_header != '' ) ? $single_event_format_header : "<ul class='eme_events_list'>";
-         $single_event_format_footer = get_option('eme_event_list_item_format_footer' );
-         $single_event_format_footer = ( $single_event_format_footer != '' ) ? $single_event_format_footer : "</ul>";
-         return $single_event_format_header .  eme_get_events_list ( 0, $scope, "ASC", $stored_format, 0 ) . $single_event_format_footer;
+         $event_list_format_header = get_option('eme_event_list_item_format_header' );
+         $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
+         $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+         $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
+         $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, 0 ) . $event_list_format_footer;
       } else {
+         # there's only one event for that day, so we show that event, but only if the event doesn't point to an external url
          $events = eme_get_events ( 0, $scope);
          $event = $events [0];
-         $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
-         $page_body = eme_replace_placeholders ( $single_event_format, $event );
-         return $page_body;
+         if ($event['event_url'] != '') {
+            $event_list_item_format = get_option('eme_event_list_item_format' );
+            //Add headers and footers to the events list
+            $event_list_format_header = get_option('eme_event_list_item_format_header' );
+            $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
+            $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+            $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
+            $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, 0 ) . $event_list_format_footer;
+         } else {
+            $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+            $page_body = eme_replace_placeholders ( $single_event_format, $event );
+         }
       }
+      return $page_body;
    } else {
       // Multiple events page
       (isset($_GET ['scope'])) ? $scope = eme_sanitize_request($_GET ['scope']) : $scope = "future";
       $stored_format = get_option('eme_event_list_item_format' );
       if (get_option('eme_display_calendar_in_events_page' )){
-         $events_body = eme_get_calendar ('full=1');
+         $page_body = eme_get_calendar ('full=1');
       }else{
-         $single_event_format_header = get_option('eme_event_list_item_format_header' );
-         $single_event_format_header = ( $single_event_format_header != '' ) ? $single_event_format_header : "<ul class='eme_events_list'>";
-         $single_event_format_footer = get_option('eme_event_list_item_format_footer' );
-         $single_event_format_footer = ( $single_event_format_footer != '' ) ? $single_event_format_footer : "</ul>";
-         $events_body = $single_event_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), $scope, "ASC", $stored_format, 0 ) . $single_event_format_footer;
+         $event_list_format_header = get_option('eme_event_list_item_format_header' );
+         $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
+         $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+         $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
+         $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), $scope, "ASC", $stored_format, 0 ) . $event_list_format_footer;
       }
-      return $events_body;
+      return $page_body;
    }
 }
 
@@ -2649,6 +2661,23 @@ function eme_event_form($event, $title, $element) {
                         </p>
                      </div>
                   </div>
+                  <div id="div_event_registration_recorded_ok_html" class="postbox <?php if ($event['event_registration_recorded_ok_html']=="") echo "closed"; ?>">
+                     <div class="handlediv" title="Click to toggle">
+                        <br />
+                     </div>
+                     <h3 class='hndle'><span>
+                        <?php _e ( 'Booking recorded html Format', 'eme' ); ?>
+                        </span>
+                     </h3>
+                     <div class="inside">
+                        <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The text (html allowed) shown to the user when the booking has been made successfully.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+                     </div>
+                  </div>
                   <div id="div_event_respondent_email_body" class="postbox <?php if ($event['event_respondent_email_body']=="") echo "closed"; ?>">
                      <div class="handlediv" title="Click to toggle">
                         <br />
@@ -3051,6 +3080,18 @@ $j_eme_event(document).ready( function() {
    }); 
    $j_eme_event('textarea#event_registration_pending_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if($j_eme_event(this).val() == tmp_value)
+         $j_eme_event(this).val('');
+   }); 
+   $j_eme_event('textarea#event_registration_recorded_ok_html').focus(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if($j_eme_event(this).val() == '')
+         $j_eme_event(this).val(tmp_value);
+   }); 
+   $j_eme_event('textarea#event_registration_recorded_ok_html').blur(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
       if($j_eme_event(this).val() == tmp_value)
          $j_eme_event(this).val('');

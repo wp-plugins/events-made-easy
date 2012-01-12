@@ -340,8 +340,10 @@ function eme_book_seats($event) {
             }
 
             $booking_id=eme_record_booking($event_id, $booker['person_id'], $bookedSeats,$bookerComment);
-
-            $result = __('Your booking has been recorded','eme');
+            $event=eme_get_event($event_id);
+            $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
+            $result = eme_replace_placeholders($format, $event);
+            //$result = __('Your booking has been recorded','eme');
             if (is_admin()) {
                $action="approveRegistration";
             } else {
