@@ -172,6 +172,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: each day in the calendar now also has the short day name as an extra class
 * Feature: list widget now also can choose to show ongoing events or not
 * Feature: made the message 'Your booking has been recorded' formattable
+* Feature: scope=Nd--Md, to get the events from day N in the past/future till day M in the past/future (eg. scope=-3d--2d , scope=0d--3d)
 * Extra: included the plugin events-made-easy-frontend-submit, see the dir extras/plugins/events-made-easy-frontend-submit
 * Bugfix: typo fix in eme_events.php influencing location showing
 * Bugfix: typo fix in eme_events.php for a jquery statement
