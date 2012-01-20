@@ -233,7 +233,7 @@ if (!function_exists(array_combine)) {
       foreach($arr1 as $key1 => $value1)    {
          $out[$value1] = $arr2[$key1];
       }
-      return $out
+      return $out;
    } 
 }
 
