@@ -174,6 +174,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: made the message 'Your booking has been recorded' formattable
 * Feature: scope=Nd--Md, to get the events from day N in the past/future till day M in the past/future (eg. scope=-3d--2d , scope=0d--3d)
 * Feature: initial state for a new event can now be set in the settings page
+* Feature: new access right setting for publish events
 * Extra: included the plugin events-made-easy-frontend-submit, see the dir extras/plugins/events-made-easy-frontend-submit
 * Bugfix: typo fix in eme_events.php influencing location showing
 * Bugfix: typo fix in eme_events.php for a jquery statement
