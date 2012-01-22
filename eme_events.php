@@ -10,7 +10,7 @@ function eme_new_event_page() {
    $event = array (
       "event_id" => '',
       "event_name" => '',
-      "event_status" => STATUS_DRAFT,
+      "event_status" => get_option('eme_event_initial_state'),
       "event_start_date" => '',
       "event_start_day" => '',
       "event_start_month" => '',
@@ -494,6 +494,7 @@ function eme_options_page() {
    eme_options_radio_binary ( __ ( 'Use the client computer clock for the calendar', 'eme' ), 'eme_use_client_clock', __ ( 'Check this option if you want to use the clock of the client as base to calculate current day for the calendar.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'Delete all EME data when upgrading or deactivating?', 'eme' ), 'eme_uninstall_drop_data', __ ( 'Check this option if you want to delete all EME data (database tables and options) when upgrading or deactivating the plugin.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'Enable shortcodes in widgets', 'eme' ), 'eme_shortcodes_in_widgets', __ ( 'Check this option if you want to enable the use of shortcodes in widgets (affects shortcodes of any plugin used in widgets, so use with care).', 'eme' ) );
+   eme_options_select (__('State for new event','eme'), 'eme_event_initial_state', eme_status_array(), __ ('Initial state for a new event','eme') );
    ?>
 </table>
 
@@ -1935,7 +1936,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    $scope_names ['all'] = __ ( 'All events', 'eme' );
    $scope_names ['future'] = __ ( 'Future events', 'eme' );
 
-   $event_status_array = status_array ();
+   $event_status_array = eme_status_array ();
 
    ?> 
       
@@ -2150,7 +2151,7 @@ function eme_event_form($event, $title, $element) {
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
       $use_select_for_locations=1;
    }
-   $event_status_array = status_array ();
+   $event_status_array = eme_status_array ();
    $saved_bydays = array();
    $currency_array = array ();
    $currency_array ['AUD'] = __ ( 'Australian Dollar', 'eme' );
@@ -3671,14 +3672,6 @@ function eme_tinymce(){
    }
 }
 add_action ( 'admin_init', 'eme_tinymce' );
-
-function status_array() {
-   $event_status_array = array();
-   $event_status_array[STATUS_PUBLIC] = __ ( 'Public', 'eme' );
-   $event_status_array[STATUS_PRIVATE] = __ ( 'Private', 'eme' );
-   $event_status_array[STATUS_DRAFT] = __ ( 'Draft', 'eme' );
-   return $event_status_array;
-}
 
 # return number of days until next event or until the specified event
 function eme_countdown() {

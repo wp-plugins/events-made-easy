@@ -226,6 +226,14 @@ function eme_delete_image_files($image_basename) {
    }
 }
 
+function eme_status_array() {
+   $event_status_array = array();
+   $event_status_array[STATUS_PUBLIC] = __ ( 'Public', 'eme' );
+   $event_status_array[STATUS_PRIVATE] = __ ( 'Private', 'eme' );
+   $event_status_array[STATUS_DRAFT] = __ ( 'Draft', 'eme' );
+   return $event_status_array;
+}
+
 # php4 compatible
 if (!function_exists(array_combine)) {
    function array_combine($arr1,$arr2) {
