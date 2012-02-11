@@ -60,14 +60,17 @@ function eme_add_booking_form($event_id) {
    }
 
    // you can book the available number of seats, with a max of 10 per time
-   $min = intval(get_option('eme_rsvp_addbooking_min_spaces'));
+   $min_allowed = intval(get_option('eme_rsvp_addbooking_min_spaces'));
    $max_allowed = intval(get_option('eme_rsvp_addbooking_max_spaces'));
    $max = eme_get_available_seats($event_id);
    if ($max > $max_allowed && $max_allowed>0) {
       $max = $max_allowed;
    }
-   // no seats anymore? No booking form then ...
-   if ($max == 0 && $max_allowed>0) {
+   // just for stupidity reasons
+   if ($min_allowed<0) $min_allowed=0;
+   // no seats anymore? No booking form then ... but only if it is required that the min number of
+   // bookings should be >0 (it can be=0 for attendance bookings)
+   if ($max == 0 && $min_allowed>0) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_add_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
@@ -82,7 +85,7 @@ function eme_add_booking_form($event_id) {
    if(!empty($form_error_message))
       $form_html .= "<div class='eme-rsvp-message'>$form_error_message</div>";
    $booked_places_options = array();
-   for ( $i = $min; $i <= $max; $i++) 
+   for ( $i = $min_allowed; $i <= $max; $i++) 
       $booked_places_options[$i]=$i;
    
       $form_html  .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>
