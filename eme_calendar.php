@@ -83,17 +83,17 @@ function eme_get_calendar($args="") {
    if (get_option('eme_use_client_clock')) {
       // these come from client unless their clock is wrong
       $curr_day= (int) $_SESSION['eme_client_mday'];
-      $curr_month=$_SESSION['eme_client_month'];
-      $curr_year=$_SESSION['eme_client_fullyear'];
+      $curr_month= (int) $_SESSION['eme_client_month'];
+      $curr_year= (int) $_SESSION['eme_client_fullyear'];
    } else {
-      $curr_day=date('j');
-      $curr_month=date('m');
-      $curr_year=date('Y');
+      $curr_day= (int) date('j');
+      $curr_month= (int) date('m');
+      $curr_year= (int) date('Y');
    }
    if ($month == '') $month = $curr_month;
    if ($year == '') $year = $curr_year;
    // let's get the day of the month, based on choosen month/year AND current day
-   $date = mktime(0,0,0,$month, $curr_day, $year); 
+   $date = mktime(0,0,0, (int) $month, (int) $curr_day, (int) $year); 
    $day = date('d', $date); 
 
    // Get friendly month name
@@ -104,7 +104,7 @@ function eme_get_calendar($args="") {
    }
 
    // Get the first day of the month 
-   $month_start = mktime(0,0,0,$month, 1, $year);
+   $month_start = mktime(0,0,0, (int) $month, 1, (int) $year);
    // Determine day of the week the month starts on.
    $month_start_day = date('D', $month_start);
 
@@ -290,8 +290,8 @@ function eme_get_calendar($args="") {
    
    // we'll look for events in the requested month and 7 days before and after
    $number_of_days_pre=eme_days_in_month($month_pre, $year_pre);
-   $limit_pre=date("Y-m-d", mktime(0,0,0,$month_pre, $number_of_days_pre-7 , $year_pre));
-   $limit_post=date("Y-m-d", mktime(0,0,0,$month_post, 7 , $year_post));
+   $limit_pre=date("Y-m-d", mktime(0,0,0, (int) $month_pre, $number_of_days_pre-7 , (int) $year_pre));
+   $limit_post=date("Y-m-d", mktime(0,0,0, (int) $month_post, 7 , (int) $year_post));
    $events = eme_get_events(0, "$limit_pre--$limit_post", "ASC", 0, $location_id, $category , $author , $contact_person );
 
 //----- DEBUG ------------
@@ -387,7 +387,7 @@ function eme_get_calendar($args="") {
 }
 
 function eme_days_in_month($month, $year) {
-   return (date("t",mktime(0,0,0,$month,1,$year)));
+   return (date("t",mktime(0,0,0, (int) $month, 1, (int) $year)));
 }
 
 function eme_ajaxize_calendar() {
