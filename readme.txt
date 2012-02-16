@@ -186,3 +186,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: list widget was behaving incorrectly for the author option
 * Bugfix: when clicking on calendar day and there's only 1 event, only show the event content directly if the event doesn't point to an external url
 * Bugfix: the booking form was still shown for fully booked events if the max number of seats to book was not defined
+* Bugfix: typo fix in the admin edit location pages

@@ -174,7 +174,7 @@ function eme_locations_edit_layout($location, $message = "") {
            <p><?php _e('The name of the location', 'eme') ?>.</p>
                         <?php if ($location ['location_name'] != "") {
                                  _e ('Permalink: ', 'eme' );
-                                 echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_events_prefix')).$location['location_id']."/";
+                                 echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix')).$location['location_id']."/";
                                  $slug = $location['location_slug'] ? $location['location_slug'] : $location['location_name'];
                                  $slug = untrailingslashit(eme_permalink_convert($slug));
                         ?>
@@ -260,7 +260,7 @@ function eme_locations_edit_layout($location, $message = "") {
          <div class="form-field">
             <label for="location_url" ><?php _e ( 'External link', 'eme' ); ?></label>
             <input name="location_url" id="location_url" type="text" value="<?php echo eme_sanitize_html($location['location_url']); ?>" size="40"  />
-            <p><?php _e ( 'If this is filled in, the single event URL will point to this url instead of the standard event page.', 'eme' )?></p>
+            <p><?php _e ( 'If this is filled in, the single location URL will point to this url instead of the standard location page.', 'eme' )?></p>
          </div>
          <p class="submit"><input type="submit" class="button-primary" name="submit" value="<?php _e('Update location', 'eme') ?>" /></p>
 
