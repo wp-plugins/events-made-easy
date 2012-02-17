@@ -1477,7 +1477,7 @@ function eme_replace_placeholders($format, $event, $target="html") {
    }
 
    // for extra date formatting, eg. #_{d/m/Y}
-   preg_match_all("/#(ESC|URL)?@?_\{[A-Za-z0-9 -\/,\.\\\]+\}/", $format, $results);
+   preg_match_all("/#(ESC|URL)?@?_\{.*?\}/", $format, $results);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
    usort($results[0],'sort_stringlenth');
