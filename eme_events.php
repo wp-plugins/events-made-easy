@@ -1855,6 +1855,13 @@ function eme_get_event($event_id) {
    $event = $wpdb->get_row ( $sql, ARRAY_A );
    //$wpdb->print_error();
 
+   if ($event['event_end_date'] == "") {
+      $event['event_end_date'] = $event['event_start_date'];
+      $event['event_end_day'] = $event['event_start_day'];
+      $event['event_end_month'] = $event['event_start_month'];
+      $event['event_end_year'] = $event['event_start_year'];
+   }
+      
    if ($event && count($event>0)) {
       $location = eme_get_location ( $event ['location_id'] );
       // add all location info to the event
