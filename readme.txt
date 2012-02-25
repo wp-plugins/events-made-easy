@@ -166,6 +166,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.2 =
 * Feature: placeholders #_TOTALSPACES and #_TOTALSEATS added (gives the total amount of spaces for an event)
+* Feature: placeholder #_TOTALPRICE added for mail formats (gives the total price to pay: the amount of spaces booked times the price of the event)
 * Feature: placeholder #_RECURRENCEDESC added, shows the recurrence info for an event like it does in the admin backend
 * Feature: events can now also have a featured image, like locations, resulting also in 2 new placeholders: #_EVENTIMAGE and #_EVENTIMAGEURL
 * Feature: location list formatting is now possible in the settings, when using the shortcode [events_locations], as it was already for [events_list]
