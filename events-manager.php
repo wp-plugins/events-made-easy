@@ -1268,10 +1268,11 @@ function eme_replace_placeholders($format, $event, $target="html") {
 
       } elseif (preg_match('/#_(CONTACTEMAIL|PLAIN_CONTACTEMAIL)$/', $result)) {
          $contact = eme_get_contact($event);
-         // ascii encode for primitive harvesting protection ...
          if ($contact) {
+            $replacement = $contact->user_email;
             if ($target == "html") {
-               $replacement = eme_ascii_encode($contact->user_email);
+               // ascii encode for primitive harvesting protection ...
+               $replacement = eme_ascii_encode($replacement);
                $replacement = apply_filters('eme_general', $replacement); 
             } elseif ($target == "rss")  {
                $replacement = apply_filters('eme_general_rss', $replacement);
