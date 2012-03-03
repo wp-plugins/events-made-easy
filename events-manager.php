@@ -1216,7 +1216,7 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif (preg_match('/#_EVENTPRICE|PRICE$/', $result)) {
+      } elseif (preg_match('/#_EVENTPRICE|#_PRICE$/', $result)) {
          $field = "price";
          if ($event[$field])
             $replacement = $event[$field];
