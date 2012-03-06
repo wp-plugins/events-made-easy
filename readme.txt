@@ -3,8 +3,8 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.0.0
-Tested up to: 3.2.1
-Stable tag: 1.0.1
+Tested up to: 3.3.1
+Stable tag: 1.0.2
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL support. SEO compatible.
              
@@ -178,6 +178,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: new access right setting for publish events
 * Extra: included the plugin events-made-easy-frontend-submit, see the dir extras/plugins/events-made-easy-frontend-submit
 * Extra: if the end date is empty, it will always be the start date now. If you want to check if they are equal, use conditional tags
+* Extra: French translation updated, thanks to Philippe Lambotte
 * Bugfix: typo fix in eme_events.php influencing location showing
 * Bugfix: typo fix in eme_events.php for a jquery statement
 * Bugfix: when adding a registration via the backend and approval was required, the registered person would get a pending message although it was already approved
