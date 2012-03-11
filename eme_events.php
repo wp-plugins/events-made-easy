@@ -1446,6 +1446,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "this_year") {
+      $year=date('Y');
       $limit_start = "$year-01-01";
       $limit_end = "$year-12-31";
       if ($show_ongoing)

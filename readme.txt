@@ -191,3 +191,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: the booking form was still shown for fully booked events if the max number of seats to book was not defined
 * Bugfix: typo fix in the admin edit location pages
 * Bugfix: #_PLAIN_CONTACTEMAIL was being replaced by empty string in mails
+
+= 1.0.3 =
+* Bugfix: scope=this_year was not working
+
