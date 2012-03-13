@@ -752,17 +752,26 @@ function eme_events_count_for($date) {
 }
 
 // filter function to call the event page when appropriate
-// we need to make sure we do this only once. Reason being: other plugins can call the_content as well
-// Suppose you add a shortcode from another plugin to the detail part of an event and that other plugin
-// calls apply_filter('the_content'), then this would cause recursion since that call would call our filter again
-$eme_event_parsed=0;
 function eme_filter_events_page($data) {
-   global $eme_event_parsed;
+ global $wp_current_filter;
+
+   // we need to make sure we do this only once. Reason being: other plugins can call the_content as well
+   // Suppose you add a shortcode from another plugin to the detail part of an event and that other plugin
+   // calls apply_filter('the_content'), then this would cause recursion since that call would call our filter again
+   // If the_content is the current filter definition (last element in the array), when there's more than one
+   // (this is possible since one filter can call another, apply_filters does this), we can be in such a loop
+   // And since our event content is only meant to be shown as content of a page (the_content is then the only element
+   // in the $wp_current_filter array), we can then skip it
+   // print_r($wp_current_filter);
+   if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content') {
+      $eme_event_parsed=1;
+   } else {
+      $eme_event_parsed=0;
+   }
    // we change the content of the page only if we're "in the loop",
    // otherwise this filter also gets applied if e.g. a widget calls
    // the_content or the_excerpt to get the content of a page
    if (in_the_loop() && eme_is_events_page() && !$eme_event_parsed) {
-      $eme_event_parsed=1;
       return eme_events_page_content ();
    } else {
       return $data;
