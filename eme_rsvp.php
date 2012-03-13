@@ -1193,7 +1193,7 @@ function eme_paypal_form($event,$booking_id) {
 
    $form_html = "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
    $form_html = "<p>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme')."</p>";
-   require "paypal/Paypal.php";
+   require_once "paypal/Paypal.php";
    $p = new Paypal;
 
    // the paypal or paypal sandbox url
@@ -1231,7 +1231,7 @@ function eme_paypal_form($event,$booking_id) {
 }
 
 function eme_paypal_ipn() {
-   require 'paypal/IPN.php';
+   require_once 'paypal/IPN.php';
    $ipn = new IPN;
 
    // the paypal url, or the sandbox url, or the ipn test url
