@@ -194,4 +194,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.3 =
 * Bugfix: scope=this_year was not working
-
+* Extra: Romanian language added, thanks to Web Geek Science (http://webhostinggeeks.com/)
