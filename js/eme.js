@@ -5,7 +5,7 @@ function remove_booking() {
 	idToRemove = ($j_eme_booking(this).parents('tr:first').attr('id').split("-"))[1];
 	$j_eme_booking.ajax({
   	  type: "POST",
-	    url: "admin.php?page=events-manager-people&action=remove_booking",
+	    url: "admin.php?page=eme-people&action=remove_booking",
 	    data: "booking_id="+ idToRemove,
 	    success: function(){
 				$j_eme_booking('tr#booking-' + idToRemove).fadeOut('slow');
@@ -15,7 +15,7 @@ function remove_booking() {
 }
  
 function update_booking_data () {
-  	$j_eme_booking.getJSON("admin.php?page=events-manager-people&eme_ajax_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
+  	$j_eme_booking.getJSON("admin.php?page=eme-people&eme_ajax_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
   	  	booked = data[0].bookedSeats;
 		available = data[0].availableSeats; 
 		$j_eme_booking('td#booked-seats').text(booked);
