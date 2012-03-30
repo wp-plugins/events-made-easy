@@ -196,4 +196,5 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: scope=this_year was not working
 * Bugfix: better the_content filter recursion detection, so it should now work ok with Arras theme and using page-include plugins inside event content
 * Bugfix: removing a booking in the event edit window via ajax was no longer working
+* Bugfix: #_EVENTIMAGEURL was not being replaced correctly
 * Extra: Romanian language added, thanks to Web Geek Science (http://webhostinggeeks.com/)

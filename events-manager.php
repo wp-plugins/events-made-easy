@@ -1158,11 +1158,11 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif (preg_match('/#_EVENTIMAGE/', $result)) {
+      } elseif (preg_match('/#_EVENTIMAGE$/', $result)) {
          if($event['event_image_url'] != '')
             $replacement = "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
 
-      } elseif (preg_match('/#_EVENTIMAGEURL/', $result)) {
+      } elseif (preg_match('/#_EVENTIMAGEURL$/', $result)) {
          if($event['event_image_url'] != '')
             $replacement = $event['event_image_url'];
 
