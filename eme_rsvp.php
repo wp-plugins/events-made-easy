@@ -70,7 +70,7 @@ function eme_add_booking_form($event_id) {
    if ($min_allowed<0) $min_allowed=0;
    // no seats anymore? No booking form then ... but only if it is required that the min number of
    // bookings should be >0 (it can be=0 for attendance bookings)
-   if ($max == 0 && $min_allowed>0) {
+   if ($max <= 0 && $min_allowed>0) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_add_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
@@ -221,7 +221,6 @@ function eme_catch_rsvp() {
       $form_delete_message = $result; 
    } 
    return $result;
-   
 }
 add_action('init','eme_catch_rsvp');
  
@@ -535,6 +534,8 @@ function eme_update_booking_seats($booking_id,$seats) {
 function eme_get_available_seats($event_id) {
    $event = eme_get_event($event_id);
    $available_seats = $event['event_seats'] - eme_get_booked_seats($event_id);
+   // the number of seats left can be <0 if more than one booking happened at the same time and people fill in things slowly
+   if ($available_seats<0) $available_seats=0;
    return $available_seats;
 }
 
