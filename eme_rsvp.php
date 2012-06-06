@@ -70,7 +70,7 @@ function eme_add_booking_form($event_id) {
    if ($min_allowed<0) $min_allowed=0;
    // no seats anymore? No booking form then ... but only if it is required that the min number of
    // bookings should be >0 (it can be=0 for attendance bookings)
-   if ($max <= 0 && $min_allowed>0) {
+   if ($max == 0 && $min_allowed>0) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_add_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
