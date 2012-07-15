@@ -2,9 +2,9 @@ Customization
 =============
 The plugin will look for configuration, form template and style files in the following paths, in that priority:
 
-   1. ./wp-content/themes/your-current-theme/events-manager-extended-frontend-submit/
+   1. ./wp-content/themes/your-current-theme/events-made-easy-frontend-submit/
    2. ./wp-content/themes/your-current-theme/emefs/
-   3. ./wp-content/themes/your-current-theme/events-manager-extended/
+   3. ./wp-content/themes/your-current-theme/events-made-easy/
    4. ./wp-content/themes/your-current-theme/eme/
 
 The overloadable files at this moment are:
@@ -35,6 +35,6 @@ $config['public_not_allowed_page'] = 154;
 don't forget the <?php and ?> or it won't work!!
 Form and Style
 
-By copying form.php and style.css from ./wp-content/plugins/events-manager-extended-frontend-submit/templates/ to any of the paths listed above, you will be able to override their contents and fit the form to your purposes.
+By copying form.php and style.css from ./wp-content/plugins/events-made-easy-frontend-submit/templates/ to any of the paths listed above, you will be able to override their contents and fit the form to your purposes.
 
 
