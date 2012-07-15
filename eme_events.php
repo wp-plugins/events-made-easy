@@ -1415,7 +1415,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = "$year-$month-01";
       $limit_end   = "$year-$month-$number_of_days_month";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "this_week") {
@@ -1428,7 +1428,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = date('Y-m-d',$start_day);
       $limit_end   = date('Y-m-d',$end_day);
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "next_week") {
@@ -1441,7 +1441,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = date('Y-m-d',$start_day);
       $limit_end   = date('Y-m-d',$end_day);
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "this_month") {
@@ -1451,7 +1451,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = "$year-$month-01";
       $limit_end   = "$year-$month-$number_of_days_month";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "this_year") {
@@ -1459,7 +1459,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = "$year-01-01";
       $limit_end = "$year-12-31";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "next_month") {
@@ -1473,48 +1473,49 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = "$year-$month-01";
       $limit_end   = "$year-$month-$number_of_days_month";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^([0-9]{4}-[0-9]{2}-[0-9]{2})--([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $scope, $matches )) {
+      $limit_start=$matches[1];
+      $limit_end=$matches[2];
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$matches[1]' AND '$matches[2]') OR (event_end_date BETWEEN '$matches[1]' AND '$matches[2]'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
-         $conditions [] = " (event_start_date BETWEEN '$matches[1]' AND '$matches[2]')";
+         $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^([0-9]{4}-[0-9]{2}-[0-9]{2})--today$/", $scope, $matches )) {
+      $limit_start=$matches[1];
+      $limit_end=$today;
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$matches[1]' AND '$today') OR (event_end_date BETWEEN '$matches[1]' AND '$today'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
-         $conditions [] = " (event_start_date BETWEEN '$matches[1]' AND '$today')";
+         $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^today--([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $scope, $matches )) {
+      $limit_start=$today;
+      $limit_end=$matches[1];
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$today' AND '$matches[1]') OR (event_end_date BETWEEN '$today' AND '$matches[1]'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
-         $conditions [] = " (event_start_date BETWEEN '$today' AND '$matches[1]')";
-   } elseif (preg_match ( "/^([0-9]{4}-[0-9]{2}-[0-9]{2})--today$/", $scope, $matches )) {
-      if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$matches[1]' AND '$today') OR (event_end_date BETWEEN '$matches[1]' AND '$today'))";
-      else
-         $conditions [] = " (event_start_date BETWEEN '$matches[1]' AND '$today')";
+         $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^\+(\d+)d$/", $scope, $matches )) {
       $limit_start = $today;
       $limit_end=date('Y-m-d',time()+$matches[1]*86400);
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^\-(\d+)d$/", $scope, $matches )) {
       $limit_end = $today;
       $limit_start=date('Y-m-d',time()-$matches[1]*86400);
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^(\-?\+?\d+)d--(\-?\+?\d+)d$/", $scope, $matches )) {
       $limit_start=date('Y-m-d',time()+$matches[1]*86400);
       $limit_end=date('Y-m-d',time()+$matches[2]*86400);
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^\+(\d+)m$/", $scope, $matches )) {
@@ -1531,7 +1532,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $number_of_days_month=eme_days_in_month($end_month,$end_year);
       $limit_end = "$end_year-$end_month-$number_of_days_month";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^\-(\d+)m$/", $scope, $matches )) {
@@ -1548,7 +1549,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $number_of_days_month=eme_days_in_month($end_month,$end_year);
       $limit_end = "$end_year-$end_month-$number_of_days_month";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^(\-?\+?\d+)m--(\-?\+?\d+)m$/", $scope, $matches )) {
@@ -1561,7 +1562,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $number_of_days_month=eme_days_in_month($end_month,$end_year);
       $limit_end = "$end_year-$end_month-$number_of_days_month";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "today--this_week") {
@@ -1571,7 +1572,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = $today;
       $limit_end   = date('Y-m-d',$end_day);
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "today--this_month") {
@@ -1581,14 +1582,14 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = $today;
       $limit_end   = "$year-$month-$number_of_days_month";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "today--this_year") {
       $limit_start = $today;
       $limit_end = "$year-12-31";
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
     } elseif ($scope == "this_week--today") {
@@ -1597,7 +1598,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = date('Y-m-d',$start_day);
       $limit_end = $today;
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "this_month--today") {
@@ -1607,14 +1608,14 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start = "$year-$month-01";
       $limit_end   = $today;
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "this_year--today") {
       $limit_start = "$year-01-01";
       $limit_end = $today;
       if ($show_ongoing)
-         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end'))";
+         $conditions [] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "tomorrow--future") {
