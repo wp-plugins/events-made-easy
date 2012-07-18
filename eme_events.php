@@ -988,7 +988,9 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $prev_offset=$scope_offset-1;
       $next_offset=$scope_offset+1;
       if ($scope=="this_week") {
-         $day_offset=date('w');
+         $start_of_week = get_option('start_of_week');
+         $day_offset=date('w')-$start_of_week;
+         if ($day_offset<0) $day_offset+=7;
          $start_day=time()-$day_offset*86400;
          $end_day=$start_day+6*86400;
          $limit_start = date('Y-m-d',$start_day+$scope_offset*7*86400);
@@ -1019,6 +1021,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $next_text = __('Next month','eme');
       }
       elseif ($scope=="this_year") {
+         $day_offset=date('z');
          $year=date('Y', strtotime("$scope_offset year")-$day_offset*86400);
          $limit_start = "$year-01-01";
          $limit_end   = "$year-12-31";
@@ -1566,7 +1569,9 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "today--this_week") {
-      $day_offset=date('w');
+      $start_of_week = get_option('start_of_week');
+      $day_offset=date('w')-$start_of_week;
+      if ($day_offset<0) $day_offset+=7;
       $start_day=time()-$day_offset*86400;
       $end_day=$start_day+6*86400;
       $limit_start = $today;
@@ -1593,7 +1598,9 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       else
          $conditions [] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
     } elseif ($scope == "this_week--today") {
-      $day_offset=date('w');
+      $start_of_week = get_option('start_of_week');
+      $day_offset=date('w')-$start_of_week;
+      if ($day_offset<0) $day_offset+=7;
       $start_day=time()-$day_offset*86400;
       $limit_start = date('Y-m-d',$start_day);
       $limit_end = $today;
