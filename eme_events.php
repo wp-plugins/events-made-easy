@@ -544,9 +544,10 @@ function eme_options_page() {
    eme_options_textarea ( __ ( 'Default event list format footer', 'eme' ), 'eme_event_list_item_format_footer', __ ( 'This content will appear just below your code for the default event list format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be used.', 'eme' ) );
 
    eme_options_input_text ( __ ( 'Single event page title format', 'eme' ), 'eme_event_page_title_format', __ ( 'The format of a single event page title. Follow the previous formatting instructions.', 'eme' ) );
+   eme_options_input_text ( __ ( 'Single event html title format', 'eme' ), 'eme_event_html_title_format', __ ( 'The format of a single event html page title. Follow the previous formatting instructions.', 'eme' ). __( ' The default is: ','eme'). DEFAULT_EVENT_HTML_TITLE_FORMAT);
    eme_options_textarea ( __ ( 'Default single event format', 'eme' ), 'eme_single_event_format', __ ( 'The format of a single event page.<br/>Follow the previous formatting instructions. <br/>Use <code>#_MAP</code> to insert a map.<br/>Use <code>#_CONTACTNAME</code>, <code>#_CONTACTEMAIL</code>, <code>#_CONTACTPHONE</code> to insert respectively the name, e-mail address and phone number of the designated contact person. <br/>Use <code>#_ADDBOOKINGFORM</code> to insert a form to allow the user to respond to your events reserving one or more places (RSVP).<br/> Use <code>#_REMOVEBOOKINGFORM</code> to insert a form where users, inserting their name and e-mail address, can remove their bookings.', 'eme' ).__('<br/>Use <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> to insert the booking form only if the user has not registered yet. Similar use <code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> to insert the booking removal form only if the user has already registered before. These two codes only work for WP users.','eme').__('<br/> Use <code>#_DIRECTIONS</code> to insert a form so people can ask directions to the event.','eme').__('<br/> Use <code>#_CATEGORIES</code> to insert a comma-seperated list of categories an event is in.','eme').__('<br/> Use <code>#_ATTENDEES</code> to get a list of the names attending the event.','eme') );
-   eme_options_input_text ( __ ( 'Monthly period date format', 'eme' ), 'eme_show_period_monthly_dateformat', __ ( 'The format of the date-string used when you use showperiod=monthly as an option to &#91;the events_list] shortcode, also used for monthly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: '). DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT );
-   eme_options_input_text ( __ ( 'Yearly period date format', 'eme' ), 'eme_show_period_yearly_dateformat', __ ( 'The format of the date-string used when you use showperiod=yearly as an option to &#91;the events_list] shortcode, also used for yearly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: '). DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT );
+   eme_options_input_text ( __ ( 'Monthly period date format', 'eme' ), 'eme_show_period_monthly_dateformat', __ ( 'The format of the date-string used when you use showperiod=monthly as an option to &#91;the events_list] shortcode, also used for monthly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: ','eme'). DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT );
+   eme_options_input_text ( __ ( 'Yearly period date format', 'eme' ), 'eme_show_period_yearly_dateformat', __ ( 'The format of the date-string used when you use showperiod=yearly as an option to &#91;the events_list] shortcode, also used for yearly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: ','eme'). DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT );
    eme_options_input_text ( __ ( 'Events page title', 'eme' ), 'eme_events_page_title', __ ( 'The title on the multiple events page.', 'eme' ) );
    eme_options_input_text ( __ ( 'No events message', 'eme' ), 'eme_no_events_message', __ ( 'The message displayed when no events are available.', 'eme' ) );
    ?>
@@ -574,6 +575,7 @@ function eme_options_page() {
    eme_options_textarea ( __ ( 'Default location list format footer', 'eme' ), 'eme_location_list_format_footer', __ ( 'This content will appear just below your code for the default location list format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be used.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) );
 
    eme_options_input_text ( __ ( 'Single location page title format', 'eme' ), 'eme_location_page_title_format', __ ( 'The format of a single location page title.<br/>Follow the previous formatting instructions.', 'eme' ) );
+   eme_options_input_text ( __ ( 'Single location html title format', 'eme' ), 'eme_location_html_title_format', __ ( 'The format of a single location html page title.<br/>Follow the previous formatting instructions.', 'eme' ). __( ' The default is: ','eme'). DEFAULT_LOCATION_HTML_TITLE_FORMAT);
    eme_options_textarea ( __ ( 'Default single location page format', 'eme' ), 'eme_single_location_format', __ ( 'The format of a single location page.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>.<br/> Use <code>#_MAP</code> to display a map of the event location, and <code>#_IMAGE</code> to display an image of the location.<br/> Use <code>#_NEXTEVENTS</code> to insert a list of the upcoming events, <code>#_PASTEVENTS</code> for a list of past events, <code>#_ALLEVENTS</code> for a list of all events taking place in this location.', 'eme' ) );
    eme_options_textarea ( __ ( 'Default location balloon format', 'eme' ), 'eme_location_baloon_format', __ ( 'The format of the text appearing in the balloon describing the location in the map.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>,<code>#_IMAGE</code>, <code>#_LOCATIONPAGEURL</code> or <code>#_DIRECTIONS</code>.', 'eme' ) );
    eme_options_textarea ( __ ( 'Default location event list format', 'eme' ), 'eme_location_event_list_item_format', __ ( 'The format of the events list inserted in the location page through the <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> element. <br/> Follow the events formatting instructions', 'eme' ) );
@@ -841,7 +843,8 @@ function eme_html_title($data) {
          if ($events_N == 1) {
             $events = eme_get_events ( 0, eme_sanitize_request($wp_query->query_vars['calendar_day']));
             $event = $events [0];
-            $page_title = eme_replace_placeholders ( "#_EVENTNAME", $event );
+            $stored_page_title_format = get_option('eme_event_html_title_format' );
+            $page_title = eme_strip_tags(eme_replace_placeholders ( $stored_page_title_format, $event ));
             return $page_title;
          }
       }
@@ -849,11 +852,13 @@ function eme_html_title($data) {
          // single event page
          $event_ID = intval($wp_query->query_vars['event_id']);
          $event = eme_get_event ( $event_ID );
-         $page_title = eme_replace_placeholders ( "#_EVENTNAME", $event );
+         $stored_page_title_format = get_option('eme_event_html_title_format' );
+         $page_title = eme_strip_tags(eme_replace_placeholders ( $stored_page_title_format, $event ));
          return $page_title;
       } elseif (eme_is_single_location_page()) {
          $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
-         $page_title = eme_replace_locations_placeholders ( "#_LOCATIONNAME", $location );
+         $stored_page_title_format = get_option('eme_location_html_title_format' );
+         $page_title = eme_strip_tags(eme_replace_placeholders ( $stored_page_title_format, $event ));
          return $page_title;
       } else {
          // Multiple events page
