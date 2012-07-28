@@ -1392,6 +1392,13 @@ function eme_replace_placeholders($format, $event, $target="html") {
          else
             $replacement = 0;
 
+      } elseif (preg_match('/#_IS_ONGOING_EVENT/', $result)) {
+         if (strtotime($event['event_start_date']." ".$event['event_start_time']) <= time() &&
+             strtotime($event['event_end_date']." ".$event['event_end_time']) >= time())
+            $replacement = 1;
+         else
+            $replacement = 0;
+
       } else {
          $found = 0;
       }

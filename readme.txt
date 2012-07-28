@@ -201,4 +201,5 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: events spanning multiple months were not correctly shown in the calendar or list
 * Bugfix: some 'this_week' scopes did not take the start day of the week preference into account
 * Feature: the html title of a single event or location can now also be formatted
+* Feature: new conditional tag #_IS_ONGOING_EVENT
 * Extra: Romanian language added, thanks to Web Geek Science (http://webhostinggeeks.com/)
