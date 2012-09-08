@@ -3472,7 +3472,7 @@ Weblog Editor 2.0
          echo "<description>$description</description>\n";
          if (get_option('eme_categories_enabled')) {
             $categories = eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" );
-            echo "<categories>$categories</categories>\n";
+            echo "<category>$categories</category>\n";
          }
          echo "</item>\n";
       }

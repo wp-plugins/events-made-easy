@@ -200,6 +200,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: the available number of seats can be <0 if more than one booking happened at the same time and people fill in things slowly ...
 * Bugfix: events spanning multiple months were not correctly shown in the calendar or list
 * Bugfix: some 'this_week' scopes did not take the start day of the week preference into account
+* Bugfix: RSS needs "<category>" and not "<categories>" as valid tag
 * Feature: the html title of a single event or location can now also be formatted
 * Feature: new conditional tag #_IS_ONGOING_EVENT
 * Extra: Romanian language added, thanks to Web Geek Science (http://webhostinggeeks.com/)
