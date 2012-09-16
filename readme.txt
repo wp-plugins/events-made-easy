@@ -3,8 +3,8 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.0.0
-Tested up to: 3.3.1
-Stable tag: 1.0.2
+Tested up to: 3.4.2
+Stable tag: 1.0.3
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL support. SEO compatible.
              
