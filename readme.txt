@@ -204,3 +204,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: the html title of a single event or location can now also be formatted
 * Feature: new conditional tag #_IS_ONGOING_EVENT
 * Extra: Romanian language added, thanks to Web Geek Science (http://webhostinggeeks.com/)
+
+= 1.0.4 =
+* Bugfix: again better the_content filter recursion detection, so it should now work ok with Arras theme, Pagelines, TwentyEleven and hopefully all other ones.

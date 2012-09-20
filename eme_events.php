@@ -764,8 +764,9 @@ function eme_filter_events_page($data) {
    // (this is possible since one filter can call another, apply_filters does this), we can be in such a loop
    // And since our event content is only meant to be shown as content of a page (the_content is then the only element
    // in the $wp_current_filter array), we can then skip it
-   // print_r($wp_current_filter);
-   if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content') {
+   //print_r($wp_current_filter);
+   $eme_count_arr=array_count_values($wp_current_filter);
+   if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content' && $eme_count_arr['the_content']>1) {
       $eme_event_parsed=1;
    } else {
       $eme_event_parsed=0;
