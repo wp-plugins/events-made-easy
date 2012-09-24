@@ -1027,12 +1027,11 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $next_text = __('Next month','eme');
       }
       elseif ($scope=="this_year") {
-         $day_offset=date('z');
-         $year=date('Y', strtotime("$scope_offset year")-$day_offset*86400);
+         $year=date('Y')+$scope_offset;
          $limit_start = "$year-01-01";
          $limit_end   = "$year-12-31";
          $scope = "$limit_start--$limit_end";
-         $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime("$scope_offset year")-$day_offset*86400);
+         $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime($limit_start));
          $prev_text = __('Previous year','eme');
          $next_text = __('Next year','eme');
       }

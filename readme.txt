@@ -207,3 +207,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.4 =
 * Bugfix: again better the_content filter recursion detection, so it should now work ok with Arras theme, Pagelines, TwentyEleven and hopefully all other ones.
+* Bugfix: this_year and paging was not working ok due to a php bug
