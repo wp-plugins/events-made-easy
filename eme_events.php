@@ -818,7 +818,6 @@ function eme_page_title($data) {
          return $page_title;
       } elseif (eme_is_single_location_page()) {
          $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
-         $stored_page_title_format = get_option('eme_location_page_title_format' );
          $page_title = eme_replace_locations_placeholders ( $stored_page_title_format, $location );
          return $page_title;
       } else {
@@ -844,27 +843,27 @@ function eme_html_title($data) {
          if ($events_N == 1) {
             $events = eme_get_events ( 0, eme_sanitize_request($wp_query->query_vars['calendar_day']));
             $event = $events [0];
-            $stored_page_title_format = get_option('eme_event_html_title_format' );
-            $page_title = eme_strip_tags(eme_replace_placeholders ( $stored_page_title_format, $event ));
-            return $page_title;
+            $stored_html_title_format = get_option('eme_event_html_title_format' );
+            $html_title = eme_strip_tags(eme_replace_placeholders ( $stored_html_title_format, $event ));
+            return $html_title;
          }
       }
       if (eme_is_single_event_page()) {
          // single event page
          $event_ID = intval($wp_query->query_vars['event_id']);
          $event = eme_get_event ( $event_ID );
-         $stored_page_title_format = get_option('eme_event_html_title_format' );
-         $page_title = eme_strip_tags(eme_replace_placeholders ( $stored_page_title_format, $event ));
-         return $page_title;
+         $stored_html_title_format = get_option('eme_event_html_title_format' );
+         $html_title = eme_strip_tags(eme_replace_placeholders ( $stored_html_title_format, $event ));
+         return $html_title;
       } elseif (eme_is_single_location_page()) {
          $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
-         $stored_page_title_format = get_option('eme_location_html_title_format' );
-         $page_title = eme_strip_tags(eme_replace_placeholders ( $stored_page_title_format, $event ));
-         return $page_title;
+         $stored_html_title_format = get_option('eme_location_html_title_format' );
+         $html_title = eme_strip_tags(eme_replace_locations_placeholders ( $stored_html_title_format, $location ));
+         return $html_title;
       } else {
          // Multiple events page
-         $page_title = get_option('eme_events_page_title' );
-         return $page_title;
+         $html_title = get_option('eme_events_page_title' );
+         return $html_title;
       }
    } else {
       return $data;
