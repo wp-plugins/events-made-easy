@@ -1193,7 +1193,7 @@ function eme_paypal_form($event,$booking_id) {
    $ipn_link = $events_page_link.$joiner."eme_eventAction=ipn";
 
    $form_html = "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
-   $form_html = "<p>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme')."</p>";
+   $form_html .= "<p>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme')."</p>";
    require_once "paypal/Paypal.php";
    $p = new Paypal;
 
