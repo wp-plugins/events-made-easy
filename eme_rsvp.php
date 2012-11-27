@@ -44,12 +44,12 @@ function eme_add_booking_form($event_id) {
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24 > $event_start_datetime ) {
-      $ret_string = "";
+      $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_add_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
       if(!empty($form_error_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_error_message</div>";
-      return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div>";
+      return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
    # you did a successfull registration, so now we decide wether to show the form again, or the paypal form
@@ -79,11 +79,12 @@ function eme_add_booking_form($event_id) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div></div>";
    }
 
-   $form_html = "";
+   $form_html = "<div id='eme-rsvp-message'>";
    if(!empty($form_add_message))
-      $form_html .= "<div id='eme-rsvp-message' class='eme-rsvp-message'>$form_add_message</div>";
+      $form_html .= "<div class='eme-rsvp-message'>$form_add_message</div>";
    if(!empty($form_error_message))
       $form_html .= "<div class='eme-rsvp-message'>$form_error_message</div>";
+   $form_html .= "</div>";
    $booked_places_options = array();
    for ( $i = $min_allowed; $i <= $max; $i++) 
       $booked_places_options[$i]=$i;
@@ -157,8 +158,10 @@ function eme_delete_booking_form($event_id) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
+   $form_html = "<div id='eme-rsvp-message'>";
    if(!empty($form_delete_message))
       $form_html .= "<div id='eme-rsvp-message' class='eme-rsvp-message'>$form_delete_message</div>";
+   $form_html .= "</div>";
 
    $form_html  .= "<form name='booking-delete-form' method='post' action='$destination'>
       <table class='eme-rsvp-form'>
