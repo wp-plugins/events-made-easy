@@ -160,7 +160,7 @@ function eme_delete_booking_form($event_id) {
 
    $form_html = "<div id='eme-rsvp-message'>";
    if(!empty($form_delete_message))
-      $form_html .= "<div id='eme-rsvp-message' class='eme-rsvp-message'>$form_delete_message</div>";
+      $form_html .= "<div class='eme-rsvp-message'>$form_delete_message</div>";
    $form_html .= "</div>";
 
    $form_html  .= "<form name='booking-delete-form' method='post' action='$destination'>
