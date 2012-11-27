@@ -800,7 +800,13 @@ function eme_email_rsvp_booking($booking_id,$action="") {
       $cancelled_body = str_replace($key, $value, $cancelled_body);
    }
 
-   
+  // possible translations are handled last 
+   $contact_body = eme_translate($contact_body); 
+   $confirmed_body = eme_translate($confirmed_body); 
+   $pending_body = eme_translate($pending_body); 
+   $denied_body = eme_translate($denied_body); 
+   $cancelled_body = eme_translate($cancelled_body);  
+   $event_name = eme_translate($event_name);  
 
    if($action!="") {
       if ($action == 'approveRegistration') {
