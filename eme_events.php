@@ -3460,20 +3460,28 @@ Weblog Editor 2.0
       $title_format = get_option('eme_rss_title_format' );
       $description_format = str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", get_option('eme_rss_description_format' ) ) );
       $events = eme_get_events ( $limit, $scope, $order, 0, "", $category, $author, $contact_person );
-      foreach ( $events as $event ) {
-         $title = eme_replace_placeholders ( $title_format, $event, "rss" );
-         $description = eme_replace_placeholders ( $description_format, $event, "rss" );
-         $event_link = eme_event_url($event);
+      # some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
+      if (empty ( $events )) {
          echo "<item>\n";
-         echo "<title>$title</title>\n";
-         echo "<link>$event_link</link>\n";
-         echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
-         echo "<description>$description</description>\n";
-         if (get_option('eme_categories_enabled')) {
-            $categories = eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" );
-            echo "<category>$categories</category>\n";
-         }
+         echo "<title></title>\n";
+         echo "<link></link>\n";
          echo "</item>\n";
+      } else {
+         foreach ( $events as $event ) {
+             $title = eme_replace_placeholders ( $title_format, $event, "rss" );
+             $description = eme_replace_placeholders ( $description_format, $event, "rss" );
+             $event_link = eme_event_url($event);
+             echo "<item>\n";
+             echo "<title>$title</title>\n";
+             echo "<link>$event_link</link>\n";
+             echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
+             echo "<description>$description</description>\n";
+             if (get_option('eme_categories_enabled')) {
+                $categories = eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" );
+                echo "<category>$categories</category>\n";
+             }
+             echo "</item>\n";
+         }
       }
       ?>
 

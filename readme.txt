@@ -214,3 +214,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: the html anchor was not always being shown for RSVP
 * Extra: give all RSVP forms a name and a html id
 * Extra: give full day events a CSS class in the calendar (eme-calendar-day-event)
+* Extra: some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
