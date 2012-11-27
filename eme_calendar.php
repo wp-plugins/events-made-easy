@@ -354,7 +354,7 @@ function eme_get_calendar($args="") {
       $cal_day_link = eme_calendar_day_url($day_key);
       $cells[$day_key]['cell'] = "<a title='$link_title' href='$cal_day_link'>{$cells[$day_key]['day']}</a>";
       if ($full) {
-         $cells[$day_key]['cell'] .= "<ul>";
+         $cells[$day_key]['cell'] .= "<ul class='eme-calendar-day-event'>";
       
          foreach($events as $event) {
             $cells[$day_key]['cell'] .= eme_replace_placeholders($event_format, $event);
