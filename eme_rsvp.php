@@ -163,7 +163,7 @@ function eme_delete_booking_form($event_id) {
       $form_html .= "<div class='eme-rsvp-message'>$form_delete_message</div>";
    $form_html .= "</div>";
 
-   $form_html  .= "<form name='booking-delete-form' method='post' action='$destination'>
+   $form_html  .= "<form id='booking-delete-form' name='booking-delete-form' method='post' action='$destination'>
       <table class='eme-rsvp-form'>
          <tr><th scope='row'>".__('Name', 'eme').":</th><td><input type='text' name='bookerName' value='$bookerName' $readonly /></td></tr>
          <tr><th scope='row'>".__('E-Mail', 'eme').":</th><td><input type='text' name='bookerEmail' value='$bookerEmail' $readonly /></td></tr>
@@ -580,7 +580,7 @@ function eme_are_seats_available_for($event_id, $seats) {
 function eme_bookings_table($event_id) {
    $bookings =  eme_get_bookings_for($event_id);
    $destination = admin_url("edit.php"); 
-   $result = "<form id='bookings-filter' method='get' action='$destination'>
+   $result = "<form id='bookings-filter' name='bookings-filter' method='get' action='$destination'>
                   <input type='hidden' name='page' value='eme_registration_seats_page'/>
                   <input type='hidden' name='event_id' value='$event_id'/>
                   <input type='hidden' name='action' value='delete_bookings'/>
@@ -887,7 +887,7 @@ function eme_registration_seats_form_table($event_id=0) {
 </div>
 <h2><?php _e ('Change reserved spaces or cancel registrations','eme'); ?></h2>
 <?php admin_show_warnings();?>
-   <form id='add-booking' action="" method="post">
+   <form id='add-booking' name='add-booking' action="" method="post">
    <input type='hidden' name='page' value='eme-registration-seats' />
    <input type='hidden' name='action' value='addRegistration' />
    <table class="widefat">
@@ -919,7 +919,7 @@ function eme_registration_seats_form_table($event_id=0) {
 
    <div class="clear"></div>
 
-   <form id="posts-filter" action="" method="post">
+   <form id="posts-filter" name="posts-filter" action="" method="post">
    <input type='hidden' name='page' value='eme-registration-seats' />
    <div class="tablenav">
 
@@ -1075,7 +1075,7 @@ function eme_registration_approval_form_table($event_id=0) {
 </div>
 <h2><?php _e ('Pending Approvals','eme'); ?></h2>
 <?php admin_show_warnings();?>
-   <form id="posts-filter" action="" method="post">
+   <form id="posts-filter" name="posts-filter" action="" method="post">
    <input type='hidden' name='page' value='eme-registration-approval' />
    <div class="tablenav">
 

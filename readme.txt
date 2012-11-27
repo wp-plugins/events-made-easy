@@ -212,3 +212,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.5 =
 * Bugfix: make html title work correctly for locations too
 * Bugfix: the html anchor was not always being shown for RSVP
+* Extra: give all RSVP forms a name and a html id
