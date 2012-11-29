@@ -79,12 +79,13 @@ function eme_add_booking_form($event_id) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div></div>";
    }
 
-   $form_html = "<div id='eme-rsvp-message'>";
    if(!empty($form_add_message))
       $form_html .= "<div class='eme-rsvp-message'>$form_add_message</div>";
    if(!empty($form_error_message))
       $form_html .= "<div class='eme-rsvp-message'>$form_error_message</div>";
-   $form_html .= "</div>";
+   # only add the id to the div if it is not empty
+   if(!empty($form_html))
+      $form_html = "<div id='eme-rsvp-message'>".$form_html."</div>";
    $booked_places_options = array();
    for ( $i = $min_allowed; $i <= $max; $i++) 
       $booked_places_options[$i]=$i;
@@ -158,10 +159,11 @@ function eme_delete_booking_form($event_id) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
-   $form_html = "<div id='eme-rsvp-message'>";
-   if(!empty($form_delete_message))
+   if(!empty($form_delete_message)) {
+      $form_html = "<div id='eme-rsvp-message'>";
       $form_html .= "<div class='eme-rsvp-message'>$form_delete_message</div>";
-   $form_html .= "</div>";
+      $form_html .= "</div>";
+   }
 
    $form_html  .= "<form id='booking-delete-form' name='booking-delete-form' method='post' action='$destination'>
       <table class='eme-rsvp-form'>
