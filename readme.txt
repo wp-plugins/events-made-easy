@@ -210,6 +210,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: this_year and paging was not working ok due to a php bug
 
 = 1.0.5 =
+* Feature: contact person mails for cancellations and approvals are now customizable
 * Bugfix: make html title work correctly for locations too
 * Bugfix: the html anchor was not always being shown for RSVP
 * Bugfix: email body and subject can now contain qtranslate calls as well (code got removed when chaning the plugin name)
