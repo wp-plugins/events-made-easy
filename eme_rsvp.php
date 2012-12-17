@@ -491,19 +491,19 @@ function eme_delete_all_bookings_for_person_id($person_id) {
 function eme_delete_booking_by_person_event_id($person_id,$event_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   $sql = "DELETE FROM $bookings_table WHERE person_id = $person_id AND event_id= $event_id";
+   $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE person_id = %d AND event_id= %d",$person_id,$event_id);
    return $wpdb->query($sql);
 }
 function eme_delete_booking($booking_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   $sql = "DELETE FROM $bookings_table WHERE booking_id = $booking_id";
+   $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE booking_id = %d",$booking_id);
    return $wpdb->query($sql);
 }
 function eme_update_booking_payed($booking_id,$value) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   $sql = $wpdb->prepare("UPDATE $bookings_table set booking_payed=$value WHERE booking_id = %s",$booking_id);
+   $sql = $wpdb->prepare("UPDATE $bookings_table set booking_payed=%d  WHERE booking_id = %d",$value,$booking_id);
    return $wpdb->query($sql);
 }
 function eme_approve_booking($booking_id) {

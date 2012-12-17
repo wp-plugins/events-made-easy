@@ -214,6 +214,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: make html title work correctly for locations too
 * Bugfix: the html anchor was not always being shown for RSVP
 * Bugfix: email body and subject can now contain qtranslate calls as well (code got removed when chaning the plugin name)
+* Bugfix: corrected and added some sql prepare statements
 * Extra: give all RSVP forms a name and a html id
 * Extra: give full day events a CSS class in the calendar (eme-calendar-day-event)
 * Extra: some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
