@@ -1315,8 +1315,8 @@ function eme_is_event_rsvpable() {
 function eme_event_needs_approval($event_id) {
    global $wpdb;
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
-   $sql = "SELECT registration_requires_approval from $events_table where event_id=$event_id";
-   return $wpdb->get_var( $wpdb->prepare($sql) );
+   $sql = $wpdb->prepare("SELECT registration_requires_approval from $events_table where event_id=%d",$booking_id);
+   return $wpdb->get_var( $sql );
 }
 
 ?>
