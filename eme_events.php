@@ -44,6 +44,7 @@ function eme_new_event_page() {
       "event_contactperson_email_body" => '',
       "event_respondent_email_body" => '',
       "event_registration_pending_email_body" => '',
+      "event_registration_form_format" => '',
       "event_slug" => '',
       "event_image_url" => '',
       "event_url" => '',
@@ -257,6 +258,7 @@ function eme_events_page() {
       $event ['event_single_event_format'] = isset($_POST ['event_single_event_format']) ? stripslashes ( $_POST ['event_single_event_format'] ) : '';
       $event ['event_contactperson_email_body'] = isset($_POST ['event_contactperson_email_body']) ? stripslashes ( $_POST ['event_contactperson_email_body'] ) : '';
       $event ['event_respondent_email_body'] = isset($_POST ['event_respondent_email_body']) ? stripslashes ( $_POST ['event_respondent_email_body'] ) : '';
+      $event ['event_registration_form_format'] = isset($_POST ['event_registration_form_format']) ? stripslashes ( $_POST ['event_registration_form_format'] ) : '';
       $event ['event_url'] = isset($_POST ['event_url']) ? eme_strip_tags ( $_POST ['event_url'] ) : '';
       $event ['event_slug'] = isset($_POST ['event_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['event_slug'] )) : eme_permalink_convert($event ['event_name']);
       if (isset ($_POST['event_category_ids'])) {
@@ -521,6 +523,7 @@ function eme_options_page() {
    eme_options_select (__('View people','eme'), 'eme_cap_people', eme_get_all_caps (), sprintf(__('Permission needed to view registered people info. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_PEOPLE)) );
    eme_options_select (__('Approve registrations','eme'), 'eme_cap_approve', eme_get_all_caps (), sprintf(__('Permission needed to approve pending registrations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_APPROVE)) );
    eme_options_select (__('Edit registrations','eme'), 'eme_cap_registrations', eme_get_all_caps (), sprintf(__('Permission needed to edit approved registrations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_REGISTRATIONS)) );
+   eme_options_select (__('Edit form fields','eme'), 'eme_cap_forms', eme_get_all_caps (), sprintf(__('Permission needed to edit form fields. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_FORMS)) );
    eme_options_select (__('Cleanup','eme'), 'eme_cap_cleanup', eme_get_all_caps (), sprintf(__('Permission needed to execute cleanup actions. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_CLEANUP)) );
    eme_options_select (__('Edit settings','eme'), 'eme_cap_settings', eme_get_all_caps (),sprintf(__('Permission needed to edit settings. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_SETTINGS)) );
    ?>
@@ -641,6 +644,13 @@ function eme_options_page() {
       eme_options_select ( __('PayPal live or test','eme'), 'eme_paypal_url', array ('https://www.sandbox.paypal.com/cgi-bin/webscr' => __('Paypal Sandbox (for testing)','eme'), 'https://www.paypal.com/cgi-bin/webscr' => __ ( 'Paypal Live', 'eme' )), __('Choose wether you want to test paypal in a paypal sandbox or go live and really use paypal.','eme') );
      # eme_options_input_text (__('PayPal url','eme'),'eme_paypal_url', sprintf(__("The URL for paypal payments. The default is: %s",'eme'),DEFAULT_PAYPAL_URL));
       eme_options_input_text (__('PayPal business info','eme'),'eme_paypal_business', __("Paypal business ID or email.",'eme'));
+   ?>
+</table>
+
+<h3><?php _e ( 'RSVP: form format', 'eme' ); ?></h3>
+<table class='form-table'>
+   <?php
+      eme_options_textarea (__('Form format','eme'),'eme_registration_form_format', __("The look and feel of the form for registrations. #_NAME, #_EMAIL and #_SEATS are obligated fields, if not present then the form will not be shown. Use #_FIELD1, #_FIELD2, ... for own defined fields.",'eme'));
    ?>
 </table>
 
@@ -2751,6 +2761,23 @@ function eme_event_form($event, $title, $element) {
                         </p>
                      </div>
                   </div>
+                  <div id="div_event_registration_form_format" class="postbox <?php if ($event['event_registration_form_format']=="") echo "closed"; ?>">
+                     <div class="handlediv" title="Click to toggle">
+                        <br />
+                     </div>
+                     <h3 class='hndle'><span>
+                        <?php _e ( 'Registration Form Format', 'eme' ); ?>
+                        </span>
+                     </h3>
+                     <div class="inside">
+                        <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The registration form format.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+                     </div>
+                  </div>
                    <div id="div_location_name" class="stuffbox" style='overflow: hidden;'>
                      <h3>
                         <?php _e ( 'Location', 'eme' ); ?>
@@ -3060,7 +3087,7 @@ $j_eme_event(document).ready( function() {
          $j_eme_event('input.row-selector').attr('checked', false);
    });
 
-   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_body
+   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_body, event_registration_form_format
    // is empty: display default value on focus, and if the value hasn't changed from the default: empty it on blur
 
    $j_eme_event('textarea#event_page_title_format').focus(function(){
@@ -3122,15 +3149,39 @@ $j_eme_event(document).ready( function() {
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
       if($j_eme_event(this).val() == tmp_value)
          $j_eme_event(this).val('');
-   }); 
+   });
    $j_eme_event('textarea#event_registration_recorded_ok_html').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
       if($j_eme_event(this).val() == '')
          $j_eme_event(this).val(tmp_value);
-   }); 
+   });
    $j_eme_event('textarea#event_registration_recorded_ok_html').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if($j_eme_event(this).val() == tmp_value)
+         $j_eme_event(this).val('');
+   });
+   $j_eme_event('textarea#event_registration_pending_email_body').focus(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if($j_eme_event(this).val() == '')
+         $j_eme_event(this).val(tmp_value);
+   });
+   $j_eme_event('textarea#event_registration_pending_email_body').blur(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if($j_eme_event(this).val() == tmp_value)
+         $j_eme_event(this).val('');
+   });
+   $j_eme_event('textarea#event_registration_form_format').focus(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if($j_eme_event(this).val() == '')
+         $j_eme_event(this).val(tmp_value);
+   }); 
+   $j_eme_event('textarea#event_registration_form_format').blur(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
       if($j_eme_event(this).val() == tmp_value)
          $j_eme_event(this).val('');

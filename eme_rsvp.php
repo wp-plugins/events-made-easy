@@ -90,34 +90,17 @@ function eme_add_booking_form($event_id) {
    for ( $i = $min_allowed; $i <= $max; $i++) 
       $booked_places_options[$i]=$i;
    
-      $form_html  .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>
-         <table class='eme-rsvp-form'>
-            <tr><th scope='row'>".__('Name', 'eme')."*:</th><td><input type='text' name='bookerName' value='$bookerName' $readonly /></td></tr>
-            <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td><input type='text' name='bookerEmail' value='$bookerEmail' $readonly /></td></tr>
-            <tr><th scope='row'>".__('Phone number', 'eme')."$bookerPhone_required:</th><td><input type='text' name='bookerPhone' value='$bookerPhone' /></td></tr>
-            <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>";
-            $form_html .= eme_ui_select($bookedSeats,"bookedSeats",$booked_places_options);
-      $form_html .= "</td></tr>
-            <tr><th scope='row'>".__('Comment', 'eme').":</th><td><textarea name='bookerComment'>$bookerComment</textarea></td></tr>";
-      if (get_option('eme_captcha_for_booking')) {
-         $form_html .= "
-            <tr><th scope='row'>".__('Please fill in the code displayed here', 'eme').":</th><td><img src='".EME_PLUGIN_URL."captcha.php'><br>
-                  <input type='text' name='captcha_check' /></td></tr>
-            ";
-      }
+      $form_html .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
+      $format = $event['event_registration_form_format'];
+      $form_html .= eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_required, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment);
       // also add a honeypot field: if it gets completed with data, 
       // it's a bot, since a humand can't see this (using CSS to render it invisible)
-      $form_html .= "
-      </table>
-      <span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
+      $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
       <p>".__('(* marks a required field)', 'eme')."</p>
       <input type='hidden' name='eme_eventAction' value='add_booking'/>
       <input type='hidden' name='event_id' value='$event_id'/>
       <input type='submit' value='".get_option('eme_rsvp_addbooking_submit_string')."'/>
    </form>";
-   // $form_html .= "dati inviati: ";
-   //    $form_html .= eme_sanitize_request($_POST['bookerName']);
-   //print_r($_SERVER);
  
    //$form_html .= eme_delete_booking_form();
     
@@ -268,8 +251,12 @@ function eme_cancel_seats($event) {
 function eme_book_seats($event) {
    global $current_user;
    $booking_id = 0;
+   $all_required_fields_ok=1;
+   $all_required_fields=eme_find_required_formfields($event['event_registration_form_format']);
+   $min_allowed = intval(get_option('eme_rsvp_addbooking_min_spaces'));
+   $max_allowed = intval(get_option('eme_rsvp_addbooking_max_spaces'));
 
-   if (isset($_POST['bookerPhone']))
+   if (isset($_POST['bookedSeats']))
       $bookedSeats = intval($_POST['bookedSeats']);
    else
       $bookedSeats = 0;
@@ -287,6 +274,22 @@ function eme_book_seats($event) {
       $honeypot_check = stripslashes($_POST['honeypot_check']);
    else
       $honeypot_check = "";
+
+   // check all required fields
+   if (!is_admin()) {
+      foreach ($all_required_fields as $required_field) {
+         if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
+	   // we already check these seperately
+	   next;
+         } elseif ($required_field == "PHONE" && empty($bookerPhone)) {
+	   $all_required_fields_ok=0;
+         } elseif ($required_field == "COMMENT" && empty($bookerComment)) {
+	   $all_required_fields_ok=0;
+         } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
+	   $all_required_fields_ok=0;
+         }
+      }
+   }
 
    $event_id = $event['event_id'];
    $registration_wp_users_only=$event['registration_wp_users_only'];
@@ -306,20 +309,19 @@ function eme_book_seats($event) {
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    }
    
-   $msg="";
    if (!is_admin() && get_option('eme_captcha_for_booking')) {
-      $msg = response_check_captcha("captcha_check",1);
+      $captcha_err = response_check_captcha("captcha_check",1);
+   } else {
+      $captcha_err = "";
    }
-   $min_allowed = intval(get_option('eme_rsvp_addbooking_min_spaces'));
-   $max_allowed = intval(get_option('eme_rsvp_addbooking_max_spaces'));
-   if(!empty($msg)) {
+   if(!empty($captcha_err)) {
       $result = __('You entered an incorrect code','eme');
    } elseif ($honeypot_check != "") {
       // a bot fills this in, but a human never will, since it's
       // a hidden field
       $result = __('You are a bad boy','eme');
-   } elseif (!$bookerName || !$bookerEmail) {
-      // if any of name, email or bookedseats are empty: return an error
+   } elseif (!$bookerName || !$bookerEmail || !$all_required_fields_ok) {
+      // if any required field is empty: return an error
       $result = __('Please fill in all the required fields','eme');
    } elseif (!filter_var($bookerEmail,FILTER_VALIDATE_EMAIL)) {
       $result = __('Please enter a valid mail address','eme');
@@ -327,9 +329,6 @@ function eme_book_seats($event) {
       $result = __('Please fill in a correct number of spaces to reserve','eme');
    } elseif ($max_allowed>0 && $bookedSeats>$max_allowed) {
       $result = __('Please fill in a correct number of spaces to reserve','eme');
-   } elseif (!is_admin() && !$registration_wp_users_only && !$bookerPhone) {
-      // no member of wordpress: we need a phonenumber then
-      $result = __('Please fill in all the required fields','eme');
    } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
       // spammers might get here, but we catch them
       $result = __('WP membership is required for registration','eme');
@@ -347,7 +346,8 @@ function eme_book_seats($event) {
             }
 
             $booking_id=eme_record_booking($event_id, $booker['person_id'], $bookedSeats,$bookerComment);
-            $event=eme_get_event($event_id);
+            eme_record_answers($booking_id);
+            //$event=eme_get_event($event_id);
             $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
             $result = eme_replace_placeholders($format, $event);
             //$result = __('Your booking has been recorded','eme');
@@ -479,7 +479,35 @@ function eme_record_booking($event_id, $person_id, $seats, $comment = "") {
          return false;
       }
 // }
-} 
+}
+
+function eme_record_answers($booking_id) {
+   global $wpdb;
+   $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
+   foreach($_POST as $key =>$value) {
+      if (preg_match('/FIELD(.+)/', $key, $matches)) {
+         $field_id = intval($matches[1]);
+         $formfield = eme_get_formfield($field_id);
+         $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],$value);
+         $wpdb->query($sql);
+      }
+   }
+}
+
+function eme_get_answers($booking_id) {
+   global $wpdb;
+   $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
+   $sql = $wpdb->prepare("SELECT * FROM $answers_table WHERE booking_id=%d",$booking_id);
+   return $wpdb->get_results($sql, ARRAY_A);
+}
+
+function eme_get_answercolumns($booking_ids) {
+   global $wpdb;
+   $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
+   $sql = $wpdb->prepare("SELECT DISTINCT field_name FROM $answers_table WHERE booking_id IN (%s)",join(",",$booking_ids));
+   return $wpdb->get_results($sql, ARRAY_A);
+}
+
 function eme_delete_all_bookings_for_person_id($person_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
@@ -684,6 +712,13 @@ function eme_bookings_compact_table($event_id) {
       $table = "<p><em>".__('No responses yet!','eme')."</em></p>";
    } 
    echo $table;
+}
+
+function eme_get_bookingids_for($event_id) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = $wpdb->prepare("SELECT booking_id FROM $bookings_table WHERE event_id=%d",$event_id);
+   return $wpdb->get_results($sql, ARRAY_A);
 }
 
 function eme_get_bookings_for($event_ids,$pending_approved=0) {

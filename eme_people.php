@@ -126,6 +126,7 @@ function eme_csv_booking_report($event_id) {
    header("Content-type: application/octet-stream");
    header("Content-Disposition: attachment; filename=\"export.csv\"");
    $bookings =  eme_get_bookings_for($event_id);
+   $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $out = fopen('php://output', 'w');
    $line=array();
    $line[]='Name';
@@ -133,6 +134,9 @@ function eme_csv_booking_report($event_id) {
    $line[]='Phone';
    $line[]='Seats';
    $line[]='Comment';
+   foreach($answer_columns as $col) {
+      $line[]=$col['field_name'];
+   }
    fputcsv2($out,$line);
    foreach($bookings as $booking) {
       $line=array();
@@ -145,6 +149,15 @@ function eme_csv_booking_report($event_id) {
       $line[]=$booking['person_phone'];
       $line[]=$booking['booking_seats'];
       $line[]=$booking['booking_comment'];
+      $answers = eme_get_answers($booking['booking_id']);
+      foreach($answer_columns as $col) {
+         foreach ($answers as $answer) {
+            if ($answer['field_name'] == $col['field_name'])
+               $line[]=$answer['answer'];
+            else
+               $line[]="";
+         }
+      }
       fputcsv2($out,$line);
    }
    fclose($out);
@@ -160,7 +173,8 @@ function eme_printable_booking_report($event_id) {
         die;
    }
 
-   $bookings =  eme_get_bookings_for($event_id);
+   $bookings = eme_get_bookings_for($event_id);
+   $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $available_seats = eme_get_available_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
@@ -191,6 +205,12 @@ function eme_printable_booking_report($event_id) {
                <th scope='col'><?php _e('Paid', 'eme')?></th>
                <th scope='col'><?php _e('Comment', 'eme')?></th> 
             <?php
+            foreach($answer_columns as $col) {
+               print "<th scope='col'>".$col['field_name']."</th>";
+            }
+            ?>
+            </tr>
+            <?php
             foreach($bookings as $booking) {
                $pending_string="";
                if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
@@ -204,6 +224,17 @@ function eme_printable_booking_report($event_id) {
                <td class='seats-number'><?php echo $booking['booking_seats']." ".$pending_string?></td>
                <td><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
                <td><?=$booking['booking_comment'] ?></td> 
+               <?php
+                  $answers = eme_get_answers($booking['booking_id']);
+                  foreach($answer_columns as $col) {
+                     foreach ($answers as $answer) {
+                         if ($answer['field_name'] == $col['field_name'])
+                            print "<td>".$answer['answer']."</td>";
+                         else
+                            print "<td>&nbsp;</td>";
+                     }
+                  }
+               ?>
             </tr>
                <?php } ?>
             <tr id='booked-seats'>
