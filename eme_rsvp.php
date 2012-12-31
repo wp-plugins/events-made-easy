@@ -498,8 +498,17 @@ function eme_get_answers($booking_id) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
    $sql = $wpdb->prepare("SELECT * FROM $answers_table WHERE booking_id=%d",$booking_id);
+   $wpdb->query($sql);
+}
+
+function eme_delete_answers($booking_id) {
+   global $wpdb;
+   $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
+   $sql = $wpdb->prepare("DELETE FROM $answers_table WHERE booking_id=%d",$booking_id);
    return $wpdb->get_results($sql, ARRAY_A);
 }
+
+function eme_get_answercolumns($booking_ids) {
 
 function eme_get_answercolumns($booking_ids) {
    global $wpdb;
@@ -524,6 +533,8 @@ function eme_delete_booking_by_person_event_id($person_id,$event_id) {
 }
 function eme_delete_booking($booking_id) {
    global $wpdb;
+   // first delete all the answers
+   eme_delete_answers($booking_id);
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE booking_id = %d",$booking_id);
    return $wpdb->query($sql);
