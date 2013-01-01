@@ -28,7 +28,7 @@ function eme_formfields_page() {
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
          $validation_result = $wpdb->insert( $formfields_table, $formfield );
       } elseif ( isset($_POST['action']) && $_POST['action'] == "delete" ) {
-         // Delete category or multiple
+         // Delete formfield or multiple
          $formfields = $_POST['formfields'];
          if (is_array($formfields)) {
             //Make sure the array is only numbers
@@ -37,7 +37,7 @@ function eme_formfields_page() {
                   $fields[] = "field_id = $field_id";
                }
             }
-            //Run the query if we have an array of category ids
+            //Run the query if we have an array of formfield ids
             if (count($fields > 0)) {
                $validation_result = $wpdb->query( "DELETE FROM $formfields_table WHERE ". implode(" OR ", $fields) );
             } else {
@@ -54,7 +54,7 @@ function eme_formfields_page() {
          $message = (isset($message)) ? $message : __("There was a problem {$_POST['action']}ing the field, please try again.");                     
          eme_formfields_table_layout($message);
       } else {
-         // no action, just a categories list
+         // no action, just a formfield list
          eme_formfields_table_layout();   
       }
    }
@@ -108,7 +108,7 @@ function eme_formfields_table_layout($message = "") {
                      foreach ($formfields as $this_formfield) {
                         $table .= "    
                            <tr>
-                           <td><input type='checkbox' class ='row-selector' value='".$this_formfield['category_id']."' name='categories[]'/></td>
+                           <td><input type='checkbox' class ='row-selector' value='".$this_formfield['field_id']."' name='formfields[]'/></td>
                            <td><a href='".admin_url("admin.php?page=eme-formfields&amp;action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".$this_formfield['field_id']."</a></td>
                            <td><a href='".admin_url("admin.php?page=eme-formfields&amp;action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".$this_formfield['field_name']."</a></td>
                            <td><a href='".admin_url("admin.php?page=eme-formfields&amp;action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".eme_get_fieldtype($this_formfield['field_type'])."</a></td>
@@ -140,17 +140,18 @@ function eme_formfields_table_layout($message = "") {
             <div class='col-wrap'>
                   <div class='form-wrap'>
                      <div id='ajax-response'/>
-                  <h3>".__('Add category', 'eme')."</h3>
+                  <h3>".__('Add field', 'eme')."</h3>
                       <form name='add' id='add' method='post' action='".$destination."' class='add:the-list: validate'>
                         <input type='hidden' name='action' value='add' />
                          <div class='form-field form-required'>
                            <label for='field_name'>".__('Field name', 'eme')."</label>
                            <input id='field-name' name='field_name' id='field_name' type='text' value='' size='40' />
-                           <label for='field_info'>".__('Field values', 'eme')."</label>
-                           <input id='field-info' name='field_info' id='field_info' type='text' value='' size='40' />
                            <label for='field_type'>".__('Field type', 'eme')."</label>
 			". eme_ui_select("","field_type",$fieldtypes)
                             ."
+                           <label for='field_info'>".__('Field values', 'eme')."</label>
+                           <input id='field-info' name='field_info' id='field_info' type='text' value='' size='40' />
+                           <br />".__('Tip: for multivalue field types (like Drop Down), use "||" to seperate the different values (e.g.: a1||a2||a3)','eme')."
                          </div>
                          <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add field', 'eme')."' /></p>
                       </form>
@@ -175,21 +176,20 @@ function eme_formfields_edit_layout($message = "") {
          
       <h2>".__('Edit field', 'eme')."</h2>";   
       
-      if($message != "") {
-         $layout .= "
+   if($message != "") {
+      $layout .= "
       <div id='message' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
          <p>$message</p>
       </div>";
-      }
-      $layout .= "
+   }
+   $layout .= "
       <div id='ajax-response'></div>
 
       <form name='editcat' id='editcat' method='post' action='".admin_url("admin.php?page=eme-formfields")."' class='validate'>
       <input type='hidden' name='action' value='edit' />
-      <input type='hidden' name='field_id' value='".$formfield['field_id']."'/>";
+      <input type='hidden' name='field_id' value='".$formfield['field_id']."' />
       
-      $layout .= "
-         <table class='form-table'>
+      <table class='form-table'>
             <tr class='form-field form-required'>
                <th scope='row' valign='top'><label for='field_name'>".__('Field name', 'eme')."</label></th>
                <td><input name='field_name' id='field-name' type='text' value='".eme_sanitize_html($formfield['field_name'])."' size='40'  /></td>
@@ -200,13 +200,14 @@ function eme_formfields_edit_layout($message = "") {
             </tr>
             <tr class='form-field form-required'>
                <th scope='row' valign='top'><label for='field_info'>".__('Field values', 'eme')."</label></th>
-               <td><input name='field_info' id='field-info' type='text' value='".eme_sanitize_html($formfield['field_info'])."' size='40'  /></td>
+               <td><input name='field_info' id='field-info' type='text' value='".eme_sanitize_html($formfield['field_info'])."' size='40'  />
+                  <br />".__('Tip: for multivalue field types (like Drop Down), use "||" to seperate the different values (e.g.: a1||a2||a3)','eme')."
+               </td>
             </tr>
-         </table>
+      </table>
       <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Update field', 'eme')."' /></p>
       </form>
          
-      
    </div>
          
    ";  

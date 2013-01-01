@@ -113,7 +113,7 @@ function eme_ui_select_binary ($option_value, $name) {
 }
 
 function eme_ui_select($option_value, $name, $list) {
-     $val = "<select name='$name'>";
+     $val = "<select id='$name' name='$name'>";
      foreach($list as $key => $value) {
 	if (is_array($value)) {
 		$t_key=$value[0];
