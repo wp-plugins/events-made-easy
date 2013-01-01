@@ -229,7 +229,7 @@ function eme_printable_booking_report($event_id) {
                   foreach($answer_columns as $col) {
                      foreach ($answers as $answer) {
                          if ($answer['field_name'] == $col['field_name'])
-                            print "<td>".$answer['answer']."</td>";
+                            print "<td>".eme_sanitize_html($answer['answer'])."</td>";
                          else
                             print "<td>&nbsp;</td>";
                      }

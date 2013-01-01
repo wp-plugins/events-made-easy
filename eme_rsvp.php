@@ -488,7 +488,7 @@ function eme_record_answers($booking_id) {
       if (preg_match('/FIELD(.+)/', $key, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield($field_id);
-         $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],$value);
+         $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
          $wpdb->query($sql);
       }
    }
@@ -727,7 +727,7 @@ function eme_get_bookingids_for($event_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT booking_id FROM $bookings_table WHERE event_id=%d",$event_id);
-   return $wpdb->get_results($sql, ARRAY_A);
+   return $wpdb->get_col($sql);
 }
 
 function eme_get_bookings_for($event_ids,$pending_approved=0) {
