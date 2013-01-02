@@ -823,10 +823,10 @@ function eme_add_options($reset=0) {
    $registration_denied_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been denied.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
    $registration_recorded_ok_html_localizable = __('Your booking has been recorded','eme');
    $registration_form_format_localizable = "<table class='eme-rsvp-form'>
-            <tr><th scope='row'>".__('Name', 'eme')."*:</th><td>#REQ_NAME</td></tr>
-            <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#REQ_EMAIL</td></tr>
+            <tr><th scope='row'>".__('Name', 'eme')."*:</th><td>#_NAME</td></tr>
+            <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_EMAIL</td></tr>
             <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_PHONE</td></tr>
-            <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#REQ_SEATS</td></tr>
+            <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_SEATS</td></tr>
             <tr><th scope='row'>".__('Comment', 'eme').":</th><td>#_COMMENT</td></tr>
             <tr><th scope='row'>".__('test', 'eme').":</th><td>#_FIELD1</td></tr>
             #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
