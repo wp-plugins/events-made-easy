@@ -99,7 +99,6 @@ function eme_add_booking_form($event_id) {
       <p>".__('(* marks a required field)', 'eme')."</p>
       <input type='hidden' name='eme_eventAction' value='add_booking'/>
       <input type='hidden' name='event_id' value='$event_id'/>
-      <input type='submit' value='".get_option('eme_rsvp_addbooking_submit_string')."'/>
    </form>";
  
    //$form_html .= eme_delete_booking_form();
@@ -155,7 +154,7 @@ function eme_delete_booking_form($event_id) {
       </table>
       <input type='hidden' name='eme_eventAction' value='delete_booking'/>
       <input type='hidden' name='event_id' value='$event_id'/>
-      <input type='submit' value='".get_option('eme_rsvp_delbooking_submit_string')."'/>
+      <input type='submit' value='".eme_translate(get_option('eme_rsvp_delbooking_submit_string'))."'/>
    </form>";
    // $form_html .= "dati inviati: ";
    //    $form_html .= $_POST['bookerName'];

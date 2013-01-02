@@ -268,23 +268,33 @@ function eme_get_formfield_html($field_id) {
 }
 
 function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_required, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment) {
+   $required_fields_count = 0;
+
    if (empty($format)) {
       $format = get_option('eme_registration_form_format');
    }
-   if (preg_match('/#_CAPTCHAHTML\[(.+)\]/', $format)) {
+
+   // the 2 placeholders that can contain extra text are treated seperately first
+   // the question mark is used for non greede (minimal) matching
+   if (preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
 	 if (get_option('eme_captcha_for_booking'))
-            $format = preg_replace('/#_CAPTCHAHTML\[(.+)\]/', '$1' ,$format );
+            $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
          else
-            $format = preg_replace('/#_CAPTCHAHTML\[(.+)\]/', '' ,$format );
+            $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
    }
-   preg_match_all("/#(REQ)?_[A-Za-z0-9_]+/", $format, $placeholders);
+   if (preg_match('/#_SUBMIT\[.+\]/', $format)) {
+         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
+         $required_fields_count++;
+   }
+
+   // now the normal placeholders
+   preg_match_all("/#(REQ)?_[A-Z0-9_]+/", $format, $placeholders);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
    usort($placeholders[0],'sort_stringlenth');
 
    # we need 3 required fields: #_NAME, #_EMAIL and #_SEATS
    # if these are not present: we don't replace anything and the form is worthless
-   $required_fields_count = 0;
    foreach($placeholders[0] as $result) {
       $orig_result = $result;
       $found=1;
@@ -313,6 +323,9 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
       } elseif (preg_match('/#_FIELD(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $replacement = eme_get_formfield_html($field_id);
+      } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
+         $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."'/>";
+         $required_fields_count++;
       } else {
          $found = 0;
       }
@@ -326,9 +339,9 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
       }
    }
 
-   # we need 3 required fields: #_NAME, #_EMAIL and #_SEATS
+   # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
    # if these are not present: we don't replace anything and the form is worthless
-   if ($required_fields_count == 3) {
+   if ($required_fields_count == 4) {
       return $format;
    } else {
       return __('Not all required fields are present in the form', 'eme');

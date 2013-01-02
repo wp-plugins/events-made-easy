@@ -210,11 +210,12 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: this_year and paging was not working ok due to a php bug
 
 = 1.0.5 =
-* Feature: forms are customizable now, although extra defined fields can be viewed/exported but not changed
+* Feature: forms are customizable now, although extra defined fields can be viewed/exported but not changed in the admin backend (and is qtranslate compatible)
 * Feature: contact person mails for cancellations and approvals are now customizable
+* Feature: submit button for registration form is now qtranslate compatible
 * Bugfix: make html title work correctly for locations too
 * Bugfix: the html anchor was not always being shown for RSVP
-* Bugfix: email body and subject can now contain qtranslate calls as well (code got removed when chaning the plugin name)
+* Bugfix: email body and subject can now contain qtranslate calls as well (code got removed when changing the plugin name)
 * Bugfix: corrected and added some sql prepare statements
 * Extra: give all RSVP forms a name and a html id
 * Extra: give full day events a CSS class in the calendar (eme-calendar-day-event)
