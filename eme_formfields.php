@@ -303,7 +303,7 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
          $required_fields_count++;
       } elseif (preg_match('/#_PHONE$/', $result)) {
          $replacement = "<input type='text' name='bookerPhone' value='$bookerPhone' />";
-      } elseif (preg_match('/#_SEATS$/', $result)) {
+      } elseif (preg_match('/#_SEATS|#_SPACES$/', $result)) {
          $replacement = eme_ui_select($bookedSeats,"bookedSeats",$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT$/', $result)) {
