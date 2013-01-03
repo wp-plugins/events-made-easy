@@ -156,6 +156,7 @@ function eme_formfields_table_layout($message = "") {
                          <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add field', 'eme')."' /></p>
                       </form>
                  </div>
+                 <p>".__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme')."</a></p>
                </div>
             </div>
             <?-- end col-left -->
@@ -209,7 +210,7 @@ function eme_formfields_edit_layout($message = "") {
       </form>
          
    </div>
-         
+   <p>".__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme')."</a></p>
    ";  
    echo $layout;
 }
