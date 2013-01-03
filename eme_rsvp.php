@@ -510,7 +510,7 @@ function eme_delete_answers($booking_id) {
 function eme_get_answercolumns($booking_ids) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
-   $sql = $wpdb->prepare("SELECT DISTINCT field_name FROM $answers_table WHERE booking_id IN (%s)",join(",",$booking_ids));
+   $sql = "SELECT DISTINCT field_name FROM $answers_table WHERE booking_id IN (".join(",",$booking_ids).")";
    return $wpdb->get_results($sql, ARRAY_A);
 }
 
