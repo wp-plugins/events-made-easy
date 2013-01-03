@@ -814,6 +814,12 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    }
 
    $booking = eme_get_booking ($booking_id);
+   $answers = eme_get_answers($booking['booking_id']);
+   $field_replace.="";
+   foreach ($answers as $answer) {
+      $field_replace.=$answer['field_name'].": ".$answer['answer']."\n";
+   }
+
    $person  = eme_get_person ($booking['person_id']);
    $event = eme_get_event($booking['event_id']);
    $event_name = $event['event_name'];
@@ -839,7 +845,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $total_price=$booking['booking_seats']*$event['price'];
    
    // rsvp specific placeholders
-   $placeholders = array('#_RESPNAME' => $person['person_name'], '#_RESPEMAIL' => $person['person_email'], '#_RESPPHONE' => $person['person_phone'], '#_SPACES' => $booking['booking_seats'],'#_COMMENT' => $booking['booking_comment'], '#_TRANSFER_NBR_BE97' => $booking['transfer_nbr_be97'], '#_TOTALPRICE' => $total_price );
+   $placeholders = array('#_RESPNAME' => $person['person_name'], '#_RESPEMAIL' => $person['person_email'], '#_RESPPHONE' => $person['person_phone'], '#_SPACES' => $booking['booking_seats'],'#_COMMENT' => $booking['booking_comment'], '#_TRANSFER_NBR_BE97' => $booking['transfer_nbr_be97'], '#_TOTALPRICE' => $total_price, '#_FIELDS' => $field_replace );
 
    foreach($placeholders as $key => $value) {
       $contact_body = str_replace($key, $value, $contact_body);

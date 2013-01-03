@@ -220,3 +220,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Extra: give all RSVP forms a name and a html id
 * Extra: give full day events a CSS class in the calendar (eme-calendar-day-event)
 * Extra: some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
+
+= 1.0.6 =
+* Feature: extra registration field info can now also be mailed, using #_FIELDS as a placeholder in mail formats
+* Bugfix: the results for custom fields were not shown in the printable overview or the CSV export
