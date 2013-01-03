@@ -815,7 +815,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
 
    $booking = eme_get_booking ($booking_id);
    $answers = eme_get_answers($booking['booking_id']);
-   $field_replace.="";
+   $field_replace = "";
    foreach ($answers as $answer) {
       $field_replace.=$answer['field_name'].": ".$answer['answer']."\n";
    }
