@@ -828,7 +828,6 @@ function eme_add_options($reset=0) {
             <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_PHONE</td></tr>
             <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_SEATS</td></tr>
             <tr><th scope='row'>".__('Comment', 'eme').":</th><td>#_COMMENT</td></tr>
-            <tr><th scope='row'>".__('test', 'eme').":</th><td>#_FIELD1</td></tr>
             #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
             </table>
             #_SUBMIT
