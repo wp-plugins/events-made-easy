@@ -831,6 +831,7 @@ function eme_add_options($reset=0) {
             <tr><th scope='row'>".__('test', 'eme').":</th><td>#_FIELD1</td></tr>
             #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
             </table>
+            #_SUBMIT
             ";
    
    $eme_options = array('eme_event_list_item_format' => DEFAULT_EVENT_LIST_ITEM_FORMAT,
