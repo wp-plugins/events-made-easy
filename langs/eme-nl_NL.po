@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Events Manager Extended\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
 "POT-Creation-Date: 2013-01-03 12:59:35+00:00\n"
-"PO-Revision-Date: 2013-01-05 23:28+0100\n"
+"PO-Revision-Date: 2013-01-05 23:32+0100\n"
 "Last-Translator: Franky Van Liedekerke <liedekef@telenet.be>\n"
 "Language-Team: Nederlandse Vertaling\n"
 "Language: nl_BE\n"
@@ -1886,7 +1886,7 @@ msgstr "Voeg een evenement toe"
 
 #: eme_events.php:3740
 msgid "This page corresponds to <strong>Events Made Easy</strong> events page. Its content will be overriden by <strong>Events Made Easy</strong>. If you want to display your content, you can can assign another page to <strong>Events Made Easy</strong> in the the <a href='%s'>Settings</a>. "
-msgstr "Deze pagina komt overeen met de <strong>Events Manager Easy</strong> evenementen pagina. De inhoud wordt overschreven door <strong>Events Manager Easy</strong>. Wilt u aangepaste content gebruiken, dan kunt u een andere pagina toewijzen aan <strong>Events Manager Easy</strong> via <a href='%s'>Instellingen</a>. "
+msgstr "Deze pagina komt overeen met de <strong>Events Made Easy</strong> evenementen pagina. De inhoud wordt overschreven door <strong>Events Made Easy</strong>. Wilt u aangepaste content gebruiken, dan kunt u een andere pagina toewijzen aan <strong>Events Manager Easy</strong> via <a href='%s'>Instellingen</a>. "
 
 #: eme_events.php:3815
 #: eme_locations.php:711
@@ -2179,7 +2179,7 @@ msgstr "Verwijder ook de aan personen gerelateerde reserveringen."
 
 #: eme_people.php:429
 msgid "The phone number used by Events Made Easy when the user is indicated as the contact person for an event."
-msgstr "Het telefoonnummer dat wordt gebruikt door Events Manager Easy wanneer een specifieke gebruiker wordt aangeduid als de contactpersoon voor een evenement."
+msgstr "Het telefoonnummer dat wordt gebruikt door Events Made Easy wanneer een specifieke gebruiker wordt aangeduid als de contactpersoon voor een evenement."
 
 #: eme_recurrence.php:280
 msgid "the first %s of the month"
@@ -2638,7 +2638,7 @@ msgid ""
 "   <p>Now it's time to insert events lists through  <a href=\"%s\" title=\"Widgets page\">widgets</a>, <a href=\"%s\" title=\"Template tags documentation\">template tags</a> or <a href=\"%s\" title=\"Shortcodes documentation\">shortcodes</a>.</p>\n"
 "   <p>By the way, have you taken a look at the <a href=\"%s\" title=\"Change settings\">Settings page</a>? That's where you customize the way events and locations are displayed.</p>\n"
 "   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>"
-msgstr "<p>Hallo, <strong>%s</strong>, welkom bij <strong>Events Manager Easy</strong>! We hopen dat je het hier naar je zin hebt.</p><p>Je kunt nu evenementen invoegen met behulp van  <a href='%s' title='Widgets page'>widgets</a>, <a href='%s' title='Template tags documentation'>template tags</a> or <a href='%s' title='Shortcodes documentation'>shortcodes</a>.</p>\t<p>Heb je al bij de <a href='%s' title='Change settings'>Instellingen</a> gekeken? Daar kun je de manier waarop evenementen en locaties worden weergegeven aanpassen.</p>\t<p>Wat? Genoeg van deze aankondiging? Ik snap het, <a href='%s' title='Don't show this advice again'>klik hier</a> en je ziet dit nooit meer!</p>"
+msgstr "<p>Hallo, <strong>%s</strong>, welkom bij <strong>Events Made Easy</strong>! We hopen dat je het hier naar je zin hebt.</p><p>Je kunt nu evenementen invoegen met behulp van  <a href='%s' title='Widgets page'>widgets</a>, <a href='%s' title='Template tags documentation'>template tags</a> or <a href='%s' title='Shortcodes documentation'>shortcodes</a>.</p>\t<p>Heb je al bij de <a href='%s' title='Change settings'>Instellingen</a> gekeken? Daar kun je de manier waarop evenementen en locaties worden weergegeven aanpassen.</p>\t<p>Wat? Genoeg van deze aankondiging? Ik snap het, <a href='%s' title='Don't show this advice again'>klik hier</a> en je ziet dit nooit meer!</p>"
 
 #: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:162
 msgid "The Events Made Easy Frontend Submit plugin is an extension to the Events Made Easy plugin, which has to be installed and activated first. The plugin has been deactivated."
