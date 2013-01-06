@@ -117,7 +117,7 @@ function fputcsv2 ($fh, $fields, $delimiter = ',', $enclosure = '"', $mysql_null
 function eme_csv_booking_report($event_id) {
    $event = eme_get_event($event_id);
    $current_userid=get_current_user_id();
-   if (!(current_user_can( get_option('eme_cap_edit_events')) ||
+   if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
         (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)))) {
         echo "No access";
         die;
@@ -167,7 +167,7 @@ function eme_csv_booking_report($event_id) {
 function eme_printable_booking_report($event_id) {
    $event = eme_get_event($event_id);
    $current_userid=get_current_user_id();
-   if (!(current_user_can( get_option('eme_cap_edit_events')) ||
+   if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
         (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)))) {
         echo "No access";
         die;

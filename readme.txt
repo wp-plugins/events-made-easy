@@ -224,4 +224,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.6 =
 * Feature: extra registration field info can now also be mailed, using #_FIELDS as a placeholder in mail formats
 * Feature: event SEO links now also take into account the qtranslate language if present
+* Feature: added extra capability to just list events, so people with no edit cap can still do e.g. CSV exports. All your event admins would need this cap as well, otherwise the menu will not show.
 * Bugfix: the results for custom fields were not shown in the printable overview or the CSV export
+* Extra: added Danish translation, thanks to Torben Bendixen
+* Extra: updated Dutch translation, thanks to Peter Goldstein
