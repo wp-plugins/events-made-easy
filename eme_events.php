@@ -1860,7 +1860,10 @@ function eme_get_event($event_id) {
    // if we're not in the admin itf, we don't want draft events
    if (!is_admin()) {
       if (is_user_logged_in()) {
-         $conditions [] = "event_status IN (".STATUS_PUBLIC.",".STATUS_PRIVATE.")";
+         if (! (current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_author_event')) ||
+                current_user_can( get_option('eme_cap_add_event')) || current_user_can( get_option('eme_cap_publish_event')) )) {
+             $conditions [] = "event_status IN (".STATUS_PUBLIC.",".STATUS_PRIVATE.")";
+         }
       } else {
          $conditions [] = "event_status=".STATUS_PUBLIC;
       }
@@ -2114,6 +2117,11 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
                echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
                echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
             }
+         }
+
+         if ($event ['event_status'] == STATUS_DRAFT) {
+               $event_url = eme_event_url($event);
+               echo "<br /> <a target='' href='$event_url'>".__('Preview','eme')."</a>";
          }
          ?> 
          </td>
@@ -3524,7 +3532,7 @@ Weblog Editor 2.0
          foreach ( $events as $event ) {
              $title = eme_replace_placeholders ( $title_format, $event, "rss" );
              $description = eme_replace_placeholders ( $description_format, $event, "rss" );
-             $event_link = eme_event_url($event);
+             $event_link = event_url($event);
              echo "<item>\n";
              echo "<title>$title</title>\n";
              echo "<link>$event_link</link>\n";
