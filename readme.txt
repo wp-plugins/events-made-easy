@@ -227,5 +227,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: added extra capability to just list events, so people with no edit cap can still do e.g. CSV exports. All your event admins would need this cap as well, otherwise the menu will not show.
 * Feature: preview added for draft events
 * Bugfix: the results for custom fields were not shown in the printable overview or the CSV export
+* Bugfix: the table for answers had a wrong index (primary), which resulted in only the first custom field to be stored in it
 * Extra: added Danish translation, thanks to Torben Bendixen
 * Extra: updated Dutch translation, thanks to Peter Goldstein

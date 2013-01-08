@@ -112,7 +112,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 23);
+define('EME_DB_VERSION', 24);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -808,9 +808,14 @@ function eme_create_answers_table($charset,$collate) {
          booking_id mediumint(9) NOT NULL,
          field_name tinytext NOT NULL,
          answer text NOT NULL,
-         PRIMARY KEY  (booking_id)
+         KEY  (booking_id)
          ) $charset $collate;";
       dbDelta($sql);
+   } else {
+      if ($db_version==23) {
+         $wpdb->query("ALTER TABLE ".$table_name." DROP PRIMARY KEY");
+         $wpdb->query("ALTER TABLE ".$table_name." ADD KEY (booking_id)");
+      }
    }
 }
 
