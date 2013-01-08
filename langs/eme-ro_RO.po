@@ -1,0 +1,2581 @@
+# This file is distributed under the same license as the  package.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
+"POT-Creation-Date: 2012-03-06 22:09:59+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-03-13 13:16+0200\n"
+"X-Poedit-Language: Romanian\n"
+"X-Poedit-Country: Romania\n"
+"Language-Team: Web Geeks\n"
+"Last-Translator: \n"
+
+#: captcha_check.php:4
+msgid "You entered an incorrect code. Please fill in the correct code."
+msgstr "Aţi introdus un cod incorect. Vă rugăm să completaţi codul corect."
+
+#: eme_UI_helpers.php:73
+#: eme_UI_helpers.php:110
+#: eme_people.php:205
+msgid "Yes"
+msgstr "da"
+
+#: eme_UI_helpers.php:74
+#: eme_UI_helpers.php:109
+#: eme_people.php:205
+msgid "No"
+msgstr "nu"
+
+#: eme_attributes.php:35
+#: eme_events.php:2856
+msgid "Attributes"
+msgstr "Atribute"
+
+#: eme_attributes.php:37
+msgid "Add attributes here"
+msgstr "Adăuga atribute aici"
+
+#: eme_attributes.php:41
+msgid "Attribute Name"
+msgstr "Nume de atribut"
+
+#: eme_attributes.php:42
+msgid "Value"
+msgstr "Valoarea"
+
+#: eme_attributes.php:47
+msgid "Add new tag"
+msgstr "Adăugaţi tag-ul"
+
+#: eme_attributes.php:61
+msgid "Not defined in templates"
+msgstr "Definite de şabloane"
+
+#: eme_attributes.php:72
+#: eme_attributes.php:93
+msgid "Remove"
+msgstr "Eliminare"
+
+#: eme_attributes.php:104
+msgid "In order to use attributes, you must define some in your templates, otherwise they'll never show. Go to Events > Settings to add attribute placeholders."
+msgstr "În scopul de a utiliza atribute, trebuie să se definească unele din şabloanele, altfel nu vom arăta. Du-te la Evenimente> Setări pentru a adăuga substituenţi de atribute."
+
+#: eme_attributes.php:117
+msgid "No attributes defined yet. If you want attributes, you first need to define/use some in the Settings page. See the section about custom attributes on the documention site for more info."
+msgstr "Nu atribute definite încă. Dacă doriţi atribute, trebuie mai întâi să definim/utiliza unele în pagina Setări. Vezi secţiunea despre atribute personalizate pe site-ul documention pentru mai multe informaţii."
+
+#: eme_calendar.php:197
+#: eme_recurrence.php:279
+msgid "Sunday"
+msgstr "Duminică"
+
+#: eme_calendar.php:197
+#: eme_recurrence.php:279
+msgid "Monday"
+msgstr "Luni"
+
+#: eme_calendar.php:197
+#: eme_recurrence.php:279
+msgid "Tuesday"
+msgstr "Marţi"
+
+#: eme_calendar.php:197
+#: eme_recurrence.php:279
+msgid "Wednesday"
+msgstr "Miercuri"
+
+#: eme_calendar.php:197
+#: eme_recurrence.php:279
+msgid "Thursday"
+msgstr "Joi"
+
+#: eme_calendar.php:197
+#: eme_recurrence.php:279
+msgid "Friday"
+msgstr "Vineri"
+
+#: eme_calendar.php:197
+#: eme_recurrence.php:279
+msgid "Saturday"
+msgstr "Sâmbătă"
+
+#: eme_categories.php:7
+msgid "You have no right to update categories!"
+msgstr "Aveţi nici un drept pentru a actualiza categorii!"
+
+#: eme_categories.php:41
+msgid "Couldn't delete the categories. Incorrect category IDs supplied. Please try again."
+msgstr "Nu a putut şterge categoriile. ID-urile de categoria incorecte furnizate. Vă rugăm să încercaţi din nou."
+
+#: eme_categories.php:67
+#: events-manager.php:916
+msgid "Categories"
+msgstr "Categorii"
+
+#: eme_categories.php:89
+#: eme_categories.php:96
+msgid "ID"
+msgstr "ID-UL"
+
+#: eme_categories.php:90
+#: eme_categories.php:97
+#: eme_events.php:2010
+#: eme_events.php:2555
+#: eme_events.php:2766
+#: eme_events.php:3177
+#: eme_locations.php:312
+#: eme_locations.php:320
+#: eme_people.php:187
+#: eme_rsvp.php:93
+#: eme_rsvp.php:165
+#: eme_rsvp.php:891
+#: eme_rsvp.php:953
+#: eme_rsvp.php:1109
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:76
+msgid "Name"
+msgstr "nume"
+
+#: eme_categories.php:122
+msgid "No categories have been inserted yet!"
+msgstr "Categorii nu au fost introdus încă!"
+
+#: eme_categories.php:135
+#: eme_categories.php:143
+msgid "Add category"
+msgstr "Adăugare categorie"
+
+#: eme_categories.php:139
+#: eme_categories.php:181
+msgid "Category name"
+msgstr "Numele categoriei"
+
+#: eme_categories.php:141
+#: eme_categories.php:183
+msgid "The name of the category"
+msgstr "Numele categoriei"
+
+#: eme_categories.php:163
+msgid "Edit category"
+msgstr "Edita categoria"
+
+#: eme_categories.php:186
+msgid "Update category"
+msgstr "Update categorie"
+
+#: eme_cleanup.php:22
+msgid "Cleanup done: events (and corresponding booking data) older than %d %s(s) have been removed."
+msgstr "Curăţire face: (evenimente şi date Cea corespunzătoare), mai mari de %s %d(s) au fost eliminate."
+
+#: eme_cleanup.php:35
+msgid "Cleanup: remove old events"
+msgstr "Clar: eliminare evenimente vechi"
+
+#: eme_cleanup.php:43
+msgid "Remove events older than"
+msgstr "Eliminare evenimente mai vechi"
+
+#: eme_cleanup.php:51
+msgid "Day(s)"
+msgstr "Zile"
+
+#: eme_cleanup.php:52
+msgid "Week(s)"
+msgstr "Săptămâni"
+
+#: eme_cleanup.php:53
+msgid "Month(s)"
+msgstr "Luni"
+
+#: eme_cleanup.php:55
+#: eme_events.php:1964
+#: eme_rsvp.php:928
+#: eme_rsvp.php:1084
+msgid "Apply"
+msgstr "Aplică"
+
+#: eme_events.php:9
+#: eme_events.php:385
+msgid "Insert New Event"
+msgstr "Inserare nou eveniment"
+
+#: eme_events.php:121
+msgid "Conversion done, please check your events and restore from backup if you see any sign of troubles."
+msgstr "Conversie făcut, vă rugăm să verificaţi evenimentele şi de a restabili de la rezervă dacă vezi nici un semn de probleme."
+
+#: eme_events.php:157
+#: eme_events.php:171
+#: eme_events.php:374
+#: eme_events.php:398
+#: eme_events.php:414
+#: eme_events.php:428
+#: eme_events.php:1944
+msgid "Future events"
+msgstr "Evenimente viitoare"
+
+#: eme_events.php:313
+#: eme_events.php:321
+msgid "Database insert failed!"
+msgstr "Inserare bază de date nu a reușit!"
+
+#: eme_events.php:315
+#: eme_events.php:352
+msgid "New recurrent event inserted!"
+msgstr "Nou eveniment recurente inserează!"
+
+#: eme_events.php:323
+msgid "New event successfully inserted!"
+msgstr "Nou eveniment introdus cu succes!"
+
+#: eme_events.php:336
+msgid "Recurrence updated!"
+msgstr "Recurenţă actualizate!"
+
+#: eme_events.php:339
+msgid "Something went wrong with the recurrence update..."
+msgstr "Ceva nu a mers bine cu actualizarea recurenţă..."
+
+#: eme_events.php:342
+#: eme_events.php:366
+#: eme_events.php:395
+#: eme_events.php:411
+#: eme_events.php:425
+msgid "You have no right to update"
+msgstr "Aveţi nici un drept la actualizare"
+
+#: eme_events.php:359
+msgid "updated"
+msgstr "actualizat"
+
+#: eme_events.php:361
+msgid "Failed to update"
+msgstr "Nu a reuşit să actualizeze"
+
+#: eme_events.php:378
+msgid "Ach, there's a problem here:"
+msgstr "ACH, există o problemă aici:"
+
+#: eme_events.php:392
+#: eme_events.php:1899
+msgid "Edit Event"
+msgstr "Editare eveniment"
+
+#: eme_events.php:422
+#: eme_events.php:2109
+msgid "Reschedule"
+msgstr "Reprogramarea"
+
+#: eme_events.php:436
+msgid "Past Events"
+msgstr "Trecut evenimente"
+
+#: eme_events.php:439
+msgid "All Events"
+msgstr "Toate evenimentele"
+
+#: eme_events.php:442
+msgid "Future Events"
+msgstr "Evenimente viitoare"
+
+#: eme_events.php:465
+msgid "Please select a page"
+msgstr "Vă rugăm să selectaţi o pagină"
+
+#: eme_events.php:479
+msgid "Event Manager Options"
+msgstr "Opţiuni de eveniment Manager"
+
+#: eme_events.php:482
+msgid "General options"
+msgstr "Opţiuni generale"
+
+#: eme_events.php:485
+msgid "Use dropdown for locations?"
+msgstr "Utilizarea verticală pentru locaţii?"
+
+#: eme_events.php:485
+msgid "Select yes to select location from a drop-down menu; location selection will be faster, but you will lose the ability to insert locations with events."
+msgstr "Selectaţi Da pentru a selecta locaţia dintr-un meniu drop-down; selecţie locaţie va fi mai rapid, dar va pierde capacitatea de a introduce locatii de evenimente."
+
+#: eme_events.php:485
+msgid "When the qtranslate plugin is installed and activated, this setting will be ignored and always considered 'Yes'."
+msgstr "Când plugin qtranslate este instalat şi activat, această setare va fi ignorată şi considerată întotdeauna \"Da\"."
+
+#: eme_events.php:486
+msgid "Use recurrence?"
+msgstr "Utilizaţi recurenţă?"
+
+#: eme_events.php:486
+msgid "Select yes to enable the possibility to create recurrent events."
+msgstr "Selectaţi Da pentru a permite posibilitatea de a crea evenimente curente."
+
+#: eme_events.php:487
+msgid "Use RSVP?"
+msgstr "Utilizarea RSVP?"
+
+#: eme_events.php:487
+msgid "Select yes to enable the RSVP feature so people can register for an event and book places."
+msgstr "Selectaţi Da pentru a activa caracteristica RSVP pentru ca oamenii se pot înscrie pentru un eveniment de carte şi de locuri."
+
+#: eme_events.php:488
+msgid "Use categories?"
+msgstr "Utilizaţi categoriile?"
+
+#: eme_events.php:488
+msgid "Select yes to enable the category features."
+msgstr "Selectaţi Da pentru a activa caracteristicile categorie."
+
+#: eme_events.php:489
+msgid "Use attributes?"
+msgstr "Utilizaţi atributele?"
+
+#: eme_events.php:489
+msgid "Select yes to enable the attributes feature."
+msgstr "Selectaţi Da pentru a activa caracteristica de atribute."
+
+#: eme_events.php:490
+msgid "Enable Google Maps integration?"
+msgstr "Permite integrarea Hărţi Google?"
+
+#: eme_events.php:490
+msgid "Check this option to enable Google Map integration."
+msgstr "Verificaţi această opţiune pentru a permite integrarea harta Google."
+
+#: eme_events.php:491
+msgid "Enable map scroll-wheel zooming?"
+msgstr "Permite hartă-rotiţă zoom?"
+
+#: eme_events.php:491
+msgid "Yes, enables map scroll-wheel zooming. No, enables scroll-wheel page scrolling over maps. (It will be necessary to refresh your web browser on a map page to see the effect of this change.)"
+msgstr "Da, harta permite scroll-wheel zoom. Nu, permite scroll-rotiţa pagină pe hărţi. (Acesta va fi necesar să reîmprospătaţi browser-ul Web de pe o pagină de harta pentru a vedea efectul acestei schimbări.)"
+
+#: eme_events.php:492
+msgid "Always include JS in header?"
+msgstr "Întotdeauna includ JS în antet?"
+
+#: eme_events.php:492
+msgid "Some themes are badely designed and can have issues showing the google maps or advancing in the calendar. If so, try activating this option which will cause the javascript to always be included in the header of every page (off by default)."
+msgstr "Unele teme sunt badely concepute şi pot avea probleme de care arată Google Maps sau avansarea în calendar. Dacă da, încercaţi activarea acestei opţiuni, care va determina JavaScript să fie întotdeauna incluse în antetul fiecărei pagini (în afara implicit)."
+
+#: eme_events.php:493
+msgid "Use the client computer clock for the calendar"
+msgstr "Utilizaţi ceasul computerului client pentru calendarul"
+
+#: eme_events.php:493
+msgid "Check this option if you want to use the clock of the client as base to calculate current day for the calendar."
+msgstr "Bifaţi această opţiune dacă doriţi să utilizaţi ceasul al clientului ca bază pentru calculul ziua curentă pentru calendar."
+
+#: eme_events.php:494
+msgid "Delete all EME data when upgrading or deactivating?"
+msgstr "Şterge toate datele EME atunci când actualizarea sau dezactivarea?"
+
+#: eme_events.php:494
+msgid "Check this option if you want to delete all EME data (database tables and options) when upgrading or deactivating the plugin."
+msgstr "Bifaţi această opţiune dacă doriţi să ştergeţi toate datele EME (tabele de baze de date şi opţiuni), atunci când modernizarea sau dezactivarea plugin."
+
+#: eme_events.php:495
+msgid "Enable shortcodes in widgets"
+msgstr "Permite shortcodes în widget-uri"
+
+#: eme_events.php:495
+msgid "Check this option if you want to enable the use of shortcodes in widgets (affects shortcodes of any plugin used in widgets, so use with care)."
+msgstr "Bifaţi această opţiune dacă doriţi să activaţi utilizarea de Scurtăturile în widget-uri (afectează Scurtăturile de orice plugin-ul utilizat în widget-uri, astfel încât utilizarea cu grijă)."
+
+#: eme_events.php:496
+msgid "State for new event"
+msgstr "Stat pentru nou eveniment"
+
+#: eme_events.php:496
+msgid "Initial state for a new event"
+msgstr "Starea iniţială pentru un nou eveniment"
+
+#: eme_events.php:500
+msgid "Permalink options"
+msgstr "Permalink opţiuni"
+
+#: eme_events.php:503
+msgid "Enable event permalinks if possible?"
+msgstr "Permite eveniment permalinks dacă posibil?"
+
+#: eme_events.php:503
+msgid "If Yes, EME will render SEO permalinks if permalinks are activated."
+msgstr "Dacă da, EME va face SEO permalinks dacă sunt activate permalinks."
+
+#: eme_events.php:503
+msgid "It is necessary to click 'Save Changes' on the  WordPress 'Settings/Permalinks' page before you will see the effect of this change."
+msgstr "Este necesar să faceţi clic pe \"Salvaţi modificările\" pe \"Settings/Permalinks de WordPress pagina înainte de a va vedea efectul acestei schimbări."
+
+#: eme_events.php:504
+msgid "Events permalink prefix"
+msgstr "Evenimente permalink prefix"
+
+#: eme_events.php:504
+msgid "The permalink prefix used for events and the calendar."
+msgstr "Prefixul permalink utilizate pentru evenimente şi calendarul."
+
+#: eme_events.php:505
+msgid "Locations permalink prefix"
+msgstr "Locatii permalink prefix"
+
+#: eme_events.php:505
+msgid "The permalink prefix used for locations."
+msgstr "Prefixul permalink utilizate pentru locaţii."
+
+#: eme_events.php:509
+msgid "Access rights"
+msgstr "Drepturi de acces"
+
+#: eme_events.php:510
+msgid "Tip: Use a plugin like \"User Role Editor\" to add/edit capabilities and roles."
+msgstr "Sfat: Foloseste un plugin ca \"Editor rol de utilizator\" pentru a adăuga/edita capacităţile şi rolurile."
+
+#: eme_events.php:513
+msgid "Add event"
+msgstr "Adăugaţi eveniment"
+
+#: eme_events.php:513
+msgid "Permission needed to add a new event. Default: %s"
+msgstr "Permisiune necesară pentru a adăuga un nou eveniment. Implicit: %s"
+
+#: eme_events.php:514
+msgid "Author event"
+msgstr "Autor eveniment"
+
+#: eme_events.php:514
+msgid "Permission needed to edit own events. Default: %s"
+msgstr "Permisiune necesară pentru a edita propriile evenimente. Implicit: %s"
+
+#: eme_events.php:515
+msgid "Publish event"
+msgstr "Publică evenimente"
+
+#: eme_events.php:515
+msgid "Permission needed to make an event public. Default: %s"
+msgstr "Permisiuni necesare pentru a face un eveniment publice. Implicit: %s"
+
+#: eme_events.php:516
+msgid "Edit events"
+msgstr "Editare evenimente"
+
+#: eme_events.php:516
+msgid "Permission needed to edit all events. Default: %s"
+msgstr "Permisiune necesară pentru a edita toate evenimentele. Implicit: %s"
+
+#: eme_events.php:517
+#: eme_locations.php:356
+#: eme_locations.php:434
+msgid "Add location"
+msgstr "Adăugaţi locaţia"
+
+#: eme_events.php:517
+msgid "Permission needed to add locations. Default: %s"
+msgstr "Permisiune necesară pentru a adăuga locații. Implicit: %s"
+
+#: eme_events.php:518
+msgid "Author location"
+msgstr "Autor locaţie"
+
+#: eme_events.php:518
+msgid "Permission needed to edit own locations. Default: %s"
+msgstr "Permisiune necesară pentru a edita propriile locaţii. Implicit: %s"
+
+#: eme_events.php:519
+#: eme_locations.php:155
+msgid "Edit location"
+msgstr "Editare locaţie"
+
+#: eme_events.php:519
+msgid "Permission needed to edit all locations. Default: %s"
+msgstr "Permisiune necesară pentru a edita toate locaţiile. Implicit: %s"
+
+#: eme_events.php:520
+msgid "Edit categories"
+msgstr "Editare categorii"
+
+#: eme_events.php:520
+msgid "Permission needed to edit all categories. Default: %s"
+msgstr "Permisiune necesară pentru a edita toate categoriile. Implicit: %s"
+
+#: eme_events.php:521
+msgid "View people"
+msgstr "Vizualizare persoane"
+
+#: eme_events.php:521
+msgid "Permission needed to view registered people info. Default: %s"
+msgstr "Permisiunea este necesar pentru a vizualiza informaţii înregistrate de oameni. Implicit: %s"
+
+#: eme_events.php:522
+msgid "Approve registrations"
+msgstr "Aproba înregistrări"
+
+#: eme_events.php:522
+msgid "Permission needed to approve pending registrations. Default: %s"
+msgstr "Permisiunea este necesar să aprobe până înregistrările. Implicit: %s"
+
+#: eme_events.php:523
+msgid "Edit registrations"
+msgstr "Editare înregistrări"
+
+#: eme_events.php:523
+msgid "Permission needed to edit approved registrations. Default: %s"
+msgstr "Permisiuni necesare pentru editare înregistrări aprobate. Implicit: %s"
+
+#: eme_events.php:524
+#: events-manager.php:927
+msgid "Cleanup"
+msgstr "Curăţire"
+
+#: eme_events.php:524
+msgid "Permission needed to execute cleanup actions. Default: %s"
+msgstr "Permisiuni necesare pentru a executa acţiuni de curăţire. Implicit: %s"
+
+#: eme_events.php:525
+msgid "Edit settings"
+msgstr "Editaţi setările"
+
+#: eme_events.php:525
+msgid "Permission needed to edit settings. Default: %s"
+msgstr "Permisiune necesară pentru a edita setările. Implicit: %s"
+
+#: eme_events.php:528
+#: eme_events.php:531
+msgid "Events page"
+msgstr "Pagina de evenimente"
+
+#: eme_events.php:531
+msgid "This option allows you to select which page to use as an events page."
+msgstr "Această opţiune vă permite să selectaţi care pagina pentru a utiliza ca o pagină de evenimente."
+
+#: eme_events.php:531
+msgid "The content of this page (including shortcodes of any kind) will be ignored completely and dynamically replaced by events data."
+msgstr "Conţinutul acestei pagini (inclusiv Scurtăturile de orice fel) va fi ignorat complet si dinamic înlocuit de date de evenimente."
+
+#: eme_events.php:532
+msgid "Show events page in lists?"
+msgstr "Arată pagina de evenimente în listele?"
+
+#: eme_events.php:532
+msgid "Check this option if you want the events page to appear together with other pages in pages lists."
+msgstr "Bifaţi această opţiune dacă doriţi ca pagina de evenimente să apară împreună cu alte pagini din listele de pagini."
+
+#: eme_events.php:532
+msgid "This option should no longer be used, it will be deprecated. Using the [events_list] shortcode in a self created page is recommended."
+msgstr "Această opţiune ar trebui să nu mai fie utilizate, acesta va fi depăşit. Utilizarea [events_list] scurtătură într-o pagină de sine creată este recomandată."
+
+#: eme_events.php:533
+msgid "Display calendar in events page?"
+msgstr "Afişare calendar în pagina de evenimente?"
+
+#: eme_events.php:533
+msgid "This option allows to display the calendar in the events page, instead of the default list. It is recommended not to display both the calendar widget and a calendar page."
+msgstr "Această opţiune permite să afişaţi calendarul în pagina de evenimente, în loc de lista implicită. Este recomandat să nu afişeze atât widget-ul calendar şi o pagină de calendar."
+
+#: eme_events.php:534
+msgid "Number of events to show per page in admin interface"
+msgstr "Numărul de evenimente pe pagină în interfaţa admin"
+
+#: eme_events.php:534
+msgid "Indicates the number of events shown on one page in the admin interface (min. 5, max. 200)"
+msgstr "Indică numărul de evenimente afişate pe o pagină din interfaţa de admin (min. 5, max. 200)"
+
+#: eme_events.php:535
+msgid "Number of events to show in lists"
+msgstr "Numărul de evenimente pentru a arăta în liste"
+
+#: eme_events.php:535
+msgid "The number of events to show in a list if no specific limit is specified (used in the shortcode events_list, RSS feed, the placeholders #_NEXTEVENTS and #_PASTEVENTS, ...). Use 0 for no limit."
+msgstr "Numărul de evenimente pentru a arăta într-o listă, dacă nu este specificat limită specifică (utilizat în events_list scurtătură, RSS, substituenţii #_NEXTEVENTS and #_PASTEVENTS, ...). Folosiţi 0 pentru nici o limită."
+
+#: eme_events.php:538
+msgid "Events format"
+msgstr "Format de evenimente"
+
+#: eme_events.php:541
+msgid "Remove leading zeros from minutes?"
+msgstr "Eliminaţi zerouri de minute?"
+
+#: eme_events.php:541
+msgid "PHP date/time functions have no notation to show minutes without leading zeros. Checking this option will return e.g. 9 for 09 and empty for 00."
+msgstr "PHP funcţii de data/ora nu au nici o notaţie pentru a arăta minute, fara zerourile. Verificarea această opţiune va reveni de exemplu, 9 pentru 09 şi gol pentru 00."
+
+#: eme_events.php:542
+msgid "Default event list format header"
+msgstr "Implicit eveniment lista format antet"
+
+#: eme_events.php:542
+msgid "This content will appear just above your code for the default event list format. If you leave this empty, the value <code><ul class='eme_events_list'></code> will be used."
+msgstr "Acest conţinut va apărea doar de mai sus codul de formatul implicit lista de eveniment. Dacă lăsaţi acest gol, valoarea <code><ul class='eme_events_list'></code> va fi utilizat."
+
+#: eme_events.php:543
+msgid "Default event list format"
+msgstr "Formatul de listă implicit eveniment"
+
+#: eme_events.php:543
+msgid "The format of any events in a list.<br/>Insert one or more of the following placeholders: <code>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_NOTES</code>.<br/> Use <code>#_EXCERPT</code> to show <code>#_NOTES</code> until you place a <code><!––more––></code> marker.<br/> Use <code>#_LINKEDNAME</code> for the event name with a link to the given event page.<br/> Use <code>#_EVENTPAGEURL</code> to print the event page URL and make your own customised links.<br/> Use <code>#_LOCATIONPAGEURL</code> to print the location page URL and make your own customised links.<br/>Use <code>#_EDITEVENTLINK</code> to add a link to edit page for the event, which will appear only when a user is logged in.<br/>To insert date and time values, use <a href=\"http://www.php.net/manual/en/function.date.php\">PHP time format characters</a>  with a <code>#</code> symbol before them, i.e. <code>#m</code>, <code>#M</code>, <code>#j</code>, etc.<br/> For the end time, put <code>#@</code> in front of the character, e.g. <code>#@h</code>, <code>#@i</code>, etc.<br/> You can also create a date format without prepending <code>#</code> by wrapping it in #_{} or #@_{} (e.g. <code>#_{d/m/Y}</code>). If there is no end date, the value is not shown.<br/>Use <code>#_12HSTARTTIME</code> and <code>#_12HENDTIME</code> for AM/PM start-time/end-time notation, idem <code>#_24HSTARTTIME</code> and <code>#_24HENDTIME</code>.<br/>Feel free to use HTML tags as <code>li</code>, <code>br</code> and so on.<br/>For custom attributes, you use <code>#_ATT{key}{alternative text}</code>, the second braces are optional and will appear if the attribute is not defined or left blank for that event. This key will appear as an option when adding attributes to your event."
+msgstr "Formatul de orice evenimente dintr-o listă <br/> Introdu unul sau mai multe dintre următoarele substituenţilor: <code> #_EVENTNAME </code>, <code> #_LOCATIONNAME </code>, <code> #_ADDRESS </code>, <code> #_TOWN </code>, <code> #_NOTES </code>. <br/> utilizare <code>#_EXCERPT</code> pentru a arăta <code> #_NOTES </code> până când locul de o <code> <- mai mult ->.. </ code> marcator <br/> utilizare <code> #_LINKEDNAME </code> pentru numele evenimentului, cu un link la pagina de eveniment dat <br/> de utilizare <code> #_EVENTPAGEURL </code> pentru a imprima pagina de URL-ul evenimentului şi să faceţi propriile dvs. link-uri personalizate. <br/> utilizare <code> #_LOCATIONPAGEURL </code> pentru a imprima URL-ul paginii locaţie şi să faceţi propriile dvs. link-uri personalizate. <br /> utilizarea <code> # _EDITEVENTLINK </ code> pentru a adăuga un link pentru a edita pagina de eveniment, care va apărea numai atunci când un utilizator este logat <br/> pentru a introduce valori de dată şi oră, utilizarea <a href=\"http://www.php.net/manual/en/function.date.php \"> PHP de caractere format de timp </ a>, cu o <code> # </ code> simbolul înaintea lor, şi anume <cod > # m </ code>, <code> # m </ code>, <code> # j </ code>, etc <br/> Pentru ora de terminare, pune <code> # @ Formatul de orice evenimente dintr-o listă <br/> Introdu unul sau mai multe dintre următoarele substituenţilor: <code>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_NOTES</code>.<br/> Use <code>#_EXCERPT</code> pentru a arăta <code>#_NOTES</code> până când locul de o <code> <- mai mult -></code> marcator <br/> utilizare <code> #_LINKEDNAME </code> pentru numele evenimentului, cu un link la pagina de eveniment dat <br/> de utilizare <code> # _EVENTPAGEURL </ code> pentru a imprima pagina de URL-ul evenimentului şi să faceţi propriile dvs. link-uri personalizate. <br/> <code> utilizare # _LOCATIONPAGEURL </ code> pentru a imprima URL-ul paginii locaţie şi să faceţi propriile dvs. link-uri personalizate. <br /> utilizarea <code> #_EDITEVENTLINK </code> pentru a adăuga un link pentru a edita pagina de eveniment, care va apărea numai atunci când un utilizator este logat <br/> pentru a introduce valori de dată şi oră, utilizarea <a href=\"http://www.php.net/manual/en/function.date.php\"> PHP de caractere format de timp </a>, cu o <code> # </code> simbolul înaintea lor, şi anume <cod > #M </code>, <code> #M </code>, <code> #j </code>, etc <br/> Pentru ora de terminare, pune <code> #@ </code>, în fata de caracter, de exemplu, <code> #@h </code>, <code> #@i </code>, etc <br/>, puteţi crea, de asemenea, un format de dată, fără a anulează executarea <code> # </code> prin trecerea în #_{} sau #@_{} (de exemplu, <code> #_{d/m/Y} </code>). Dacă nu există nici o data de sfârşit, valoarea nu este indicat <br/> Utilizare <code> #_12HSTARTTIME </code>. Şi <code> #_12HENDTIME </code> pentru AM/PM notaţie start-time/end-time, idem <code> #_24HSTARTTIME </code> şi <code> #_24HENDTIME </code>. <br/> Simţiţi-vă liber pentru a utiliza tag-uri HTML ca <code> li </code>, <code> BR </code> şi aşa mai departe. <br/> pentru atribute personalizate, puteţi utiliza <code>#_ATT{key}{alternative text}</code>, cele doua acolade sunt opţionale şi vor apărea dacă atributul nu este definită sau lăsată necompletată pentru acest eveniment . Această cheie va apărea ca o opţiune atunci când adăugarea de atribute la eveniment."
+
+#: eme_events.php:543
+msgid "Use <code>#_PAST_FUTURE_CLASS</code> to return a class name indicating this event is future or past (<code>eme-future-event</code> or <code>eme-past-event</code>), use the returned value in e.g. the li-statement for each event in the list of events"
+msgstr "Utilizaţi <code> #_PAST_FUTURE_CLASS </code> pentru a reveni un nume de clasa care indică acest eveniment este de viitor sau trecut (<code> eme-viitor-eveniment </code> sau <code> eme-trecut-eveniment </code>), utilizează valoarea returnată de exemplu, înLi-declaraţie pentru fiecare eveniment în lista de evenimente"
+
+#: eme_events.php:544
+msgid "Default event list format footer"
+msgstr "Implicit eveniment lista format subsol"
+
+#: eme_events.php:544
+msgid "This content will appear just below your code for the default event list format. If you leave this empty, the value <code></ul></code> will be used."
+msgstr "Acest conţinut va apărea doar codul de mai jos pentru a vă lista de formatul implicit de eveniment. Dacă lăsaţi acest gol, valoarea <code> </UL> </code> va fi utilizat."
+
+#: eme_events.php:546
+msgid "Single event page title format"
+msgstr "Format de titlu pagină singur eveniment"
+
+#: eme_events.php:546
+msgid "The format of a single event page title. Follow the previous formatting instructions."
+msgstr "Formatul de un singur titlu pagina evenimentului. Urmaţi instrucţiunile anterioare de formatare."
+
+#: eme_events.php:547
+msgid "Default single event format"
+msgstr "Formatul implicit singur eveniment"
+
+#: eme_events.php:547
+msgid "The format of a single event page.<br/>Follow the previous formatting instructions. <br/>Use <code>#_MAP</code> to insert a map.<br/>Use <code>#_CONTACTNAME</code>, <code>#_CONTACTEMAIL</code>, <code>#_CONTACTPHONE</code> to insert respectively the name, e-mail address and phone number of the designated contact person. <br/>Use <code>#_ADDBOOKINGFORM</code> to insert a form to allow the user to respond to your events reserving one or more places (RSVP).<br/> Use <code>#_REMOVEBOOKINGFORM</code> to insert a form where users, inserting their name and e-mail address, can remove their bookings."
+msgstr "Formatul de o pagina eveniment unic. <br/> Urmaţi instrucţiunile anterioare de formatare. <br/> utilizare <code>#_MAP</code> pentru a insera o harta. <br/> utilizare <code>#_CONTACTNAME</code>, <code>#_CONTACTEMAIL</code>, <code>#_CONTACTPHONE</code> pentru a insera, respectiv numele, adresa de e-mail şi numărul de telefon al persoanei de contact desemnate. <br/> Utilizaţi <code>#_ADDBOOKINGFORM</code> pentru a insera o formă care să permită utilizatorului să răspundă la evenimentele tale rezerve una sau mai multe locuri (RSVP). <br/> utilizare <code>#_REMOVEBOOKINGFORM</code> pentru a insera o formă în cazul în care utilizatorii, insera numele lor şi adresa de e-mail, posibilitatea de a elimina rezervările lor."
+
+#: eme_events.php:547
+msgid "<br/>Use <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> to insert the booking form only if the user has not registered yet. Similar use <code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> to insert the booking removal form only if the user has already registered before. These two codes only work for WP users."
+msgstr "<br/> Utilizaţi <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> pentru a insera formularul de rezervare doar dacă utilizatorul nu a înregistrat încă. <code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> pentru a insera formularul de rezervare eliminarea numai în cazul în care utilizatorul a fost deja înregistrate înainte. Aceste două coduri funcţionează numai pentru utilizatorii de WP."
+
+#: eme_events.php:547
+msgid "<br/> Use <code>#_DIRECTIONS</code> to insert a form so people can ask directions to the event."
+msgstr "<br/> Utilizaţi <code> #_DIRECTIONS </code> pentru a insera o formă astfel încât oamenii pot cere direcţii la eveniment."
+
+#: eme_events.php:547
+msgid "<br/> Use <code>#_CATEGORIES</code> to insert a comma-seperated list of categories an event is in."
+msgstr "<br/> Utilizaţi <code>#_CATEGORIES</code> pentru a insera o listă separate prin virgulă-a categorii de un eveniment este de inch"
+
+#: eme_events.php:547
+msgid "<br/> Use <code>#_ATTENDEES</code> to get a list of the names attending the event."
+msgstr "<br/> Utilizaţi <code>#_ATTENDEES</code> pentru a obţine o listă de nume prezente la eveniment."
+
+#: eme_events.php:548
+msgid "Monthly period date format"
+msgstr "Format dată perioada lunar"
+
+#: eme_events.php:548
+msgid "The format of the date-string used when you use showperiod=monthly as an option to [the events_list] shortcode, also used for monthly pagination. Use php date() compatible settings."
+msgstr "Formatul de dată-şirul de caractere folosit atunci când utilizaţi showperiod=lunar ca o opţiune de a [events_list] scurtătură, de asemenea, folosit pentru paginare lunar. Utilizarea php data() setările compatibile."
+
+#: eme_events.php:548
+#: eme_events.php:549
+msgid " The default is: "
+msgstr " Valoarea implicită este: "
+
+#: eme_events.php:549
+msgid "Yearly period date format"
+msgstr "Format dată perioadei anuale"
+
+#: eme_events.php:549
+msgid "The format of the date-string used when you use showperiod=yearly as an option to [the events_list] shortcode, also used for yearly pagination. Use php date() compatible settings."
+msgstr "Formatul de dată-şirul de caractere folosit atunci când utilizaţi showperiod=anual ca o opţiune de a [events_list] scurtătură, de asemenea, folosit pentru paginare anual. Utilizarea php data() setările compatibile."
+
+#: eme_events.php:550
+msgid "Events page title"
+msgstr "Titlul paginii evenimente"
+
+#: eme_events.php:550
+msgid "The title on the multiple events page."
+msgstr "Titlul pe pagina de mai multe evenimente."
+
+#: eme_events.php:551
+msgid "No events message"
+msgstr "Nici un mesaj de evenimente"
+
+#: eme_events.php:551
+msgid "The message displayed when no events are available."
+msgstr "Mesajul afişat când evenimente nu sunt disponibile."
+
+#: eme_events.php:554
+msgid "Events filtering format"
+msgstr "Evenimente filtrare format"
+
+#: eme_events.php:557
+msgid "Default event list filtering format"
+msgstr "Formatul implicit eveniment lista Filtrare"
+
+#: eme_events.php:557
+msgid "This defines the layout of the event list filtering form when using the shortcode <code>[events_filterform]</code>. Use <code>#_FILTER_CATS</code>, <code>#_FILTER_LOCS</code>, <code>#_FILTER_TOWNS</code>, <code>#_FILTER_WEEKS</code>, <code>#_FILTER_MONTHS</code>."
+msgstr "Aceasta defineste aspectul de forma lista de evenimente de filtrare atunci când se utilizează scurtătură <code>[events_filterform]</code>. Utilizaţi <code>#_FILTER_CATS</code>, <code>#_FILTER_LOCS</code>, <code>#_FILTER_TOWNS</code>, <code>#_FILTER_WEEKS</code>, <code>#_FILTER_MONTHS</code>."
+
+#: eme_events.php:560
+msgid "Calendar format"
+msgstr "Format de calendar"
+
+#: eme_events.php:563
+msgid "Small calendar title"
+msgstr "Titlu calendar mici"
+
+#: eme_events.php:563
+msgid "The format of the title, corresponding to the text that appears when hovering on an eventful calendar day."
+msgstr "Formatul de titlu, care corespunde textului care apare atunci când situându-se pe o zi plină de evenimente calendar."
+
+#: eme_events.php:564
+msgid "Small calendar title separator"
+msgstr "Calendar mici titlul separator"
+
+#: eme_events.php:564
+msgid "The separator appearing on the above title when more than one event is taking place on the same day."
+msgstr "Separator apare pe titlul de mai sus, atunci când mai mult de un eveniment are loc în aceeaşi zi."
+
+#: eme_events.php:565
+msgid "Full calendar events format"
+msgstr "Format de evenimente calendar complet"
+
+#: eme_events.php:565
+msgid "The format of each event when displayed in the full calendar. Remember to include <code>li</code> tags before and after the event."
+msgstr "Formatul fiecărui eveniment atunci când sunt afişate în calendarul complet. Amintiţi-vă să includă <code> Li </code> etichetele înainte şi după eveniment."
+
+#: eme_events.php:569
+msgid "Locations format"
+msgstr "Locatii format"
+
+#: eme_events.php:572
+msgid "Default location list format header"
+msgstr "Implicit locaţie lista format antet"
+
+#: eme_events.php:572
+msgid "This content will appear just above your code for the default location list format. If you leave this empty, the value <code><ul class='eme_locations_list'></code> will be used.<br/>Used by the shortcode <code>[events_locations]</code>"
+msgstr "Acest conţinut va apărea doar de mai sus codul pentru formatul de lista de locaţie prestabilită. Dacă lăsaţi acest gol, valoarea <code><ul class='eme_locations_list'></code> va fi utilizat. <br/> Agricole de scurtătură <code>[events_locations]</code>"
+
+#: eme_events.php:573
+msgid "Default location list item format"
+msgstr "Formatul implicit locaţie lista element"
+
+#: eme_events.php:573
+msgid "The format of a location in a location list. If you leave this empty, the value <code><li class=\\\"location-#_LOCATIONID\\\">#_LOCATIONNAME</li></code> will be used.<br/>See the documentation for a list of available placeholders for locations.<br/>Used by the shortcode <code>[events_locations]</code>"
+msgstr "Formatul de o locaţie într-o listă locaţie. Dacă lăsaţi acest gol, valoarea <code><li class=\\\"location-#_LOCATIONID\\\">#_LOCATIONNAME</li></code> va fi utilizat. <br/> Consultaţi documentaţia pentru o listă de substituenţi disponibile pentru locaţii <br/> de second hand. de scurtătură <code>[events_locations]</code>"
+
+#: eme_events.php:574
+msgid "Default location list format footer"
+msgstr "Implicit locaţie lista format subsol"
+
+#: eme_events.php:574
+msgid "This content will appear just below your code for the default location list format. If you leave this empty, the value <code></ul></code> will be used.<br/>Used by the shortcode <code>[events_locations]</code>"
+msgstr "Acest conţinut va apărea doar codul de mai jos pentru a vă lista de formatul implicit de locaţie. Dacă lăsaţi acest gol, valoarea <code></ul></code> va fi utilizat. <br/> Agricole de scurtătură <code>[events_locations]</code>"
+
+#: eme_events.php:576
+msgid "Single location page title format"
+msgstr "Format singur loc pagină titlu"
+
+#: eme_events.php:576
+msgid "The format of a single location page title.<br/>Follow the previous formatting instructions."
+msgstr "Formatul de un singur titlu pagină locaţie. <br/> Urmaţi instrucţiunile anterioare de formatare."
+
+#: eme_events.php:577
+msgid "Default single location page format"
+msgstr "Formatul implicit singur loc pagină"
+
+#: eme_events.php:577
+msgid "The format of a single location page.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>.<br/> Use <code>#_MAP</code> to display a map of the event location, and <code>#_IMAGE</code> to display an image of the location.<br/> Use <code>#_NEXTEVENTS</code> to insert a list of the upcoming events, <code>#_PASTEVENTS</code> for a list of past events, <code>#_ALLEVENTS</code> for a list of all events taking place in this location."
+msgstr "Formatul de o pagina singură locaţie <br/> Introdu unul sau mai multe dintre următoarele substituenţilor: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>. <br/> utilizare <code>#_MAP</code> pentru a afişa o hartă locaţia evenimentului, şi <code>#_IMAGE</code> pentru a afişa o imagine a Locul de amplasare. <br/> utilizare <code>#_NEXTEVENTS</code> pentru a insera o listă a evenimentelor viitoare, <code>#_PASTEVENTS</code> pentru o listă de evenimente trecute, <code>#_ALLEVENTS</code> pentru o listă a tuturor evenimentelor care au loc în această locaţie."
+
+#: eme_events.php:578
+msgid "Default location balloon format"
+msgstr "Formatul implicit locaţie balon"
+
+#: eme_events.php:578
+msgid "The format of the text appearing in the balloon describing the location in the map.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>,<code>#_IMAGE</code>, <code>#_LOCATIONPAGEURL</code> or <code>#_DIRECTIONS</code>."
+msgstr "Formatul de textul care figurează în balon care descrie locaţia în harta <br/> Introdu unul sau mai multe dintre următoarele substituenţilor: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>,<code>#_IMAGE</code>, <code>#_LOCATIONPAGEURL</code> or <code>#_DIRECTIONS</code>."
+
+#: eme_events.php:579
+msgid "Default location event list format"
+msgstr "Formatul de listă implicit locaţie eveniment"
+
+#: eme_events.php:579
+msgid "The format of the events list inserted in the location page through the <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> element. <br/> Follow the events formatting instructions"
+msgstr "Formatul de lista de evenimente introdus în pagina de locaţie prin <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> şi <code>#_ALLEVENTS</code> element. <br/> Urmaţi instrucţiunile de formatare evenimente"
+
+#: eme_events.php:580
+msgid "Default no events message"
+msgstr "Implicit nici un mesaj de evenimente"
+
+#: eme_events.php:580
+msgid "The message to be displayed in the list generated by <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> when no events are available."
+msgstr "Mesajul să fie afişat în lista generată de <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> şi <code>#_ALLEVENTS</code> evenimente atunci când nu sunt disponibile."
+
+#: eme_events.php:584
+msgid "RSS feed format"
+msgstr "RSS feed format"
+
+#: eme_events.php:587
+msgid "RSS main title"
+msgstr "Titlul principal RSS"
+
+#: eme_events.php:587
+msgid "The main title of your RSS events feed."
+msgstr "Titlul principal al tău seară RSS feed."
+
+#: eme_events.php:588
+msgid "RSS main description"
+msgstr "Descrierea principalelor RSS"
+
+#: eme_events.php:588
+msgid "The main description of your RSS events feed."
+msgstr "Descrierea principalelor evenimente dumneavoastră RSS feed."
+
+#: eme_events.php:589
+msgid "RSS title format"
+msgstr "RSS titlu format"
+
+#: eme_events.php:589
+msgid "The format of the title of each item in the events RSS feed."
+msgstr "Formatul titlul de fiecare element evenimentelor RSS feed."
+
+#: eme_events.php:590
+msgid "RSS description format"
+msgstr "Format pentru RSS"
+
+#: eme_events.php:590
+msgid "The format of the description of each item in the events RSS feed. Follow the previous formatting instructions."
+msgstr "Formatul de descriere a fiecărui element în hrana evenimente RSS. Urmaţi instrucţiunile anterioare de formatare."
+
+#: eme_events.php:594
+msgid "RSVP: registrations and bookings"
+msgstr "RSVP: înregistrările şi rezervările"
+
+#: eme_events.php:597
+#: eme_events.php:2467
+msgid "Event author"
+msgstr "Eveniment autor"
+
+#: eme_events.php:599
+msgid "Default contact person"
+msgstr "Persoana de contact implicit"
+
+#: eme_events.php:599
+msgid "Select the default contact person. This user will be employed whenever a contact person is not explicitly specified for an event"
+msgstr "Selectaţi persoana de contact implicit. Acest utilizator va fi angajat ori de câte ori o persoană de contact nu este specificată în mod explicit pentru un eveniment"
+
+#: eme_events.php:600
+msgid "By default require WP membership to be able to register?"
+msgstr "În mod implicit necesită WP de membru să poată înregistra?"
+
+#: eme_events.php:600
+msgid "Check this option if you want by default that only WP registered users can book for an event."
+msgstr "Bifaţi această opţiune dacă doriţi în mod implicit că numai utilizatorii înregistraţi pot WP rezerva pentru un eveniment."
+
+#: eme_events.php:601
+msgid "By default enable registrations for new events?"
+msgstr "Implicit activează înregistrările pentru evenimente noi?"
+
+#: eme_events.php:601
+msgid "Check this option if you want to enable registrations by default for new events."
+msgstr "Bifaţi această opţiune dacă doriţi să activaţi înregistrări în mod implicit pentru noi evenimente."
+
+#: eme_events.php:602
+msgid "Default number of spaces"
+msgstr "Numărul implicit de spaţii"
+
+#: eme_events.php:602
+msgid "The default number of spaces an event has."
+msgstr "Numărul implicit de spaţii un eveniment are."
+
+#: eme_events.php:603
+msgid "Min number of spaces to book"
+msgstr "Min numărul de spaţii pentru a rezerva"
+
+#: eme_events.php:603
+msgid "The minimum number of spaces a person can book in one go (it can be 0, for e.g. just an attendee list)."
+msgstr "Numărul minim de spaţii care o persoană poate rezerva într-un du-te (poate fi 0, de exemplu, pentru doar o lista de participanţi)."
+
+#: eme_events.php:604
+msgid "Max number of spaces to book"
+msgstr "Max numărul de spaţii pentru a rezerva"
+
+#: eme_events.php:604
+msgid "The maximum number of spaces a person can book in one go."
+msgstr "Numărul maxim de spaţii puteţi rezerva o persoană într-un du-te."
+
+#: eme_events.php:605
+msgid "Use captcha for booking form?"
+msgstr "Utilizaţi captcha pentru formularul de rezervare?"
+
+#: eme_events.php:605
+msgid "Check this option if you want to use a captcha on the booking form, to thwart spammers a bit."
+msgstr "Bifaţi această opţiune dacă doriţi să utilizaţi un CAPTCHA pe formularul de rezervare, pentru a contracara spam un pic."
+
+#: eme_events.php:606
+msgid "Hide fully booked events?"
+msgstr "Ascunde pe deplin rezervat de evenimente?"
+
+#: eme_events.php:606
+msgid "Check this option if you want to hide events that are fully booked from the calendar and events listing in the front."
+msgstr "Bifaţi această opţiune dacă doriţi să ascundeţi evenimente care sunt complet înregistrate de la calendarul şi lista evenimentelor în faţă."
+
+#: eme_events.php:607
+msgid "Add booking form submit text"
+msgstr "Adăugaţi formularul de rezervare prezinte text"
+
+#: eme_events.php:607
+msgid "The string of the submit button on the add booking form"
+msgstr "Şirul de pe formularul de rezervare Adăugare butonul submit"
+
+#: eme_events.php:608
+msgid "Delete booking form submit text"
+msgstr "Şterge formularul de rezervare prezinte text"
+
+#: eme_events.php:608
+msgid "The string of the submit button on the delete booking form"
+msgstr "Şirul de pe formularul de rezervare Ştergere butonul submit"
+
+#: eme_events.php:609
+msgid "Attendees list format"
+msgstr "Formatul listei de participanţi"
+
+#: eme_events.php:609
+msgid "The format for the attendees list when using the <code>#_ATTENDEES</code> placeholder. Use <code>#_NAME</code>, <code>#_EMAIL</code>, <code>#_PHONE</code>, <code>#_ID</code>."
+msgstr "Formatul pentru lista de participanţi la utilizarea <code>#_ATTENDEES</code> substituent. Utilizaţi <code>#_NAME</code>, <code>#_EMAIL</code>, <code>#_PHONE</code>, <code>#_ID</code>."
+
+#: eme_events.php:609
+msgid "Use <code>#_USER_RESERVEDSPACES</code> to show the number of seats for that person."
+msgstr "Utilizaţi <code>#_USER_RESERVEDSPACES</code> pentru a afişa numărul de locuri pentru acea persoană."
+
+#: eme_events.php:610
+msgid "Booking recorded message"
+msgstr "Rezervare înregistrate mesaj"
+
+#: eme_events.php:610
+#: eme_events.php:2690
+msgid "The text (html allowed) shown to the user when the booking has been made successfully."
+msgstr "Text (HTML este permis), indicat pentru utilizator atunci când rezervarea a fost făcută cu succes."
+
+#: eme_events.php:614
+msgid "RSVP: mail options"
+msgstr "RSVP: opțiuni de mail"
+
+#: eme_events.php:617
+msgid "Enable the RSVP e-mail notifications?"
+msgstr "Activare notificări e-mail RSVP?"
+
+#: eme_events.php:617
+msgid "Check this option if you want to receive an email when someone books places for your events."
+msgstr "Bifaţi această opţiune dacă doriţi să primiţi un e-mail atunci când cineva carti de locuri pentru evenimentele tale."
+
+#: eme_events.php:618
+msgid "Contact person email format"
+msgstr "Persoana de contact e-mail format"
+
+#: eme_events.php:618
+msgid "The format of the email which will be sent to the contact person. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent's comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats."
+msgstr "Formatul de e-mail care va fi trimis la persoana de contact. Urmaţi instrucţiunile de formatare evenimente. <br/> Utilizaţi <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> şi <code>#_RESPPHONE</code> pentru a afişa, respectiv numele, adresa de e-mail, adresa şi telefonul a respondentului <br/> <code>#_SPACES</code> pentru a afişa numărul de spaţii rezervate de către pârât. Utilizaţi <code>#_COMMENT</code> pentru a afişa comentariul respondentului. <br/> Utilizaţi <code>#_RESERVEDSPACES</code> şi <code>#_AVAILABLESPACES</code> pentru a afişa, respectiv, numărul de locuri disponibile şi înregistrate."
+
+#: eme_events.php:619
+msgid "Respondent email format"
+msgstr "Formatul email respondentului"
+
+#: eme_events.php:619
+msgid "The format of the email which will be sent to the respondent. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code> to display the name of the respondent.<br/>Use <code>#_CONTACTNAME</code> and <code>#_PLAIN_CONTACTEMAIL</code> to display respectively the name and e-mail of the contact person.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent's comment."
+msgstr "Formatul de e-mail care va fi trimis la pârât. Urmaţi instrucţiunile de formatare evenimente. <br/> Utilizaţi <code>#_RESPNAME</code> pentru a afişa numele pârâtului. <br/> utilizare <code>#_CONTACTNAME</code> şi <code>#_PLAIN_CONTACTEMAIL</code> pentru a afişa, respectiv numele şi adresa de e-mail a persoanei de contact. <br/> utilizare <code>#_SPACES</code> pentru a afişa numărul de spaţii rezervate de către pârât. Utilizaţi <code>#_COMMENT</code> pentru a afişa comentariul respondentului."
+
+#: eme_events.php:620
+msgid "Registration pending email format"
+msgstr "Înregistrare până la format de e-mail"
+
+#: eme_events.php:620
+msgid "The format of the email which will be sent to the respondent when the event requires registration approval."
+msgstr "Formatul de e-mail care va fi trimis la pârât atunci când evenimentul necesită aprobare de înregistrare."
+
+#: eme_events.php:621
+msgid "Registration cancelled email format"
+msgstr "Înregistrare revocată e-mail format"
+
+#: eme_events.php:621
+msgid "The format of the email which will be sent to the respondent when the respondent cancels the registrations for an event."
+msgstr "Formatul de e-mail care va fi trimis la pârât atunci când pârâtul anulează înregistrările pentru un eveniment."
+
+#: eme_events.php:622
+msgid "Registration denied email format"
+msgstr "Înregistrare negat e-mail format"
+
+#: eme_events.php:622
+msgid "The format of the email which will be sent to the respondent when the admin denies the registration request if the event requires registration approval."
+msgstr "Formatul de e-mail care va fi trimis la pârât atunci când administratorul respinge cererea de înregistrare în cazul în care evenimentul necesită aprobare de înregistrare."
+
+#: eme_events.php:623
+msgid "Notification sender name"
+msgstr "Numele expeditorului notificarea"
+
+#: eme_events.php:623
+msgid "Insert the display name of the notification sender."
+msgstr "Introduceţi numele afişat al expeditorului notificarea."
+
+#: eme_events.php:624
+msgid "Notification sender address"
+msgstr "Notificarea adresa expeditorului"
+
+#: eme_events.php:624
+msgid "Insert the address of the notification sender. It must correspond with your Gmail account user"
+msgstr "Introduceţi adresa expeditorului notificării. Acesta trebuie să corespundă cu ghidul de contul Gmail"
+
+#: eme_events.php:625
+msgid "Mail sending method"
+msgstr "Mail trimite metoda"
+
+#: eme_events.php:625
+msgid "PHP mail function"
+msgstr "Funcţie PHP mail"
+
+#: eme_events.php:625
+msgid "Select the method to send email notification."
+msgstr "Selectaţi metoda pentru a trimite e-mail de notificare."
+
+#: eme_events.php:626
+msgid "The SMTP host. Usually it corresponds to 'localhost'. If you use Gmail, set this value to 'ssl://smtp.gmail.com:465'."
+msgstr "SMTP gazdă. De obicei, aceasta corespunde la \"localhost\". Dacă utilizaţi Gmail, setaţi această valoare la \"SSL://smtp.gmail.com:465\"."
+
+#: eme_events.php:627
+msgid "The port through which you e-mail notifications will be sent. Make sure the firewall doesn't block this port"
+msgstr "Portul prin care vă e-mail notificări vor fi trimise. Asiguraţi-vă că firewall-ul nu se bloca acest port"
+
+#: eme_events.php:628
+msgid "Use SMTP authentication?"
+msgstr "Utilizarea SMTP autentificare?"
+
+#: eme_events.php:628
+msgid "SMTP authentication is often needed. If you use Gmail, make sure to set this parameter to Yes"
+msgstr "Autentificarea SMTP este adesea necesar. Dacă utilizaţi Gmail, asiguraţi-vă că pentru a seta acest parametru la Da"
+
+#: eme_events.php:629
+msgid "SMTP username"
+msgstr "Nume utilizator SMTP"
+
+#: eme_events.php:629
+msgid "Insert the username to be used to access your SMTP server."
+msgstr "Introduceţi numele de utilizator pentru a fi folosite pentru a accesa serverul SMTP."
+
+#: eme_events.php:630
+msgid "SMTP password"
+msgstr "Parolã SMTP"
+
+#: eme_events.php:630
+msgid "Insert the password to be used to access your SMTP server"
+msgstr "Introduceţi parola pentru a fi folosite pentru a accesa serverul SMTP"
+
+#: eme_events.php:634
+msgid "RSVP: paypal options"
+msgstr "RSVP: paypal opţiuni"
+
+#: eme_events.php:637
+msgid "PayPal live or test"
+msgstr "PayPal live sau de testare"
+
+#: eme_events.php:637
+msgid "Paypal Sandbox (for testing)"
+msgstr "PayPal Sandbox (pentru testare)"
+
+#: eme_events.php:637
+msgid "Paypal Live"
+msgstr "PayPal Live"
+
+#: eme_events.php:637
+msgid "Choose wether you want to test paypal in a paypal sandbox or go live and really use paypal."
+msgstr "Alege Fie doriţi să îl testaţi într-un nisip PayPal PayPal sau du-te direct şi într-adevăr folosi PayPal."
+
+#: eme_events.php:639
+msgid "PayPal business info"
+msgstr "PayPal de afaceri info"
+
+#: eme_events.php:639
+msgid "Paypal business ID or email."
+msgstr "ID-ul de afaceri PayPal sau e-mail."
+
+#: eme_events.php:643
+msgid "Images size"
+msgstr "Dimensiunea imaginilor"
+
+#: eme_events.php:646
+msgid "Maximum width (px)"
+msgstr "Lățimea maximă (px)"
+
+#: eme_events.php:646
+msgid "The maximum allowed width for images uploaded, in pixels"
+msgstr "Maximă permisă lăţime pentru imagini încărcat, în pixeli"
+
+#: eme_events.php:647
+msgid "Maximum height (px)"
+msgstr "Înălțimea maximă (px)"
+
+#: eme_events.php:647
+msgid "The maximum allowed height for images uploaded, in pixels"
+msgstr "Maximă permisă înălţime pentru imagini încărcat, în pixeli"
+
+#: eme_events.php:648
+msgid "Maximum size (bytes)"
+msgstr "Dimensiune maximă (octeţi)"
+
+#: eme_events.php:648
+msgid "The maximum allowed size for images uploaded, in bytes"
+msgstr "Maxim permis dimensiune pentru imagini încărcat, în octeţi"
+
+#: eme_events.php:652
+msgid "Extra html headers"
+msgstr "Anteturile html suplimentare"
+
+#: eme_events.php:655
+msgid "Extra event html headers"
+msgstr "Anteturile html suplimentare eveniment"
+
+#: eme_events.php:655
+msgid "Here you can define extra html headers when viewing a single event, typically used to add meta tags for facebook or SEO. All event placeholders can be used, but will be stripped from resulting html."
+msgstr "Aici puteţi defini anteturi suplimentare html atunci când vizualizaţi un eveniment unic, de obicei folosite pentru a adăuga meta tag-uri pentru Facebook sau SEO. Toate substituenţi de evenimente pot fi folosite, dar va fi deposedat de rezultat HTML."
+
+#: eme_events.php:656
+msgid "Extra location html headers"
+msgstr "Anteturile html suplimentare de locaţie"
+
+#: eme_events.php:656
+msgid "Here you can define extra html headers when viewing a single location, typically used to add meta tags for facebook or SEO. All location placeholders can be used, but will be stripped from resulting html."
+msgstr "Aici puteţi defini anteturi suplimentare HTML când vizualizaţi o locaţie unică, de obicei folosite pentru a adăuga meta tag-uri pentru Facebook sau SEO. Toate substituenţi de localizare pot fi folosite, dar va fi deposedat de rezultat HTML."
+
+#: eme_events.php:660
+msgid "Save Changes"
+msgstr "Salvaţi modificările"
+
+#: eme_events.php:991
+#: eme_locations.php:755
+msgid "Previous week"
+msgstr "Săptămâna anterioară"
+
+#: eme_events.php:992
+#: eme_locations.php:756
+msgid "Next week"
+msgstr "săptămâna viitoare"
+
+#: eme_events.php:1009
+#: eme_locations.php:773
+msgid "Previous month"
+msgstr "Luna anterioară"
+
+#: eme_events.php:1010
+#: eme_locations.php:774
+msgid "Next month"
+msgstr "Luna viitoare"
+
+#: eme_events.php:1018
+#: eme_locations.php:782
+msgid "Previous year"
+msgstr "Anul precedent"
+
+#: eme_events.php:1019
+#: eme_locations.php:783
+msgid "Next year"
+msgstr "Anul viitor"
+
+#: eme_events.php:1028
+#: eme_events.php:1037
+#: eme_locations.php:792
+#: eme_locations.php:801
+msgid "Previous day"
+msgstr "Ziua precedentă"
+
+#: eme_events.php:1029
+#: eme_events.php:1038
+#: eme_locations.php:793
+#: eme_locations.php:802
+msgid "Next day"
+msgstr "A doua zi"
+
+#: eme_events.php:1065
+msgid "Previous page"
+msgstr "Pagina anterioară"
+
+#: eme_events.php:1066
+msgid "Next page"
+msgstr "Pagina următoare"
+
+#: eme_events.php:1103
+#: eme_events.php:1113
+msgid "Page "
+msgstr "Pagină "
+
+#: eme_events.php:1937
+msgid "New Event ..."
+msgstr "Nou eveniment..."
+
+#: eme_events.php:1942
+msgid "Past events"
+msgstr "Trecut evenimente"
+
+#: eme_events.php:1943
+#: eme_rsvp.php:930
+#: eme_rsvp.php:1086
+msgid "All events"
+msgstr "Toate evenimentele"
+
+#: eme_events.php:1953
+msgid "Total"
+msgstr "Total"
+
+#: eme_events.php:1953
+#: events-manager.php:144
+#: events-manager.php:779
+#: events-manager.php:780
+#: events-manager.php:906
+msgid "Events"
+msgstr "Evenimente"
+
+#: eme_events.php:1960
+#: eme_rsvp.php:924
+#: eme_rsvp.php:1080
+msgid "Bulk Actions"
+msgstr "Acţiuni în masă"
+
+#: eme_events.php:1961
+msgid "Delete selected events"
+msgstr "Ştergere selectate evenimente"
+
+#: eme_events.php:1962
+msgid "Delete selected recurrent events"
+msgstr "Ştergeţi selectate evenimente curente"
+
+#: eme_events.php:1976
+#: eme_events.php:2348
+msgid "Event Status"
+msgstr "Statutul de eveniment"
+
+#: eme_events.php:1982
+msgid "All categories"
+msgstr "Toate categoriile"
+
+#: eme_events.php:1994
+#: eme_rsvp.php:945
+#: eme_rsvp.php:1101
+msgid "Filter"
+msgstr "Filtru"
+
+#: eme_events.php:2001
+#: events-manager.php:150
+#: events-manager.php:773
+msgid "No events"
+msgstr "Nu evenimente"
+
+#: eme_events.php:2011
+#: eme_events.php:2351
+msgid "Status"
+msgstr "Statutul"
+
+#: eme_events.php:2013
+#: eme_events.php:2732
+#: eme_events.php:2742
+msgid "Location"
+msgstr "Locaţie"
+
+#: eme_events.php:2014
+#: eme_rsvp.php:954
+#: eme_rsvp.php:1110
+msgid "Date and time"
+msgstr "Data şi ora"
+
+#: eme_events.php:2066
+#: eme_events.php:2528
+#: eme_locations.php:220
+#: eme_locations.php:395
+#: eme_widgets.php:113
+#: eme_widgets.php:224
+msgid "Category"
+msgstr "Categoria"
+
+#: eme_events.php:2075
+#: eme_events.php:2077
+msgid "RSVP Info: "
+msgstr "RSVP Info: "
+
+#: eme_events.php:2075
+#: eme_events.php:2077
+msgid "Free: "
+msgstr "Drum liber: "
+
+#: eme_events.php:2075
+#: eme_rsvp.php:990
+#: eme_rsvp.php:1146
+msgid "Pending: "
+msgstr "În aşteptare: "
+
+#: eme_events.php:2075
+#: eme_events.php:2077
+#: eme_rsvp.php:990
+#: eme_rsvp.php:1146
+msgid "Max: "
+msgstr "Max: "
+
+#: eme_events.php:2079
+#: eme_rsvp.php:668
+msgid "Printable view"
+msgstr "Vizualizare imprimabilă"
+
+#: eme_events.php:2080
+#: eme_rsvp.php:672
+msgid "CSV export"
+msgstr "CSV export"
+
+#: eme_events.php:2093
+msgid "Duplicate this event"
+msgstr "Duplicat acest eveniment"
+
+#: eme_events.php:2164
+msgid "Australian Dollar"
+msgstr "Dolar australian"
+
+#: eme_events.php:2165
+msgid "Canadian Dollar"
+msgstr "Dolar canadian"
+
+#: eme_events.php:2166
+msgid "Czech Koruna"
+msgstr "Coroana cehă"
+
+#: eme_events.php:2167
+msgid "Danish Krone"
+msgstr "Coroană daneză"
+
+#: eme_events.php:2168
+msgid "Euro"
+msgstr "Euro"
+
+#: eme_events.php:2169
+msgid "Hong Kong Dollar"
+msgstr "Dolar Hong Kong"
+
+#: eme_events.php:2170
+msgid "Hungarian Forint"
+msgstr "Forint maghiar"
+
+#: eme_events.php:2171
+msgid "Israeli New Sheqel"
+msgstr "Noul Sheqel"
+
+#: eme_events.php:2172
+msgid "Japanese Yen"
+msgstr "Iene japoneze"
+
+#: eme_events.php:2173
+msgid "Mexican Peso"
+msgstr "Mexican Peso"
+
+#: eme_events.php:2174
+msgid "Norwegian Krone"
+msgstr "Coroană Norvegiană"
+
+#: eme_events.php:2175
+msgid "New Zealand Dollar"
+msgstr "Dolar nou zeelandez"
+
+#: eme_events.php:2176
+msgid "Philippine Peso"
+msgstr "Peso filipinez"
+
+#: eme_events.php:2177
+msgid "Polish Zloty"
+msgstr "Zlot polonez"
+
+#: eme_events.php:2178
+msgid "Pound Sterling"
+msgstr "Lira sterlina"
+
+#: eme_events.php:2179
+msgid "Singapore Dollar"
+msgstr "Dolar Singapore"
+
+#: eme_events.php:2180
+msgid "Swedish Krona"
+msgstr "Coroană suedeză"
+
+#: eme_events.php:2181
+msgid "Swiss Franc"
+msgstr "Franc elveţian"
+
+#: eme_events.php:2182
+msgid "Thai Baht"
+msgstr "Baht thailandez"
+
+#: eme_events.php:2183
+msgid "U.S. Dollar"
+msgstr "Dolari SUA"
+
+#: eme_events.php:2289
+#: eme_widgets.php:97
+msgid "Daily"
+msgstr "Zilnic"
+
+#: eme_events.php:2289
+msgid "Weekly"
+msgstr "Săptămânal"
+
+#: eme_events.php:2289
+#: eme_widgets.php:98
+msgid "Monthly"
+msgstr "Lunar"
+
+#: eme_events.php:2290
+msgid "Mon"
+msgstr "Lun"
+
+#: eme_events.php:2290
+msgid "Tue"
+msgstr "Marti"
+
+#: eme_events.php:2290
+msgid "Wed"
+msgstr "Miercuri"
+
+#: eme_events.php:2290
+msgid "Thu"
+msgstr "Joi"
+
+#: eme_events.php:2290
+msgid "Fri"
+msgstr "Vineri"
+
+#: eme_events.php:2290
+msgid "Sat"
+msgstr "Sat"
+
+#: eme_events.php:2290
+msgid "Sun"
+msgstr "Soare"
+
+#: eme_events.php:2291
+msgid "first"
+msgstr "prima"
+
+#: eme_events.php:2291
+msgid "second"
+msgstr "al doilea"
+
+#: eme_events.php:2291
+msgid "third"
+msgstr "treia"
+
+#: eme_events.php:2291
+msgid "fourth"
+msgstr "al patrulea"
+
+#: eme_events.php:2291
+msgid "fifth"
+msgstr "al cincilea"
+
+#: eme_events.php:2291
+msgid "last"
+msgstr "ultima"
+
+#: eme_events.php:2291
+msgid "Start day"
+msgstr "Începeţi ziua"
+
+#: eme_events.php:2324
+msgid "WARNING: This is a recurrence."
+msgstr "AVERTISMENT: Acest lucru este repetarea."
+
+#: eme_events.php:2327
+msgid "Modifying these data all the events linked to this recurrence will be rescheduled"
+msgstr "Modificarea acestor date toate evenimentele legate de această recurenţă va fi reprogramat"
+
+#: eme_events.php:2330
+msgid "WARNING: This is a recurring event."
+msgstr "AVERTISMENT: Aceasta este un eveniment recurent."
+
+#: eme_events.php:2331
+msgid "If you change these data and save, this will become an independent event."
+msgstr "Dacă vă schimbaţi aceste date şi de a salva, aceasta va deveni un eveniment independent."
+
+#: eme_events.php:2365
+msgid "Private events are only visible for logged in users, draft events are not visible from the front end."
+msgstr "Evenimente private sunt vizibile numai pentru utilizatorii autentificaţi, proiectele de evenimente nu sunt vizibile din front-end."
+
+#: eme_events.php:2377
+msgid "Recurrence"
+msgstr "Recurenţă"
+
+#: eme_events.php:2396
+#: eme_events.php:2418
+msgid "Every"
+msgstr "Fiecare"
+
+#: eme_events.php:2400
+msgid "day"
+msgstr "zi"
+
+#: eme_events.php:2402
+msgid "days"
+msgstr "zile"
+
+#: eme_events.php:2404
+msgid "week"
+msgstr "săptămână"
+
+#: eme_events.php:2406
+msgid "weeks"
+msgstr "săptămâni"
+
+#: eme_events.php:2408
+msgid "month"
+msgstr "lună"
+
+#: eme_events.php:2410
+msgid "months"
+msgstr "luni"
+
+#: eme_events.php:2415
+msgid "If you leave this empty, the recurrence start date will be used as a reference."
+msgstr "Dacă lăsaţi acest gol, data de început a repetarea vor fi utilizate ca referinţă."
+
+#: eme_events.php:2425
+msgid "Day of month"
+msgstr "Ziua lunii"
+
+#: eme_events.php:2427
+msgid "If you use \"Start day\" as day of the month, the event start date will be used as a reference."
+msgstr "Dacă utilizaţi \"zi Start\" ca zi a lunii, data de început a evenimentului va fi folosit ca o referinţă."
+
+#: eme_events.php:2431
+msgid "Check if your event happens more than once according to a regular pattern"
+msgstr "Verificaţi dacă evenimentul se intampla mai mult de o dată în conformitate cu un model regulat"
+
+#: eme_events.php:2434
+msgid "The event start and end date only define the duration of an event in case of a recurrence."
+msgstr "Data de început a evenimentului şi sfârşitul defini numai durata a unui eveniment, în caz de recidivă."
+
+#: eme_events.php:2446
+#: eme_widgets.php:133
+#: eme_widgets.php:240
+msgid "Author"
+msgstr "Autor"
+
+#: eme_events.php:2449
+msgid "Author of this event: "
+msgstr "Autorul acestui eveniment: "
+
+#: eme_events.php:2462
+msgid "Contact Person"
+msgstr "Persoană de contact"
+
+#: eme_events.php:2465
+msgid "Contact"
+msgstr "Contact"
+
+#: eme_events.php:2476
+msgid "RSVP"
+msgstr "RSVP"
+
+#: eme_events.php:2480
+msgid "Enable registration for this event"
+msgstr "Permite înregistrarea pentru acest eveniment"
+
+#: eme_events.php:2485
+msgid "Require approval for registration"
+msgstr "Necesită aprobare de înregistrare"
+
+#: eme_events.php:2488
+msgid "Require WP membership for registration"
+msgstr "Necesită WP de membru de înregistrare"
+
+#: eme_events.php:2490
+#: eme_rsvp.php:638
+msgid "Spaces"
+msgstr "Spaţii"
+
+#: eme_events.php:2493
+msgid "Allow RSVP until "
+msgstr "Permite RSVP până la "
+
+#: eme_events.php:2495
+msgid " days before the event starts."
+msgstr " zile înainte de începerea evenimentului."
+
+#: eme_events.php:2497
+#: eme_people.php:183
+msgid "Price: "
+msgstr "Pret: "
+
+#: eme_events.php:2512
+msgid "Payment methods"
+msgstr "Metode de plată"
+
+#: eme_events.php:2513
+msgid "Paypal "
+msgstr "PayPal "
+
+#: eme_events.php:2561
+msgid "The event name. Example: Birthday party"
+msgstr "Numele evenimentului. Exemplu: Birthday party"
+
+#: eme_events.php:2565
+#: eme_locations.php:176
+msgid "Permalink: "
+msgstr "Permalink: "
+
+#: eme_events.php:2578
+msgid "Event date"
+msgstr "Data eveniment"
+
+#: eme_events.php:2587
+msgid "The event date."
+msgstr "Data evenimentului."
+
+#: eme_events.php:2593
+msgid "Recurrence dates"
+msgstr "Datele de recurenţă"
+
+#: eme_events.php:2602
+msgid "The recurrence beginning and end date."
+msgstr "Recurenţă începutul și sfârșitul data."
+
+#: eme_events.php:2608
+msgid "Event time"
+msgstr "Eveniment timp"
+
+#: eme_events.php:2615
+msgid "The time of the event beginning and end"
+msgstr "Timpul de eveniment începutul și sfârșitul"
+
+#: eme_events.php:2620
+msgid "Coordinates"
+msgstr "Coordonate"
+
+#: eme_events.php:2633
+msgid "Single Event Title Format"
+msgstr "Singur eveniment titlul Format"
+
+#: eme_events.php:2639
+msgid "The format of the single event title."
+msgstr "Formatul titlul singur eveniment."
+
+#: eme_events.php:2641
+#: eme_events.php:2658
+#: eme_events.php:2675
+#: eme_events.php:2692
+#: eme_events.php:2709
+#: eme_events.php:2726
+msgid "Only fill this in if you want to override the default settings."
+msgstr "Doar completaţi acest lucru dacă doriţi să suprascrie setările implicite."
+
+#: eme_events.php:2650
+msgid "Single Event Format"
+msgstr "Singur eveniment Format"
+
+#: eme_events.php:2656
+msgid "The format of the single event page."
+msgstr "Formatul paginii singur eveniment."
+
+#: eme_events.php:2667
+msgid "Contact Person Email Format"
+msgstr "Format de E-mail a persoanei de contact"
+
+#: eme_events.php:2673
+msgid "The format of the email which will be sent to the contact person."
+msgstr "Formatul email-ului care va fi trimis la persoana de contact."
+
+#: eme_events.php:2684
+msgid "Booking recorded html Format"
+msgstr "Rezervare înregistrate html Format"
+
+#: eme_events.php:2701
+msgid "Respondent Email Format"
+msgstr "Respondentului E-mail Format"
+
+#: eme_events.php:2707
+msgid "The format of the email which will be sent to the respondent."
+msgstr "Formatul email-ului care va fi trimis la pârâtului."
+
+#: eme_events.php:2718
+msgid "Registration Pending Email Format"
+msgstr "Înregistrare până la Format de E-mail"
+
+#: eme_events.php:2724
+msgid "The format of the email which will be sent to the respondent if the registration is pending."
+msgstr "Formatul de e-mail care va fi trimis pentru a respondentului, dacă înregistrarea este în curs."
+
+#: eme_events.php:2777
+#: eme_locations.php:247
+#: eme_locations.php:416
+msgid "Map not found"
+msgstr "Hartă negăsit"
+
+#: eme_events.php:2787
+msgid "The name of the location where the event takes place. You can use the name of a venue, a square, etc"
+msgstr "Numele de locaţia unde are loc evenimentul. Puteţi utiliza numele de o locaţie, un pătrat, etc"
+
+#: eme_events.php:2789
+msgid "If you leave this empty, the map will NOT be shown for this event"
+msgstr "Daca lasi aceasta necompletat, harta nu vor fi afişate pentru acest eveniment"
+
+#: eme_events.php:2795
+msgid "Select a location for your event"
+msgstr "Selectaţi o locaţie pentru evenimentul dumneavoastră"
+
+#: eme_events.php:2801
+msgid "Address:"
+msgstr "Adresa:"
+
+#: eme_events.php:2806
+msgid "The address of the location where the event takes place. Example: 21, Dominick Street"
+msgstr "Adresa de locaţia unde are loc evenimentul. De exemplu: 21, Dominick Street"
+
+#: eme_events.php:2810
+msgid "Town:"
+msgstr "Oraș:"
+
+#: eme_events.php:2815
+msgid "The town where the location is located. If you're using the Google Map integration and want to avoid geotagging ambiguities include the country in the town field. Example: Verona, Italy."
+msgstr "Oraşul în care se află locaţia. Dacă utilizaţi integrarea Harta Google şi doriţi, pentru a evita ambiguităţile geotagging includă această ţară în domeniul oraş. Exemplu: Verona, Italia."
+
+#: eme_events.php:2824
+msgid "Details"
+msgstr "Detalii"
+
+#: eme_events.php:2831
+msgid "Details about the event"
+msgstr "Detalii despre eveniment"
+
+#: eme_events.php:2836
+msgid "Event image"
+msgstr "Imagini eveniment"
+
+#: eme_events.php:2841
+#: eme_locations.php:212
+msgid "Current image:"
+msgstr "Imaginea curentă:"
+
+#: eme_events.php:2848
+#: eme_locations.php:210
+#: eme_locations.php:390
+msgid "Select an image to upload"
+msgstr "Selectaţi o imagine pentru a încărca"
+
+#: eme_events.php:2850
+msgid "Remove existing image"
+msgstr "Elimina imaginea existentă"
+
+#: eme_events.php:2865
+#: eme_locations.php:261
+#: eme_locations.php:430
+msgid "External link"
+msgstr "Link-ul extern"
+
+#: eme_events.php:2870
+#: eme_locations.php:432
+msgid "If this is filled in, the single event URL will point to this url instead of the standard event page."
+msgstr "În cazul în care acest lucru este completat, URL-ul eveniment unic va indica această adresă URL în loc de pagina evenimentului standard."
+
+#: eme_events.php:2875
+msgid "Submit Event"
+msgstr "Prezintă eveniment"
+
+#: eme_events.php:2896
+msgid "Missing fields: "
+msgstr "Lipsesc câmpuri: "
+
+#: eme_events.php:2898
+msgid "Since the event is repeated, you must specify an event date for the recurrence."
+msgstr "Deoarece evenimentul se repetă, trebuie să specificaţi o dată pentru eveniment recurenţă."
+
+#: eme_events.php:2904
+#: eme_locations.php:613
+msgid "The image file is too big! Maximum size:"
+msgstr "Fişierul de imagine este prea mare! Dimensiunea maximă:"
+
+#: eme_events.php:2909
+#: eme_locations.php:618
+msgid "The image is too big! Maximum size allowed:"
+msgstr "Imaginea este prea mare! Dimensiunea maximă permisă:"
+
+#: eme_events.php:2911
+#: eme_locations.php:620
+msgid "The image is in a wrong format!"
+msgstr "Imaginea este în format greşit!"
+
+#: eme_events.php:3178
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:26
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:40
+msgid "Date"
+msgstr "Data"
+
+#: eme_events.php:3193
+msgid "Some required fields are missing:"
+msgstr "Unele câmpuri lipsesc necesare:"
+
+#: eme_events.php:3196
+msgid "Since the event is repeated, you must specify an end date"
+msgstr "Deoarece evenimentul se repetă, trebuie să specificaţi o dată de sfârşit"
+
+#: eme_events.php:3649
+msgid "Add an event"
+msgstr "Adăugaţi un eveniment"
+
+#: eme_events.php:3657
+msgid "This page corresponds to <strong>Events Made Easy</strong> events page. Its content will be overriden by <strong>Events Made Easy</strong>. If you want to display your content, you can can assign another page to <strong>Events Made Easy</strong> in the the <a href='%s'>Settings</a>. "
+msgstr "Această pagină a corespunde Evenimente <strong> Made Easy </strong> pagina de evenimente. Conţinutul său va fi overriden de Events <strong> Made Easy </strong>. Dacă doriţi să afişaţi conţinutul dvs., aveţi posibilitatea să se poate atribui o altă pagină de Evenimente <strong> Made Easy </strong> în <a href='%s'> Setări </ a>."
+
+#: eme_events.php:3732
+#: eme_locations.php:711
+msgid "The image could not be loaded"
+msgstr "Imposibil de încărcat imaginea"
+
+#: eme_functions.php:231
+msgid "Public"
+msgstr "Publice"
+
+#: eme_functions.php:232
+msgid "Private"
+msgstr "Privat"
+
+#: eme_functions.php:233
+msgid "Draft"
+msgstr "Proiectul"
+
+#: eme_locations.php:14
+#: eme_locations.php:84
+msgid "You have no right to edit this location!"
+msgstr "Aveţi nici un drept pentru a edita această locaţie!"
+
+#: eme_locations.php:72
+msgid "The location has been updated."
+msgstr "Locaţia a fost actualizat."
+
+#: eme_locations.php:75
+msgid "The location update failed."
+msgstr "Actualizarea amplasare nu a reuşit."
+
+#: eme_locations.php:122
+msgid "The location has been added."
+msgstr "Locaţia a fost adăugat."
+
+#: eme_locations.php:126
+msgid "There has been a problem adding the location."
+msgstr "Acolo a fost o problemă adăugarea locaţia."
+
+#: eme_locations.php:136
+msgid "You have no right to add a location!"
+msgstr "Aveţi nici un drept pentru a adăuga o locaţie!"
+
+#: eme_locations.php:171
+#: eme_locations.php:360
+msgid "Location name"
+msgstr "Numele de locaţie"
+
+#: eme_locations.php:174
+#: eme_locations.php:363
+msgid "The name of the location"
+msgstr "Numele locaţiei"
+
+#: eme_locations.php:188
+#: eme_locations.php:367
+msgid "Location address"
+msgstr "Adresa de locaţie"
+
+#: eme_locations.php:190
+#: eme_locations.php:369
+msgid "The address of the location"
+msgstr "Adresa locaţiei"
+
+#: eme_locations.php:194
+#: eme_locations.php:373
+msgid "Location town"
+msgstr "Poziţia oraşului"
+
+#: eme_locations.php:196
+#: eme_locations.php:375
+msgid "The town of the location"
+msgstr "Orașul locaţiei"
+
+#: eme_locations.php:208
+#: eme_locations.php:388
+msgid "Location image"
+msgstr "Poziţia imaginii"
+
+#: eme_locations.php:243
+msgid "Because qtranslate is active, the title of the location will not update automatically in the balloon, so don't panic there."
+msgstr "Deoarece qtranslate este activ, titlul de locaţie nu se va actualiza automat în balon, astfel încât să nu intraţi în panică acolo."
+
+#: eme_locations.php:252
+#: eme_locations.php:421
+msgid "Location description"
+msgstr "Poziţia Descriere"
+
+#: eme_locations.php:257
+#: eme_locations.php:426
+msgid "A description of the Location. You may include any kind of info here."
+msgstr "O descriere a locaţiei. Puteţi include orice fel de informaţii aici."
+
+#: eme_locations.php:263
+msgid "If this is filled in, the single location URL will point to this url instead of the standard location page."
+msgstr "În cazul în care acest lucru este completat, URL-ul singur loc se vor indica această adresă URL în loc de pagina standard de locaţie."
+
+#: eme_locations.php:265
+msgid "Update location"
+msgstr "Actualizaţi locaţia"
+
+#: eme_locations.php:294
+#: events-manager.php:913
+msgid "Locations"
+msgstr "Locatii"
+
+#: eme_locations.php:313
+#: eme_locations.php:321
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:82
+msgid "Address"
+msgstr "Adresa"
+
+#: eme_locations.php:314
+#: eme_locations.php:322
+msgid "Town"
+msgstr "Oraș"
+
+#: eme_locations.php:346
+msgid "No venues have been inserted yet!"
+msgstr "Locuri nu au fost introdus încă!"
+
+#: eme_locations.php:605
+msgid " is missing!"
+msgstr " lipseşte!"
+
+#: eme_locations.php:627
+msgid "Ach, some problems here:"
+msgstr "ACH, unele probleme aici:"
+
+#: eme_locations.php:1128
+msgid "Your Street Address"
+msgstr "Adresa Street"
+
+#: eme_locations.php:1132
+msgid "Get Directions"
+msgstr "Obţineţi direcţii"
+
+#: eme_people.php:6
+msgid "You have no right to update people!"
+msgstr "Aveţi nici un drept pentru a actualiza oameni!"
+
+#: eme_people.php:33
+msgid "Couldn't delete the people. Please try again."
+msgstr "Nu a putut şterge oameni. Vă rugăm să încercaţi din nou."
+
+#: eme_people.php:141
+#: eme_people.php:197
+#: eme_rsvp.php:652
+msgid "(pending)"
+msgstr "(curs)"
+
+#: eme_people.php:184
+msgid "Bookings data"
+msgstr "Rezervările date"
+
+#: eme_people.php:188
+#: eme_rsvp.php:587
+msgid "E-mail"
+msgstr "Poştă electronică"
+
+#: eme_people.php:189
+#: eme_people.php:393
+#: eme_people.php:396
+#: eme_rsvp.php:95
+#: eme_rsvp.php:587
+#: eme_rsvp.php:893
+msgid "Phone number"
+msgstr "Număr de telefon"
+
+#: eme_people.php:190
+#: eme_rsvp.php:96
+#: eme_rsvp.php:587
+#: eme_rsvp.php:909
+#: eme_rsvp.php:956
+#: eme_rsvp.php:1112
+msgid "Seats"
+msgstr "Locuri"
+
+#: eme_people.php:191
+#: eme_rsvp.php:910
+#: eme_rsvp.php:958
+#: eme_rsvp.php:1114
+msgid "Paid"
+msgstr "Plătit"
+
+#: eme_people.php:192
+#: eme_rsvp.php:99
+msgid "Comment"
+msgstr "Comentariu"
+
+#: eme_people.php:211
+msgid "Booked"
+msgstr "Rezervat"
+
+#: eme_people.php:215
+msgid "(%s pending)"
+msgstr "(%s până la)"
+
+#: eme_people.php:221
+msgid "Available"
+msgstr "Disponibile"
+
+#: eme_people.php:237
+msgid "No people have responded to your events yet!"
+msgstr "Oamenii nu au răspuns la evenimente dumneavoastră încă!"
+
+#: eme_people.php:239
+msgid "This table shows the data about the people who responded to your events"
+msgstr "Acest tabel indică datele despre oameni care au răspuns dumneavoastră evenimente"
+
+#: eme_people.php:277
+msgid "Also delete associated bookings"
+msgstr "De asemenea, şterge rezervările asociate"
+
+#: eme_people.php:398
+msgid "The phone number used by Events Made Easy when the user is indicated as the contact person for an event."
+msgstr "Numărul de telefon utilizat de către Events Made Easy atunci când utilizatorul este indicat ca persoana de contact pentru un eveniment."
+
+#: eme_recurrence.php:280
+msgid "the first %s of the month"
+msgstr "%s prima lunii"
+
+#: eme_recurrence.php:280
+msgid "the second %s of the month"
+msgstr "al doilea %s a lunii"
+
+#: eme_recurrence.php:280
+msgid "the third %s of the month"
+msgstr "%s treia a lunii"
+
+#: eme_recurrence.php:280
+msgid "the fourth %s of the month"
+msgstr "%s patra a lunii"
+
+#: eme_recurrence.php:280
+msgid "the fifth %s of the month"
+msgstr "al cincilea %s a lunii"
+
+#: eme_recurrence.php:280
+msgid "the last %s of the month"
+msgstr "%s ultima a lunii"
+
+#: eme_recurrence.php:281
+msgid "From %1$s to %2$s"
+msgstr "La %1$ s în %2$ s"
+
+#: eme_recurrence.php:283
+msgid "everyday"
+msgstr "zi cu zi"
+
+#: eme_recurrence.php:285
+msgid "every %s days"
+msgstr "fiecare zile %s"
+
+#: eme_recurrence.php:302
+#: eme_recurrence.php:320
+msgid " and "
+msgstr " şi "
+
+#: eme_recurrence.php:304
+msgid "every week"
+msgstr "în fiecare săptămână"
+
+#: eme_recurrence.php:306
+msgid "every %s weeks"
+msgstr "fiecare săptămâni de %s"
+
+#: eme_recurrence.php:322
+msgid "every month"
+msgstr "în fiecare lună"
+
+#: eme_recurrence.php:324
+msgid "every %s months"
+msgstr "fiecare luni %s"
+
+#: eme_rsvp.php:52
+#: eme_rsvp.php:157
+msgid "Bookings no longer allowed on this date."
+msgstr "Rezervările nu mai sunt permise pentru această dată."
+
+#: eme_rsvp.php:79
+msgid "Bookings no longer possible: no seats available anymore"
+msgstr "Rezervările nu mai este posibil: nici locuri disponibile anymore"
+
+#: eme_rsvp.php:94
+#: eme_rsvp.php:166
+#: eme_rsvp.php:892
+msgid "E-Mail"
+msgstr "Poştă electronică"
+
+#: eme_rsvp.php:102
+msgid "Please fill in the code displayed here"
+msgstr "Vă rugăm să completaţi codul afişată aici"
+
+#: eme_rsvp.php:111
+msgid "(* marks a required field)"
+msgstr "(* marchează un câmp obligatoriu)"
+
+#: eme_rsvp.php:253
+msgid "Booking deleted"
+msgstr "Rezervare elimină"
+
+#: eme_rsvp.php:255
+#: eme_rsvp.php:258
+msgid "There are no bookings associated to this name and e-mail"
+msgstr "Nu există nici o rezervările asociate cu acest nume şi poştă electronică"
+
+#: eme_rsvp.php:312
+msgid "You entered an incorrect code"
+msgstr "Aţi introdus un cod incorect"
+
+#: eme_rsvp.php:316
+msgid "You are a bad boy"
+msgstr "Sunteţi un băiat rău"
+
+#: eme_rsvp.php:319
+#: eme_rsvp.php:328
+msgid "Please fill in all the required fields"
+msgstr "Vă rugăm să completaţi toate câmpurile obligatorii"
+
+#: eme_rsvp.php:321
+msgid "Please enter a valid mail address"
+msgstr "Introduceţi o adresă de e-mail validă"
+
+#: eme_rsvp.php:323
+#: eme_rsvp.php:325
+msgid "Please fill in a correct number of spaces to reserve"
+msgstr "Vă rugăm să completaţi un număr corect de spaţii rezerva"
+
+#: eme_rsvp.php:331
+msgid "WP membership is required for registration"
+msgstr "WP de membru este necesară pentru înregistrare"
+
+#: eme_rsvp.php:364
+msgid "No booker ID found, something is wrong here"
+msgstr "Nici un ID booker găsit, ceva este greşit aici"
+
+#: eme_rsvp.php:368
+msgid "Booking cannot be made: not enough seats available!"
+msgstr "Rezervarea se face: nu suficient de locuri disponibile!"
+
+#: eme_rsvp.php:518
+#: eme_rsvp.php:532
+msgid "Booking approved"
+msgstr "Rezervare aprobate"
+
+#: eme_rsvp.php:587
+#: eme_rsvp.php:955
+#: eme_rsvp.php:1111
+msgid "Booker"
+msgstr "Booker"
+
+#: eme_rsvp.php:587
+#: eme_rsvp.php:957
+#: eme_rsvp.php:1113
+msgid "Unique nbr"
+msgstr "Nbr unic"
+
+#: eme_rsvp.php:600
+#: eme_rsvp.php:643
+msgid "Booked spaces"
+msgstr "Spațiile rezervate"
+
+#: eme_rsvp.php:601
+#: eme_rsvp.php:644
+msgid "Available spaces"
+msgstr "Spaţiile disponibile"
+
+#: eme_rsvp.php:622
+msgid "approved"
+msgstr "aprobat"
+
+#: eme_rsvp.php:622
+msgid "pending"
+msgstr "aşteptare"
+
+#: eme_rsvp.php:632
+msgid "respondents so far"
+msgstr "respondenţi până în prezent"
+
+#: eme_rsvp.php:637
+msgid "Respondent"
+msgstr "Respondentul"
+
+#: eme_rsvp.php:649
+msgid "Comment:"
+msgstr "Comentariu:"
+
+#: eme_rsvp.php:678
+#: eme_rsvp.php:729
+msgid "No responses yet!"
+msgstr "Nu răspunsuri încă!"
+
+#: eme_rsvp.php:803
+#: eme_rsvp.php:817
+msgid "Reservation for '%s' confirmed"
+msgstr "Rezervare pentru '% s' a confirmat"
+
+#: eme_rsvp.php:805
+msgid "Reservation for '%s' denied"
+msgstr "Rezervare pentru '% s' a negat"
+
+#: eme_rsvp.php:807
+msgid "Reservation for '%s' cancelled"
+msgstr "Anularea rezervării pentru '% s'"
+
+#: eme_rsvp.php:808
+msgid "A reservation has been cancelled for '%s'"
+msgstr "O rezervare a fost anulat pentru '% s'"
+
+#: eme_rsvp.php:813
+msgid "Approval required for new booking for '%s'"
+msgstr "Aprobarea necesare pentru noi rezervari pentru '% s'"
+
+#: eme_rsvp.php:814
+msgid "Reservation for '%s' is pending"
+msgstr "Rezervare pentru '% s' este pendinte"
+
+#: eme_rsvp.php:816
+msgid "New booking for '%s'"
+msgstr "Rezervare nouă pentru '% s'"
+
+#: eme_rsvp.php:884
+msgid "Change reserved spaces or cancel registrations"
+msgstr "Spațiile rezervate modifica sau anula înregistrări"
+
+#: eme_rsvp.php:894
+msgid "Event"
+msgstr "Eveniment"
+
+#: eme_rsvp.php:913
+msgid "Register booking"
+msgstr "Registrul rezervare"
+
+#: eme_rsvp.php:925
+msgid "Update registration"
+msgstr "Actualizare înregistrare"
+
+#: eme_rsvp.php:926
+#: eme_rsvp.php:1082
+msgid "Deny registration"
+msgstr "Refuza înregistrarea"
+
+#: eme_rsvp.php:972
+#: eme_rsvp.php:973
+#: eme_rsvp.php:1128
+#: eme_rsvp.php:1129
+msgid "D d M Y"
+msgstr "D d M Y"
+
+#: eme_rsvp.php:990
+#: eme_rsvp.php:1146
+msgid "Approved: "
+msgstr "Aprobat: "
+
+#: eme_rsvp.php:1072
+#: events-manager.php:922
+msgid "Pending Approvals"
+msgstr "Aprobările de aşteptare"
+
+#: eme_rsvp.php:1081
+msgid "Approve registration"
+msgstr "Aprobarea înregistrării"
+
+#: eme_rsvp.php:1194
+msgid "Payment handling"
+msgstr "Manipularea de plată"
+
+#: eme_rsvp.php:1195
+msgid "You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below."
+msgstr "Puteţi plăti pentru acest eveniment prin intermediul PayPal. Dacă doriţi să faceţi acest lucru, faceţi clic pe \"plătiţi prin Paypal\" butonul de mai jos."
+
+#: eme_rsvp.php:1211
+msgid "Pay via Paypal"
+msgstr "Plata prin Paypal"
+
+#: eme_rsvp.php:1223
+msgid "Booking for '%s'"
+msgstr "Rezervare pentru '% s'"
+
+#: eme_widgets.php:5
+#: eme_widgets.php:6
+msgid "Events List"
+msgstr "Lista de evenimente"
+
+#: eme_widgets.php:82
+#: eme_widgets.php:213
+msgid "Title:"
+msgstr "Titlu:"
+
+#: eme_widgets.php:86
+msgid "Number of events"
+msgstr "Numărul de evenimente"
+
+#: eme_widgets.php:90
+msgid "Scope of the events"
+msgstr "Domeniul de aplicare a evenimentelor"
+
+#: eme_widgets.php:90
+msgid "(See the doc for [events_list] for all possible values)"
+msgstr "(A se vedea doc pentru [ events_list] pentru toate valorile posibile)"
+
+#: eme_widgets.php:94
+msgid "Show events per period"
+msgstr "Evenimente arată pe perioada"
+
+#: eme_widgets.php:96
+#: eme_widgets.php:115
+#: eme_widgets.php:135
+#: eme_widgets.php:226
+#: eme_widgets.php:242
+msgid "Select..."
+msgstr "Selectaţi..."
+
+#: eme_widgets.php:99
+msgid "Yearly"
+msgstr "Anual"
+
+#: eme_widgets.php:103
+msgid "Order of the events"
+msgstr "Ordinea evenimentelor"
+
+#: eme_widgets.php:105
+msgid "Ascendant"
+msgstr "Ascendent"
+
+#: eme_widgets.php:106
+msgid "Descendant"
+msgstr "Descendent"
+
+#: eme_widgets.php:129
+msgid "Show Ongoing Events?"
+msgstr "Arată în curs de desfăşurare de evenimente?"
+
+#: eme_widgets.php:139
+msgid "List header format<br />(if empty <ul> is used)"
+msgstr "Lista format antet < br />(if empty <ul> is used)"
+
+#: eme_widgets.php:143
+msgid "List item format"
+msgstr "Lista element format"
+
+#: eme_widgets.php:147
+msgid "List footer format<br />(if empty </ul> is used)"
+msgstr "Lista format subsol < br />(if empty </ul> is used)"
+
+#: eme_widgets.php:156
+#: eme_widgets.php:157
+msgid "Events Calendar"
+msgstr "Calendar de evenimente"
+
+#: eme_widgets.php:217
+msgid "Show Long Events?"
+msgstr "Evenimente lung Arată?"
+
+#: events-manager.php:155
+msgid "<li>No events in this location</li>"
+msgstr "<li>Nu evenimente în această locaţie</li>"
+
+#: events-manager.php:166
+msgid "Send your booking"
+msgstr "Trimite rezervarea dumneavoastră"
+
+#: events-manager.php:167
+msgid "Cancel your booking"
+msgstr "Revocaţi rezervarea dumneavoastră"
+
+#: events-manager.php:200
+msgid "The location name"
+msgstr "Numele de locaţie"
+
+#: events-manager.php:200
+msgid "The location address"
+msgstr "Adresa de locaţie"
+
+#: events-manager.php:200
+msgid "The location town"
+msgstr "Poziţia oraşului"
+
+#: events-manager.php:757
+msgid "#_RESPNAME (#_RESPEMAIL) will attend #_EVENTNAME on #m #d, #Y. He wants to reserve #_SPACES space(s).<br/>Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,<br/>Events Manager"
+msgstr "#_RESPNAME (#_RESPEMAIL) Va participa #_EVENTNAME pe # m # d, # Y. El vrea să rezerve spaţiu #_SPACES (e). <br/> Acum există spaţiu #_RESERVEDSPACES (e) rezervat, #_AVAILABLESPACES sunt încă disponibile. <br/> Cu <br/> cu fidelitate, <br/> Director Evenimente"
+
+#: events-manager.php:758
+msgid "Dear #_RESPNAME,<br/><br/>you have successfully reserved #_SPACES space(s) for #_EVENTNAME.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr "Dragi #_RESPNAME, <br/> aţi rezervat cu succes spaţiu #_SPACES (e) pentru #_EVENTNAME <br/> Cu <br/> cu fidelitate,. <br/> #_CONTACTPERSON"
+
+#: events-manager.php:759
+msgid "Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME is pending.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr "Dragi #_RESPNAME,<br/><br/>cererea dvs. de a rezerva spaţiu #_SPACES (e) pentru #_EVENTNAME este în curs de <br/> Cu <br/> cu fidelitate,. <br/> #_CONTACTPERSON"
+
+#: events-manager.php:760
+msgid "Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been cancelled.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr "Dragi #_RESPNAME, <br/> cererea dvs. de a rezerva spaţiu #_SPACES (e) pentru #_EVENTNAME a fost anulat. <br/> Cu <br/> cu fidelitate, <br/> #_CONTACTPERSON"
+
+#: events-manager.php:761
+msgid "Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been denied.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr "Dragi #_RESPNAME, <br/> cererea dvs. de a rezerva spaţiu #_SPACES (e) pentru #_EVENTNAME a fost refuzat. <br/> Cu <br/> cu fidelitate, <br/> #_CONTACTPERSON"
+
+#: events-manager.php:762
+msgid "Your booking has been recorded"
+msgstr "Rezervarea a fost înregistrat"
+
+#: events-manager.php:883
+msgid "events"
+msgstr "evenimente"
+
+#: events-manager.php:909
+#: events-manager.php:1004
+msgid "Edit"
+msgstr "Editare"
+
+#: events-manager.php:911
+msgid "Add new"
+msgstr "Adăugare nou"
+
+#: events-manager.php:916
+msgid "Event Categories"
+msgstr "Eveniment categorii"
+
+#: events-manager.php:920
+msgid "People"
+msgstr "Oameni"
+
+#: events-manager.php:924
+msgid "Change Registration"
+msgstr "Modificarea înregistrării"
+
+#: events-manager.php:931
+#: events-manager.php:933
+msgid "Events Made Easy Settings"
+msgstr "Evenimente făcut uşor setările"
+
+#: events-manager.php:931
+#: events-manager.php:933
+msgid "Settings"
+msgstr "Setări"
+
+#: events-manager.php:1595
+msgid "It seems you upgraded Events Made Eeasy but your events database hasn't been updated accordingly yet. Please deactivate/activate the plugin for this to happen."
+msgstr "Se pare că v-aţi actualizat Evenimente Made Aceasta este usor, dar de evenimente de baze de date nu a fost actualizat în consecinţă încă. Va rugam sa activa / dezactiva plugin-ul pentru ca acest lucru să se întâmple."
+
+#: events-manager.php:1595
+msgid "<strong>Warning:</strong> make sure the option 'Delete all EME data when upgrading or deactivating' is not activated if you don't want to lose all existing event data!"
+msgstr "<strong>Atenţie: </strong> asiguraţi-vă că opţiunea \"Şterge toate datele EME atunci când actualizarea sau dezactivarea\" nu este activat în cazul în care nu doriţi să pierd toate datele existente eveniment!"
+
+#: events-manager.php:1605
+msgid "Donate"
+msgstr "Dona"
+
+#: events-manager.php:1607
+msgid "If you find this plugin useful to you, please consider making a small donation to help contribute to my time invested and to further development. Thanks for your kind support!"
+msgstr "Dacă găsiţi acest plugin util pentru tine, vă rugăm să consideraţi a face o donatie mica pentru a ajuta la a contribui la timpul meu investit şi la dezvoltarea în continuare. Vă mulţumim pentru sprijinul dumneavoastră!"
+
+#: events-manager.php:1616
+msgid "<a href=\"%s\" title=\"I already donated\">I already donated.</a>"
+msgstr "> Am deja donat.</a>"
+
+#: events-manager.php:1630
+msgid ""
+"<p>Hey, <strong>%s</strong>, welcome to <strong>Events Made Easy</strong>! We hope you like it around here.</p> \n"
+"   <p>Now it's time to insert events lists through  <a href=\"%s\" title=\"Widgets page\">widgets</a>, <a href=\"%s\" title=\"Template tags documentation\">template tags</a> or <a href=\"%s\" title=\"Shortcodes documentation\">shortcodes</a>.</p>\n"
+"   <p>By the way, have you taken a look at the <a href=\"%s\" title=\"Change settings\">Settings page</a>? That's where you customize the way events and locations are displayed.</p>\n"
+"   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>"
+msgstr ""
+"<p> Hei, <strong>%s</strong>, Bine aţi venit la evenimente <strong> Made Easy </strong>! Sperăm că vă place aici. </p> \n"
+"    <p> Acum este momentul pentru a introduce listele de evenimente prin <a href=\"%s\" title=\"Widgets page\"> widget-uri </a>, <a href=\"%s\" title=\"Format de documentare etichetele\"> tag-uri de şabloane</a> sau <a href=\"%s\" title=\"Shortcodes documentation\"> Scurtăturile </a> </p>. \n"
+"    <p> Apropo, aţi luat o privire la <a href=\"%s\" title=\"Change settings\"> pagina Setări </a>? Asta în cazul în care vă personaliza modul de evenimente şi locaţii sunt afişate. </p> \n"
+"    <p> Ce? Obosit de a vedea acest sfat? Te-am auzit, <a href=\"%s\" title=\"Don't arată acest again\"> sfat click aici </a> şi nu veţi vedea acest lucru din nou </p>!"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:162
+msgid "The Events Made Easy Frontend Submit plugin is an extension to the Events Made Easy plugin, which has to be installed and activated first. The plugin has been deactivated."
+msgstr "Evenimente Made Easy Frontend Trimite plugin-ul este o extensie a evenimentelor Made Easy plugin-ul, care trebuie să fie instalat şi activat mai întâi.Plugin-ul a fost dezactivat."
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:189
+msgid "Please enter a name for the event"
+msgstr "Vă rugăm să introduceţi un nume pentru eveniment"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:195
+msgid "Enter the event's start date"
+msgstr "Introduceţi data de start a evenimentului"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:214
+msgid "Check the start's date and time"
+msgstr "Verificaţi data şi ora de început"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:218
+msgid "Check the end's date and time"
+msgstr "Verificaţi 's capătul data şi ora"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:222
+msgid "The event's end must be <strong>after</strong> the event's start"
+msgstr "Sfârșitul evenimentului trebuie să fie <strong>după</strong> începerea evenimentului"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:234
+msgid "Please enter a description for the event"
+msgstr "Vă rugăm să introduceţi o descriere pentru eveniment"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:240
+msgid "Please select an Event Category"
+msgstr "Vă rugăm să selectaţi o categorie de eveniment"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:350
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:363
+msgid "Basic Configuration is Missing"
+msgstr "Configuraţia de bază este lipsă"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:5
+msgid "Event Information"
+msgstr "Informaţii eveniment"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:8
+msgid "Event Name"
+msgstr "Numele evenimentului"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:8
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:14
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:24
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:56
+msgid "required"
+msgstr "necesare"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:14
+msgid "Select the Event Category"
+msgstr "Selectaţi categoria eveniment"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:21
+msgid "Date & Time"
+msgstr "Data si ora"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:24
+msgid "Start"
+msgstr "Start"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:31
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:45
+msgid "Time"
+msgstr "Timp"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:38
+msgid "End"
+msgstr "Scop"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:56
+msgid "Description"
+msgstr "Descriere"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:62
+msgid "Contact E-mail"
+msgstr "Contact poştă electronică"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:68
+msgid "Event Web Page"
+msgstr "Pagină Web eveniment"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:73
+msgid "Location Information"
+msgstr "Informațiile privind poziția"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:88
+msgid "City or Town"
+msgstr "Oraş"
+
