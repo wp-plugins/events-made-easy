@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Events Manager Extended\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
 "POT-Creation-Date: 2013-01-03 12:59:35+00:00\n"
-"PO-Revision-Date: 2013-01-05 23:32+0100\n"
+"PO-Revision-Date: 2013-01-09 23:35+0100\n"
 "Last-Translator: Franky Van Liedekerke <liedekef@telenet.be>\n"
 "Language-Team: Nederlandse Vertaling\n"
 "Language: nl_BE\n"
@@ -109,7 +109,7 @@ msgstr "Zaterdag"
 
 #: eme_categories.php:7
 msgid "You have no right to update categories!"
-msgstr "Je hebt geen rechten om categorieeën aan te passen!"
+msgstr "Je hebt geen rechten om categorieën aan te passen!"
 
 #: eme_categories.php:41
 msgid "Couldn't delete the categories. Incorrect category IDs supplied. Please try again."
@@ -210,7 +210,7 @@ msgstr "Maak een nieuw evenement aan"
 
 #: eme_events.php:122
 msgid "Conversion done, please check your events and restore from backup if you see any sign of troubles."
-msgstr "Conversie gereed. Controleer je evenementen en zet de backup terug, als je problemen signaleert."
+msgstr "Conversie gereed. Controleer je evenementen en zet de backup terug als je problemen ziet."
 
 #: eme_events.php:158
 #: eme_events.php:172
@@ -1761,11 +1761,11 @@ msgstr "De opmaak van de e-mail die aan de aanmelder wordt gestuurd als het even
 
 #: eme_events.php:2769
 msgid "Registration Form Format"
-msgstr "Opmaak e-mail goed te keuren reservering"
+msgstr "Opmaak e-mail reservering"
 
 #: eme_events.php:2775
 msgid "The registration form format."
-msgstr "Opmaak e-mail geweigerde reservering"
+msgstr "Opmaak e-mail reservering"
 
 #: eme_events.php:2828
 #: eme_locations.php:247
@@ -1908,7 +1908,7 @@ msgstr "Formulier velden"
 #: eme_formfields.php:95
 #: eme_formfields.php:103
 msgid "Title"
-msgstr "Titel:"
+msgstr "Titel"
 
 #: eme_formfields.php:96
 #: eme_formfields.php:104
@@ -1917,12 +1917,12 @@ msgstr "Type"
 
 #: eme_formfields.php:130
 msgid "No fields defined yet!"
-msgstr "Nog geen reacties!"
+msgstr "Nog geen velden aangemaakt!"
 
 #: eme_formfields.php:143
 #: eme_formfields.php:156
 msgid "Add field"
-msgstr "Voeg nieuwe toe"
+msgstr "Voeg nieuw veld toe"
 
 #: eme_formfields.php:147
 #: eme_formfields.php:195
@@ -1956,7 +1956,7 @@ msgstr "de documentatie"
 
 #: eme_formfields.php:178
 msgid "Edit field"
-msgstr "bewerk veld"
+msgstr "Bewerk veld"
 
 #: eme_formfields.php:209
 msgid "Update field"
@@ -1972,7 +1972,7 @@ msgstr "Enkele vereiste velden ontbreken in het formulier:"
 
 #: eme_functions.php:231
 msgid "Public"
-msgstr "Gepubliceerd"
+msgstr "Publiek"
 
 #: eme_functions.php:232
 msgid "Private"
@@ -1985,7 +1985,7 @@ msgstr "Concept"
 #: eme_locations.php:14
 #: eme_locations.php:84
 msgid "You have no right to edit this location!"
-msgstr "Je hebt geen rechten om deze locatie te wijzigen."
+msgstr "Je hebt geen rechten om deze locatie te wijzigen!"
 
 #: eme_locations.php:72
 msgid "The location has been updated."
@@ -1993,7 +1993,7 @@ msgstr "De locatie is bijgewerkt."
 
 #: eme_locations.php:75
 msgid "The location update failed."
-msgstr "Bijwerken van de locatie is mislukt!"
+msgstr "Bijwerken van de locatie is mislukt."
 
 #: eme_locations.php:122
 msgid "The location has been added."
@@ -2276,7 +2276,7 @@ msgstr "Je bent ondeugend!"
 
 #: eme_rsvp.php:324
 msgid "Please fill in all the required fields"
-msgstr "Vult u alstublieft de vereiste velden in"
+msgstr "Vul a.u.b. alle vereiste velden in"
 
 #: eme_rsvp.php:326
 msgid "Please enter a valid mail address"
@@ -2314,7 +2314,7 @@ msgstr "Aanmelder"
 #: eme_rsvp.php:1020
 #: eme_rsvp.php:1176
 msgid "Unique nbr"
-msgstr "Uniek nbr"
+msgstr "Uniek nr"
 
 #: eme_rsvp.php:642
 #: eme_rsvp.php:685
@@ -2715,7 +2715,7 @@ msgstr "Einde"
 
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:56
 msgid "Description"
-msgstr "De (kop) beschrijving van de RSS"
+msgstr "Omschrijving"
 
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:62
 msgid "Contact E-mail"
