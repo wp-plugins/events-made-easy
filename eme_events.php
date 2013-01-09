@@ -2966,9 +2966,11 @@ function eme_validate_event($event) {
          $maximum_width = get_option('eme_image_max_width');
          $maximum_height = get_option('eme_image_max_height');
          if (($width > $maximum_width) || ($height > $maximum_height))
-               $error_message .= "<li>". __('The image is too big! Maximum size allowed:')." $maximum_width x $maximum_height</li>";
+               $error_message .= "<li>". __('The image file is too big! Maximum size allowed:', 'eme')." $maximum_width x $maximum_height</li>";
          if (($type!=1) && ($type!=2) && ($type!=3))
-                  $error_message .= "<li>".__('The image is in a wrong format!')."</li>";
+                  $error_message .= "<li>".__('The image is in a wrong format!', 'eme')."</li>";
+      } else {
+	 $error_message .= "<li>".__('The image upload failed!', 'eme')."</li>";
       }
    }
 

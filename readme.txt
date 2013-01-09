@@ -230,3 +230,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: the table for answers had a wrong index (primary), which resulted in only the first custom field to be stored in it
 * Extra: added Danish translation, thanks to Torben Bendixen
 * Extra: updated Dutch translation, thanks to Peter Goldstein
+
+= 1.0.7 =
+* Extra: Added error if image upload fails
