@@ -232,4 +232,5 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Extra: updated Dutch translation, thanks to Peter Goldstein
 
 = 1.0.7 =
+* Bugfix: calendar navigation now also respects the qtranslate language if permalinks are enabled
 * Extra: Added error if image upload fails

@@ -393,7 +393,12 @@ function eme_days_in_month($month, $year) {
 function eme_ajaxize_calendar() {
    global $eme_need_calendar_js;
 
-   if (isset($_GET['lang'])) {
+   if (function_exists('qtrans_getLanguage')) {
+      // if permalinks are on, $_GET doesn't contain lang as a parameter
+      // so we get it like this to be sure
+      $language=qtrans_getLanguage();
+      $jquery_override_lang=", lang: '".$language."'";
+   } elseif (isset($_GET['lang'])) {
       $jquery_override_lang=", lang: '".$_GET['lang']."'";
    } else {
       $jquery_override_lang="";
