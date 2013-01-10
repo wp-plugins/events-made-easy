@@ -1093,6 +1093,12 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = "<a href=' ".admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id'])."'>".__('Edit')."</a>";
          }
 
+      } elseif (preg_match('/#_EDITEVENTURL$/', $result)) { 
+         if (current_user_can( get_option('eme_cap_edit_events')) ||
+             (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
+            $replacement = admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id']);
+         }
+
       } elseif (preg_match('/#_24HSTARTTIME$/', $result)) { 
          $replacement = substr($event['event_start_time'], 0,5);
 
