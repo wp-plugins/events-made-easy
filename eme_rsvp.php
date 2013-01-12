@@ -264,6 +264,7 @@ function eme_book_seats($event) {
       $bookerPhone = eme_strip_tags($_POST['bookerPhone']); 
    else
       $bookerPhone = "";
+
    if (isset($_POST['bookerComment']))
       $bookerComment = eme_strip_tags($_POST['bookerComment']);
    else
@@ -280,10 +281,10 @@ function eme_book_seats($event) {
          if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
 	   // we already check these seperately
 	   next;
-         } elseif ($required_field == "PHONE" && empty($bookerPhone)) {
-	   $all_required_fields_ok=0;
-         } elseif ($required_field == "COMMENT" && empty($bookerComment)) {
-	   $all_required_fields_ok=0;
+         } elseif (strcmp($required_field,"PHONE")==0) {
+	   if (empty($bookerPhone)) $all_required_fields_ok=0;
+         } elseif (strcmp($required_field,"COMMENT")==0) {
+           if (empty($bookerComment)) $all_required_fields_ok=0;
          } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
 	   $all_required_fields_ok=0;
          }
