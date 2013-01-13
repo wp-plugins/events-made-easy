@@ -3534,7 +3534,7 @@ Weblog Editor 2.0
          foreach ( $events as $event ) {
              $title = eme_replace_placeholders ( $title_format, $event, "rss" );
              $description = eme_replace_placeholders ( $description_format, $event, "rss" );
-             $event_link = event_url($event);
+             $event_link = eme_event_url($event);
              echo "<item>\n";
              echo "<title>$title</title>\n";
              echo "<link>$event_link</link>\n";
