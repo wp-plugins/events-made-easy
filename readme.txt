@@ -233,6 +233,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.7 =
 * Feature: placeholder #_EDITEVENTURL added, gives you just the link to the admin page for editing the event
+* Feature: added a setting to wether or not show the event creation/modification date as PubDate info in the in the events RSS feed
 * Bugfix: calendar navigation now also respects the qtranslate language if permalinks are enabled
 * Bugfix: if phone or comment was defined as a required field, the booking was not working
 * Bugfix: fix wrong call to event_rul(), must be eme_event_url(), bug added in changeset 649391

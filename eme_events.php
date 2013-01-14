@@ -594,6 +594,7 @@ function eme_options_page() {
    eme_options_input_text ( __ ( 'RSS main description', 'eme' ), 'eme_rss_main_description', __ ( 'The main description of your RSS events feed.', 'eme' ) );
    eme_options_input_text ( __ ( 'RSS title format', 'eme' ), 'eme_rss_title_format', __ ( 'The format of the title of each item in the events RSS feed.', 'eme' ) );
    eme_options_input_text ( __ ( 'RSS description format', 'eme' ), 'eme_rss_description_format', __ ( 'The format of the description of each item in the events RSS feed. Follow the previous formatting instructions.', 'eme' ) );
+   eme_options_radio_binary ( __ ( 'RSS Pubdate usage', 'eme' ), 'eme_rss_show_pubdate', __ ( 'Show the event creation/modification date as PubDate info in the in the events RSS feed.', 'eme' ) );
    ?>
 </table>
 
@@ -2119,16 +2120,17 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             }
          }
 
-         if ($event ['event_status'] == STATUS_DRAFT) {
-               $event_url = eme_event_url($event);
-               echo "<br /> <a target='' href='$event_url'>".__('Preview','eme')."</a>";
-         }
          ?> 
          </td>
          <td>
          <?php
          if (isset ($event_status_array[$event['event_status']])) {
             echo $event_status_array[$event['event_status']];
+            $event_url = eme_event_url($event);
+            if ($event ['event_status'] == STATUS_DRAFT)
+               echo "<br /> <a target='' href='$event_url'>".__('Preview event','eme')."</a>";
+            else
+               echo "<br /> <a target='' href='$event_url'>".__('View event','eme')."</a>";
          }
          ?> 
          </td>
@@ -3538,7 +3540,8 @@ Weblog Editor 2.0
              echo "<item>\n";
              echo "<title>$title</title>\n";
              echo "<link>$event_link</link>\n";
-             echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
+             if (get_option('eme_rss_show_pubdate' ))
+                echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
              echo "<description>$description</description>\n";
              if (get_option('eme_categories_enabled')) {
                 $categories = eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" );
