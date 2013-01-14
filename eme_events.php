@@ -3775,7 +3775,7 @@ function eme_tinymce(){
 add_action ( 'admin_init', 'eme_tinymce' );
 
 # return number of days until next event or until the specified event
-function eme_countdown() {
+function eme_countdown($atts) {
    extract ( shortcode_atts ( array ('id'=>''), $atts ) );
 
    $now = date("Y-m-d");

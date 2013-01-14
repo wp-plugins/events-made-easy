@@ -236,4 +236,5 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: calendar navigation now also respects the qtranslate language if permalinks are enabled
 * Bugfix: if phone or comment was defined as a required field, the booking was not working
 * Bugfix: fix wrong call to event_rul(), must be eme_event_url(), bug added in changeset 649391
+* Bugfix: [events_countdown] shortcode was not working as expected
 * Extra: Added error if image upload fails

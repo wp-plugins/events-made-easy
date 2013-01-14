@@ -763,7 +763,7 @@ function eme_get_bookings_for($event_ids,$pending_approved=0) {
    return $booking_data;
 }
 
-function eme_get_bookings_list_for($event_id) {
+function eme_get_attendees_list_for($event_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT DISTINCT person_id FROM $bookings_table WHERE event_id = %s",$event_id);
