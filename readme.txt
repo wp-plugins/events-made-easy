@@ -240,3 +240,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: fix wrong call to event_rul(), must be eme_event_url(), bug added in changeset 649391
 * Bugfix: [events_countdown] shortcode was not working as expected
 * Extra: Added error if image upload fails
+
+= 1.0.8 =
+* Bugfix: custom (per event) event_registration_pending_email_body was not working

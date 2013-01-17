@@ -258,6 +258,7 @@ function eme_events_page() {
       $event ['event_single_event_format'] = isset($_POST ['event_single_event_format']) ? stripslashes ( $_POST ['event_single_event_format'] ) : '';
       $event ['event_contactperson_email_body'] = isset($_POST ['event_contactperson_email_body']) ? stripslashes ( $_POST ['event_contactperson_email_body'] ) : '';
       $event ['event_respondent_email_body'] = isset($_POST ['event_respondent_email_body']) ? stripslashes ( $_POST ['event_respondent_email_body'] ) : '';
+      $event ['event_registration_pending_email_body'] = isset($_POST ['event_registration_pending_email_body']) ? stripslashes ( $_POST ['event_registration_pending_email_body'] ) : '';
       $event ['event_registration_form_format'] = isset($_POST ['event_registration_form_format']) ? stripslashes ( $_POST ['event_registration_form_format'] ) : '';
       $event ['event_url'] = isset($_POST ['event_url']) ? eme_strip_tags ( $_POST ['event_url'] ) : '';
       $event ['event_slug'] = isset($_POST ['event_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['event_slug'] )) : eme_permalink_convert($event ['event_name']);
@@ -3100,7 +3101,7 @@ $j_eme_event(document).ready( function() {
          $j_eme_event('input.row-selector').attr('checked', false);
    });
 
-   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_body, event_registration_form_format
+   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_email_body, event_registration_form_format
    // is empty: display default value on focus, and if the value hasn't changed from the default: empty it on blur
 
    $j_eme_event('textarea#event_page_title_format').focus(function(){
@@ -3151,18 +3152,6 @@ $j_eme_event(document).ready( function() {
       if($j_eme_event(this).val() == tmp_value)
          $j_eme_event(this).val('');
    }); 
-   $j_eme_event('textarea#event_registration_pending_body').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
-   }); 
-   $j_eme_event('textarea#event_registration_pending_body').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
-   });
    $j_eme_event('textarea#event_registration_recorded_ok_html').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
