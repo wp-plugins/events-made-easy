@@ -243,3 +243,4 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.8 =
 * Bugfix: custom (per event) event_registration_pending_email_body was not working
+* Bugfix: fix a WP php notice for wp_enqueue_script: it should be called from within other wp_* calls, not directly. So I added it to the callback for add_action('wp_enqueue_scripts')

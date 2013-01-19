@@ -36,8 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 if (get_option('eme_use_client_clock')) {
    // If needed, add high priority action to enable session variables.
    if (!session_id()) add_action('init', 'session_start', 1);
-   // Embed client-clock.js in webpage header.
-   wp_enqueue_script('client_clock_submit', plugin_dir_url( __FILE__ ) . 'js/client-clock.js', array('jquery'));  
+   add_action('wp_enqueue_scripts', 'eme_client_clock_enqueue_scripts');
    // Declare URL to the file that receives AJAXed client clock data (wp-admin/admin-ajax.php).
    wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
 
@@ -46,6 +45,11 @@ if (get_option('eme_use_client_clock')) {
    add_action('wp_ajax_nopriv_client_clock_submit', 'eme_client_clock_callback', 1);
    // Add high priority action to receive clock data from logged-in users.
    add_action('wp_ajax_client_clock_submit', 'eme_client_clock_callback', 1);
+}
+
+function eme_client_clock_enqueue_scripts() {
+   // Embed client-clock.js in webpage header.
+   wp_enqueue_script('client_clock_submit', plugin_dir_url( __FILE__ ) . 'js/client-clock.js', array('jquery'));  
 }
 
 function eme_client_clock_callback() {
