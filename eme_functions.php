@@ -257,15 +257,4 @@ function eme_status_array() {
    return $event_status_array;
 }
 
-# php4 compatible
-if (!function_exists(array_combine)) {
-   function array_combine($arr1,$arr2) {
-      $out = array();
-      foreach($arr1 as $key1 => $value1)    {
-         $out[$value1] = $arr2[$key1];
-      }
-      return $out;
-   } 
-}
-
 ?>

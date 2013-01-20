@@ -1,12 +1,7 @@
 <?php
 
-function eme_new_event_page() {
-   // check the user is allowed to make changes
-   if ( !current_user_can( get_option('eme_cap_add_event')  ) ) {
-      return;
-   }
+function eme_new_event() {
 
-   $title = __ ( "Insert New Event", 'eme' );
    $event = array (
       "event_id" => '',
       "event_name" => '',
@@ -64,13 +59,23 @@ function eme_new_event_page() {
       "location_slug" => '',
       "location_url" => ''
    );
+   return $event;
+}
+
+function eme_new_event_page() {
+   // check the user is allowed to make changes
+   if ( !current_user_can( get_option('eme_cap_add_event')  ) ) {
+      return;
+   }
+
+   $title = __ ( "Insert New Event", 'eme' );
+   $event = eme_new_event();
 
    if (isset($_GET['action']) && $_GET['action'] == "insert_event") {
       eme_events_page();
    } else {
       eme_event_form ($event, $title, '');
    }
-
 }
 
 function eme_events_page() {
@@ -253,7 +258,7 @@ function eme_events_page() {
       $location ['location_description'] = "";
       //switched to WP TinyMCE field
       //$event ['event_notes'] = stripslashes ( $_POST ['event_notes'] );
-      $event ['event_notes'] = isset($_POST ['content']) ? stripslashes($_POST ['content']) : '';
+      $event ['event_notes'] = isset($_POST ['event_notes']) ? stripslashes($_POST ['event_notes']) : '';
       $event ['event_page_title_format'] = isset($_POST ['event_page_title_format']) ? stripslashes ( $_POST ['event_page_title_format'] ) : '';
       $event ['event_single_event_format'] = isset($_POST ['event_single_event_format']) ? stripslashes ( $_POST ['event_single_event_format'] ) : '';
       $event ['event_contactperson_email_body'] = isset($_POST ['event_contactperson_email_body']) ? stripslashes ( $_POST ['event_contactperson_email_body'] ) : '';
@@ -1855,6 +1860,11 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 function eme_get_event($event_id) {
    global $wpdb;
    $event_id = intval($event_id);
+
+   if (!$event_id) {
+      return eme_new_event();
+   }
+
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $conditions = array ();
    $conditions [] = "event_id = $event_id";
@@ -2888,7 +2898,7 @@ function eme_event_form($event, $title, $element) {
                      </h3>
                      <div class="inside">
                         <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                           <?php the_editor($event ['event_notes']); ?>
+                           <?php wp_editor($event ['event_notes'],"event_notes"); ?>
                         </div>
                         <br />
                         <?php _e ( 'Details about the event', 'eme' )?>
