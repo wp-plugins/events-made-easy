@@ -151,7 +151,7 @@ define('DEFAULT_CAP_FORMS','edit_others_posts');
 define('DEFAULT_CAP_CLEANUP','activate_plugins');
 define('DEFAULT_CAP_SETTINGS','activate_plugins');
 define('DEFAULT_EVENT_LIST_ITEM_FORMAT', '<li>#j #M #Y - #H:#i<br /> #_LINKEDNAME<br />#_TOWN </li>');
-define('DEFAULT_SINGLE_EVENT_FORMAT', '<p>#j #M #Y - #H:#i</p><p>#_TOWN</p><p>#_NOTES</p>'); 
+define('DEFAULT_SINGLE_EVENT_FORMAT', '<p>#j #M #Y - #H:#i</p><p>#_TOWN</p><p>#_NOTES</p><p>#_ADDBOOKINGFORM</p><p>#_MAP</p>'); 
 define('DEFAULT_EVENTS_PAGE_TITLE',__('Events','eme') ) ;
 define('DEFAULT_EVENT_PAGE_TITLE_FORMAT', '#_EVENTNAME'); 
 define('DEFAULT_EVENT_HTML_TITLE_FORMAT', '#_EVENTNAME'); 
