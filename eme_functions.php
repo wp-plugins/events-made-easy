@@ -216,20 +216,19 @@ function eme_capNamesCB ( $cap ) {
 function eme_get_all_caps() {
    global $wp_roles;
    $caps = array();
+   $capabilities = array();
 
-   foreach ( $wp_roles->role_names as $role=>$name ) {
-   	$role_caps = get_role($role);
-      $caps = array_merge($caps, $role_caps->capabilities);
+   foreach ( $wp_roles->roles as $role ) {
+      foreach ( $role['capabilities'] as $cap=>$val ) {
+        if (!preg_match("/^level/",$cap))
+	   $capabilities[$cap]=eme_capNamesCB($cap);
+      }
    }
 
-   $keys = array_keys($caps);
-   $names = array_map('eme_capNamesCB', $keys);
-   $capabilities = array_combine($keys, $names);
-
-   $sys_caps = get_option('syscaps');
-   if ( is_array($sys_caps) ) {
-      $capabilities = array_merge($sys_caps, $capabilities);
-   }
+#   $sys_caps = get_option('syscaps');
+#   if ( is_array($sys_caps) ) {
+#      $capabilities = array_merge($sys_caps, $capabilities);
+#   }
 
    asort($capabilities);
    return $capabilities;

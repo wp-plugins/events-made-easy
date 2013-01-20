@@ -242,5 +242,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Extra: Added error if image upload fails
 
 = 1.0.8 =
+* Bugfix: apparently some WP update changed the capability checking worked, so the code to get all caps has been updated
 * Bugfix: custom (per event) event_registration_pending_email_body was not working
 * Bugfix: fix a WP php notice for wp_enqueue_script: it should be called from within other wp_* calls, not directly. So I added it to the callback for add_action('wp_enqueue_scripts')
