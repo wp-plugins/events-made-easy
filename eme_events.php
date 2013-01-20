@@ -2072,24 +2072,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             break;
          $class = ($i % 2) ? ' class="alternate"' : '';
 
-         if ($event['event_start_date'] != "") {
-            preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_start_date'], $matches );
-            $year = $matches [1];
-            $month = sprintf("%02d",$matches [2]);
-            $day = sprintf("%02d",$matches [3]);
-            $localised_start_date = str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-         } else {
-            $localised_start_date = "";
-         }
-         if ($event['event_end_date'] != "") {
-            preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_end_date'], $matches );
-            $end_year = $matches [1];
-            $end_month = sprintf("%02d",$matches [2]);
-            $end_day = sprintf("%02d",$matches [3]);
-            $localised_end_date = str_replace ( "yy", $end_year, str_replace ( "mm", $end_month, str_replace ( "dd", $end_day, $localised_date_format ) ) );
-         } else {
-            $localised_end_date = "";
-         }
+         $localised_start_date = eme_admin_localised_date($event['event_start_date']);
+         $localised_end_date = eme_admin_localised_date($event['event_end_date']);
 
          $today = date ( "Y-m-d" );
          
@@ -2276,13 +2260,6 @@ function eme_event_form($event, $title, $element) {
       }
    }
    
-   $locale_code = substr ( get_locale (), 0, 2 );
-   if (isset($localised_date_formats [$locale_code])) {
-      $localised_date_format = $localised_date_formats [$locale_code];
-   } else {
-      $localised_date_format = $localised_date_formats ["en"];
-   }
-
    $hours_locale = "24";
    // Setting 12 hours format for those countries using it
    if (preg_match ( "/en|sk|zh|us|uk/", $locale_code ))
@@ -2297,47 +2274,15 @@ function eme_event_form($event, $title, $element) {
    if ($event['event_end_24h_time'] == "")
          $event['event_end_24h_time'] = date('H:i',time()+3600);
    
-   $localised_example = str_replace ( "yy", "2008", str_replace ( "mm", "11", str_replace ( "dd", "28", $localised_date_format ) ) );
-   $localised_end_example = str_replace ( "yy", "2008", str_replace ( "mm", "11", str_replace ( "dd", "28", $localised_date_format ) ) );
+   $localised_example = eme_localised_date("2008-11-28");
+   $localised_end_example = eme_localised_date("2008-11-28");
    
-   if ($event['event_start_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_start_date'], $matches );
-      $year = $matches [1];
-      $month = sprintf("%02d",$matches [2]);
-      $day = sprintf("%02d",$matches [3]);
-      $localised_start_date = str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-   } else {
-      $localised_start_date = "";
-   }
-   if ($event['event_end_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_end_date'], $matches );
-      $end_year = $matches [1];
-      $end_month = sprintf("%02d",$matches [2]);
-      $end_day = sprintf("%02d",$matches [3]);
-      $localised_end_date = str_replace ( "yy", $end_year, str_replace ( "mm", $end_month, str_replace ( "dd", $end_day, $localised_date_format ) ) );
-   } else {
-      $localised_end_date = "";
-   }
+   $localised_start_date = eme_localised_date($event['event_start_date']);
+   $localised_end_date = eme_localised_date($event['event_end_date']);
    if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
-   if ($event['recurrence_start_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['recurrence_start_date'], $matches );
-      $year = $matches [1];
-      $month = sprintf("%02d",$matches [2]);
-      $day = sprintf("%02d",$matches [3]);
-      $localised_rec_start_date = str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-   } else {
-      $localised_rec_start_date = "";
-   }
+   $localised_rec_start_date = eme_localised_date($event['recurrence_start_date']);
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
-   if ($event['recurrence_end_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['recurrence_end_date'], $matches );
-      $end_year = $matches [1];
-      $end_month = sprintf("%02d",$matches [2]);
-      $end_day = sprintf("%02d",$matches [3]);
-      $localised_rec_end_date = str_replace ( "yy", $end_year, str_replace ( "mm", $end_month, str_replace ( "dd", $end_day, $localised_date_format ) ) );
-   } else {
-      $localised_rec_end_date = "";
-   }
+   $localised_rec_end_date = eme_localised_date($event['recurrence_end_date']);
    //if($event[$pref.'rsvp'])
     //   echo (eme_bookings_table($event[$pref.'id']));
    

@@ -185,13 +185,13 @@ function eme_printable_booking_report($event_id) {
       <html>
       <head>
          <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-         <title>Bookings for <?php echo $event['event_name'];?></title>
+         <title>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></title>
           <link rel="stylesheet" href="<?php echo $stylesheet; ?>" type="text/css" media="screen" />
       </head>
       <body id="printable">
          <div id="container">
-         <h1>Bookings for <?php echo $event['event_name'];?></h1> 
-         <p><?php echo date_i18n (get_option('date_format'), strtotime($event['event_start_date'])); ?></p>
+         <h1>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></h1> 
+         <p><?php echo eme_admin_localised_date($event['event_start_date']); ?></p>
          <p><?php if ($event['location_id']) echo eme_replace_placeholders("#_LOCATIONNAME, #_ADDRESS, #_TOWN", $event); ?></p>
          <?php if ($event['use_paypal'] && $event['price']) ?>
             <p><?php _e ( 'Price: ','eme' ); echo eme_replace_placeholders("#_CURRENCY #_PRICE", $event)?></p>
@@ -413,33 +413,42 @@ function eme_add_person($name, $email, $phone, $wp_id) {
 }
 
 // when editing other profiles then your own
-add_action('edit_user_profile', 'eme_phone_field') ;
+add_action('edit_user_profile', 'eme_user_profile') ;
 // when editing your own profile
-add_action('show_user_profile', 'eme_phone_field') ;
+add_action('show_user_profile', 'eme_user_profile') ;
 
-function eme_phone_field($user) {
+function eme_user_profile($user) {
    //$eme_phone=get_user_meta($user,'eme_phone',true);
    $eme_phone=$user->eme_phone;
+   $eme_date_format=$user->eme_date_format;
    ?>
-   <h3><?php _e('Phone number', 'eme')?></h3>
+   <h3><?php _e('Events Made Easy settings', 'eme')?></h3>
    <table class='form-table'>
       <tr>
          <th><label for="eme_phone"><?php _e('Phone number','eme');?></label></th>
          <td><input type="text" name="eme_phone" id="eme_phone" value="<?php echo $eme_phone; ?>" class="regular-text" /> <br />
          <?php _e('The phone number used by Events Made Easy when the user is indicated as the contact person for an event.','eme');?></td>
       </tr>
+      <tr>
+         <th><label for="eme_date_format"><?php _e('Date format','eme');?></label></th>
+         <td><input type="text" name="eme_date_format" id="eme_date_format" value="<?php echo $eme_date_format; ?>" class="regular-text" /> <br />
+         <?php _e('The date format used by Events Made Easy in the admin section. If empty the general WP date format setting will be used.','eme');?></td>
+      </tr>
    </table>
    <?php
 }
 
 // when editing other profiles then your own
-add_action('edit_user_profile_update','eme_update_wp_phone');
+add_action('edit_user_profile_update','eme_update_user_profile');
 // when editing your own profile
-add_action('personal_options_update','eme_update_wp_phone');
+add_action('personal_options_update','eme_update_user_profile');
 
-function eme_update_wp_phone($wp_user_ID) {
+function eme_update_user_profile($wp_user_ID) {
    if(isset($_POST['eme_phone']) && $_POST['eme_phone'] != '') {
       update_user_meta($wp_user_ID,'eme_phone', $_POST['eme_phone']);
+   }
+   if(isset($_POST['eme_date_format']) && $_POST['eme_date_format'] != '') {
+      update_user_meta($wp_user_ID,'eme_date_format', $_POST['eme_date_format']);
    }
    
 }

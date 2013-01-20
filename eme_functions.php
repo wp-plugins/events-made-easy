@@ -73,7 +73,15 @@ function eme_get_contact($event) {
 }
 
 function eme_get_user_phone($user_id) {
-   return get_usermeta($user_id, 'eme_phone');
+   return get_user_meta($user_id, 'eme_phone',true);
+}
+
+function eme_get_date_format($user_id) {
+   $format="";
+   if ($user_id)
+      $format = get_user_meta($user_id, 'eme_date_format',true);
+   if ($format == '') $format=get_option('date_format');
+   return $format;
 }
 
 // got from http://davidwalsh.name/php-email-encode-prevent-spam
@@ -257,4 +265,29 @@ function eme_status_array() {
    return $event_status_array;
 }
 
+function eme_localised_date($mydate) {
+   // $mydate should be in yyyy-mm-dd format
+   $locale_code = substr ( get_locale (), 0, 2 );
+   if (isset($localised_date_formats [$locale_code])) {
+      $localised_date_format = $localised_date_formats [$locale_code];
+   } else {
+      $localised_date_format = $localised_date_formats ["en"];
+   }
+
+   if ($mydate != "") {
+      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $mydate, $matches );
+      $year = $matches [1];
+      $month = sprintf("%02d",$matches [2]);
+      $day = sprintf("%02d",$matches [3]);
+      return str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
+   } else {
+      return "";
+   }
+}
+
+function eme_admin_localised_date($mydate) {
+   $current_userid=get_current_user_id();
+   $date_format = eme_get_date_format($current_userid);
+   return date_i18n ( $date_format, strtotime($mydate));
+}
 ?>
