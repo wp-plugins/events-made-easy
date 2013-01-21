@@ -40,7 +40,7 @@ function eme_add_booking_form($event_id) {
       $readonly="";
       $bookerPhone_required="*";
    }
-   $destination = "?".$_SERVER['QUERY_STRING']."#eme-rsvp-message";
+   $destination = eme_event_url($event)."#eme-rsvp-message";
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24 > $event_start_datetime ) {
@@ -131,7 +131,7 @@ function eme_delete_booking_form($event_id) {
    } else {
       $readonly="";
    }
-   $destination = "?".$_SERVER['QUERY_STRING']."#eme-rsvp-message";
+   $destination = eme_event_url($event)."#eme-rsvp-message";
    
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24 > $event_start_datetime ) {
