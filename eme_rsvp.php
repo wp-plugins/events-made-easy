@@ -40,7 +40,7 @@ function eme_add_booking_form($event_id) {
       $readonly="";
       $bookerPhone_required="*";
    }
-   $destination = "?".$_SERVER['QUERY_STRING']."#eme-rsvp-message";
+   $destination = eme_event_url($event)."#eme-rsvp-message";
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24 > $event_start_datetime ) {
@@ -131,7 +131,7 @@ function eme_delete_booking_form($event_id) {
    } else {
       $readonly="";
    }
-   $destination = "?".$_SERVER['QUERY_STRING']."#eme-rsvp-message";
+   $destination = eme_event_url($event)."#eme-rsvp-message";
    
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24 > $event_start_datetime ) {
@@ -968,7 +968,7 @@ function eme_registration_seats_form_table($event_id=0) {
    $events_with_pending_bookings=array();
    foreach ( $all_events as $event ) {
       if ($event ['event_rsvp']) {
-         $option_text=$event['event_name']." (".date_i18n (get_option('date_format'), strtotime($event['event_start_date'])).")"; 
+         $option_text=$event['event_name']." (".eme_admin_localised_date($event['event_start_date']).")"; 
          echo "<option value='".$event['event_id']."' >".$option_text."</option>  ";
       }
    }
@@ -1020,8 +1020,8 @@ function eme_registration_seats_form_table($event_id=0) {
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
-         <th><?php _e ( 'Name', 'eme' ); ?></th>
-         <th><?php _e ( 'Date and time', 'eme' ); ?></th>
+         <th><?php _e ('Name','eme'); ?></th>
+         <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
          <th><?php _e ('Seats','eme'); ?></th>
          <th><?php _e ('Unique nbr','eme'); ?></th>
@@ -1039,8 +1039,8 @@ function eme_registration_seats_form_table($event_id=0) {
       foreach ( $bookings as $event_booking ) {
          $event=eme_get_event($event_booking['event_id']);
          $class = ($i % 2) ? ' class="alternate"' : '';
-         $localised_start_date = date_i18n ( __ ( 'D d M Y' ), strtotime($event['event_start_date']));
-         $localised_end_date = date_i18n ( __ ( 'D d M Y' ), strtotime($event['event_end_date']));
+         $localised_start_date = eme_admin_localised_date($event['event_start_date']);
+         $localised_end_date = eme_admin_localised_date($event['event_end_date']);
          $style = "";
          $today = date ( "Y-m-d" );
          
@@ -1051,17 +1051,23 @@ function eme_registration_seats_form_table($event_id=0) {
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_sanitize_html($event ['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>
          <?php
+             $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
+             $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
              $approved_seats = eme_get_approved_seats($event['event_id']);
              $pending_seats = eme_get_pending_seats($event['event_id']);
              $total_seats = $event ['event_seats'];
              echo "<br />".__('Approved: ','eme' ).$approved_seats.", ".__('Pending: ','eme').$pending_seats.", ".__('Max: ','eme').$total_seats;
+             if ($approved_seats>0) {
+                echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
+                echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
+             }
          ?>
          </td>
          <td>
-            <?php echo $localised_start_date; if ($localised_end_date !='') echo " - " . $localised_end_date; ?><br />
+            <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo substr ( $event['event_start_time'], 0, 5 ) . " - " . substr ( $event['event_end_time'], 0, 5 ); ?>
          </td>
          <td>
@@ -1195,8 +1201,8 @@ function eme_registration_approval_form_table($event_id=0) {
       foreach ( $pending_bookings as $event_booking ) {
          $event=eme_get_event($event_booking['event_id']);
          $class = ($i % 2) ? ' class="alternate"' : '';
-         $localised_start_date = date_i18n ( __ ( 'D d M Y' ), strtotime($event['event_start_date']));
-         $localised_end_date = date_i18n ( __ ( 'D d M Y' ), strtotime($event['event_end_date']));
+         $localised_start_date = eme_admin_localised_date($event['event_start_date']);
+         $localised_end_date = eme_admin_localised_date($event['event_end_date']);
          $style = "";
          $today = date ( "Y-m-d" );
          

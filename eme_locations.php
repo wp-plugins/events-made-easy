@@ -38,7 +38,7 @@ function eme_locations_page() {
          $location['location_town'] = stripslashes($_POST['location_town']); 
          $location['location_latitude'] = $_POST['location_latitude'];
          $location['location_longitude'] = $_POST['location_longitude'];
-         $location['location_description'] = stripslashes($_POST['content']);
+         $location['location_description'] = stripslashes($_POST['location_description']);
          $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
          $location['location_slug'] = isset($_POST ['location_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['location_slug'] )) : eme_permalink_convert($location['location_name']);
          // we don't change the author
@@ -93,7 +93,7 @@ function eme_locations_page() {
          $location['location_town'] = stripslashes($_POST['location_town']); 
          $location['location_latitude'] = $_POST['location_latitude'];
          $location['location_longitude'] = $_POST['location_longitude'];
-         $location['location_description'] = stripslashes($_POST['content']);
+         $location['location_description'] = stripslashes($_POST['location_description']);
          $location['location_author'] = $current_userid;
          $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
          $location['location_slug'] = isset($_POST ['location_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['location_slug'] )) : eme_permalink_convert($location['location_name']);
@@ -252,7 +252,7 @@ function eme_locations_edit_layout($location, $message = "") {
             <label><?php _e('Location description', 'eme') ?></label>
             <div class="inside">
                <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                  <?php the_editor($location['location_description']); ?>
+                  <?php wp_editor($location['location_description'],"location_description"); ?>
                </div>
                <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
             </div>
@@ -421,7 +421,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                               <label><?php _e('Location description', 'eme') ?></label>
                               <div class="inside">
                                  <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                                    <?php the_editor($new_location['location_description']); ?>
+                                    <?php wp_editor($new_location['location_description'],"location_description"); ?>
                                  </div>
                                  <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
                               </div>

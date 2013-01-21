@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.0.0
 Tested up to: 3.5
-Stable tag: 1.0.6
+Stable tag: 1.0.8
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL support. SEO compatible.
              
@@ -240,3 +240,10 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: fix wrong call to event_rul(), must be eme_event_url(), bug added in changeset 649391
 * Bugfix: [events_countdown] shortcode was not working as expected
 * Extra: Added error if image upload fails
+
+= 1.0.8 =
+* Bugfix: apparently some WP update changed the capability checking worked, so the code to get all caps has been updated
+* Bugfix: custom (per event) event_registration_pending_email_body was not working
+* Bugfix: fix a WP php notice for wp_enqueue_script: it should be called from within other wp_* calls, not directly. So I added it to the callback for add_action('wp_enqueue_scripts')
+* Bugfix: fix typo with acl for "Edit events"
+* Extra: the admin backend will now use a new date_format setting in the user's profile (if present) for all dates shown
