@@ -1964,13 +1964,6 @@ function eme_duplicate_event($event_id) {
 }
 
 function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $o_category=0) {
-   global $localised_date_formats;
-   $locale_code = substr ( get_locale (), 0, 2 );
-   if (isset($localised_date_formats [$locale_code])) {
-      $localised_date_format = $localised_date_formats [$locale_code];
-   } else {
-      $localised_date_format = $localised_date_formats ["en"];
-   }
 
    $events_count = count ( $events );
    ?>
@@ -2190,7 +2183,6 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
 
 function eme_event_form($event, $title, $element) {
    
-   global $localised_date_formats;
    admin_show_warnings();
 
    $use_select_for_locations = get_option('eme_use_select_for_locations');
@@ -2262,6 +2254,7 @@ function eme_event_form($event, $title, $element) {
    
    $hours_locale = "24";
    // Setting 12 hours format for those countries using it
+   $locale_code = substr ( get_locale (), 0, 2 );
    if (preg_match ( "/en|sk|zh|us|uk/", $locale_code ))
       $hours_locale = "12";
 

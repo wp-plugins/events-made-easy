@@ -266,6 +266,8 @@ function eme_status_array() {
 }
 
 function eme_localised_date($mydate) {
+   global $localised_date_formats;
+
    // $mydate should be in yyyy-mm-dd format
    $locale_code = substr ( get_locale (), 0, 2 );
    if (isset($localised_date_formats [$locale_code])) {
