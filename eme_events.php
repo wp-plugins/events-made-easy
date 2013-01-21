@@ -486,6 +486,9 @@ function eme_options_page() {
 </div>
 <h2><?php _e ( 'Event Manager Options', 'eme' ); ?></h2>
 <?php admin_show_warnings();?>
+<p> 
+<?php printf(__( "Please also check <a href='%s'>your profile</a> for some per-user EME settings.", 'eme' ),admin_url('profile.php')); ?>
+</p>
 <form id="eme_options_form" method="post" action="options.php">
 <h3><?php _e ( 'General options', 'eme' ); ?></h3>
 <table class="form-table">
