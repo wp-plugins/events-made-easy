@@ -247,3 +247,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: fix a WP php notice for wp_enqueue_script: it should be called from within other wp_* calls, not directly. So I added it to the callback for add_action('wp_enqueue_scripts')
 * Bugfix: fix typo with acl for "Edit events"
 * Extra: the admin backend will now use a new date_format setting in the user's profile (if present) for all dates shown
+
+= 1.0.9 =
+* Extra: some warning for the cab 'List events'
