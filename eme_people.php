@@ -432,7 +432,10 @@ function eme_user_profile($user) {
       <tr>
          <th><label for="eme_date_format"><?php _e('Date format','eme');?></label></th>
          <td><input type="text" name="eme_date_format" id="eme_date_format" value="<?php echo $eme_date_format; ?>" class="regular-text" /> <br />
-         <?php _e('The date format used by Events Made Easy in the admin section. If empty the general WP date format setting will be used.','eme');?></td>
+         <?php _e('The date format used by Events Made Easy in the admin section. If empty the general WP date format setting will be used.','eme');
+               echo "\t<p>" . __('<a href="http://codex.wordpress.org/Formatting_Date_and_Time">Documentation on date and time formatting</a>.') . "</p>\n";
+         ?>
+         </td>
       </tr>
    </table>
    <?php

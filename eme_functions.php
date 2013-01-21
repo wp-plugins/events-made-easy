@@ -227,9 +227,11 @@ function eme_get_all_caps() {
    $capabilities = array();
 
    foreach ( $wp_roles->roles as $role ) {
-      foreach ( $role['capabilities'] as $cap=>$val ) {
-        if (!preg_match("/^level/",$cap))
-	   $capabilities[$cap]=eme_capNamesCB($cap);
+      if ($role['capabilities']) {
+         foreach ( $role['capabilities'] as $cap=>$val ) {
+           if (!preg_match("/^level/",$cap))
+	      $capabilities[$cap]=eme_capNamesCB($cap);
+         }
       }
    }
 
