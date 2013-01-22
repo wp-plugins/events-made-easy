@@ -3197,8 +3197,8 @@ $j_eme_event(document).ready( function() {
         //});
 
    // users cannot submit the event form unless some fields are filled
-      function validateEventForm(){
-         errors = "";
+   function validateEventForm() {
+      errors = "";
       var recurring = $j_eme_event("input[name=repeated_event]:checked").val();
       //requiredFields= new Array('event_name', 'localised_event_start_date', 'location_name','location_address','location_town');
       requiredFields= new Array('event_name', 'localised_event_start_date');
@@ -3214,11 +3214,11 @@ $j_eme_event(document).ready( function() {
          } else {
             $j_eme_event("input[name=" + requiredFields[i]+ "]").css('border','1px solid #DFDFDF');
          }
-         }
+      }
    
       //    alert('ciao ' + recurring+ " end: " + $j_eme_event("input[@name=localised_event_end_date]").val());
-         if (missingFields.length > 0) {
-          errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
+      if (missingFields.length > 0) {
+         errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
       }
       if(recurring && $j_eme_event("input[name=localised_recurrence_end_date]").val() == "") {
          errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
@@ -3234,6 +3234,20 @@ $j_eme_event(document).ready( function() {
    }
 
    $j_eme_event('#eventForm').bind("submit", validateEventForm);
+
+
+   function areyousuretodelete() {
+      if ($j_eme_event("select[name=action]").val() == "denyRegistration") {
+        if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
+           return false;
+        } else {
+           return true;
+        }
+      }
+      return true;
+   }
+   $j_eme_event('#eme-admin-pendingform').bind("submit", areyousuretodelete);
+   $j_eme_event('#eme-admin-changeregform').bind("submit", areyousuretodelete);
       
 });
 //]]>

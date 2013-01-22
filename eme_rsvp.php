@@ -985,7 +985,7 @@ function eme_registration_seats_form_table($event_id=0) {
 
    <div class="clear"></div>
 
-   <form id="posts-filter" name="posts-filter" action="" method="post">
+   <form id="eme-admin-changeregform" name="eme-admin-changeregform" action="" method="post">
    <input type='hidden' name='page' value='eme-registration-seats' />
    <div class="tablenav">
 
@@ -1147,7 +1147,7 @@ function eme_registration_approval_form_table($event_id=0) {
 </div>
 <h2><?php _e ('Pending Approvals','eme'); ?></h2>
 <?php admin_show_warnings();?>
-   <form id="posts-filter" name="posts-filter" action="" method="post">
+   <form id="eme-admin-pendingform" name="eme-admin-pendingform" action="" method="post">
    <input type='hidden' name='page' value='eme-registration-approval' />
    <div class="tablenav">
 
