@@ -249,4 +249,5 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Extra: the admin backend will now use a new date_format setting in the user's profile (if present) for all dates shown
 
 = 1.0.9 =
+* Extra: updated Dutch translation, thanks to Peter Goldstein
 * Extra: some warning for the cab 'List events'
