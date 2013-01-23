@@ -37,8 +37,6 @@ if (get_option('eme_use_client_clock')) {
    // If needed, add high priority action to enable session variables.
    if (!session_id()) add_action('init', 'session_start', 1);
    add_action('wp_enqueue_scripts', 'eme_client_clock_enqueue_scripts');
-   // Declare URL to the file that receives AJAXed client clock data (wp-admin/admin-ajax.php).
-   wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
 
    // the next 2 actions are executed by the ajax JS call "client_clock_submit"
    // Add high priority action to receive clock data from users who are not logged-in.
@@ -50,6 +48,9 @@ if (get_option('eme_use_client_clock')) {
 function eme_client_clock_enqueue_scripts() {
    // Embed client-clock.js in webpage header.
    wp_enqueue_script('client_clock_submit', plugin_dir_url( __FILE__ ) . 'js/client-clock.js', array('jquery'));  
+   // Declare URL to the file that receives AJAXed client clock data (wp-admin/admin-ajax.php).
+   // this really just replaces the string "ajaxurl" in the JS var eme_ajax with the value admin_url('admin-ajax.php')
+   wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
 }
 
 function eme_client_clock_callback() {
