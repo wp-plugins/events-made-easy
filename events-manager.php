@@ -1317,6 +1317,14 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
+      } elseif (preg_match('/#_DAYS_TILL_START$/', $result)) {
+	 $now = date("Y-m-d");
+         $replacement = eme_daydifference($now,$event['event_start_date']);
+
+      } elseif (preg_match('/#_DAYS_TILL_END$/', $result)) {
+	 $now = date("Y-m-d");
+         $replacement = eme_daydifference($now,$event['event_end_date']);
+
       } elseif (preg_match('/#_EVENTPRICE|#_PRICE$/', $result)) {
          $field = "price";
          if ($event[$field])

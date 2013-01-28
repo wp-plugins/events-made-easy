@@ -249,6 +249,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Extra: the admin backend will now use a new date_format setting in the user's profile (if present) for all dates shown
 
 = 1.0.9 =
+* Feature: added #_DAYS_TILL_START and #_DAYS_TILL_END placeholders
 * Bugfix: the full calendar was showing month 0 of the year 0
 * Extra: when denying registrations, confirmation is now being asked
 * Extra: updated Dutch translation, thanks to Peter Goldstein
