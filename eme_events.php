@@ -1,12 +1,7 @@
 <?php
 
-function eme_new_event_page() {
-   // check the user is allowed to make changes
-   if ( !current_user_can( get_option('eme_cap_add_event')  ) ) {
-      return;
-   }
+function eme_new_event() {
 
-   $title = __ ( "Insert New Event", 'eme' );
    $event = array (
       "event_id" => '',
       "event_name" => '',
@@ -64,13 +59,23 @@ function eme_new_event_page() {
       "location_slug" => '',
       "location_url" => ''
    );
+   return $event;
+}
+
+function eme_new_event_page() {
+   // check the user is allowed to make changes
+   if ( !current_user_can( get_option('eme_cap_add_event')  ) ) {
+      return;
+   }
+
+   $title = __ ( "Insert New Event", 'eme' );
+   $event = eme_new_event();
 
    if (isset($_GET['action']) && $_GET['action'] == "insert_event") {
       eme_events_page();
    } else {
       eme_event_form ($event, $title, '');
    }
-
 }
 
 function eme_events_page() {
@@ -253,11 +258,12 @@ function eme_events_page() {
       $location ['location_description'] = "";
       //switched to WP TinyMCE field
       //$event ['event_notes'] = stripslashes ( $_POST ['event_notes'] );
-      $event ['event_notes'] = isset($_POST ['content']) ? stripslashes($_POST ['content']) : '';
+      $event ['event_notes'] = isset($_POST ['event_notes']) ? stripslashes($_POST ['event_notes']) : '';
       $event ['event_page_title_format'] = isset($_POST ['event_page_title_format']) ? stripslashes ( $_POST ['event_page_title_format'] ) : '';
       $event ['event_single_event_format'] = isset($_POST ['event_single_event_format']) ? stripslashes ( $_POST ['event_single_event_format'] ) : '';
       $event ['event_contactperson_email_body'] = isset($_POST ['event_contactperson_email_body']) ? stripslashes ( $_POST ['event_contactperson_email_body'] ) : '';
       $event ['event_respondent_email_body'] = isset($_POST ['event_respondent_email_body']) ? stripslashes ( $_POST ['event_respondent_email_body'] ) : '';
+      $event ['event_registration_pending_email_body'] = isset($_POST ['event_registration_pending_email_body']) ? stripslashes ( $_POST ['event_registration_pending_email_body'] ) : '';
       $event ['event_registration_form_format'] = isset($_POST ['event_registration_form_format']) ? stripslashes ( $_POST ['event_registration_form_format'] ) : '';
       $event ['event_url'] = isset($_POST ['event_url']) ? eme_strip_tags ( $_POST ['event_url'] ) : '';
       $event ['event_slug'] = isset($_POST ['event_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['event_slug'] )) : eme_permalink_convert($event ['event_name']);
@@ -480,6 +486,9 @@ function eme_options_page() {
 </div>
 <h2><?php _e ( 'Event Manager Options', 'eme' ); ?></h2>
 <?php admin_show_warnings();?>
+<p> 
+<?php printf(__( "Please also check <a href='%s'>your profile</a> for some per-user EME settings.", 'eme' ),admin_url('profile.php')); ?>
+</p>
 <form id="eme_options_form" method="post" action="options.php">
 <h3><?php _e ( 'General options', 'eme' ); ?></h3>
 <table class="form-table">
@@ -515,7 +524,7 @@ function eme_options_page() {
    eme_options_select (__('Add event','eme'), 'eme_cap_add_event', eme_get_all_caps (), sprintf(__('Permission needed to add a new event. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_ADD_EVENT)) );
    eme_options_select (__('Author event','eme'), 'eme_cap_author_event', eme_get_all_caps (), sprintf(__('Permission needed to edit own events. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_AUTHOR_EVENT)) );
    eme_options_select (__('Publish event','eme'), 'eme_cap_publish_event', eme_get_all_caps (), sprintf(__('Permission needed to make an event public. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_PUBLISH_EVENT)) );
-   eme_options_select (__('List events','eme'), 'eme_cap_list_events', eme_get_all_caps (), sprintf(__('Permission needed to just list all events, useful for CSV exports for bookings and such. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_LIST_EVENTS)) );
+   eme_options_select (__('List events','eme'), 'eme_cap_list_events', eme_get_all_caps (), sprintf(__('Permission needed to just list all events, useful for CSV exports for bookings and such. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_LIST_EVENTS)) . "<br><b>". __('All your event admins need this as well, otherwise the menu will not show.','eme')."</b>" );
    eme_options_select (__('Edit events','eme'), 'eme_cap_edit_events', eme_get_all_caps (), sprintf(__('Permission needed to edit all events. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_EDIT_EVENTS)) );
    eme_options_select (__('Add location','eme'), 'eme_cap_add_locations', eme_get_all_caps (), sprintf(__('Permission needed to add locations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_ADD_LOCATION)) );
    eme_options_select (__('Author location','eme'), 'eme_cap_author_locations', eme_get_all_caps (), sprintf(__('Permission needed to edit own locations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_AUTHOR_LOCATION)) );
@@ -544,12 +553,12 @@ function eme_options_page() {
    <?php
    eme_options_radio_binary ( __ ( 'Remove leading zeros from minutes?', 'eme' ), 'eme_time_remove_leading_zeros', __ ( 'PHP date/time functions have no notation to show minutes without leading zeros. Checking this option will return e.g. 9 for 09 and empty for 00.', 'eme' ) ); 
    eme_options_textarea ( __ ( 'Default event list format header', 'eme' ), 'eme_event_list_item_format_header', __( 'This content will appear just above your code for the default event list format. If you leave this empty, the value <code>&lt;ul class=\'eme_events_list\'&gt;</code> will be used.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Default event list format', 'eme' ), 'eme_event_list_item_format', __ ( 'The format of any events in a list.<br/>Insert one or more of the following placeholders: <code>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_NOTES</code>.<br/> Use <code>#_EXCERPT</code> to show <code>#_NOTES</code> until you place a <code>&lt;!&ndash;&ndash;more&ndash;&ndash;&gt;</code> marker.<br/> Use <code>#_LINKEDNAME</code> for the event name with a link to the given event page.<br/> Use <code>#_EVENTPAGEURL</code> to print the event page URL and make your own customised links.<br/> Use <code>#_LOCATIONPAGEURL</code> to print the location page URL and make your own customised links.<br/>Use <code>#_EDITEVENTLINK</code> to add a link to edit page for the event, which will appear only when a user is logged in.<br/>To insert date and time values, use <a href="http://www.php.net/manual/en/function.date.php">PHP time format characters</a>  with a <code>#</code> symbol before them, i.e. <code>#m</code>, <code>#M</code>, <code>#j</code>, etc.<br/> For the end time, put <code>#@</code> in front of the character, e.g. <code>#@h</code>, <code>#@i</code>, etc.<br/> You can also create a date format without prepending <code>#</code> by wrapping it in #_{} or #@_{} (e.g. <code>#_{d/m/Y}</code>). If there is no end date, the value is not shown.<br/>Use <code>#_12HSTARTTIME</code> and <code>#_12HENDTIME</code> for AM/PM start-time/end-time notation, idem <code>#_24HSTARTTIME</code> and <code>#_24HENDTIME</code>.<br/>Feel free to use HTML tags as <code>li</code>, <code>br</code> and so on.<br/>For custom attributes, you use <code>#_ATT{key}{alternative text}</code>, the second braces are optional and will appear if the attribute is not defined or left blank for that event. This key will appear as an option when adding attributes to your event.', 'eme' )."<br />".__('Use <code>#_PAST_FUTURE_CLASS</code> to return a class name indicating this event is future or past (<code>eme-future-event</code> or <code>eme-past-event</code>), use the returned value in e.g. the li-statement for each event in the list of events','eme') );
+   eme_options_textarea ( __ ( 'Default event list format', 'eme' ), 'eme_event_list_item_format', __ ( 'The format of any events in a list.<br/>Insert one or more of the following placeholders: <code>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_NOTES</code>.<br/> Use <code>#_EXCERPT</code> to show <code>#_NOTES</code> until you place a <code>&lt;!&ndash;&ndash;more&ndash;&ndash;&gt;</code> marker.<br/> Use <code>#_LINKEDNAME</code> for the event name with a link to the given event page.<br/> Use <code>#_EVENTPAGEURL</code> to print the event page URL and make your own customised links.<br/> Use <code>#_LOCATIONPAGEURL</code> to print the location page URL and make your own customised links.<br/>Use <code>#_EDITEVENTLINK</code> to add a link to edit page for the event, which will appear only when a user is logged in.<br/>To insert date and time values, use <a href="http://www.php.net/manual/en/function.date.php">PHP time format characters</a>  with a <code>#</code> symbol before them, i.e. <code>#m</code>, <code>#M</code>, <code>#j</code>, etc.<br/> For the end time, put <code>#@</code> in front of the character, e.g. <code>#@h</code>, <code>#@i</code>, etc.<br/> You can also create a date format without prepending <code>#</code> by wrapping it in #_{} or #@_{} (e.g. <code>#_{d/m/Y}</code>). If there is no end date, the value is not shown.<br/>Use <code>#_12HSTARTTIME</code> and <code>#_12HENDTIME</code> for AM/PM start-time/end-time notation, idem <code>#_24HSTARTTIME</code> and <code>#_24HENDTIME</code>.<br/>Feel free to use HTML tags as <code>li</code>, <code>br</code> and so on.<br/>For custom attributes, you use <code>#_ATT{key}{alternative text}</code>, the second braces are optional and will appear if the attribute is not defined or left blank for that event. This key will appear as an option when adding attributes to your event.', 'eme' )."<br />".__('Use <code>#_PAST_FUTURE_CLASS</code> to return a class name indicating this event is future or past (<code>eme-future-event</code> or <code>eme-past-event</code>), use the returned value in e.g. the li-statement for each event in the list of events','eme') .'<br />'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('the documentation', 'eme').'</a>' );
    eme_options_textarea ( __ ( 'Default event list format footer', 'eme' ), 'eme_event_list_item_format_footer', __ ( 'This content will appear just below your code for the default event list format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be used.', 'eme' ) );
 
    eme_options_input_text ( __ ( 'Single event page title format', 'eme' ), 'eme_event_page_title_format', __ ( 'The format of a single event page title. Follow the previous formatting instructions.', 'eme' ) );
    eme_options_input_text ( __ ( 'Single event html title format', 'eme' ), 'eme_event_html_title_format', __ ( 'The format of a single event html page title. Follow the previous formatting instructions.', 'eme' ). __( ' The default is: ','eme'). DEFAULT_EVENT_HTML_TITLE_FORMAT);
-   eme_options_textarea ( __ ( 'Default single event format', 'eme' ), 'eme_single_event_format', __ ( 'The format of a single event page.<br/>Follow the previous formatting instructions. <br/>Use <code>#_MAP</code> to insert a map.<br/>Use <code>#_CONTACTNAME</code>, <code>#_CONTACTEMAIL</code>, <code>#_CONTACTPHONE</code> to insert respectively the name, e-mail address and phone number of the designated contact person. <br/>Use <code>#_ADDBOOKINGFORM</code> to insert a form to allow the user to respond to your events reserving one or more places (RSVP).<br/> Use <code>#_REMOVEBOOKINGFORM</code> to insert a form where users, inserting their name and e-mail address, can remove their bookings.', 'eme' ).__('<br/>Use <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> to insert the booking form only if the user has not registered yet. Similar use <code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> to insert the booking removal form only if the user has already registered before. These two codes only work for WP users.','eme').__('<br/> Use <code>#_DIRECTIONS</code> to insert a form so people can ask directions to the event.','eme').__('<br/> Use <code>#_CATEGORIES</code> to insert a comma-seperated list of categories an event is in.','eme').__('<br/> Use <code>#_ATTENDEES</code> to get a list of the names attending the event.','eme') );
+   eme_options_textarea ( __ ( 'Default single event format', 'eme' ), 'eme_single_event_format', __ ( 'The format of a single event page.<br/>Follow the previous formatting instructions. <br/>Use <code>#_MAP</code> to insert a map.<br/>Use <code>#_CONTACTNAME</code>, <code>#_CONTACTEMAIL</code>, <code>#_CONTACTPHONE</code> to insert respectively the name, e-mail address and phone number of the designated contact person. <br/>Use <code>#_ADDBOOKINGFORM</code> to insert a form to allow the user to respond to your events reserving one or more places (RSVP).<br/> Use <code>#_REMOVEBOOKINGFORM</code> to insert a form where users, inserting their name and e-mail address, can remove their bookings.', 'eme' ).__('<br/>Use <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> to insert the booking form only if the user has not registered yet. Similar use <code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> to insert the booking removal form only if the user has already registered before. These two codes only work for WP users.','eme').__('<br/> Use <code>#_DIRECTIONS</code> to insert a form so people can ask directions to the event.','eme').__('<br/> Use <code>#_CATEGORIES</code> to insert a comma-seperated list of categories an event is in.','eme').__('<br/> Use <code>#_ATTENDEES</code> to get a list of the names attending the event.','eme') .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('the documentation', 'eme').'</a>' );
    eme_options_input_text ( __ ( 'Monthly period date format', 'eme' ), 'eme_show_period_monthly_dateformat', __ ( 'The format of the date-string used when you use showperiod=monthly as an option to &#91;the events_list] shortcode, also used for monthly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: ','eme'). DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT );
    eme_options_input_text ( __ ( 'Yearly period date format', 'eme' ), 'eme_show_period_yearly_dateformat', __ ( 'The format of the date-string used when you use showperiod=yearly as an option to &#91;the events_list] shortcode, also used for yearly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: ','eme'). DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT );
    eme_options_input_text ( __ ( 'Events page title', 'eme' ), 'eme_events_page_title', __ ( 'The title on the multiple events page.', 'eme' ) );
@@ -559,7 +568,7 @@ function eme_options_page() {
 <h3><?php _e ( 'Events filtering format', 'eme' ); ?></h3>
 <table class="form-table">
    <?php
-   eme_options_textarea ( __ ( 'Default event list filtering format', 'eme' ), 'eme_filter_form_format', __ ( 'This defines the layout of the event list filtering form when using the shortcode <code>[events_filterform]</code>. Use <code>#_FILTER_CATS</code>, <code>#_FILTER_LOCS</code>, <code>#_FILTER_TOWNS</code>, <code>#_FILTER_WEEKS</code>, <code>#_FILTER_MONTHS</code>.', 'eme' ) );
+   eme_options_textarea ( __ ( 'Default event list filtering format', 'eme' ), 'eme_filter_form_format', __ ( 'This defines the layout of the event list filtering form when using the shortcode <code>[events_filterform]</code>. Use <code>#_FILTER_CATS</code>, <code>#_FILTER_LOCS</code>, <code>#_FILTER_TOWNS</code>, <code>#_FILTER_WEEKS</code>, <code>#_FILTER_MONTHS</code>.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=28'>".__('the documentation', 'eme').'</a>' );
    ?>
 </table>
 <h3><?php _e ( 'Calendar format', 'eme' ); ?></h3>
@@ -575,12 +584,12 @@ function eme_options_page() {
 <table class="form-table">
    <?php
    eme_options_textarea ( __ ( 'Default location list format header', 'eme' ), 'eme_location_list_format_header', __( 'This content will appear just above your code for the default location list format. If you leave this empty, the value <code>&lt;ul class=\'eme_locations_list\'&gt;</code> will be used.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) );
-   eme_options_textarea ( __ ( 'Default location list item format', 'eme' ), 'eme_location_list_format_item', __ ( 'The format of a location in a location list. If you leave this empty, the value <code>&lt;li class=\"location-#_LOCATIONID\"&gt;#_LOCATIONNAME&lt;/li&gt;</code> will be used.<br/>See the documentation for a list of available placeholders for locations.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) );
+   eme_options_textarea ( __ ( 'Default location list item format', 'eme' ), 'eme_location_list_format_item', __ ( 'The format of a location in a location list. If you leave this empty, the value <code>&lt;li class=\"location-#_LOCATIONID\"&gt;#_LOCATIONNAME&lt;/li&gt;</code> will be used.<br/>See the documentation for a list of available placeholders for locations.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=26'>".__('the documentation', 'eme').'</a>' );
    eme_options_textarea ( __ ( 'Default location list format footer', 'eme' ), 'eme_location_list_format_footer', __ ( 'This content will appear just below your code for the default location list format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be used.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) );
 
    eme_options_input_text ( __ ( 'Single location page title format', 'eme' ), 'eme_location_page_title_format', __ ( 'The format of a single location page title.<br/>Follow the previous formatting instructions.', 'eme' ) );
    eme_options_input_text ( __ ( 'Single location html title format', 'eme' ), 'eme_location_html_title_format', __ ( 'The format of a single location html page title.<br/>Follow the previous formatting instructions.', 'eme' ). __( ' The default is: ','eme'). DEFAULT_LOCATION_HTML_TITLE_FORMAT);
-   eme_options_textarea ( __ ( 'Default single location page format', 'eme' ), 'eme_single_location_format', __ ( 'The format of a single location page.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>.<br/> Use <code>#_MAP</code> to display a map of the event location, and <code>#_IMAGE</code> to display an image of the location.<br/> Use <code>#_NEXTEVENTS</code> to insert a list of the upcoming events, <code>#_PASTEVENTS</code> for a list of past events, <code>#_ALLEVENTS</code> for a list of all events taking place in this location.', 'eme' ) );
+   eme_options_textarea ( __ ( 'Default single location page format', 'eme' ), 'eme_single_location_format', __ ( 'The format of a single location page.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>.<br/> Use <code>#_MAP</code> to display a map of the event location, and <code>#_IMAGE</code> to display an image of the location.<br/> Use <code>#_NEXTEVENTS</code> to insert a list of the upcoming events, <code>#_PASTEVENTS</code> for a list of past events, <code>#_ALLEVENTS</code> for a list of all events taking place in this location.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=26'>".__('the documentation', 'eme').'</a>' );
    eme_options_textarea ( __ ( 'Default location balloon format', 'eme' ), 'eme_location_baloon_format', __ ( 'The format of the text appearing in the balloon describing the location in the map.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>,<code>#_IMAGE</code>, <code>#_LOCATIONPAGEURL</code> or <code>#_DIRECTIONS</code>.', 'eme' ) );
    eme_options_textarea ( __ ( 'Default location event list format', 'eme' ), 'eme_location_event_list_item_format', __ ( 'The format of the events list inserted in the location page through the <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> element. <br/> Follow the events formatting instructions', 'eme' ) );
    eme_options_textarea ( __ ( 'Default no events message', 'eme' ), 'eme_location_no_events_message', __ ( 'The message to be displayed in the list generated by <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> when no events are available.', 'eme' ) );
@@ -622,13 +631,13 @@ function eme_options_page() {
 <table class='form-table'>
    <?php
    eme_options_radio_binary ( __ ( 'Enable the RSVP e-mail notifications?', 'eme' ), 'eme_rsvp_mail_notify_is_active', __ ( 'Check this option if you want to receive an email when someone books places for your events.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Contact person email format', 'eme' ), 'eme_contactperson_email_body', __ ( 'The format of the email which will be sent to the contact person. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Contact person cancelled email format', 'eme' ), 'eme_contactperson_cancelled_email_body', __ ( 'The format of the email which will be sent to the contact person for a cancellation. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Contact person pending email format', 'eme' ), 'eme_contactperson_pending_email_body', __ ( 'The format of the email which will be sent to the contact person if approval is needed. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Respondent email format', 'eme' ), 'eme_respondent_email_body', __ ( 'The format of the email which will be sent to the respondent. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code> to display the name of the respondent.<br/>Use <code>#_CONTACTNAME</code> and <code>#_PLAIN_CONTACTEMAIL</code> to display respectively the name and e-mail of the contact person.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Registration pending email format', 'eme' ), 'eme_registration_pending_email_body', __ ( 'The format of the email which will be sent to the respondent when the event requires registration approval.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Registration cancelled email format', 'eme' ), 'eme_registration_cancelled_email_body', __ ( 'The format of the email which will be sent to the respondent when the respondent cancels the registrations for an event.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Registration denied email format', 'eme' ), 'eme_registration_denied_email_body', __ ( 'The format of the email which will be sent to the respondent when the admin denies the registration request if the event requires registration approval.', 'eme' ) );
+   eme_options_textarea ( __ ( 'Contact person email format', 'eme' ), 'eme_contactperson_email_body', __ ( 'The format of the email which will be sent to the contact person. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Contact person cancelled email format', 'eme' ), 'eme_contactperson_cancelled_email_body', __ ( 'The format of the email which will be sent to the contact person for a cancellation. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Contact person pending email format', 'eme' ), 'eme_contactperson_pending_email_body', __ ( 'The format of the email which will be sent to the contact person if approval is needed. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Respondent email format', 'eme' ), 'eme_respondent_email_body', __ ( 'The format of the email which will be sent to the respondent. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code> to display the name of the respondent.<br/>Use <code>#_CONTACTNAME</code> and <code>#_PLAIN_CONTACTEMAIL</code> to display respectively the name and e-mail of the contact person.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Registration pending email format', 'eme' ), 'eme_registration_pending_email_body', __ ( 'The format of the email which will be sent to the respondent when the event requires registration approval.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Registration cancelled email format', 'eme' ), 'eme_registration_cancelled_email_body', __ ( 'The format of the email which will be sent to the respondent when the respondent cancels the registrations for an event.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Registration denied email format', 'eme' ), 'eme_registration_denied_email_body', __ ( 'The format of the email which will be sent to the respondent when the admin denies the registration request if the event requires registration approval.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
    eme_options_input_text ( __ ( 'Notification sender name', 'eme' ), 'eme_mail_sender_name', __ ( "Insert the display name of the notification sender.", 'eme' ) );
    eme_options_input_text ( __ ( 'Notification sender address', 'eme' ), 'eme_mail_sender_address', __ ( "Insert the address of the notification sender. It must correspond with your Gmail account user", 'eme' ) );
    eme_options_select ( __ ( 'Mail sending method', 'eme' ), 'eme_rsvp_mail_send_method', array ('smtp' => 'SMTP', 'mail' => __ ( 'PHP mail function', 'eme' ), 'sendmail' => 'Sendmail', 'qmail' => 'Qmail' ), __ ( 'Select the method to send email notification.', 'eme' ) );
@@ -652,7 +661,7 @@ function eme_options_page() {
 <h3><?php _e ( 'RSVP: form format', 'eme' ); ?></h3>
 <table class='form-table'>
    <?php
-      eme_options_textarea (__('Form format','eme'),'eme_registration_form_format', __("The look and feel of the form for registrations. #_NAME, #_EMAIL and #_SEATS are obligated fields, if not present then the form will not be shown. Use #_FIELD1, #_FIELD2, ... for own defined fields.",'eme'));
+      eme_options_textarea (__('Form format','eme'),'eme_registration_form_format', __("The look and feel of the form for registrations. #_NAME, #_EMAIL and #_SEATS are obligated fields, if not present then the form will not be shown. Use #_FIELD1, #_FIELD2, ... for own defined fields.",'eme')  .'<br/>'.__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme').'</a>');
    ?>
 </table>
 
@@ -1854,6 +1863,11 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 function eme_get_event($event_id) {
    global $wpdb;
    $event_id = intval($event_id);
+
+   if (!$event_id) {
+      return eme_new_event();
+   }
+
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $conditions = array ();
    $conditions [] = "event_id = $event_id";
@@ -1953,13 +1967,6 @@ function eme_duplicate_event($event_id) {
 }
 
 function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $o_category=0) {
-   global $localised_date_formats;
-   $locale_code = substr ( get_locale (), 0, 2 );
-   if (isset($localised_date_formats [$locale_code])) {
-      $localised_date_format = $localised_date_formats [$locale_code];
-   } else {
-      $localised_date_format = $localised_date_formats ["en"];
-   }
 
    $events_count = count ( $events );
    ?>
@@ -2061,24 +2068,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             break;
          $class = ($i % 2) ? ' class="alternate"' : '';
 
-         if ($event['event_start_date'] != "") {
-            preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_start_date'], $matches );
-            $year = $matches [1];
-            $month = sprintf("%02d",$matches [2]);
-            $day = sprintf("%02d",$matches [3]);
-            $localised_start_date = str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-         } else {
-            $localised_start_date = "";
-         }
-         if ($event['event_end_date'] != "") {
-            preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_end_date'], $matches );
-            $end_year = $matches [1];
-            $end_month = sprintf("%02d",$matches [2]);
-            $end_day = sprintf("%02d",$matches [3]);
-            $localised_end_date = str_replace ( "yy", $end_year, str_replace ( "mm", $end_month, str_replace ( "dd", $end_day, $localised_date_format ) ) );
-         } else {
-            $localised_end_date = "";
-         }
+         $localised_start_date = eme_admin_localised_date($event['event_start_date']);
+         $localised_end_date = eme_admin_localised_date($event['event_end_date']);
 
          $today = date ( "Y-m-d" );
          
@@ -2195,7 +2186,6 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
 
 function eme_event_form($event, $title, $element) {
    
-   global $localised_date_formats;
    admin_show_warnings();
 
    $use_select_for_locations = get_option('eme_use_select_for_locations');
@@ -2265,15 +2255,9 @@ function eme_event_form($event, $title, $element) {
       }
    }
    
-   $locale_code = substr ( get_locale (), 0, 2 );
-   if (isset($localised_date_formats [$locale_code])) {
-      $localised_date_format = $localised_date_formats [$locale_code];
-   } else {
-      $localised_date_format = $localised_date_formats ["en"];
-   }
-
    $hours_locale = "24";
    // Setting 12 hours format for those countries using it
+   $locale_code = substr ( get_locale (), 0, 2 );
    if (preg_match ( "/en|sk|zh|us|uk/", $locale_code ))
       $hours_locale = "12";
 
@@ -2286,47 +2270,15 @@ function eme_event_form($event, $title, $element) {
    if ($event['event_end_24h_time'] == "")
          $event['event_end_24h_time'] = date('H:i',time()+3600);
    
-   $localised_example = str_replace ( "yy", "2008", str_replace ( "mm", "11", str_replace ( "dd", "28", $localised_date_format ) ) );
-   $localised_end_example = str_replace ( "yy", "2008", str_replace ( "mm", "11", str_replace ( "dd", "28", $localised_date_format ) ) );
+   $localised_example = eme_localised_date("2008-11-28");
+   $localised_end_example = eme_localised_date("2008-11-28");
    
-   if ($event['event_start_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_start_date'], $matches );
-      $year = $matches [1];
-      $month = sprintf("%02d",$matches [2]);
-      $day = sprintf("%02d",$matches [3]);
-      $localised_start_date = str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-   } else {
-      $localised_start_date = "";
-   }
-   if ($event['event_end_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['event_end_date'], $matches );
-      $end_year = $matches [1];
-      $end_month = sprintf("%02d",$matches [2]);
-      $end_day = sprintf("%02d",$matches [3]);
-      $localised_end_date = str_replace ( "yy", $end_year, str_replace ( "mm", $end_month, str_replace ( "dd", $end_day, $localised_date_format ) ) );
-   } else {
-      $localised_end_date = "";
-   }
+   $localised_start_date = eme_localised_date($event['event_start_date']);
+   $localised_end_date = eme_localised_date($event['event_end_date']);
    if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
-   if ($event['recurrence_start_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['recurrence_start_date'], $matches );
-      $year = $matches [1];
-      $month = sprintf("%02d",$matches [2]);
-      $day = sprintf("%02d",$matches [3]);
-      $localised_rec_start_date = str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-   } else {
-      $localised_rec_start_date = "";
-   }
+   $localised_rec_start_date = eme_localised_date($event['recurrence_start_date']);
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
-   if ($event['recurrence_end_date'] != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $event['recurrence_end_date'], $matches );
-      $end_year = $matches [1];
-      $end_month = sprintf("%02d",$matches [2]);
-      $end_day = sprintf("%02d",$matches [3]);
-      $localised_rec_end_date = str_replace ( "yy", $end_year, str_replace ( "mm", $end_month, str_replace ( "dd", $end_day, $localised_date_format ) ) );
-   } else {
-      $localised_rec_end_date = "";
-   }
+   $localised_rec_end_date = eme_localised_date($event['recurrence_end_date']);
    //if($event[$pref.'rsvp'])
     //   echo (eme_bookings_table($event[$pref.'id']));
    
@@ -2887,7 +2839,7 @@ function eme_event_form($event, $title, $element) {
                      </h3>
                      <div class="inside">
                         <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                           <?php the_editor($event ['event_notes']); ?>
+                           <?php wp_editor($event ['event_notes'],"event_notes"); ?>
                         </div>
                         <br />
                         <?php _e ( 'Details about the event', 'eme' )?>
@@ -3100,7 +3052,7 @@ $j_eme_event(document).ready( function() {
          $j_eme_event('input.row-selector').attr('checked', false);
    });
 
-   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_body, event_registration_form_format
+   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_email_body, event_registration_form_format
    // is empty: display default value on focus, and if the value hasn't changed from the default: empty it on blur
 
    $j_eme_event('textarea#event_page_title_format').focus(function(){
@@ -3151,18 +3103,6 @@ $j_eme_event(document).ready( function() {
       if($j_eme_event(this).val() == tmp_value)
          $j_eme_event(this).val('');
    }); 
-   $j_eme_event('textarea#event_registration_pending_body').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
-   }); 
-   $j_eme_event('textarea#event_registration_pending_body').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
-   });
    $j_eme_event('textarea#event_registration_recorded_ok_html').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
@@ -3257,8 +3197,8 @@ $j_eme_event(document).ready( function() {
         //});
 
    // users cannot submit the event form unless some fields are filled
-      function validateEventForm(){
-         errors = "";
+   function validateEventForm() {
+      errors = "";
       var recurring = $j_eme_event("input[name=repeated_event]:checked").val();
       //requiredFields= new Array('event_name', 'localised_event_start_date', 'location_name','location_address','location_town');
       requiredFields= new Array('event_name', 'localised_event_start_date');
@@ -3274,11 +3214,11 @@ $j_eme_event(document).ready( function() {
          } else {
             $j_eme_event("input[name=" + requiredFields[i]+ "]").css('border','1px solid #DFDFDF');
          }
-         }
+      }
    
       //    alert('ciao ' + recurring+ " end: " + $j_eme_event("input[@name=localised_event_end_date]").val());
-         if (missingFields.length > 0) {
-          errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
+      if (missingFields.length > 0) {
+         errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
       }
       if(recurring && $j_eme_event("input[name=localised_recurrence_end_date]").val() == "") {
          errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
@@ -3294,6 +3234,20 @@ $j_eme_event(document).ready( function() {
    }
 
    $j_eme_event('#eventForm').bind("submit", validateEventForm);
+
+
+   function areyousuretodelete() {
+      if ($j_eme_event("select[name=action]").val() == "denyRegistration") {
+        if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
+           return false;
+        } else {
+           return true;
+        }
+      }
+      return true;
+   }
+   $j_eme_event('#eme-admin-pendingform').bind("submit", areyousuretodelete);
+   $j_eme_event('#eme-admin-changeregform').bind("submit", areyousuretodelete);
       
 });
 //]]>
