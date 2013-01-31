@@ -116,6 +116,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.10 =
 * Bugfix: the CSV export and print of custom fields was not being alligned properly
+* Extra: updated Dutch translation, thanks to Peter Goldstein
 
 = 1.0.9 =
 * Feature: added #_DAYS_TILL_START and #_DAYS_TILL_END placeholders
