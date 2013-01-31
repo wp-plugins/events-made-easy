@@ -114,6 +114,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.10 =
+* Bugfix: the CSV export and print of custom fields was not being alligned properly
+
 = 1.0.9 =
 * Feature: added #_DAYS_TILL_START and #_DAYS_TILL_END placeholders
 * Bugfix: the full calendar was showing month 0 of the year 0 if the option "use client clock" was used

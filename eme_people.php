@@ -151,12 +151,17 @@ function eme_csv_booking_report($event_id) {
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
       foreach($answer_columns as $col) {
+	 $found=0;
          foreach ($answers as $answer) {
-            if ($answer['field_name'] == $col['field_name'])
+            if ($answer['field_name'] == $col['field_name']) {
                $line[]=$answer['answer'];
-            else
-               $line[]="";
+               $found=1;
+               break;
+            }
          }
+         # to make sure the number of columns are correct, we add an empty answer if none was found
+         if (!$found)
+            $line[]="";
       }
       fputcsv2($out,$line);
    }
@@ -227,12 +232,17 @@ function eme_printable_booking_report($event_id) {
                <?php
                   $answers = eme_get_answers($booking['booking_id']);
                   foreach($answer_columns as $col) {
+                     $found=0;
                      foreach ($answers as $answer) {
-                         if ($answer['field_name'] == $col['field_name'])
+                         if ($answer['field_name'] == $col['field_name']) {
                             print "<td>".eme_sanitize_html($answer['answer'])."</td>";
-                         else
-                            print "<td>&nbsp;</td>";
+                            $found=1;
+                            break;
+                         }
                      }
+                     # to make sure the number of columns are correct, we add an empty answer if none was found
+                     if (!$found)
+                        print "<td>&nbsp;</td>";
                   }
                ?>
             </tr>
