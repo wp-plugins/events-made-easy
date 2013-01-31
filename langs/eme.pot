@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
-"POT-Creation-Date: 2013-01-22 21:49:02+00:00\n"
+"POT-Creation-Date: 2013-01-31 21:49:29+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,11 +16,11 @@ msgstr ""
 msgid "You entered an incorrect code. Please fill in the correct code."
 msgstr ""
 
-#: eme_UI_helpers.php:73 eme_UI_helpers.php:110 eme_people.php:225
+#: eme_UI_helpers.php:73 eme_UI_helpers.php:110 eme_people.php:230
 msgid "Yes"
 msgstr ""
 
-#: eme_UI_helpers.php:74 eme_UI_helpers.php:109 eme_people.php:225
+#: eme_UI_helpers.php:74 eme_UI_helpers.php:109 eme_people.php:230
 msgid "No"
 msgstr ""
 
@@ -104,7 +104,7 @@ msgid ""
 "again."
 msgstr ""
 
-#: eme_categories.php:67 events-manager.php:1008
+#: eme_categories.php:67 events-manager.php:1009
 msgid "Categories"
 msgstr ""
 
@@ -115,9 +115,9 @@ msgstr ""
 
 #: eme_categories.php:90 eme_categories.php:97 eme_events.php:2056
 #: eme_events.php:2552 eme_events.php:2780 eme_events.php:3205
-#: eme_locations.php:312 eme_locations.php:320 eme_people.php:201
+#: eme_locations.php:312 eme_locations.php:320 eme_people.php:206
 #: eme_rsvp.php:152 eme_rsvp.php:961 eme_rsvp.php:1023 eme_rsvp.php:1185
-#: events-manager.php:838
+#: events-manager.php:839
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:76
 msgid "Name"
 msgstr ""
@@ -540,7 +540,7 @@ msgstr ""
 msgid "Permission needed to edit form fields. Default: %s"
 msgstr ""
 
-#: eme_events.php:537 events-manager.php:1021
+#: eme_events.php:537 events-manager.php:1022
 msgid "Cleanup"
 msgstr ""
 
@@ -1497,8 +1497,8 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: eme_events.php:1999 events-manager.php:155 events-manager.php:865
-#: events-manager.php:866 events-manager.php:998
+#: eme_events.php:1999 events-manager.php:156 events-manager.php:866
+#: events-manager.php:867 events-manager.php:999
 msgid "Events"
 msgstr ""
 
@@ -1526,7 +1526,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: eme_events.php:2047 events-manager.php:162 events-manager.php:858
+#: eme_events.php:2047 events-manager.php:163 events-manager.php:859
 msgid "No events"
 msgstr ""
 
@@ -1859,7 +1859,7 @@ msgstr ""
 msgid " days before the event starts."
 msgstr ""
 
-#: eme_events.php:2494 eme_people.php:197
+#: eme_events.php:2494 eme_people.php:202
 msgid "Price: "
 msgstr ""
 
@@ -2084,11 +2084,15 @@ msgstr ""
 msgid "Since the event is repeated, you must specify an end date"
 msgstr ""
 
-#: eme_events.php:3686
+#: eme_events.php:3241
+msgid "Are you sure you want to deny registration for these bookings?"
+msgstr ""
+
+#: eme_events.php:3700
 msgid "Add an event"
 msgstr ""
 
-#: eme_events.php:3694
+#: eme_events.php:3708
 msgid ""
 "This page corresponds to <strong>Events Made Easy</strong> events page. Its "
 "content will be overriden by <strong>Events Made Easy</strong>. If you want "
@@ -2096,7 +2100,7 @@ msgid ""
 "Made Easy</strong> in the the <a href='%s'>Settings</a>. "
 msgstr ""
 
-#: eme_events.php:3769 eme_locations.php:711
+#: eme_events.php:3783 eme_locations.php:711
 msgid "The image could not be loaded"
 msgstr ""
 
@@ -2252,7 +2256,7 @@ msgstr ""
 msgid "Update location"
 msgstr ""
 
-#: eme_locations.php:294 events-manager.php:1005
+#: eme_locations.php:294 events-manager.php:1006
 msgid "Locations"
 msgstr ""
 
@@ -2293,81 +2297,81 @@ msgstr ""
 msgid "Couldn't delete the people. Please try again."
 msgstr ""
 
-#: eme_people.php:145 eme_people.php:217 eme_rsvp.php:695
+#: eme_people.php:145 eme_people.php:222 eme_rsvp.php:695
 msgid "(pending)"
 msgstr ""
 
-#: eme_people.php:198
+#: eme_people.php:203
 msgid "Bookings data"
 msgstr ""
 
-#: eme_people.php:202 eme_rsvp.php:630
+#: eme_people.php:207 eme_rsvp.php:630
 msgid "E-mail"
 msgstr ""
 
-#: eme_people.php:203 eme_people.php:428 eme_rsvp.php:630 eme_rsvp.php:963
-#: events-manager.php:840
+#: eme_people.php:208 eme_people.php:438 eme_rsvp.php:630 eme_rsvp.php:963
+#: events-manager.php:841
 msgid "Phone number"
 msgstr ""
 
-#: eme_people.php:204 eme_rsvp.php:630 eme_rsvp.php:979 eme_rsvp.php:1026
-#: eme_rsvp.php:1188 events-manager.php:841
+#: eme_people.php:209 eme_rsvp.php:630 eme_rsvp.php:979 eme_rsvp.php:1026
+#: eme_rsvp.php:1188 events-manager.php:842
 msgid "Seats"
 msgstr ""
 
-#: eme_people.php:205 eme_rsvp.php:980 eme_rsvp.php:1028 eme_rsvp.php:1190
+#: eme_people.php:210 eme_rsvp.php:980 eme_rsvp.php:1028 eme_rsvp.php:1190
 msgid "Paid"
 msgstr ""
 
-#: eme_people.php:206 events-manager.php:842
+#: eme_people.php:211 events-manager.php:843
 msgid "Comment"
 msgstr ""
 
-#: eme_people.php:242
+#: eme_people.php:252
 msgid "Booked"
 msgstr ""
 
-#: eme_people.php:246
+#: eme_people.php:256
 msgid "(%s pending)"
 msgstr ""
 
-#: eme_people.php:252
+#: eme_people.php:262
 msgid "Available"
 msgstr ""
 
-#: eme_people.php:268
+#: eme_people.php:278
 msgid "No people have responded to your events yet!"
 msgstr ""
 
-#: eme_people.php:270
+#: eme_people.php:280
 msgid "This table shows the data about the people who responded to your events"
 msgstr ""
 
-#: eme_people.php:308
+#: eme_people.php:318
 msgid "Also delete associated bookings"
 msgstr ""
 
-#: eme_people.php:425
+#: eme_people.php:435
 msgid "Events Made Easy settings"
 msgstr ""
 
-#: eme_people.php:430
+#: eme_people.php:440
 msgid ""
 "The phone number used by Events Made Easy when the user is indicated as the "
 "contact person for an event."
 msgstr ""
 
-#: eme_people.php:433
+#: eme_people.php:443
 msgid "Date format"
 msgstr ""
 
-#: eme_people.php:435
+#: eme_people.php:445
 msgid ""
 "The date format used by Events Made Easy in the admin section. If empty the "
 "general WP date format setting will be used."
 msgstr ""
 
-#: eme_people.php:436
+#: eme_people.php:446
 msgid ""
 "<a href=\"http://codex.wordpress.org/Formatting_Date_and_Time"
 "\">Documentation on date and time formatting</a>."
@@ -2441,7 +2445,7 @@ msgstr ""
 msgid "(* marks a required field)"
 msgstr ""
 
-#: eme_rsvp.php:153 eme_rsvp.php:962 events-manager.php:839
+#: eme_rsvp.php:153 eme_rsvp.php:962 events-manager.php:840
 msgid "E-Mail"
 msgstr ""
 
@@ -2581,7 +2585,7 @@ msgstr ""
 msgid "Approved: "
 msgstr ""
 
-#: eme_rsvp.php:1148 events-manager.php:1014
+#: eme_rsvp.php:1148 events-manager.php:1015
 msgid "Pending Approvals"
 msgstr ""
 
@@ -2676,31 +2680,31 @@ msgstr ""
 msgid "Show Long Events?"
 msgstr ""
 
-#: events-manager.php:168
+#: events-manager.php:169
 msgid "<li>No events in this location</li>"
 msgstr ""
 
-#: events-manager.php:179
+#: events-manager.php:180
 msgid "Send your booking"
 msgstr ""
 
-#: events-manager.php:180
+#: events-manager.php:181
 msgid "Cancel your booking"
 msgstr ""
 
-#: events-manager.php:213
+#: events-manager.php:214
 msgid "The location name"
 msgstr ""
 
-#: events-manager.php:213
+#: events-manager.php:214
 msgid "The location address"
 msgstr ""
 
-#: events-manager.php:213
+#: events-manager.php:214
 msgid "The location town"
 msgstr ""
 
-#: events-manager.php:829
+#: events-manager.php:830
 msgid ""
 "#_RESPNAME (#_RESPEMAIL) will attend #_EVENTNAME on #m #d, #Y. He wants to "
 "reserve #_SPACES space(s).<br/>Now there are #_RESERVEDSPACES space(s) "
@@ -2708,14 +2712,14 @@ msgid ""
 "<br/>Events Manager"
 msgstr ""
 
-#: events-manager.php:830
+#: events-manager.php:831
 msgid ""
 "#_RESPNAME (#_RESPEMAIL) has cancelled for #_EVENTNAME on #m #d, #Y. <br/"
 ">Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are "
 "still available.<br/><br/>Yours faithfully,<br/>Events Manager"
 msgstr ""
 
-#: events-manager.php:831
+#: events-manager.php:832
 msgid ""
 "#_RESPNAME (#_RESPEMAIL) would like to attend #_EVENTNAME on #m #d, #Y. He "
 "wants to reserve #_SPACES space(s).<br/>Now there are #_RESERVEDSPACES space"
@@ -2723,101 +2727,101 @@ msgid ""
 "faithfully,<br/>Events Manager"
 msgstr ""
 
-#: events-manager.php:832
+#: events-manager.php:833
 msgid ""
 "Dear #_RESPNAME,<br/><br/>you have successfully reserved #_SPACES space(s) "
 "for #_EVENTNAME.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
 msgstr ""
 
-#: events-manager.php:833
+#: events-manager.php:834
 msgid ""
 "Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for "
 "#_EVENTNAME is pending.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
 msgstr ""
 
-#: events-manager.php:834
+#: events-manager.php:835
 msgid ""
 "Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for "
 "#_EVENTNAME has been cancelled.<br/><br/>Yours faithfully,<br/"
 ">#_CONTACTPERSON"
 msgstr ""
 
-#: events-manager.php:835
+#: events-manager.php:836
 msgid ""
 "Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for "
 "#_EVENTNAME has been denied.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
 msgstr ""
 
-#: events-manager.php:836
+#: events-manager.php:837
 msgid "Your booking has been recorded"
 msgstr ""
 
-#: events-manager.php:975
+#: events-manager.php:976
 msgid "events"
 msgstr ""
 
-#: events-manager.php:1001 events-manager.php:1098
+#: events-manager.php:1002 events-manager.php:1099
 msgid "Edit"
 msgstr ""
 
-#: events-manager.php:1003
+#: events-manager.php:1004
 msgid "Add new"
 msgstr ""
 
-#: events-manager.php:1008
+#: events-manager.php:1009
 msgid "Event Categories"
 msgstr ""
 
-#: events-manager.php:1012
+#: events-manager.php:1013
 msgid "People"
 msgstr ""
 
-#: events-manager.php:1016
+#: events-manager.php:1017
 msgid "Change Registration"
 msgstr ""
 
-#: events-manager.php:1018
+#: events-manager.php:1019
 msgid "Form Fields"
 msgstr ""
 
-#: events-manager.php:1025 events-manager.php:1027
+#: events-manager.php:1026 events-manager.php:1028
 msgid "Events Made Easy Settings"
 msgstr ""
 
-#: events-manager.php:1025 events-manager.php:1027
+#: events-manager.php:1026 events-manager.php:1028
 msgid "Settings"
 msgstr ""
 
-#: events-manager.php:1701
+#: events-manager.php:1710
 msgid ""
 "It seems you upgraded Events Made Eeasy but your events database hasn't been "
 "updated accordingly yet. Please deactivate/activate the plugin for this to "
 "happen."
 msgstr ""
 
-#: events-manager.php:1701
+#: events-manager.php:1710
 msgid ""
 "<strong>Warning:</strong> make sure the option 'Delete all EME data when "
 "upgrading or deactivating' is not activated if you don't want to lose all "
 "existing event data!"
 msgstr ""
 
-#: events-manager.php:1711
+#: events-manager.php:1720
 msgid "Donate"
 msgstr ""
 
-#: events-manager.php:1713
+#: events-manager.php:1722
 msgid ""
 "If you find this plugin useful to you, please consider making a small "
 "donation to help contribute to my time invested and to further development. "
 "Thanks for your kind support!"
 msgstr ""
 
-#: events-manager.php:1722
+#: events-manager.php:1731
 msgid "<a href=\"%s\" title=\"I already donated\">I already donated.</a>"
 msgstr ""
 
-#: events-manager.php:1736
+#: events-manager.php:1745
 msgid ""
 "<p>Hey, <strong>%s</strong>, welcome to <strong>Events Made Easy</strong>! "
 "We hope you like it around here.</p> \n"
