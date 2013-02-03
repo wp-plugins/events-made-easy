@@ -457,10 +457,10 @@ add_action('edit_user_profile_update','eme_update_user_profile');
 add_action('personal_options_update','eme_update_user_profile');
 
 function eme_update_user_profile($wp_user_ID) {
-   if(isset($_POST['eme_phone']) && $_POST['eme_phone'] != '') {
+   if(isset($_POST['eme_phone'])) {
       update_user_meta($wp_user_ID,'eme_phone', $_POST['eme_phone']);
    }
-   if(isset($_POST['eme_date_format']) && $_POST['eme_date_format'] != '') {
+   if(isset($_POST['eme_date_format'])) {
       update_user_meta($wp_user_ID,'eme_date_format', $_POST['eme_date_format']);
    }
    
