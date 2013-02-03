@@ -258,7 +258,7 @@ function eme_events_page() {
       $location ['location_description'] = "";
       //switched to WP TinyMCE field
       //$event ['event_notes'] = stripslashes ( $_POST ['event_notes'] );
-      $event ['event_notes'] = isset($_POST ['event_notes']) ? stripslashes($_POST ['event_notes']) : '';
+      $event ['event_notes'] = isset($_POST ['content']) ? stripslashes($_POST ['content']) : '';
       $event ['event_page_title_format'] = isset($_POST ['event_page_title_format']) ? stripslashes ( $_POST ['event_page_title_format'] ) : '';
       $event ['event_single_event_format'] = isset($_POST ['event_single_event_format']) ? stripslashes ( $_POST ['event_single_event_format'] ) : '';
       $event ['event_contactperson_email_body'] = isset($_POST ['event_contactperson_email_body']) ? stripslashes ( $_POST ['event_contactperson_email_body'] ) : '';
@@ -2839,7 +2839,8 @@ function eme_event_form($event, $title, $element) {
                      </h3>
                      <div class="inside">
                         <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                           <?php wp_editor($event ['event_notes'],"event_notes"); ?>
+                  <!-- we need content for qtranslate as ID -->
+                           <?php wp_editor($event ['event_notes'],"content"); ?>
                         </div>
                         <br />
                         <?php _e ( 'Details about the event', 'eme' )?>
