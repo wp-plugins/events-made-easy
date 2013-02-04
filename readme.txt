@@ -115,6 +115,8 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 == Changelog ==
 
 = 1.0.10 =
+* Feature: added #_BOOKINGS placeholder (+ customizable bookings format)
+* Feature: added #_FIELNAMExx to get the formfield name (can be used in the registration form and in #_BOOKINGS)
 * Bugfix: make qtranslate work again
 * Bugfix: the CSV export and print of custom fields was not being alligned properly
 * Bugfix: allow empty contact phone

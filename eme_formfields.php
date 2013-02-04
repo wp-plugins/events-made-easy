@@ -184,6 +184,9 @@ function eme_formfields_edit_layout($message = "") {
       </div>";
    }
    $layout .= "
+      <div id='warning' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
+         <p>".__('Warning: changing the field name might result in some answers not being visible when using the #_BOOKINGS placeholder, since the answers are based on the field name', 'eme')."</p>
+      </div>
       <div id='ajax-response'></div>
 
       <form name='editcat' id='editcat' method='post' action='".admin_url("admin.php?page=eme-formfields")."' class='validate'>
@@ -321,6 +324,10 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
       } elseif (preg_match('/#_CAPTCHA$/', $result) && get_option('eme_captcha_for_booking')) {
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php'><br><input type='text' name='captcha_check' />";
+      } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $formfield = eme_get_formfield($field_id);
+         $replacement = eme_trans_sanitize_html($formfield['field_name']);
       } elseif (preg_match('/#_FIELD(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $replacement = eme_get_formfield_html($field_id);

@@ -781,6 +781,62 @@ function eme_get_attendees_list_for($event_id) {
    return $res;
 }
 
+function eme_get_bookings_list_for($event_id) {
+   global $wpdb; 
+   $bookings=eme_get_bookings_for($event_id);
+   if ($bookings) {
+      $res="<ul class='eme_bookings_list_ul'>";
+      foreach ($bookings as $booking) {
+         $res.= eme_replace_booking_placeholders(get_option('eme_bookings_list_format'),$booking);
+      }
+      $res.="</ul>";
+   } else {
+      $res="<p class='eme_no_bookings'>".__('No responses yet!','eme')."</p>";
+   }
+   return $res;
+}
+
+function eme_replace_booking_placeholders($format, $booking, $answers, $target="html") {
+   preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
+   $answers = eme_get_answers($booking['booking_id']);
+   foreach($placeholders[0] as $result) {
+      $replacement='';
+      $found = 1;
+      if (preg_match('/#_(NAME|PHONE|ID|EMAIL)$/', $result)) {
+         $field = "person_".ltrim(strtolower($result), "#_");
+         $replacement = $booking[$field];
+         $replacement = eme_sanitize_html($replacement);
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
+
+      } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
+         $replacement = $booking['booking_seats'];
+      } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $formfield = eme_get_formfield($field_id);
+         $replacement = eme_trans_sanitize_html($formfield['field_name']);
+      } elseif (preg_match('/#_FIELD(.+)$/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $formfield = eme_get_formfield($field_id);
+         foreach ($answers as $answer) {
+            if ($answer['field_name'] == $formfield['field_name'])
+               $replacement = $answer['answer'];
+         }
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
+      } else {
+         $found = 0;
+      }
+      if ($found)
+         $format = str_replace($result, $replacement ,$format );
+   }
+   return do_shortcode($format);   
+}
+
 function eme_replace_attendees_placeholders($format, $attendee, $event_id, $target="html") {
    preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
    foreach($placeholders[0] as $result) {
@@ -800,9 +856,8 @@ function eme_replace_attendees_placeholders($format, $attendee, $event_id, $targ
       } else {
          $found = 0;
       }
-      if ($found) {
+      if ($found)
          $format = str_replace($result, $replacement ,$format );
-      }
    }
    return do_shortcode($format);   
 }
@@ -815,7 +870,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    }
 
    $booking = eme_get_booking ($booking_id);
-   $answers = eme_get_answers($booking['booking_id']);
+   $answers = eme_get_answers ($booking_id);
    $field_replace = "";
    foreach ($answers as $answer) {
       $field_replace.=$answer['field_name'].": ".$answer['answer']."\n";
