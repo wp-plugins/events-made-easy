@@ -810,7 +810,13 @@ function eme_replace_booking_placeholders($format, $booking, $answers, $target="
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
-
+      } elseif (preg_match('/#_COMMENT$/', $result)) {
+         $replacement = $booking['booking_comment'];
+         $replacement = eme_sanitize_html($replacement);
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          $replacement = $booking['booking_seats'];
       } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
