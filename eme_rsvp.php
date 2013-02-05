@@ -785,18 +785,18 @@ function eme_get_bookings_list_for($event_id) {
    global $wpdb; 
    $bookings=eme_get_bookings_for($event_id);
    if ($bookings) {
-      $res="<ul class='eme_bookings_list_ul'>";
+      $res=get_option('eme_bookings_list_header_format');
       foreach ($bookings as $booking) {
          $res.= eme_replace_booking_placeholders(get_option('eme_bookings_list_format'),$booking);
       }
-      $res.="</ul>";
+      $res.=get_option('eme_bookings_list_footer_format');
    } else {
       $res="<p class='eme_no_bookings'>".__('No responses yet!','eme')."</p>";
    }
    return $res;
 }
 
-function eme_replace_booking_placeholders($format, $booking, $answers, $target="html") {
+function eme_replace_booking_placeholders($format, $booking, $target="html") {
    preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
    $answers = eme_get_answers($booking['booking_id']);
    foreach($placeholders[0] as $result) {
