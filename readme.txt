@@ -11,12 +11,10 @@ Manage and display events. Includes recurring events; locations; widgets; Google
 == Description ==
 Events Made Easy (formally called 'Events Manager Extended') is a full-featured event management solution for Wordpress. Events Made Easy supports public, private, draft and recurring events, locations management, RSVP (+ approval if wanted) and maps. With Events Made Easy you can plan and publish your event, or let people reserve spaces for your weekly meetings. You can add events list, calendars and description to your blog using multiple sidebar widgets or shortcodes; if you are a web designer you can simply employ the template tags provided by Events Made Easy. 
 
-Events Made Easy (EME) is a fork (NOT an extension) of the older Events Manager (EM) version 2.2.2 (April 2010). After months, the original plugin came back to life with a new codebase, but I added so much features already that it is very hard to go back to being one plugin. Read here for the differences since 2.2.2: http://www.e-dynamics.be/wordpress/?page_id=2 
 Events Made Easy integrates with Google Maps; thanks to geocoding, Events Made Easy can find the location of your event and accordingly display a map. 
+Events Made Easy also integrates payments for events using paypal. 
 
 Events Made Easy provides also a RSS and ICAL feed, to keep your subscribers updated about the events you're organising. 
-
-Events Made Easy also integrates payments for events using paypal. 
 
 Events Made Easy is fully customisable; you can customise the amount of data displayed and their format in events lists, pages and in the RSS/ICAL feed. You can choose to show or hide the events page, and change its title.  
 
