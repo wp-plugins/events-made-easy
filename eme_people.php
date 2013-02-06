@@ -139,14 +139,15 @@ function eme_csv_booking_report($event_id) {
    }
    fputcsv2($out,$line);
    foreach($bookings as $booking) {
+      $person = eme_get_person ($booking['person_id']);
       $line=array();
       $pending_string="";
       if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
          $booking['booking_seats'].=" ".__('(pending)','eme');
       }
-      $line[]=$booking['person_name'];
-      $line[]=$booking['person_email'];
-      $line[]=$booking['person_phone'];
+      $line[]=$person['person_name'];
+      $line[]=$person['person_email'];
+      $line[]=$person['person_phone'];
       $line[]=$booking['booking_seats'];
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
@@ -217,15 +218,16 @@ function eme_printable_booking_report($event_id) {
             </tr>
             <?php
             foreach($bookings as $booking) {
+               $person = eme_get_person ($booking['person_id']);
                $pending_string="";
                if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
                   $pending_string=__('(pending)','eme');
                }
                 ?>
             <tr>
-               <td><?php echo $booking['person_name']?></td> 
-               <td><?php echo $booking['person_email']?></td>
-               <td><?php echo $booking['person_phone']?></td>
+               <td><?php echo $person['person_name']?></td> 
+               <td><?php echo $person['person_email']?></td>
+               <td><?php echo $person['person_phone']?></td>
                <td class='seats-number'><?php echo $booking['booking_seats']." ".$pending_string?></td>
                <td><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
                <td><?=$booking['booking_comment'] ?></td> 
