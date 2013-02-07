@@ -3,20 +3,18 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.0.0
-Tested up to: 3.5
-Stable tag: 1.0.6
+Tested up to: 3.5.1
+Stable tag: 1.0.10
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL support. SEO compatible.
              
 == Description ==
 Events Made Easy (formally called 'Events Manager Extended') is a full-featured event management solution for Wordpress. Events Made Easy supports public, private, draft and recurring events, locations management, RSVP (+ approval if wanted) and maps. With Events Made Easy you can plan and publish your event, or let people reserve spaces for your weekly meetings. You can add events list, calendars and description to your blog using multiple sidebar widgets or shortcodes; if you are a web designer you can simply employ the template tags provided by Events Made Easy. 
 
-Events Made Easy (EME) is a fork (NOT an extension) of the older Events Manager (EM) version 2.2.2 (April 2010). After months, the original plugin came back to life with a new codebase, but I added so much features already that it is very hard to go back to being one plugin. Read here for the differences since 2.2.2: http://www.e-dynamics.be/wordpress/?page_id=2 
 Events Made Easy integrates with Google Maps; thanks to geocoding, Events Made Easy can find the location of your event and accordingly display a map. 
+Events Made Easy also integrates payments for events using paypal. 
 
 Events Made Easy provides also a RSS and ICAL feed, to keep your subscribers updated about the events you're organising. 
-
-Events Made Easy also integrates payments for events using paypal. 
 
 Events Made Easy is fully customisable; you can customise the amount of data displayed and their format in events lists, pages and in the RSS/ICAL feed. You can choose to show or hide the events page, and change its title.  
 
@@ -114,8 +112,110 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
-= Older versions =
-* See the Changelog of the Events Manager Extended plugin
+= 1.0.10 =
+* Feature: added #_BOOKINGS placeholder (+ customizable bookings format)
+* Feature: added #_FIELNAMExx to get the formfield name (can be used in the registration form, in #_BOOKINGS and RSVP mails)
+* Feature: added shortcodes [events_add_booking_form] and [events_delete_booking_form] (with 'id' as parameter: the id of the event)
+           This way you can have normal pages for events (using the url option), but still show the booking form as well
+* Bugfix: make qtranslate work again
+* Bugfix: the CSV export and print of custom fields was not being alligned properly
+* Bugfix: allow empty contact phone
+* Extra: updated Dutch translation, thanks to Peter Goldstein
+
+= 1.0.9 =
+* Feature: added #_DAYS_TILL_START and #_DAYS_TILL_END placeholders
+* Bugfix: the full calendar was showing month 0 of the year 0 if the option "use client clock" was used
+* Extra: when denying registrations, confirmation is now being asked
+* Extra: updated Dutch translation, thanks to Peter Goldstein
+* Extra: some warning for the capability 'List events'
+
+= 1.0.8 =
+* Bugfix: apparently some WP update changed the capability checking worked, so the code to get all caps has been updated
+* Bugfix: custom (per event) event_registration_pending_email_body was not working
+* Bugfix: fix a WP php notice for wp_enqueue_script: it should be called from within other wp_* calls, not directly. So I added it to the callback for add_action('wp_enqueue_scripts')
+* Bugfix: fix typo with acl for "Edit events"
+* Extra: the admin backend will now use a new date_format setting in the user's profile (if present) for all dates shown
+
+= 1.0.7 =
+* Feature: placeholder #_EDITEVENTURL added, gives you just the link to the admin page for editing the event
+* Feature: added a setting to wether or not show the event creation/modification date as PubDate info in the in the events RSS feed
+* Bugfix: calendar navigation now also respects the qtranslate language if permalinks are enabled
+* Bugfix: filter forms now also respects the qtranslate language
+* Bugfix: if phone or comment was defined as a required field, the booking was not working
+* Bugfix: fix wrong call to event_rul(), must be eme_event_url(), bug added in changeset 649391
+* Bugfix: [events_countdown] shortcode was not working as expected
+* Extra: Added error if image upload fails
+
+= 1.0.6 =
+* Feature: extra registration field info can now also be mailed, using #_FIELDS as a placeholder in mail formats
+* Feature: event SEO links now also take into account the qtranslate language if present
+* Feature: added extra capability to just list events, so people with no edit cap can still do e.g. CSV exports. All your event admins would need this cap as well, otherwise the menu will not show.
+* Feature: preview added for draft events
+* Bugfix: the results for custom fields were not shown in the printable overview or the CSV export
+* Bugfix: the table for answers had a wrong index (primary), which resulted in only the first custom field to be stored in it
+* Extra: added Danish translation, thanks to Torben Bendixen
+* Extra: updated Dutch translation, thanks to Peter Goldstein
+
+= 1.0.5 =
+* Feature: forms are customizable now, although extra defined fields can be viewed/exported but not changed in the admin backend (and is qtranslate compatible)
+* Feature: contact person mails for cancellations and approvals are now customizable
+* Feature: submit button for registration form is now qtranslate compatible
+* Bugfix: make html title work correctly for locations too
+* Bugfix: the html anchor was not always being shown for RSVP
+* Bugfix: email body and subject can now contain qtranslate calls as well (code got removed when changing the plugin name)
+* Bugfix: corrected and added some sql prepare statements
+* Extra: give all RSVP forms a name and a html id
+* Extra: give full day events a CSS class in the calendar (eme-calendar-day-event)
+* Extra: some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
+
+= 1.0.4 =
+* Bugfix: again better the_content filter recursion detection, so it should now work ok with Arras theme, Pagelines, TwentyEleven and hopefully all other ones.
+* Bugfix: this_year and paging was not working ok due to a php bug
+
+= 1.0.3 =
+* Bugfix: scope=this_year was not working
+* Bugfix: better the_content filter recursion detection, so it should now work ok with Arras theme and using page-include plugins inside event content
+* Bugfix: removing a booking in the event edit window via ajax was no longer working
+* Bugfix: #_EVENTIMAGEURL was not being replaced correctly
+* Bugfix: the available number of seats can be <0 if more than one booking happened at the same time and people fill in things slowly ...
+* Bugfix: events spanning multiple months were not correctly shown in the calendar or list
+* Bugfix: some 'this_week' scopes did not take the start day of the week preference into account
+* Bugfix: RSS needs "<category>" and not "<categories>" as valid tag
+* Feature: the html title of a single event or location can now also be formatted
+* Feature: new conditional tag #_IS_ONGOING_EVENT
+* Extra: Romanian language added, thanks to Web Geek Science (http://webhostinggeeks.com/)
+
+= 1.0.2 =
+* Feature: placeholders #_TOTALSPACES and #_TOTALSEATS added (gives the total amount of spaces for an event)
+* Feature: placeholder #_TOTALPRICE added for mail formats (gives the total price to pay: the amount of spaces booked times the price of the event)
+* Feature: placeholder #_RECURRENCEDESC added, shows the recurrence info for an event like it does in the admin backend
+* Feature: events can now also have a featured image, like locations, resulting also in 2 new placeholders: #_EVENTIMAGE and #_EVENTIMAGEURL
+* Feature: location list formatting is now possible in the settings, when using the shortcode [events_locations], as it was already for [events_list]
+* Feature: each day in the calendar now also has the short day name as an extra class
+* Feature: list widget now also can choose to show ongoing events or not
+* Feature: made the message 'Your booking has been recorded' formattable
+* Feature: scope=Nd--Md, to get the events from day N in the past/future till day M in the past/future (eg. scope=-3d--2d , scope=0d--3d)
+* Feature: initial state for a new event can now be set in the settings page
+* Feature: new access right setting for publish events
+* Extra: included the plugin events-made-easy-frontend-submit, see the dir extras/plugins/events-made-easy-frontend-submit
+* Extra: if the end date is empty, it will always be the start date now. If you want to check if they are equal, use conditional tags
+* Extra: French translation updated, thanks to Philippe Lambotte
+* Bugfix: typo fix in eme_events.php influencing location showing
+* Bugfix: typo fix in eme_events.php for a jquery statement
+* Bugfix: when adding a registration via the backend and approval was required, the registered person would get a pending message although it was already approved
+* Bugfix: #_USER_RESERVEDSPACES wasn't working correctly for the attendees format setting
+* Bugfix: location title was not qtranslate-ready in the [events_location] shortcode
+* Bugfix: better retreiving of new booker info, should resolve the booker being empty in some cases
+* Bugfix: datepicker images were not in svn
+* Bugfix: list widget was behaving incorrectly for the author option
+* Bugfix: when clicking on calendar day and there's only 1 event, only show the event content directly if the event doesn't point to an external url
+* Bugfix: the booking form was still shown for fully booked events if the max number of seats to book was not defined
+* Bugfix: typo fix in the admin edit location pages
+* Bugfix: #_PLAIN_CONTACTEMAIL was being replaced by empty string in mails
+
+= 1.0.1 =
+* Bugfix: fix replacement in menu for page title by events title when viewing a single event
+* Bugfix: fixed a closing-div tag, preventing the rich html-editor to appear sometimes for locations
 
 = 1.0.0 =
 * Feature: added options 'category' and 'notcategory' to the shortcode [events_filterform], so you can choose to only show specific categories or exclude certain categories from the select box
@@ -160,83 +260,6 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: ampersand character in event title breaks RSS feed
 * Bugfix: make sure that we apply the the_content filter only once
 
-= 1.0.1 =
-* Bugfix: fix replacement in menu for page title by events title when viewing a single event
-* Bugfix: fixed a closing-div tag, preventing the rich html-editor to appear sometimes for locations
+= Older versions =
+* See the Changelog of the Events Manager Extended plugin
 
-= 1.0.2 =
-* Feature: placeholders #_TOTALSPACES and #_TOTALSEATS added (gives the total amount of spaces for an event)
-* Feature: placeholder #_TOTALPRICE added for mail formats (gives the total price to pay: the amount of spaces booked times the price of the event)
-* Feature: placeholder #_RECURRENCEDESC added, shows the recurrence info for an event like it does in the admin backend
-* Feature: events can now also have a featured image, like locations, resulting also in 2 new placeholders: #_EVENTIMAGE and #_EVENTIMAGEURL
-* Feature: location list formatting is now possible in the settings, when using the shortcode [events_locations], as it was already for [events_list]
-* Feature: each day in the calendar now also has the short day name as an extra class
-* Feature: list widget now also can choose to show ongoing events or not
-* Feature: made the message 'Your booking has been recorded' formattable
-* Feature: scope=Nd--Md, to get the events from day N in the past/future till day M in the past/future (eg. scope=-3d--2d , scope=0d--3d)
-* Feature: initial state for a new event can now be set in the settings page
-* Feature: new access right setting for publish events
-* Extra: included the plugin events-made-easy-frontend-submit, see the dir extras/plugins/events-made-easy-frontend-submit
-* Extra: if the end date is empty, it will always be the start date now. If you want to check if they are equal, use conditional tags
-* Extra: French translation updated, thanks to Philippe Lambotte
-* Bugfix: typo fix in eme_events.php influencing location showing
-* Bugfix: typo fix in eme_events.php for a jquery statement
-* Bugfix: when adding a registration via the backend and approval was required, the registered person would get a pending message although it was already approved
-* Bugfix: #_USER_RESERVEDSPACES wasn't working correctly for the attendees format setting
-* Bugfix: location title was not qtranslate-ready in the [events_location] shortcode
-* Bugfix: better retreiving of new booker info, should resolve the booker being empty in some cases
-* Bugfix: datepicker images were not in svn
-* Bugfix: list widget was behaving incorrectly for the author option
-* Bugfix: when clicking on calendar day and there's only 1 event, only show the event content directly if the event doesn't point to an external url
-* Bugfix: the booking form was still shown for fully booked events if the max number of seats to book was not defined
-* Bugfix: typo fix in the admin edit location pages
-* Bugfix: #_PLAIN_CONTACTEMAIL was being replaced by empty string in mails
-
-= 1.0.3 =
-* Bugfix: scope=this_year was not working
-* Bugfix: better the_content filter recursion detection, so it should now work ok with Arras theme and using page-include plugins inside event content
-* Bugfix: removing a booking in the event edit window via ajax was no longer working
-* Bugfix: #_EVENTIMAGEURL was not being replaced correctly
-* Bugfix: the available number of seats can be <0 if more than one booking happened at the same time and people fill in things slowly ...
-* Bugfix: events spanning multiple months were not correctly shown in the calendar or list
-* Bugfix: some 'this_week' scopes did not take the start day of the week preference into account
-* Bugfix: RSS needs "<category>" and not "<categories>" as valid tag
-* Feature: the html title of a single event or location can now also be formatted
-* Feature: new conditional tag #_IS_ONGOING_EVENT
-* Extra: Romanian language added, thanks to Web Geek Science (http://webhostinggeeks.com/)
-
-= 1.0.4 =
-* Bugfix: again better the_content filter recursion detection, so it should now work ok with Arras theme, Pagelines, TwentyEleven and hopefully all other ones.
-* Bugfix: this_year and paging was not working ok due to a php bug
-
-= 1.0.5 =
-* Feature: forms are customizable now, although extra defined fields can be viewed/exported but not changed in the admin backend (and is qtranslate compatible)
-* Feature: contact person mails for cancellations and approvals are now customizable
-* Feature: submit button for registration form is now qtranslate compatible
-* Bugfix: make html title work correctly for locations too
-* Bugfix: the html anchor was not always being shown for RSVP
-* Bugfix: email body and subject can now contain qtranslate calls as well (code got removed when changing the plugin name)
-* Bugfix: corrected and added some sql prepare statements
-* Extra: give all RSVP forms a name and a html id
-* Extra: give full day events a CSS class in the calendar (eme-calendar-day-event)
-* Extra: some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
-
-= 1.0.6 =
-* Feature: extra registration field info can now also be mailed, using #_FIELDS as a placeholder in mail formats
-* Feature: event SEO links now also take into account the qtranslate language if present
-* Feature: added extra capability to just list events, so people with no edit cap can still do e.g. CSV exports. All your event admins would need this cap as well, otherwise the menu will not show.
-* Feature: preview added for draft events
-* Bugfix: the results for custom fields were not shown in the printable overview or the CSV export
-* Bugfix: the table for answers had a wrong index (primary), which resulted in only the first custom field to be stored in it
-* Extra: added Danish translation, thanks to Torben Bendixen
-* Extra: updated Dutch translation, thanks to Peter Goldstein
-
-= 1.0.7 =
-* Feature: placeholder #_EDITEVENTURL added, gives you just the link to the admin page for editing the event
-* Feature: added a setting to wether or not show the event creation/modification date as PubDate info in the in the events RSS feed
-* Bugfix: calendar navigation now also respects the qtranslate language if permalinks are enabled
-* Bugfix: filter forms now also respects the qtranslate language
-* Bugfix: if phone or comment was defined as a required field, the booking was not working
-* Bugfix: fix wrong call to event_rul(), must be eme_event_url(), bug added in changeset 649391
-* Bugfix: [events_countdown] shortcode was not working as expected
-* Extra: Added error if image upload fails
