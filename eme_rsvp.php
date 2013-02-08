@@ -1401,8 +1401,8 @@ function eme_paypal_ipn() {
    $ipn->paypal_email = get_option('eme_paypal_business');
 
    // log to file options
-   $ipn->log_to_file = false;					// write logs to file
-   $ipn->log_filename = '/path/to/ipn.log';  	// the log filename (should NOT be web accessible and should be writable)
+   $ipn->log_to_file = true;					// write logs to file
+   $ipn->log_filename = '/home/edynami/public_html/wordpress/wp-content/plugins/events-made-easy/logs/ipn.log';  	// the log filename (should NOT be web accessible and should be writable)
 
    // log to e-mail options
    $ipn->log_to_email = false;					// send logs by e-mail
