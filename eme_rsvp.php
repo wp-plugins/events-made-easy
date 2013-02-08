@@ -804,7 +804,7 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
       $replacement='';
       $found = 1;
       if (preg_match('/#_RESP(NAME|PHONE|ID|EMAIL)$/', $result)) {
-         $field = "person_".ltrim(strtolower($result), "#_");
+         $field = "person_".strtolower(ltrim($result, "#_RESP"));
          $replacement = $person[$field];
          $replacement = eme_sanitize_html($replacement);
          if ($target == "html")

@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.12 =
+* Bugfix: the participant info was not correctly replaced in mails sent
+
 = 1.0.11 =
 * Bugfix release: the list of participants was not shown anymore
 
