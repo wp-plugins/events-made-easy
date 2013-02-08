@@ -252,7 +252,8 @@ function eme_locations_edit_layout($location, $message = "") {
             <label><?php _e('Location description', 'eme') ?></label>
             <div class="inside">
                <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                  <?php the_editor($location['location_description']); ?>
+                  <!-- we need content for qtranslate as ID -->
+                  <?php wp_editor($location['location_description'],"content"); ?>
                </div>
                <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
             </div>
@@ -421,7 +422,8 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                               <label><?php _e('Location description', 'eme') ?></label>
                               <div class="inside">
                                  <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                                    <?php the_editor($new_location['location_description']); ?>
+                                    <!-- we need content for qtranslate as ID -->
+                                    <?php wp_editor($new_location['location_description'],"content"); ?>
                                  </div>
                                  <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
                               </div>
