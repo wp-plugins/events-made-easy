@@ -744,9 +744,9 @@ function eme_get_bookings_for($event_ids,$pending_approved=0) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    
-   $booking_data = array();
+   $bookings = array();
    if (!$event_ids)
-      return $booking_data;
+      return $bookings;
    
    if (is_array($event_ids)) {
       $where="event_id IN (".join(",",$event_ids).")";
@@ -760,17 +760,7 @@ function eme_get_bookings_for($event_ids,$pending_approved=0) {
    } else {
       $sql = "SELECT * FROM $bookings_table WHERE $where";
    }
-   $bookings = $wpdb->get_results($sql, ARRAY_A);
-#   if ($bookings) {
-#      foreach ($bookings as $booking) {
-#         $person = eme_get_person($booking['person_id']);
-#         $booking['person_name'] = $person['person_name']; 
-#         $booking['person_email'] = $person['person_email'];
-#         $booking['person_phone'] = $person['person_phone'];
-#         array_push($booking_data, $booking);
-#      }
-#   }
-   return $booking_data;
+   return $wpdb->get_results($sql, ARRAY_A);
 }
 
 function eme_get_attendees_list_for($event_id) {
