@@ -804,7 +804,8 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
       $replacement='';
       $found = 1;
       if (preg_match('/#_RESP(NAME|PHONE|ID|EMAIL)$/', $result)) {
-         $field = "person_".strtolower(ltrim($result, "#_RESP"));
+         $field = preg_replace("/#_RESP/","",$result);
+         $field = "person_".strtolower($field);
          $replacement = $person[$field];
          $replacement = eme_sanitize_html($replacement);
          if ($target == "html")
@@ -860,7 +861,8 @@ function eme_replace_attendees_placeholders($format, $attendee, $event_id, $targ
       $replacement='';
       $found = 1;
       if (preg_match('/#_(NAME|PHONE|ID|EMAIL)$/', $result)) {
-         $field = "person_".ltrim(strtolower($result), "#_");
+         $field = preg_replace("/#_/","",$result);
+         $field = "person_".strtolower($field);
          $replacement = $attendee[$field];
          $replacement = eme_sanitize_html($replacement);
          if ($target == "html")
