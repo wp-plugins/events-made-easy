@@ -115,6 +115,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.12 =
 * Bugfix: the participant info was not correctly replaced in mails sent
 * Bugfix: make paypal work via https and HTTP/1.1
+* Bugfix: the CSS classes in the calendar indicating the weekday were wrong for days in the previous/next month
 
 = 1.0.11 =
 * Bugfix release: the list of participants was not shown anymore

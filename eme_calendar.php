@@ -230,12 +230,15 @@ function eme_get_calendar($args="") {
    foreach ($weeks as $week) { 
       $calendar .= "<tr>\n"; 
       foreach ($week as $d) { 
-         $text_dayofweek=date('D', strtotime("$year-$month-$d"));
          if ($i < $offset_count) { //if it is PREVIOUS month
+            $t_month = date('m',strtotime("previous month"));
+            $t_year = date('Y',strtotime("previous month"));
+            $text_dayofweek=date('D', strtotime("$t_year-$t_month-$d"));
             $calendar .= "<td class='$text_dayofweek eventless-pre'>$d</td>\n"; 
          }
          if (($i >= $offset_count) && ($i < ($num_weeks * 7) - $outset)) {
             // if it is THIS month
+            $text_dayofweek=date('D', strtotime("$year-$month-$d"));
             if($d == $curr_day && $month == $curr_month && $year == $curr_year) {
                $calendar .= "<td class='$text_dayofweek eventless-today'>$d</td>\n"; 
             } else { 
@@ -243,6 +246,9 @@ function eme_get_calendar($args="") {
             } 
          } elseif(($outset > 0)) {
             //if it is NEXT month
+            $t_month = date('m',strtotime("next month"));
+            $t_year = date('Y',strtotime("next month"));
+            $text_dayofweek=date('D', strtotime("$t_year-$t_month-$d"));
             if(($i >= ($num_weeks * 7) - $outset)) { 
                $calendar .= "<td class='$text_dayofweek eventless-post'>$d</td>\n"; 
             } 
