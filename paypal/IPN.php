@@ -96,8 +96,9 @@ class IPN {
 			return false;
 		}
 
-		// check if it was payed to your e-mail
-		if($this->ipn['receiver_email'] != $this->paypal_email) {
+		// check if it was payed to your paypal e-mail or business id
+		if(strtolower($this->ipn['receiver_email']) != strtolower($this->paypal_email) &&
+		   strtolower($this->ipn['receiver_id']) != strtolower($this->paypal_email)) {
 			$this->write_log('WARNING: payment was made to different e-mail account', $this->pretty_ipn);
 			return false;
 		}

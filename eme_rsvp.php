@@ -1419,7 +1419,8 @@ function eme_paypal_ipn() {
    $ipn->db_name = '';						// database name
 
    // array of currencies accepted or false to disable
-   $ipn->currencies = array('USD','EUR');
+   //$ipn->currencies = array('USD','EUR');
+   $ipn->currencies = false;
 
    // date format on log headers (default: dd/mm/YYYY HH:mm:ss)
    // see http://php.net/date

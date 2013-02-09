@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.13 =
+* Feature/Bugfix: the paypal class didn't really support the business ID, should work now
+
 = 1.0.12 =
 * Bugfix: the participant info was not correctly replaced in mails sent
 * Bugfix: make paypal work via https and HTTP/1.1
