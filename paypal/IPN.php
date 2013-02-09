@@ -132,7 +132,7 @@ class IPN {
 		$url_parsed=parse_url($this->paypal_url);
 
 		// connect to paypal
-		$socket = fsockopen($url_parsed['host'],80,$err_num,$err_str,30);
+		$socket = fsockopen("ssl://".$url_parsed['host'],443,$err_num,$err_str,30);
 
 		if(!$socket) {
 			// could not open the connection. Log it and return
@@ -143,7 +143,9 @@ class IPN {
 
 			// connected, add the ipn validation cmd and post everything back to PayPal
 			$req = 'cmd=_notify-validate' . $req;
-			$header .= "POST ".$url_parsed['path']." HTTP/1.0\r\n";
+			$header = "POST ".$url_parsed['path']." HTTP/1.1\r\n";
+			$header .= "Host: ".$url_parsed['host']."\r\n";
+			$header .= "Connection: close\r\n";
 			$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 			$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 			fputs($socket, $header . $req);

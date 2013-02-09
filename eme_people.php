@@ -139,24 +139,30 @@ function eme_csv_booking_report($event_id) {
    }
    fputcsv2($out,$line);
    foreach($bookings as $booking) {
+      $person = eme_get_person ($booking['person_id']);
       $line=array();
       $pending_string="";
       if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
          $booking['booking_seats'].=" ".__('(pending)','eme');
       }
-      $line[]=$booking['person_name'];
-      $line[]=$booking['person_email'];
-      $line[]=$booking['person_phone'];
+      $line[]=$person['person_name'];
+      $line[]=$person['person_email'];
+      $line[]=$person['person_phone'];
       $line[]=$booking['booking_seats'];
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
       foreach($answer_columns as $col) {
+	 $found=0;
          foreach ($answers as $answer) {
-            if ($answer['field_name'] == $col['field_name'])
+            if ($answer['field_name'] == $col['field_name']) {
                $line[]=$answer['answer'];
-            else
-               $line[]="";
+               $found=1;
+               break;
+            }
          }
+         # to make sure the number of columns are correct, we add an empty answer if none was found
+         if (!$found)
+            $line[]="";
       }
       fputcsv2($out,$line);
    }
@@ -185,13 +191,13 @@ function eme_printable_booking_report($event_id) {
       <html>
       <head>
          <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-         <title>Bookings for <?php echo $event['event_name'];?></title>
+         <title>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></title>
           <link rel="stylesheet" href="<?php echo $stylesheet; ?>" type="text/css" media="screen" />
       </head>
       <body id="printable">
          <div id="container">
-         <h1>Bookings for <?php echo $event['event_name'];?></h1> 
-         <p><?php echo date_i18n (get_option('date_format'), strtotime($event['event_start_date'])); ?></p>
+         <h1>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></h1> 
+         <p><?php echo eme_admin_localised_date($event['event_start_date']); ?></p>
          <p><?php if ($event['location_id']) echo eme_replace_placeholders("#_LOCATIONNAME, #_ADDRESS, #_TOWN", $event); ?></p>
          <?php if ($event['use_paypal'] && $event['price']) ?>
             <p><?php _e ( 'Price: ','eme' ); echo eme_replace_placeholders("#_CURRENCY #_PRICE", $event)?></p>
@@ -212,27 +218,33 @@ function eme_printable_booking_report($event_id) {
             </tr>
             <?php
             foreach($bookings as $booking) {
+               $person = eme_get_person ($booking['person_id']);
                $pending_string="";
                if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
                   $pending_string=__('(pending)','eme');
                }
                 ?>
             <tr>
-               <td><?php echo $booking['person_name']?></td> 
-               <td><?php echo $booking['person_email']?></td>
-               <td><?php echo $booking['person_phone']?></td>
+               <td><?php echo $person['person_name']?></td> 
+               <td><?php echo $person['person_email']?></td>
+               <td><?php echo $person['person_phone']?></td>
                <td class='seats-number'><?php echo $booking['booking_seats']." ".$pending_string?></td>
                <td><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
                <td><?=$booking['booking_comment'] ?></td> 
                <?php
                   $answers = eme_get_answers($booking['booking_id']);
                   foreach($answer_columns as $col) {
+                     $found=0;
                      foreach ($answers as $answer) {
-                         if ($answer['field_name'] == $col['field_name'])
+                         if ($answer['field_name'] == $col['field_name']) {
                             print "<td>".eme_sanitize_html($answer['answer'])."</td>";
-                         else
-                            print "<td>&nbsp;</td>";
+                            $found=1;
+                            break;
+                         }
                      }
+                     # to make sure the number of columns are correct, we add an empty answer if none was found
+                     if (!$found)
+                        print "<td>&nbsp;</td>";
                   }
                ?>
             </tr>
@@ -413,33 +425,45 @@ function eme_add_person($name, $email, $phone, $wp_id) {
 }
 
 // when editing other profiles then your own
-add_action('edit_user_profile', 'eme_phone_field') ;
+add_action('edit_user_profile', 'eme_user_profile') ;
 // when editing your own profile
-add_action('show_user_profile', 'eme_phone_field') ;
+add_action('show_user_profile', 'eme_user_profile') ;
 
-function eme_phone_field($user) {
+function eme_user_profile($user) {
    //$eme_phone=get_user_meta($user,'eme_phone',true);
    $eme_phone=$user->eme_phone;
+   $eme_date_format=$user->eme_date_format;
    ?>
-   <h3><?php _e('Phone number', 'eme')?></h3>
+   <h3><?php _e('Events Made Easy settings', 'eme')?></h3>
    <table class='form-table'>
       <tr>
          <th><label for="eme_phone"><?php _e('Phone number','eme');?></label></th>
          <td><input type="text" name="eme_phone" id="eme_phone" value="<?php echo $eme_phone; ?>" class="regular-text" /> <br />
          <?php _e('The phone number used by Events Made Easy when the user is indicated as the contact person for an event.','eme');?></td>
       </tr>
+      <tr>
+         <th><label for="eme_date_format"><?php _e('Date format','eme');?></label></th>
+         <td><input type="text" name="eme_date_format" id="eme_date_format" value="<?php echo $eme_date_format; ?>" class="regular-text" /> <br />
+         <?php _e('The date format used by Events Made Easy in the admin section. If empty the general WP date format setting will be used.','eme');
+               echo "\t<p>" . __('<a href="http://codex.wordpress.org/Formatting_Date_and_Time">Documentation on date and time formatting</a>.') . "</p>\n";
+         ?>
+         </td>
+      </tr>
    </table>
    <?php
 }
 
 // when editing other profiles then your own
-add_action('edit_user_profile_update','eme_update_wp_phone');
+add_action('edit_user_profile_update','eme_update_user_profile');
 // when editing your own profile
-add_action('personal_options_update','eme_update_wp_phone');
+add_action('personal_options_update','eme_update_user_profile');
 
-function eme_update_wp_phone($wp_user_ID) {
-   if(isset($_POST['eme_phone']) && $_POST['eme_phone'] != '') {
+function eme_update_user_profile($wp_user_ID) {
+   if(isset($_POST['eme_phone'])) {
       update_user_meta($wp_user_ID,'eme_phone', $_POST['eme_phone']);
+   }
+   if(isset($_POST['eme_date_format'])) {
+      update_user_meta($wp_user_ID,'eme_date_format', $_POST['eme_date_format']);
    }
    
 }
