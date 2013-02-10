@@ -53,10 +53,17 @@ function eme_add_booking_form($event_id) {
    }
 
    # you did a successfull registration, so now we decide wether to show the form again, or the paypal form
-   if(!empty($form_add_message) && empty($form_error_message) && $event['use_paypal']) {
+   if(!empty($form_add_message) && empty($form_error_message)) {
       $ret_string = "<div class='eme-rsvp-message'>$form_add_message</div>";
-      $ret_string .= eme_paypal_form($event,$booking_id_done);
-      return $ret_string;
+      $ret_string .= "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
+      if ($event['use_paypal'])
+         $ret_string .= eme_paypal_form($event,$booking_id_done);
+      if ($event['use_google'])
+         $ret_string .= eme_google_form($event,$booking_id_done);
+      if ($event['use_2co'])
+         $ret_string .= eme_2co_form($event,$booking_id_done);
+      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'])
+         return $ret_string;
    }
 
    // you can book the available number of seats, with a max of 10 per time
@@ -179,8 +186,11 @@ function eme_catch_rsvp() {
    global $booking_id_done;
    $result = "";
 
-   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="ipn") {
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="paypal_ipn") {
       return eme_paypal_ipn();
+   }
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="2co_ins") {
+      return eme_2co_ins();
    }
    // make sure we don't get too far without proper info
    if (!(isset($_POST['eme_eventAction']) && isset($_POST['event_id']))) {
@@ -1103,6 +1113,7 @@ function eme_registration_seats_form_table($event_id=0) {
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
+         <th><?php _e ('ID','eme'); ?></th>
          <th><?php _e ('Name','eme'); ?></th>
          <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
@@ -1134,6 +1145,7 @@ function eme_registration_seats_form_table($event_id=0) {
       <tr <?php echo "$class $style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
+         <td><?php echo $event_booking ['booking_id']; ?></td>
          <td><strong>
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>
@@ -1266,6 +1278,7 @@ function eme_registration_approval_form_table($event_id=0) {
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
+         <th><?php _e ( 'ID', 'eme' ); ?></th>
          <th><?php _e ( 'Name', 'eme' ); ?></th>
          <th><?php _e ( 'Date and time', 'eme' ); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
@@ -1297,6 +1310,7 @@ function eme_registration_approval_form_table($event_id=0) {
       <tr <?php echo "$class $style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' /></td>
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='pending_bookings[]' /></td>
+         <td><?php echo $event_booking ['booking_id']; ?></td>
          <td><strong>
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_sanitize_html($event ['event_name']); ?></a>
          </strong>
@@ -1343,6 +1357,49 @@ function eme_registration_approval_form_table($event_id=0) {
 <?php
 }
 
+function eme_2co_form($event,$booking_id) {
+   $events_page_link = eme_get_events_page(true, false);
+   $business=get_option('eme_2co_business');
+   $url=CO_URL;
+   $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
+   $price=$event['price'];
+   $cur=$event['currency'];
+
+   $form_html="<form action='$url' method='post'>";
+   $form_html.="<input type='hidden' name='sid' value='$business' >";
+   $form_html.="<input type='hidden' name='mode' value='2CO' >";
+   $form_html.="<input type='hidden' name='li_0_type' value='product' >";
+   $form_html.="<input type='hidden' name='li_0_product_id' value='$booking_id' >";
+   $form_html.="<input type='hidden' name='li_0_name' value='$name' >";
+   $form_html.="<input type='hidden' name='li_0_price' value='$price' >";
+   $form_html.="<input type='hidden' name='currency_code' value='$cur' >";
+   $form_html.="<input name='submit' type='submit' value='Pay via 2Checkout' >";
+   if (get_option('eme_2co_demo')) {
+      $form_html.="<input type='hidden' name='demo' value='Y' >";
+   }
+   $form_html.="</form>";
+   return $form_html;
+}
+
+function eme_google_form($event,$booking_id) {
+   $booking = eme_get_booking($booking_id);
+   $events_page_link = eme_get_events_page(true, false);
+
+   require_once('google_checkout/googlecart.php');
+   require_once('google_checkout/googleitem.php');
+   $merchant_id = get_option('eme_google_merchant_id');  // Your Merchant ID
+   $merchant_key = get_option('eme_google_merchant_key');  // Your Merchant Key
+   $server_type = get_option('eme_google_checkout_type');
+   $cart = new GoogleCart($merchant_id, $merchant_key, $server_type, $event['currency']);
+   $item_1 = new GoogleItem("Booking", // Item name
+                            sprintf(__("Booking for '%s'","eme"),eme_sanitize_html($event['event_name'])), // Item description
+                            $booking['booking_seats'], // Quantity
+                            $event['price']); // Unit price
+   $item_1->SetMerchantItemId($booking_id);
+   $cart->AddItem($item_1);
+   return $cart->CheckoutButtonCode("SMALL");
+}
+
 function eme_paypal_form($event,$booking_id) {
    $booking = eme_get_booking($booking_id);
    $events_page_link = eme_get_events_page(true, false);
@@ -1350,15 +1407,13 @@ function eme_paypal_form($event,$booking_id) {
       $joiner = "&amp;";
    else
       $joiner = "?";
-   $ipn_link = $events_page_link.$joiner."eme_eventAction=ipn";
+   $ipn_link = $events_page_link.$joiner."eme_eventAction=paypal_ipn";
 
-   $form_html = "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
-   $form_html .= "<p>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme')."</p>";
+   $form_html = "<p>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme')."</p>";
    require_once "paypal/Paypal.php";
    $p = new Paypal;
 
    // the paypal or paypal sandbox url
-   //$p->paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
    $p->paypal_url = get_option('eme_paypal_url');
 
    // the timeout in seconds before the button form is submitted to paypal
@@ -1443,6 +1498,167 @@ function eme_paypal_ipn() {
       $ipn->complete();
    }
 }
+
+function eme_google_response() {
+  // this function is here for google payment handling, but since that
+  // needs a certificate, I don't use it yet
+  // Even for just the callback uri, https is required if not using the sandbox
+  require_once('google_checkout/googleresponse.php');
+  require_once('google_checkout/googleresult.php');
+  require_once('google_checkout/googlerequest.php');
+
+  define('RESPONSE_HANDLER_ERROR_LOG_FILE', 'googleerror.log');
+  define('RESPONSE_HANDLER_LOG_FILE', 'googlemessage.log');
+
+  $merchant_id = get_option('eme_google_merchant_id');  // Your Merchant ID
+  $merchant_key = get_option('eme_google_merchant_key');  // Your Merchant Key
+  $server_type = get_option('eme_google_checkout_type');
+
+  $Gresponse = new GoogleResponse($merchant_id, $merchant_key);
+  $Grequest = new GoogleRequest($merchant_id, $merchant_key, $server_type, $event['currency']);
+  $GRequest->SetCertificatePath($certificate_path);
+
+  //Setup the log file
+  //$Gresponse->SetLogFiles(RESPONSE_HANDLER_ERROR_LOG_FILE, 
+  //                                      RESPONSE_HANDLER_LOG_FILE, L_ALL);
+
+  // Retrieve the XML sent in the HTTP POST request to the ResponseHandler
+  $xml_response = isset($HTTP_RAW_POST_DATA)?
+                    $HTTP_RAW_POST_DATA:file_get_contents("php://input");
+  if (get_magic_quotes_gpc()) {
+    $xml_response = stripslashes($xml_response);
+  }
+  list($root, $data) = $Gresponse->GetParsedXML($xml_response);
+  $Gresponse->SetMerchantAuthentication($merchant_id, $merchant_key);
+
+  /*$status = $Gresponse->HttpAuthentication();
+  if(! $status) {
+    die('authentication failed');
+  }*/
+
+  /* Commands to send the various order processing APIs
+   * Send charge order : $Grequest->SendChargeOrder($data[$root]
+   *    ['google-order-number']['VALUE'], <amount>);
+   * Send process order : $Grequest->SendProcessOrder($data[$root]
+   *    ['google-order-number']['VALUE']);
+   * Send deliver order: $Grequest->SendDeliverOrder($data[$root]
+   *    ['google-order-number']['VALUE'], <carrier>, <tracking-number>,
+   *    <send_mail>);
+   * Send archive order: $Grequest->SendArchiveOrder($data[$root]
+   *    ['google-order-number']['VALUE']);
+   *
+   */
+
+  switch ($root) {
+    case "request-received": {
+      break;
+    }
+    case "error": {
+      break;
+    }
+    case "diagnosis": {
+      break;
+    }
+    case "checkout-redirect": {
+      break;
+    }
+    case "merchant-calculation-callback": {
+      break;
+    }
+    case "new-order-notification": {
+      $Gresponse->SendAck();
+      break;
+    }
+    case "order-state-change-notification": {
+      $Gresponse->SendAck();
+      $new_financial_state = $data[$root]['new-financial-order-state']['VALUE'];
+      $new_fulfillment_order = $data[$root]['new-fulfillment-order-state']['VALUE'];
+
+      switch($new_financial_state) {
+        case 'REVIEWING': {
+          break;
+        }
+        case 'CHARGEABLE': {
+          $Grequest->SendProcessOrder($data[$root]['google-order-number']['VALUE']);
+          $Grequest->SendChargeOrder($data[$root]['google-order-number']['VALUE'],'');
+          break;
+        }
+        case 'CHARGING': {
+          break;
+        }
+        case 'CHARGED': {
+          $booking_id=$data[$root]['google-order-number']['VALUE'];
+          eme_update_booking_payed($booking_id,1);
+          break;
+        }
+        case 'PAYMENT_DECLINED': {
+          break;
+        }
+        case 'CANCELLED': {
+          break;
+        }
+        case 'CANCELLED_BY_GOOGLE': {
+          //$Grequest->SendBuyerMessage($data[$root]['google-order-number']['VALUE'],
+          //    "Sorry, your order is cancelled by Google", true);
+          break;
+        }
+        default:
+          break;
+      }
+
+      break;
+    }
+    case "charge-amount-notification": {
+      //$Grequest->SendDeliverOrder($data[$root]['google-order-number']['VALUE'],
+      //    <carrier>, <tracking-number>, <send-email>);
+      //$Grequest->SendArchiveOrder($data[$root]['google-order-number']['VALUE'] );
+      $Gresponse->SendAck();
+      break;
+    }
+    case "chargeback-amount-notification": {
+      $Gresponse->SendAck();
+      break;
+    }
+    case "refund-amount-notification": {
+      $Gresponse->SendAck();
+      break;
+    }
+    case "risk-information-notification": {
+      $Gresponse->SendAck();
+      break;
+    }
+    default:
+      $Gresponse->SendBadRequestStatus("Invalid or not supported Message");
+      break;
+  }
+}
+
+function eme_2co_ins() {
+   $business=get_option('eme_2co_business');
+   $secret=get_option('eme_2co_secret');
+
+   if ($_POST['message_type'] == 'INVOICE_STATUS_CHANGED') {
+      $insMessage = array();
+      foreach ($_POST as $k => $v) {
+         $insMessage[$k] = $v;
+      }
+ 
+      $hashOrder = $insMessage['sale_id'];
+      $hashInvoice = $insMessage['invoice_id'];
+      $StringToHash = strtoupper(md5($hashOrder . $business . $hashInvoice . $secret));
+ 
+      if ($StringToHash != $insMessage['md5_hash']) {
+         die('Hash Incorrect');
+      }
+      // TODO: do some extra checks, like the price payed and such
+ 
+      if ($insMessage['invoice_status'] == 'approved') {
+          $booking_id=$insMessage['item_id_0'];
+          eme_update_booking_payed($booking_id,1);
+      }
+   }
+}
+
 
 // template function
 function eme_is_event_rsvpable() {

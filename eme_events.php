@@ -23,6 +23,8 @@ function eme_new_event() {
       "event_notes" => '',
       "event_rsvp" => 0,
       "use_paypal" => 0,
+      "use_google" => 0,
+      "use_2co" => 0,
       "price" => 0,
       "currency" => "EUR",
       "rsvp_number_days" => 0,
@@ -237,6 +239,8 @@ function eme_events_page() {
       $event ['event_seats'] = (isset ($_POST ['event_seats']) && is_numeric($_POST ['event_seats'])) ? $_POST ['event_seats']:0;
       
       $event ['use_paypal'] = (isset ($_POST ['use_paypal']) && is_numeric($_POST ['use_paypal'])) ? $_POST ['use_paypal']:0;
+      $event ['use_2co'] = (isset ($_POST ['use_2co']) && is_numeric($_POST ['use_2co'])) ? $_POST ['use_2co']:0;
+      $event ['use_google'] = (isset ($_POST ['use_google']) && is_numeric($_POST ['use_google'])) ? $_POST ['use_google']:0;
       $event ['price'] = (isset ($_POST ['price']) && is_numeric($_POST ['price'])) ? $_POST ['price']:0;
       $event ['currency'] = isset ($_POST ['currency']) ? $_POST ['currency']:"EUR";
 
@@ -655,9 +659,34 @@ function eme_options_page() {
 <h3><?php _e ( 'RSVP: paypal options', 'eme' ); ?></h3>
 <table class='form-table'>
    <?php
-      eme_options_select ( __('PayPal live or test','eme'), 'eme_paypal_url', array ('https://www.sandbox.paypal.com/cgi-bin/webscr' => __('Paypal Sandbox (for testing)','eme'), 'https://www.paypal.com/cgi-bin/webscr' => __ ( 'Paypal Live', 'eme' )), __('Choose wether you want to test paypal in a paypal sandbox or go live and really use paypal.','eme') );
-     # eme_options_input_text (__('PayPal url','eme'),'eme_paypal_url', sprintf(__("The URL for paypal payments. The default is: %s",'eme'),DEFAULT_PAYPAL_URL));
+      eme_options_select ( __('PayPal live or test','eme'), 'eme_paypal_url', array (PAYPAL_SANDBOX_URL => __('Paypal Sandbox (for testing)','eme'), PAYPAL_LIVE_URL => __ ( 'Paypal Live', 'eme' )), __('Choose wether you want to test paypal in a paypal sandbox or go live and really use paypal.','eme') );
       eme_options_input_text (__('PayPal business info','eme'),'eme_paypal_business', __("Paypal business ID or email.",'eme'));
+   ?>
+</table>
+
+<h3><?php _e ( 'RSVP: 2Checkout options', 'eme' ); ?></h3>
+<table class='form-table'>
+   <?php
+      $events_page_link = eme_get_events_page(true, false);
+      if (stristr ( $events_page_link, "?" ))
+         $joiner = "&amp;";
+      else
+         $joiner = "?";
+      $ins_link = $events_page_link.$joiner."eme_eventAction=2co_ins";
+
+      eme_options_select ( __('2Checkout live or test','eme'), 'eme_2co_demo', array (1 => __('2Checkout Sandbox (for testing)','eme'), 0 => __ ( '2Checkout Live', 'eme' )), __('Choose wether you want to test 2Checkout in a sandbox or go live and really use 2Checkout.','eme') );
+      eme_options_input_text (__('2Checkout Account number','eme'),'eme_2co_business', __("2Checkout Account number.",'eme'));
+      eme_options_input_text (__('2Checkout Secret','eme'),'eme_2co_secret', __("2Checkout secret.",'eme'));
+      echo "<tr>".__('Info: the url for Instant Notifications is: ','eme').$ins_link.'</tr>';
+   ?>
+</table>
+
+<h3><?php _e ( 'RSVP: Google Checkout options', 'eme' ); ?></h3>
+<table class='form-table'>
+   <?php
+      eme_options_select ( __('Google Checkout live or test','eme'), 'eme_google_checkout_type', array (GOOGLE_SANDBOX => __('Google Checkout Sandbox (for testing)','eme'), GOOGLE_LIVE => __ ( 'Google Checkout Live', 'eme' )), __('Choose wether you want to test Google Checkout in a sandbox or go live and really use Google Checkout.','eme') );
+      eme_options_input_text (__('Google Checkout merchant ID','eme'),'eme_google_merchant_id', __("Google Checkout Merchant ID.",'eme'));
+      eme_options_input_text (__('Google Checkout merchant Key','eme'),'eme_google_merchant_key', __("Google Checkout Merchant Key.",'eme'));
    ?>
 </table>
 
@@ -2308,6 +2337,8 @@ function eme_event_form($event, $title, $element) {
    }
    $event ['registration_requires_approval'] ? $registration_requires_approval = "checked='checked'" : $registration_requires_approval = '';
    $event ['use_paypal'] ? $use_paypal_checked = "checked='checked'" : $use_paypal_checked = '';
+   $event ['use_2co'] ? $use_2co_checked = "checked='checked'" : $use_2co_checked = '';
+   $event ['use_google'] ? $use_google_checked = "checked='checked'" : $use_google_checked = '';
    
    ob_start();
    ?>
@@ -2511,6 +2542,8 @@ function eme_event_form($event, $title, $element) {
                             <br />
                               <?php _e ( 'Payment methods','eme' ); ?><br />
                               <input id="paypal-checkbox" name='use_paypal' value='1' type='checkbox' <?php echo $use_paypal_checked; ?> /><?php _e ( 'Paypal ','eme' ); ?><br />
+                              <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout ','eme' ); ?><br />
+                              <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout ','eme' ); ?><br />
                            </p>
                            <?php if ($event ['event_rsvp']) {
                                  eme_bookings_compact_table ( $event['event_id'] );
