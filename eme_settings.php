@@ -143,8 +143,46 @@ function eme_options_delete() {
 function eme_options_register() {
 
    // only the options you want changed in the Settings page, not eg. eme_hello_to_user, eme_donation_done
+   // and only those for the tab shown, otherwise the others get reset to empty values
+   // The tab value is set in the form in the function eme_options_page. It needs to be set there as a hidden value when calling options.php, otherwise
+   //    it won't be known here and all values will be lost.
+   $tab = isset( $_REQUEST['tab'] ) ? esc_attr($_REQUEST['tab']) : 'general';
+   switch ( $tab ){
+	      case 'general' :
+                 $options = array ('eme_use_select_for_locations','eme_recurrence_enabled', 'eme_rsvp_enabled', 'eme_categories_enabled', 'eme_attributes_enabled', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_load_js_in_header','eme_use_client_clock','eme_uninstall_drop_data','eme_shortcodes_in_widgets');
+	         break;
+	      case 'seo' :
+                 $options = array ('eme_seo_permalink','eme_permalink_events_prefix','eme_permalink_locations_prefix');
+	         break;
+	      case 'access' :
+                 $options = array ('eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_list_events', 'eme_cap_edit_events', 'eme_cap_add_locations', 'eme_cap_author_locations', 'eme_cap_edit_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings');
+	         break;
+	      case 'events' :
+                 $options = array ('eme_events_page','eme_list_events_page','eme_display_calendar_in_events_page','eme_events_admin_limit','eme_event_list_number_items','eme_event_initial_state','eme_time_remove_leading_zeros','eme_event_list_item_format_header','eme_event_list_item_format','eme_event_list_item_format_footer','eme_event_page_title_format','eme_event_html_title_format','eme_single_event_format','eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat','eme_events_page_title','eme_no_events_message','eme_filter_form_format');
+	         break;
+	      case 'calendar' :
+                 $options = array ('eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_full_calendar_event_format');
+	         break;
+	      case 'locations' :
+                 $options = array ('eme_location_list_format_header','eme_location_list_format_item','eme_location_list_format_footer','eme_location_page_title_format','eme_location_html_title_format','eme_single_location_format','eme_location_baloon_format','eme_location_event_list_item_format','eme_location_no_events_message',);
+	         break;
+	      case 'rss' :
+                 $options = array ('eme_rss_main_title','eme_rss_main_description','eme_rss_title_format','eme_rss_description_format','eme_rss_show_pubdate');
+	         break;
+	      case 'rsvp' :
+                 $options = array ('eme_default_contact_person','eme_rsvp_registered_users_only','eme_rsvp_reg_for_new_events','eme_rsvp_default_number_spaces','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_captcha_for_booking','eme_rsvp_hide_full_events','eme_rsvp_addbooking_submit_string','eme_rsvp_delbooking_submit_string','eme_attendees_list_format','eme_bookings_list_header_format','eme_bookings_list_format','eme_bookings_list_footer_format','eme_registration_recorded_ok_html','eme_registration_form_format');
+	         break;
+	      case 'mail' :
+                 $options = array ('eme_rsvp_mail_notify_is_active','eme_contactperson_email_body','eme_contactperson_cancelled_email_body','eme_contactperson_pending_email_body','eme_respondent_email_body','eme_registration_pending_email_body','eme_registration_cancelled_email_body','eme_registration_denied_email_body','eme_mail_sender_name','eme_mail_sender_address','eme_rsvp_mail_send_method','eme_smtp_host','eme_rsvp_mail_port','eme_rsvp_mail_SMTPAuth','eme_smtp_username','eme_smtp_password');
+	         break;
+	      case 'payments' :
+                 $options = array ('eme_paypal_url','eme_paypal_business','eme_2co_demo','eme_2co_business','eme_2co_secret','eme_google_checkout_type','eme_google_merchant_id','eme_google_merchant_key');
+	         break;
+	      case 'other' :
+                 $options = array ('eme_image_max_width','eme_image_max_height','eme_image_max_size','eme_event_html_headers_format','eme_location_html_headers_format');
+	         break;
+   }
 
-   $options = array ('eme_events_page', 'eme_display_calendar_in_events_page', 'eme_event_list_item_format_header', 'eme_event_list_item_format', 'eme_event_list_item_format_footer', 'eme_event_page_title_format', 'eme_event_html_title_format', 'eme_single_event_format', 'eme_list_events_page', 'eme_events_page_title', 'eme_no_events_message', 'eme_location_page_title_format', 'eme_location_html_title_format', 'eme_location_baloon_format', 'eme_single_location_format', 'eme_location_event_list_item_format', 'eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat', 'eme_location_no_events_message', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_seo_permalink', 'eme_rss_main_title', 'eme_rss_main_description', 'eme_rss_title_format', 'eme_rss_description_format', 'eme_rss_show_pubdate', 'eme_rsvp_mail_notify_is_active', 'eme_contactperson_email_body', 'eme_contactperson_cancelled_email_body', 'eme_contactperson_pending_email_body', 'eme_respondent_email_body', 'eme_registration_recorded_ok_html', 'eme_mail_sender_name', 'eme_smtp_username', 'eme_smtp_password', 'eme_default_contact_person','eme_captcha_for_booking', 'eme_mail_sender_address', 'eme_smtp_host', 'eme_rsvp_mail_send_method', 'eme_rsvp_mail_port', 'eme_rsvp_mail_SMTPAuth', 'eme_rsvp_registered_users_only', 'eme_rsvp_reg_for_new_events', 'eme_rsvp_default_number_spaces', 'eme_rsvp_addbooking_submit_string', 'eme_rsvp_delbooking_submit_string', 'eme_image_max_width', 'eme_image_max_height', 'eme_image_max_size', 'eme_full_calendar_event_format', 'eme_use_select_for_locations', 'eme_attributes_enabled', 'eme_recurrence_enabled','eme_rsvp_enabled','eme_categories_enabled','eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_registration_pending_email_body','eme_registration_denied_email_body','eme_registration_cancelled_email_body','eme_attendees_list_format','eme_bookings_list_format','eme_bookings_list_header_format','eme_bookings_list_footer_format','eme_uninstall_drop_data','eme_time_remove_leading_zeros','eme_rsvp_hide_full_events','eme_events_admin_limit','eme_filter_form_format','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_shortcodes_in_widgets','eme_load_js_in_header','eme_use_client_clock','eme_event_list_number_items', 'eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_edit_events', 'eme_cap_list_events', 'eme_cap_add_locations', 'eme_cap_edit_locations', 'eme_cap_author_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings', 'eme_event_html_headers_format', 'eme_location_html_headers_format','eme_permalink_events_prefix','eme_permalink_locations_prefix','eme_paypal_url','eme_paypal_business', 'eme_2co_business', 'eme_2co_secret', 'eme_2co_demo', 'eme_google_checkout_type', 'eme_google_merchant_id', 'eme_google_merchant_key', 'eme_location_list_item_header', 'eme_location_list_format_item', 'eme_location_list_format_footer','eme_event_initial_state', 'eme_registration_form_format');
    foreach ( $options as $opt ) {
       register_setting ( 'eme-options', $opt, '' );
    }
@@ -176,7 +214,6 @@ function eme_admin_tabs( $current = 'homepage' ) {
 
 // Function composing the options page
 function eme_options_page() {
-   wp_nonce_field( "eme-options-page" );
    if ((isset($_GET['page']) && $_GET['page'] == 'eme-options')) {
       $tab = isset( $_GET['tab'] ) ? esc_attr($_GET['tab']) : 'general';
       eme_admin_tabs($tab);
@@ -190,9 +227,10 @@ function eme_options_page() {
 <?php printf(__( "Please also check <a href='%s'>your profile</a> for some per-user EME settings.", 'eme' ),admin_url('profile.php')); ?>
 </p>
 <form id="eme_options_form" method="post" action="options.php">
-
+<input type='hidden' name='tab' value='<?php echo $tab;?>'>
 <?php
-      switch ( $tab ){
+   settings_fields ( 'eme-options' );
+   switch ( $tab ) {
 	      case 'general' :
 ?>
 
@@ -404,7 +442,7 @@ function eme_options_page() {
    eme_options_input_text ( 'Mail sending port', 'eme_rsvp_mail_port', __ ( "The port through which you e-mail notifications will be sent. Make sure the firewall doesn't block this port", 'eme' ) );
    eme_options_radio_binary ( __ ( 'Use SMTP authentication?', 'eme' ), 'eme_rsvp_mail_SMTPAuth', __ ( 'SMTP authentication is often needed. If you use Gmail, make sure to set this parameter to Yes', 'eme' ) );
    eme_options_input_text ( __ ( 'SMTP username', 'eme' ), 'eme_smtp_username', __ ( "Insert the username to be used to access your SMTP server.", 'eme' ) );
-   eme_options_input_password ( __ ( 'SMTP password', 'eme' ), "eme_smtp_password", __ ( "Insert the password to be used to access your SMTP server", 'eme' ) );
+   eme_options_input_password ( __ ( 'SMTP password', 'eme' ), 'eme_smtp_password', __ ( "Insert the password to be used to access your SMTP server", 'eme' ) );
    ?>
 </table>
 
@@ -476,9 +514,6 @@ function eme_options_page() {
 
 
 <p class="submit"><input type="submit" id="eme_options_submit" name="Submit" value="<?php _e ( 'Save Changes' )?>" /></p>
-   <?php
-   settings_fields ( 'eme-options' );
-   ?> 
 </form>
 </div>
 <?php
