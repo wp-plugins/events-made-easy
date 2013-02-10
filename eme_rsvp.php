@@ -1639,7 +1639,8 @@ function eme_2co_ins() {
    $business=get_option('eme_2co_business');
    $secret=get_option('eme_2co_secret');
 
-   if ($_POST['message_type'] == 'INVOICE_STATUS_CHANGED') {
+   if ($_POST['message_type'] == 'ORDER_CREATED'
+       || $_POST['message_type'] == 'INVOICE_STATUS_CHANGED') {
       $insMessage = array();
       foreach ($_POST as $k => $v) {
          $insMessage[$k] = $v;
@@ -1654,8 +1655,8 @@ function eme_2co_ins() {
       }
       // TODO: do some extra checks, like the price payed and such
  
-      if ($insMessage['invoice_status'] == 'approved') {
-          $booking_id=$insMessage['item_id_0'];
+      if ($insMessage['invoice_status'] == 'approved' || $insMessage['invoice_status'] == 'deposited') {
+          $booking_id=$insMessage['item_id_1'];
           eme_update_booking_payed($booking_id,1);
       }
    }
