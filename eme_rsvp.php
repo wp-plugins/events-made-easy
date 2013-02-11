@@ -58,10 +58,10 @@ function eme_add_booking_form($event_id) {
       $ret_string .= "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
       if ($event['use_paypal'])
          $ret_string .= eme_paypal_form($event,$booking_id_done);
-      if ($event['use_google'])
-         $ret_string .= eme_google_form($event,$booking_id_done);
       if ($event['use_2co'])
          $ret_string .= eme_2co_form($event,$booking_id_done);
+      if ($event['use_google'])
+         $ret_string .= eme_google_form($event,$booking_id_done);
       if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'])
          return $ret_string;
    }
@@ -1365,7 +1365,8 @@ function eme_2co_form($event,$booking_id) {
    $price=$event['price'];
    $cur=$event['currency'];
 
-   $form_html="<form action='$url' method='post'>";
+   $form_html = "<br>".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='sid' value='$business' >";
    $form_html.="<input type='hidden' name='mode' value='2CO' >";
    $form_html.="<input type='hidden' name='li_0_type' value='product' >";
@@ -1397,7 +1398,8 @@ function eme_google_form($event,$booking_id) {
                             $event['price']); // Unit price
    $item_1->SetMerchantItemId($booking_id);
    $cart->AddItem($item_1);
-   return $cart->CheckoutButtonCode("SMALL");
+   $form_html = "<br>".__("You can pay for this event via Google Checkout. If you wish to do so, click the button below.",'eme');
+   return $form_html.$cart->CheckoutButtonCode("SMALL");
 }
 
 function eme_paypal_form($event,$booking_id) {
@@ -1409,7 +1411,7 @@ function eme_paypal_form($event,$booking_id) {
       $joiner = "?";
    $ipn_link = $events_page_link.$joiner."eme_eventAction=paypal_ipn";
 
-   $form_html = "<p>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme')."</p>";
+   $form_html = "<br>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme');
    require_once "paypal/Paypal.php";
    $p = new Paypal;
 
@@ -1637,7 +1639,8 @@ function eme_2co_ins() {
    $business=get_option('eme_2co_business');
    $secret=get_option('eme_2co_secret');
 
-   if ($_POST['message_type'] == 'INVOICE_STATUS_CHANGED') {
+   if ($_POST['message_type'] == 'ORDER_CREATED'
+       || $_POST['message_type'] == 'INVOICE_STATUS_CHANGED') {
       $insMessage = array();
       foreach ($_POST as $k => $v) {
          $insMessage[$k] = $v;
@@ -1652,8 +1655,8 @@ function eme_2co_ins() {
       }
       // TODO: do some extra checks, like the price payed and such
  
-      if ($insMessage['invoice_status'] == 'approved') {
-          $booking_id=$insMessage['item_id_0'];
+      if ($insMessage['invoice_status'] == 'approved' || $insMessage['invoice_status'] == 'deposited') {
+          $booking_id=$insMessage['item_id_1'];
           eme_update_booking_payed($booking_id,1);
       }
    }
