@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.14 =
+* Improvement: the "Required field" text has a div-id surrounding it now, so you can change the look of it as wanted using CSS
+
 = 1.0.13 =
 * Feature: integrated 2Checkout. Instant Notification is also possible, but you have to specify the url in your 2Checkout account. The value for this will be shown in the EME settings.
 * Feature: integrated Google Checkout, but no automatic payment handling since that requires client certificates. And for Google Checkout to work, the price must be in dollars or pounds (identical to your google wallet account, otherwise it will fail)
