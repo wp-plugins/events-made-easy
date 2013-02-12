@@ -722,6 +722,8 @@ function eme_global_map($atts) {
       // that we want the javascript in the footer as well
       $eme_need_gmap_js=1;
       extract(shortcode_atts(array(
+                  'show_locations' => true,
+                  'show_events' => false,
                   'eventful' => false,
                   'scope' => 'all',
                   'paging' => 0,
@@ -731,6 +733,8 @@ function eme_global_map($atts) {
                   'list_location' => 'after'
                   ), $atts));
       $eventful = (bool) $eventful;
+      $show_events = (bool) $show_events;
+      $show_locations = (bool) $show_locations;
       $events_page_link = eme_get_events_page(true, false);
       if (stristr($events_page_link, "?"))
          $joiner = "&amp;";
@@ -847,25 +851,38 @@ function eme_global_map($atts) {
       //$result .= "<script src='".EME_PLUGIN_URL."eme_global_map.js' type='text/javascript'></script>";
 
       // we add the list if wanted (only for "before" or "after")
-      if ($list_location=="before") {
-         $locations = eme_get_locations((bool) $eventful,$scope,$category,0);
-         $loc_list = "<ol id='eme_locations_list'>"; 
-         foreach($locations as $location) {
+      $locations = eme_get_locations((bool) $eventful,$scope,$category,0);
+      $loc_list = "<ol id='eme_locations_list'>"; 
+      $firstletter="A";
+      foreach($locations as $location) {
+         if ($show_locations) {
             $loc_list.="<li id='location-". $location['location_id'].
-                              "' style='list-style-type: upper-alpha'><a >".
-                              $location['location_name']."</a></li>";
+                           "' style='list-style-type: upper-alpha'><a>".
+                           $location['location_name']."</a></li>";
          }
-         $loc_list .= "</ol>"; 
+         if ($show_events) {
+            $events = eme_get_events(0,$scope,"ASC",$scope_offset,$location['location_id'], $category);
+            $loc_list .= "<ol id='eme_events_list'>"; 
+            foreach ($events as $event) {
+               if ($show_locations)
+                  $loc_list.="<li id='location-". $location['location_id'].
+                           "' style='list-style-type: none'>- <a>".
+                           $event['event_name']."</a></li>";
+               else
+                  $loc_list.="<li id='location-". $location['location_id'].
+                           "' style='list-style-type: none'>$firstletter. <a>".
+                           $event['event_name']."</a></li>";
+            }
+            $loc_list.= "</ol>"; 
+         }
+         // cool: we can increment strings in php, so we can mimic the CSS "style='list-style-type: upper-alpha'" thingie
+         // usefull when we show events (more than one event per location)
+         $firstletter++;
+      }
+      $loc_list .= "</ol>"; 
+      if ($list_location=="before") {
          $result = $loc_list.$result;
       } elseif ($list_location=="after") {
-         $locations = eme_get_locations((bool) $eventful,$scope,$category,0);
-         $loc_list = "<ol id='eme_locations_list'>"; 
-         foreach($locations as $location) {
-            $loc_list.="<li id='location-". $location['location_id'].
-                              "' style='list-style-type: upper-alpha'><a >".
-                              $location['location_name']."</a></li>";
-         }
-         $loc_list .= "</ol>"; 
          $result .= $loc_list;
       }
    } else {
