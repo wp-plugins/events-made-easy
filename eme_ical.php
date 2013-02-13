@@ -54,7 +54,8 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "") 
 
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
-      $echo = (bool) $r ['echo'];
+      $echo = $r ['echo'];
+      $echo = ($echo==="true" || $echo==="1") ? true : false;
    }
    if ($text == '')
       $text = "ICAL";

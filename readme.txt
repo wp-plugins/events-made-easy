@@ -116,6 +116,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: new parameters "show_events" (default:0) and "show_locations" (default:1) for shortcode [locations_map], allows to show a list of events corresponding to the locations on the map
 * Improvement: the "Required field" text has a div-id surrounding it now, so you can change the look of it as wanted using CSS
 * Improvement: removed deprecated wp_tiny_mce as editor and solved some php warnings (and moved the minimum required version up to 3.3)
+* Improvement: a number of options for shortcodes where booleans with 0 or 1, now we added true/false support too
 
 = 1.0.13 =
 * Feature: integrated 2Checkout. Instant Notification is also possible, but you have to specify the url in your 2Checkout account. The value for this will be shown in the EME settings.

@@ -60,13 +60,16 @@ function eme_ajax_actions() {
          eme_csv_booking_report(intval($_GET['event_id']));
    }
    if (isset($_GET['query']) && $_GET['query'] == 'GlobalMapData') { 
-      eme_global_map_json((bool) $_GET['eventful'],$_GET['scope'],$_GET['category']);
+      $eventful=isset($_GET['eventful'])?$_GET['eventful']:false;
+      $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
+      eme_global_map_json((bool)$eventful,$_GET['scope'],$_GET['category']);
       die();
    }
 }
 
 function eme_global_map_json($eventful = false, $scope = "all", $category = '', $offset = 0) {
-   $locations = eme_get_locations((bool) $eventful,$scope,$category,$offset);
+   $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
+   $locations = eme_get_locations((bool)$eventful,$scope,$category,$offset);
    $json_locations = array();
    foreach($locations as $location) {
       $json_location = array();
