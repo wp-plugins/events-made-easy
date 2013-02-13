@@ -2,7 +2,7 @@
 Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
-Requires at least: 3.0.0
+Requires at least: 3.3
 Tested up to: 3.5.1
 Stable tag: 1.0.13
 
@@ -115,6 +115,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.14 =
 * Feature: new parameters "show_events" (default:0) and "show_locations" (default:1) for shortcode [locations_map], allows to show a list of events corresponding to the locations on the map
 * Improvement: the "Required field" text has a div-id surrounding it now, so you can change the look of it as wanted using CSS
+* Improvement: removed deprecated wp_tiny_mce as editor and solved some php warnings (and moved the minimum required version up to 3.3)
 
 = 1.0.13 =
 * Feature: integrated 2Checkout. Instant Notification is also possible, but you have to specify the url in your 2Checkout account. The value for this will be shown in the EME settings.

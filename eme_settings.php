@@ -146,7 +146,10 @@ function eme_options_register() {
    // and only those for the tab shown, otherwise the others get reset to empty values
    // The tab value is set in the form in the function eme_options_page. It needs to be set there as a hidden value when calling options.php, otherwise
    //    it won't be known here and all values will be lost.
-   $tab = isset( $_REQUEST['tab'] ) ? esc_attr($_REQUEST['tab']) : 'general';
+   if (!isset($_POST['option_page']) || ($_POST['option_page'] != "eme-options"))
+      return;
+   $options = array();
+   $tab = isset( $_POST['tab'] ) ? esc_attr($_POST['tab']) : 'general';
    switch ( $tab ){
 	      case 'general' :
                  $options = array ('eme_use_select_for_locations','eme_recurrence_enabled', 'eme_rsvp_enabled', 'eme_categories_enabled', 'eme_attributes_enabled', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_load_js_in_header','eme_use_client_clock','eme_uninstall_drop_data','eme_shortcodes_in_widgets');

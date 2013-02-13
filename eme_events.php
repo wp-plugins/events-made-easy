@@ -3507,14 +3507,14 @@ function eme_alert_events_page() {
 }
 add_action ( 'admin_notices', 'eme_alert_events_page' );
 
-//This adds the tinymce editor
-function eme_tinymce(){
+//This adds the wysiwyg editor
+function eme_wysiwyg(){
    global $plugin_page;
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
-      add_action( 'admin_print_footer_scripts', 'wp_tiny_mce', 25 );
-      if (function_exists('wp_tiny_mce_preload_dialogs')) {
-         add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-      }
+#      add_action( 'admin_print_footer_scripts', 'wp_tiny_mce', 25 );
+#      if (function_exists('wp_tiny_mce_preload_dialogs')) {
+#         add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
+#      }
       wp_enqueue_script('post');
       if ( user_can_richedit() )
          wp_enqueue_script('editor');
@@ -3524,7 +3524,7 @@ function eme_tinymce(){
       wp_enqueue_script('quicktags');  
    }
 }
-add_action ( 'admin_init', 'eme_tinymce' );
+add_action ( 'admin_init', 'eme_wysiwyg' );
 
 # return number of days until next event or until the specified event
 function eme_countdown($atts) {
