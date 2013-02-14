@@ -114,6 +114,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.15 =
 * Improvement: more options for shortcodes that were booleans with 0 or 1 have now true/false support too
+* Bugfix: the page title for single location pages was not being set correctly
 
 = 1.0.14 =
 * Feature: new parameters "show_events" (default:0) and "show_locations" (default:1) for shortcode [locations_map], allows to show a list of events corresponding to the locations on the map

@@ -631,6 +631,7 @@ function eme_page_title($data) {
          return $page_title;
       } elseif (eme_is_single_location_page()) {
          $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+         $stored_page_title_format = get_option('eme_location_page_title_format' );
          $page_title = eme_replace_locations_placeholders ( $stored_page_title_format, $location );
          return $page_title;
       } else {
