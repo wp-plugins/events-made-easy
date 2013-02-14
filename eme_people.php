@@ -61,14 +61,18 @@ function eme_ajax_actions() {
    }
    if (isset($_GET['query']) && $_GET['query'] == 'GlobalMapData') { 
       $eventful = isset($_GET['eventful'])?$_GET['eventful']:false;
-      $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
+      $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
+      $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
+
       eme_global_map_json((bool)$eventful,$_GET['scope'],$_GET['category']);
       die();
    }
 }
 
 function eme_global_map_json($eventful = false, $scope = "all", $category = '', $offset = 0) {
-   $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
+   $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
+   $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
+
    $locations = eme_get_locations((bool)$eventful,$scope,$category,$offset);
    $json_locations = array();
    foreach($locations as $location) {

@@ -766,10 +766,14 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       // so we fix it again
       $category = preg_replace("/ /","+",$category);
    }
-   $echo = ($echo==="true" || $echo==="1") ? true : false;
-   $long_events = ($long_events==="true" || $long_events==="1") ? true : false;
-   $paging = ($paging==="true" || $paging==="1") ? true : false;
-   $show_ongoing = ($show_ongoing==="true" || $show_ongoing==="1") ? true : false;
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
+   $paging = ($paging==="true" || $paging==="1") ? true : $paging;
+   $show_ongoing = ($show_ongoing==="true" || $show_ongoing==="1") ? true : $show_ongoing;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $long_events = ($long_events==="false" || $long_events==="0") ? false : $long_events;
+   $paging = ($paging==="false" || $paging==="0") ? false : $paging;
+   $show_ongoing = ($show_ongoing==="false" || $show_ongoing==="0") ? false : $show_ongoing;
    if ($scope == "")
       $scope = "future";
    if ($order != "DESC")
@@ -1128,8 +1132,10 @@ function eme_get_events_page($justurl = 0, $echo = 1, $text = '') {
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
    }
-   $echo = ($echo==="true" || $echo==="1") ? true : false;
-   $justurl = ($justurl==="true" || $justurl==="1") ? true : false;
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : $justurl;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $justurl = ($justurl==="false" || $justurl==="0") ? false : $justurl;
    
    $page_link = get_permalink ( get_option ( 'eme_events_page' ) );
    if ($justurl) {
@@ -3200,7 +3206,8 @@ function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $
       extract ( $r );
       $echo = $r ['echo'];
    }
-   $echo = ($echo==="true" || $echo==="1") ? true : false;
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $echo = ($echo==="false" || $echo==="O") ? false : $echo;
    if ($text == '')
       $text = "RSS";
    $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit");

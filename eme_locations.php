@@ -455,7 +455,8 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
    // for the query: we don't do "SELECT *" because the data returned from this function is also used in the function eme_global_map_json()
    // and some fields from the events table contain carriage returns, which can't be passed along
    // The function eme_global_map_json tries to remove these, but the data is not needed and better be safe than sorry
-   $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
+   $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
+   $eventful = ($eventful==="false" || $eventful==="0") ? true : $eventful;
    if ($eventful) {
       $events = eme_get_events(0, $scope, "ASC", $offset, "", $category);
       if ($events) {
@@ -733,9 +734,13 @@ function eme_global_map($atts) {
                   'height' => 300,
                   'list_location' => 'after'
                   ), $atts));
-      $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
-      $show_events = ($show_events==="true" || $show_events==="1") ? true : false;
-      $show_locations = ($show_locations==="true" || $show_locations==="1") ? true : false;
+      $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
+      $show_events = ($show_events==="true" || $show_events==="1") ? true : $show_events;
+      $show_locations = ($show_locations==="true" || $show_locations==="1") ? true : $show_locations;
+      $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
+      $show_events = ($show_events==="false" || $show_events==="0") ? false : $show_events;
+      $show_locations = ($show_locations==="false" || $show_locations==="0") ? false : $show_locations;
+
       $events_page_link = eme_get_events_page(true, false);
       if (stristr($events_page_link, "?"))
          $joiner = "&amp;";
@@ -912,8 +917,11 @@ function get_locations_shortcode($atts) {
       'class'     => ''
    ), $atts));
    $class = $class ? "class=\"{$class}\"" : "";
-   $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
-   $link = ($link==="true" || $link==="1") ? true : false;
+   $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
+   $link = ($link==="true" || $link==="1") ? true : $link;
+   $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
+   $link = ($link==="false" || $link==="0") ? false : $link;
+
    $locations = eme_get_locations((bool)$eventful, $scope, $category, $offset);
 
    $locations_format_header = get_option('eme_location_list_format_header' );
