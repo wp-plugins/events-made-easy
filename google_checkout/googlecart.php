@@ -1156,7 +1156,7 @@
      * @return string the button's html
      */
     function CheckoutButtonCode($size="large", $variant=true, $loc="en_US",
-                                               $showtext=true, $style="trans") {
+                                               $showtext=false, $style="trans") {
 
       switch (strtolower($size)) {
         case "medium":

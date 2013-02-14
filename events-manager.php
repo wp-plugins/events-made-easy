@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.0.12
+Version: 1.0.15
 Plugin URI: http://www.e-dynamics.be/wordpress
-Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
+Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
 Author URI: http://www.e-dynamics.be/
 */
@@ -119,7 +119,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 24);
+define('EME_DB_VERSION', 25);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -307,6 +307,7 @@ function eme_insertMyRewriteQueryVars($vars) {
 // (like eg. the load_textdomain). Some includes do stuff based on _GET
 // so they need the correct info before doing stuff
 include("captcha_check.php");
+include("eme_settings.php");
 include("eme_functions.php");
 include("eme_filters.php");
 include("eme_events.php");
@@ -836,157 +837,6 @@ function eme_create_answers_table($charset,$collate) {
       }
    }
 }
-
-function eme_add_options($reset=0) {
-   $contact_person_email_body_localizable = __("#_RESPNAME (#_RESPEMAIL) will attend #_EVENTNAME on #m #d, #Y. He wants to reserve #_SPACES space(s).<br/>Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,<br/>Events Manager",'eme') ;
-   $contactperson_cancelled_email_body_localizable = __("#_RESPNAME (#_RESPEMAIL) has cancelled for #_EVENTNAME on #m #d, #Y. <br/>Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,<br/>Events Manager",'eme') ;
-   $contact_person_pending_email_body_localizable = __("#_RESPNAME (#_RESPEMAIL) would like to attend #_EVENTNAME on #m #d, #Y. He wants to reserve #_SPACES space(s).<br/>Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,<br/>Events Manager",'eme') ;
-   $respondent_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>you have successfully reserved #_SPACES space(s) for #_EVENTNAME.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_pending_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME is pending.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_cancelled_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been cancelled.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_denied_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been denied.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_recorded_ok_html_localizable = __('Your booking has been recorded','eme');
-   $registration_form_format_localizable = "<table class='eme-rsvp-form'>
-            <tr><th scope='row'>".__('Name', 'eme')."*:</th><td>#_NAME</td></tr>
-            <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_EMAIL</td></tr>
-            <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_PHONE</td></tr>
-            <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_SEATS</td></tr>
-            <tr><th scope='row'>".__('Comment', 'eme').":</th><td>#_COMMENT</td></tr>
-            #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
-            </table>
-            #_SUBMIT
-            ";
-   
-   $eme_options = array('eme_event_list_item_format' => DEFAULT_EVENT_LIST_ITEM_FORMAT,
-   'eme_display_calendar_in_events_page' => 0,
-   'eme_single_event_format' => DEFAULT_SINGLE_EVENT_FORMAT,
-   'eme_event_page_title_format' => DEFAULT_EVENT_PAGE_TITLE_FORMAT,
-   'eme_event_html_title_format' => DEFAULT_EVENT_HTML_TITLE_FORMAT,
-   'eme_show_period_monthly_dateformat' => DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT,
-   'eme_show_period_yearly_dateformat' => DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT,
-   'eme_filter_form_format' => DEFAULT_FILTER_FORM_FORMAT,
-   'eme_list_events_page' => 0,
-   'eme_events_page_title' => DEFAULT_EVENTS_PAGE_TITLE,
-   'eme_no_events_message' => __('No events','eme'),
-   'eme_location_page_title_format' => DEFAULT_LOCATION_PAGE_TITLE_FORMAT,
-   'eme_location_html_title_format' => DEFAULT_LOCATION_HTML_TITLE_FORMAT,
-   'eme_location_baloon_format' => DEFAULT_LOCATION_BALLOON_FORMAT,
-   'eme_location_event_list_item_format' => DEFAULT_LOCATION_EVENT_LIST_ITEM_FORMAT,
-   'eme_location_no_events_message' => DEFAULT_LOCATION_NO_EVENTS_MESSAGE,
-   'eme_single_location_format' => DEFAULT_SINGLE_LOCATION_FORMAT,
-   'eme_rss_main_title' => get_bloginfo('title')." - ".__('Events'),
-   'eme_rss_main_description' => get_bloginfo('description')." - ".__('Events'),
-   'eme_rss_description_format' => DEFAULT_RSS_DESCRIPTION_FORMAT,
-   'eme_rss_title_format' => DEFAULT_RSS_TITLE_FORMAT,
-   'eme_rss_show_pubdate' => 1,
-   'eme_gmap_is_active'=> DEFAULT_GMAP_ENABLED,
-   'eme_gmap_zooming'=> DEFAULT_GMAP_ZOOMING,
-   'eme_seo_permalink'=> DEFAULT_SEO_PERMALINK,
-   'eme_permalink_events_prefix' => 'events',
-   'eme_permalink_locations_prefix' => 'locations',
-   'eme_default_contact_person' => -1,
-   'eme_captcha_for_booking' => 0 ,
-   'eme_rsvp_mail_notify_is_active' => 0 ,
-   'eme_contactperson_email_body' => preg_replace("/<br ?\/?>/", "\n", $contact_person_email_body_localizable),
-   'eme_contactperson_cancelled_email_body' => preg_replace("/<br ?\/?>/", "\n", $contactperson_cancelled_email_body_localizable),
-   'eme_contactperson_pending_email_body' => preg_replace("/<br ?\/?>/", "\n", $contact_person_pending_email_body_localizable),
-   'eme_respondent_email_body' => preg_replace("/<br ?\/?>/", "\n", $respondent_email_body_localizable),
-   'eme_registration_pending_email_body' => preg_replace("/<br ?\/?>/", "\n", $registration_pending_email_body_localizable),
-   'eme_registration_cancelled_email_body' => preg_replace("/<br ?\/?>/", "\n", $registration_cancelled_email_body_localizable),
-   'eme_registration_denied_email_body' => preg_replace("/<br ?\/?>/", "\n", $registration_denied_email_body_localizable),
-   'eme_registration_recorded_ok_html' => $registration_recorded_ok_html_localizable,
-   'eme_registration_form_format' => $registration_form_format_localizable,
-   'eme_rsvp_mail_port' => 25,
-   'eme_smtp_host' => 'localhost',
-   'eme_mail_sender_name' => '',
-   'eme_rsvp_mail_send_method' => 'smtp',
-   'eme_rsvp_mail_SMTPAuth' => 0,
-   'eme_attendees_list_format' => DEFAULT_ATTENDEES_LIST_FORMAT,
-   'eme_bookings_list_format' => DEFAULT_BOOKINGS_LIST_FORMAT,
-   'eme_bookings_list_header_format' => DEFAULT_BOOKINGS_LIST_HEADER_FORMAT,
-   'eme_bookings_list_footer_format' => DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT,
-   'eme_image_max_width' => DEFAULT_IMAGE_MAX_WIDTH,
-   'eme_image_max_height' => DEFAULT_IMAGE_MAX_HEIGHT,
-   'eme_image_max_size' => DEFAULT_IMAGE_MAX_SIZE,
-   'eme_full_calendar_event_format' => DEFAULT_FULL_CALENDAR_EVENT_FORMAT,
-   'eme_small_calendar_event_title_format' => DEFAULT_SMALL_CALENDAR_EVENT_TITLE_FORMAT,
-   'eme_small_calendar_event_title_separator' => DEFAULT_SMALL_CALENDAR_EVENT_TITLE_SEPARATOR, 
-   'eme_hello_to_user' => 1,
-   'eme_shortcodes_in_widgets' => 0,
-   'eme_load_js_in_header' => 0,
-   'eme_use_client_clock' => 0,
-   'eme_donation_done' => 0,
-   'eme_events_admin_limit' => 20,
-   'eme_event_list_number_items'  => 10,
-   'eme_use_select_for_locations' => DEFAULT_USE_SELECT_FOR_LOCATIONS,
-   'eme_attributes_enabled' => DEFAULT_ATTRIBUTES_ENABLED,
-   'eme_recurrence_enabled' => DEFAULT_RECURRENCE_ENABLED,
-   'eme_rsvp_enabled' => DEFAULT_RSVP_ENABLED,
-   'eme_rsvp_addbooking_submit_string' => DEFAULT_RSVP_ADDBOOKINGFORM_SUBMIT_STRING,
-   'eme_rsvp_addbooking_min_spaces' => 1,
-   'eme_rsvp_addbooking_max_spaces' => 10,
-   'eme_rsvp_delbooking_submit_string' => DEFAULT_RSVP_DELBOOKINGFORM_SUBMIT_STRING,
-   'eme_categories_enabled' => DEFAULT_CATEGORIES_ENABLED,
-   'eme_cap_add_event' => DEFAULT_CAP_ADD_EVENT, 
-   'eme_cap_author_event' => DEFAULT_CAP_AUTHOR_EVENT, 
-   'eme_cap_publish_event' => DEFAULT_CAP_PUBLISH_EVENT,
-   'eme_cap_list_events' => DEFAULT_CAP_LIST_EVENTS,
-   'eme_cap_edit_events' => DEFAULT_CAP_EDIT_EVENTS,
-   'eme_cap_add_locations' => DEFAULT_CAP_ADD_LOCATION,
-   'eme_cap_author_locations' => DEFAULT_CAP_AUTHOR_LOCATION,
-   'eme_cap_edit_locations' => DEFAULT_CAP_EDIT_LOCATIONS,
-   'eme_cap_categories' => DEFAULT_CAP_CATEGORIES,
-   'eme_cap_people' => DEFAULT_CAP_PEOPLE,
-   'eme_cap_approve' => DEFAULT_CAP_APPROVE,
-   'eme_cap_registrations' => DEFAULT_CAP_REGISTRATIONS,
-   'eme_cap_forms' => DEFAULT_CAP_FORMS,
-   'eme_cap_cleanup' => DEFAULT_CAP_CLEANUP,
-   'eme_cap_settings' => DEFAULT_CAP_SETTINGS,
-   'eme_event_html_headers_format' => '',
-   'eme_location_html_headers_format' => '',
-   'eme_paypal_url' => PAYPAL_LIVE_URL,
-   'eme_paypal_business' => '',
-   'eme_google_checkout_type' => GOOGLE_LIVE,
-   'eme_google_merchant_id' => '',
-   'eme_google_merchant_key' => '',
-   'eme_2co_demo' => 0,
-   'eme_2co_business' => '',
-   'eme_2co_secret' => '',
-   'eme_event_initial_state' => STATUS_DRAFT,
-   );
-   
-   foreach($eme_options as $key => $value){
-      eme_add_option($key, $value, $reset);
-   }
-      
-}
-function eme_add_option($key, $value, $reset) {
-   $option_val = get_option($key,"non_existing");
-   if ($option_val=="non_existing" || $reset) {
-      update_option($key, $value);
-   }
-}
-
-////////////////////////////////////
-// WP options registration/deletion
-////////////////////////////////////
-function eme_options_delete() {
-   $options = array ('eme_version', 'eme_events_page', 'eme_display_calendar_in_events_page', 'eme_event_list_item_format_header', 'eme_event_list_item_format', 'eme_event_list_item_format_footer', 'eme_event_page_title_format', 'eme_event_html_title_format', 'eme_single_event_format', 'eme_list_events_page', 'eme_events_page_title', 'eme_no_events_message', 'eme_location_page_title_format','eme_location_html_title_format', 'eme_location_baloon_format', 'eme_single_location_format', 'eme_location_event_list_item_format', 'eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat', 'eme_location_no_events_message', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_seo_permalink', 'eme_rss_main_title', 'eme_rss_main_description', 'eme_rss_title_format', 'eme_rss_description_format', 'eme_rss_show_pubdate', 'eme_rsvp_mail_notify_is_active', 'eme_contactperson_email_body', 'eme_contactperson_cancelled_email_body', 'eme_contactperson_pending_email_body', 'eme_respondent_email_body', 'eme_registration_recorded_ok_html', 'eme_mail_sender_name', 'eme_smtp_username', 'eme_smtp_password', 'eme_default_contact_person','eme_captcha_for_booking', 'eme_mail_sender_address', 'eme_mail_receiver_address', 'eme_smtp_host', 'eme_rsvp_mail_send_method', 'eme_rsvp_mail_port', 'eme_rsvp_mail_SMTPAuth', 'eme_rsvp_registered_users_only', 'eme_rsvp_reg_for_new_events', 'eme_rsvp_default_number_spaces', 'eme_rsvp_addbooking_submit_string', 'eme_rsvp_delbooking_submit_string', 'eme_image_max_width', 'eme_image_max_height', 'eme_image_max_size', 'eme_full_calendar_event_format', 'eme_use_select_for_locations', 'eme_attributes_enabled', 'eme_recurrence_enabled','eme_rsvp_enabled','eme_categories_enabled','eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_registration_pending_email_body','eme_registration_denied_email_body','eme_registration_cancelled_email_body','eme_attendees_list_format','eme_bookings_list_format','eme_bookings_list_header_format','eme_bookings_list_footer_format','eme_uninstall_drop_tables','eme_uninstall_drop_data','eme_time_remove_leading_zeros','eme_rsvp_hide_full_events','eme_events_admin_limit','eme_donation_done','eme_hello_to_user','eme_filter_form_format','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_shortcodes_in_widgets','eme_load_js_in_header','eme_use_client_clock','eme_event_list_number_items', 'eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_edit_events', 'eme_cap_list_events', 'eme_cap_add_locations', 'eme_cap_edit_locations', 'eme_cap_author_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings', 'eme_event_html_headers_format', 'eme_location_html_headers_format','eme_permalink_events_prefix','eme_permalink_locations_prefix','eme_paypal_url','eme_paypal_business', 'eme_2co_business', 'eme_2co_secret', 'eme_2co_demo', 'eme_google_checkout_type', 'eme_google_merchant_id', 'eme_google_merchant_key', 'eme_location_list_format_header', 'eme_location_list_format_item', 'eme_location_list_format_footer','eme_event_initial_state', 'eme_registration_form_format');
-   foreach ( $options as $opt ) {
-      delete_option ( $opt );
-   }
-}
-
-function eme_options_register() {
-
-   // only the options you want changed in the Settings page, not eg. eme_hello_to_user, eme_donation_done
-
-   $options = array ('eme_events_page', 'eme_display_calendar_in_events_page', 'eme_event_list_item_format_header', 'eme_event_list_item_format', 'eme_event_list_item_format_footer', 'eme_event_page_title_format', 'eme_event_html_title_format', 'eme_single_event_format', 'eme_list_events_page', 'eme_events_page_title', 'eme_no_events_message', 'eme_location_page_title_format', 'eme_location_html_title_format', 'eme_location_baloon_format', 'eme_single_location_format', 'eme_location_event_list_item_format', 'eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat', 'eme_location_no_events_message', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_seo_permalink', 'eme_rss_main_title', 'eme_rss_main_description', 'eme_rss_title_format', 'eme_rss_description_format', 'eme_rss_show_pubdate', 'eme_rsvp_mail_notify_is_active', 'eme_contactperson_email_body', 'eme_contactperson_cancelled_email_body', 'eme_contactperson_pending_email_body', 'eme_respondent_email_body', 'eme_registration_recorded_ok_html', 'eme_mail_sender_name', 'eme_smtp_username', 'eme_smtp_password', 'eme_default_contact_person','eme_captcha_for_booking', 'eme_mail_sender_address', 'eme_smtp_host', 'eme_rsvp_mail_send_method', 'eme_rsvp_mail_port', 'eme_rsvp_mail_SMTPAuth', 'eme_rsvp_registered_users_only', 'eme_rsvp_reg_for_new_events', 'eme_rsvp_default_number_spaces', 'eme_rsvp_addbooking_submit_string', 'eme_rsvp_delbooking_submit_string', 'eme_image_max_width', 'eme_image_max_height', 'eme_image_max_size', 'eme_full_calendar_event_format', 'eme_use_select_for_locations', 'eme_attributes_enabled', 'eme_recurrence_enabled','eme_rsvp_enabled','eme_categories_enabled','eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_registration_pending_email_body','eme_registration_denied_email_body','eme_registration_cancelled_email_body','eme_attendees_list_format','eme_bookings_list_format','eme_bookings_list_header_format','eme_bookings_list_footer_format','eme_uninstall_drop_data','eme_time_remove_leading_zeros','eme_rsvp_hide_full_events','eme_events_admin_limit','eme_filter_form_format','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_shortcodes_in_widgets','eme_load_js_in_header','eme_use_client_clock','eme_event_list_number_items', 'eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_edit_events', 'eme_cap_list_events', 'eme_cap_add_locations', 'eme_cap_edit_locations', 'eme_cap_author_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings', 'eme_event_html_headers_format', 'eme_location_html_headers_format','eme_permalink_events_prefix','eme_permalink_locations_prefix','eme_paypal_url','eme_paypal_business', 'eme_2co_business', 'eme_2co_secret', 'eme_2co_demo', 'eme_google_checkout_type', 'eme_google_merchant_id', 'eme_google_merchant_key', 'eme_location_list_item_header', 'eme_location_list_format_item', 'eme_location_list_format_footer','eme_event_initial_state', 'eme_registration_form_format');
-   foreach ( $options as $opt ) {
-      register_setting ( 'eme-options', $opt, '' );
-   }
-}
-add_action ( 'admin_init', 'eme_options_register' );
 
 function eme_create_events_page() {
    global $wpdb;

@@ -11,6 +11,12 @@ function eme_get_calendar_shortcode($atts) {
          'contact_person' => '',
          'location_id' => ''
       ), $atts)); 
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $full = ($full==="true" || $full==="1") ? true : $full;
+   $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $full = ($full==="false" || $full==="0") ? false : $full;
+   $long_events = ($long_events==="false" || $long_events==="0") ? false : $long_events;
 
    // this allows people to use specific months/years to show the calendar on
    if(isset($_GET['calmonth']) && $_GET['calmonth'] != '')   {
@@ -75,7 +81,12 @@ function eme_get_calendar($args="") {
    );
    $r = wp_parse_args( $args, $defaults );
    extract( $r );
-   $echo = (bool) $r ['echo'];
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $full = ($full==="true" || $full==="1") ? true : $full;
+   $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $full = ($full==="false" || $full==="0") ? false : $full;
+   $long_events = ($long_events==="false" || $long_events==="0") ? false : $long_events;
    
    // this comes from global wordpress preferences
    $start_of_week = get_option('start_of_week');
