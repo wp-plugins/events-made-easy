@@ -60,7 +60,7 @@ function eme_ajax_actions() {
          eme_csv_booking_report(intval($_GET['event_id']));
    }
    if (isset($_GET['query']) && $_GET['query'] == 'GlobalMapData') { 
-      $eventful=isset($_GET['eventful'])?$_GET['eventful']:false;
+      $eventful = isset($_GET['eventful'])?$_GET['eventful']:false;
       $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
       eme_global_map_json((bool)$eventful,$_GET['scope'],$_GET['category']);
       die();

@@ -913,6 +913,7 @@ function get_locations_shortcode($atts) {
    ), $atts));
    $class = $class ? "class=\"{$class}\"" : "";
    $eventful = ($eventful==="true" || $eventful==="1") ? true : false;
+   $link = ($link==="true" || $link==="1") ? true : false;
    $locations = eme_get_locations((bool)$eventful, $scope, $category, $offset);
 
    $locations_format_header = get_option('eme_location_list_format_header' );

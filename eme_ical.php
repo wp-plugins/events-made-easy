@@ -54,9 +54,9 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "") 
 
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
-      $echo = $r ['echo'];
-      $echo = ($echo==="true" || $echo==="1") ? true : false;
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : false;
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : false;
    if ($text == '')
       $text = "ICAL";
    if (!empty($category)) {
@@ -78,6 +78,7 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "") 
 
 function eme_ical_link_shortcode($atts) {
    extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'ICAL', 'category' => '' ), $atts ) );
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : false;
    $result = eme_ical_link ( "justurl=$justurl&echo=0&text=$text&category=$category" );
    return $result;
 }

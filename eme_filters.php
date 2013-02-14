@@ -2,6 +2,7 @@
 
 function eme_filter_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('multiple' => 0, 'multisize' => 5, 'scope_count' => 12, 'submit' => 'Submit', 'fields'=> 'all', 'category' => '', 'notcategory' => '' ), $atts ) );
+   $multiple = ($multiple==="true" || $multiple==="1") ? true : false;
 
    $content=eme_replace_filter_form_placeholders(get_option('eme_filter_form_format'),$multiple,$multisize,$scope_count,$fields,$category,$notcategory);
    # using the current page as action, so we can leave action empty in the html form definition

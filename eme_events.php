@@ -761,12 +761,14 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $defaults = array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'echo' => 1 , 'category' => '', 'showperiod' => '', $author => '', $contact_person => '', 'paging'=>0, 'long_events' => 0, 'location_id' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '');
       $r = wp_parse_args ( $limit, $defaults );
       extract ( $r );
-      $echo = $r ['echo'];
-      $echo = ($echo==="true" || $echo==="1") ? true : false;
       // for AND categories: the user enters "+" and this gets translated to " " by wp_parse_args
       // so we fix it again
       $category = preg_replace("/ /","+",$category);
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : false;
+   $long_events = ($long_events==="true" || $long_events==="1") ? true : false;
+   $paging = ($paging==="true" || $paging==="1") ? true : false;
+   $show_ongoing = ($show_ongoing==="true" || $show_ongoing==="1") ? true : false;
    if ($scope == "")
       $scope = "future";
    if ($order != "DESC")
@@ -1124,9 +1126,9 @@ function eme_get_events_page($justurl = 0, $echo = 1, $text = '') {
       
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
-      $echo = $r ['echo'];
-      $echo = ($echo==="true" || $echo==="1") ? true : false;
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : false;
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : false;
    
    $page_link = get_permalink ( get_option ( 'eme_events_page' ) );
    if ($justurl) {
@@ -3196,8 +3198,8 @@ function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
       $echo = $r ['echo'];
-      $echo = ($echo==="true" || $echo==="1") ? true : false;
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : false;
    if ($text == '')
       $text = "RSS";
    $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit");
