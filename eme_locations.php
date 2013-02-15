@@ -666,14 +666,18 @@ function eme_insert_location($location) {
    $location['location_creation_date_gmt']=current_time('mysql', true);
    $location['location_modif_date_gmt']=current_time('mysql', true);
 
-   $wpdb->show_errors(true);
-   if (!$wpdb->insert($table_name,$location)) {
-      $wpdb->print_error();
+   if (current_user_can( get_option('eme_cap_edit_locations'))) {
+      $wpdb->show_errors(true);
+      if (!$wpdb->insert($table_name,$location)) {
+         $wpdb->print_error();
+         return false;
+      } else {
+         $location_ID = $wpdb->insert_id;
+         $new_location = eme_get_location($location_ID);
+         return $new_location;
+      }
+   } else
       return false;
-   } else {
-      $location_ID = $wpdb->insert_id;
-      $new_location = eme_get_location($location_ID);
-      return $new_location;
    }
 }
 

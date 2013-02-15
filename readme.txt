@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.16 =
+* Bugfix: when creating/editing an event, location creation is now also being checked for access rights
+
 = 1.0.15 =
 * Improvement: more options for shortcodes that were booleans with 0 or 1 have now true/false support too
 * Bugfix: the page title for single location pages was not being set correctly
