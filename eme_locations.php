@@ -676,7 +676,7 @@ function eme_insert_location($location) {
          $new_location = eme_get_location($location_ID);
          return $new_location;
       }
-   } else
+   } else {
       return false;
    }
 }
@@ -916,15 +916,10 @@ function get_locations_shortcode($atts) {
       'eventful'  => false,
       'category'  => '',
       'scope'     => 'all',
-      'offset'    => 0,
-      'link'      => false,
-      'class'     => ''
+      'offset'    => 0
    ), $atts));
-   $class = $class ? "class=\"{$class}\"" : "";
    $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
-   $link = ($link==="true" || $link==="1") ? true : $link;
    $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
-   $link = ($link==="false" || $link==="0") ? false : $link;
 
    $locations = eme_get_locations((bool)$eventful, $scope, $category, $offset);
 
