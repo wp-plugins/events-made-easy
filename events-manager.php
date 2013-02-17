@@ -1569,11 +1569,13 @@ function eme_strip_tags ( $value ) {
 
 function admin_show_warnings() {
    $db_version = get_option('eme_version');
+   global $plugin_page;
+
    if ($db_version && $db_version < EME_DB_VERSION) {
       // the warning is already given via admin_notice, we just want
       // to prevent people to do anything in EME without deactivation/activation first
       // But we allow access to the settings page ...
-      if ((isset($_GET['page']) && $_GET['page'] != 'eme-options'))
+      if ($plugin_page != 'eme-options')
          exit(1);
    } else {
       // the normal warnings
@@ -1610,7 +1612,7 @@ _e('If you find this plugin useful to you, please consider making a small donati
 ">
 <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
 <?php
-echo sprintf ( __ ( "<a href=\"%s\" title=\"I already donated\">I already donated.</a>", 'eme' ), admin_url("admin.php?page=events-manager&amp;disable_donate_message=true") );
+echo sprintf ( __ ( "<a href=\"%s\" title=\"I already donated\">I already donated.</a>", 'eme' ), add_query_arg (array("disable_donate_message"=>"true")));
 ?>
 <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
 </form>
@@ -1627,7 +1629,7 @@ function eme_hello_to_new_user() {
    $advice = sprintf ( __ ( "<p>Hey, <strong>%s</strong>, welcome to <strong>Events Made Easy</strong>! We hope you like it around here.</p> 
    <p>Now it's time to insert events lists through  <a href=\"%s\" title=\"Widgets page\">widgets</a>, <a href=\"%s\" title=\"Template tags documentation\">template tags</a> or <a href=\"%s\" title=\"Shortcodes documentation\">shortcodes</a>.</p>
    <p>By the way, have you taken a look at the <a href=\"%s\" title=\"Change settings\">Settings page</a>? That's where you customize the way events and locations are displayed.</p>
-   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), $current_user->display_name, admin_url("widgets.php"), 'http://www.e-dynamics.be/wordpress/#template-tags', 'http://www.e-dynamics.be/wordpress/#shortcodes', admin_url("admin.php?page=eme-options"), admin_url("admin.php?page=events-manager&amp;disable_hello_to_user=true") );
+   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), $current_user->display_name, admin_url("widgets.php"), 'http://www.e-dynamics.be/wordpress/#template-tags', 'http://www.e-dynamics.be/wordpress/#shortcodes', admin_url("admin.php?page=eme-options"), add_query_arg (array("disable_hello_to_user"=>"true")) );
    ?>
 <div id="message" class="updated">
       <?php

@@ -97,38 +97,12 @@ function eme_events_page() {
       $extra_conditions[] = 'event_status = '.$status;
    }
 
-   
    // check if the user is allowed to do anything
    if ( !current_user_can( get_option('eme_cap_add_event') ) ) {
       $action="";
    }
    $current_userid=get_current_user_id();
 
-   // Disable Hello to new user if requested
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['disable_hello_to_user'] ) && $_GET ['disable_hello_to_user'] == 'true')
-      update_option('eme_hello_to_user', 0 );
-
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['disable_donate_message'] ) && $_GET ['disable_donate_message'] == 'true')
-      update_option('eme_donation_done', 1 );
-
-   // do the UTF-8 conversion if wanted
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['do_character_conversion'] ) && $_GET ['do_character_conversion'] == 'true' && $wpdb->has_cap('collation')) {
-                if ( ! empty($wpdb->charset)) {
-                        $charset = "CHARACTER SET $wpdb->charset";
-         $collate="";
-         if ( ! empty($wpdb->collate) )
-            $collate = "COLLATE $wpdb->collate";
-                        eme_convert_charset(EVENTS_TBNAME,$charset,$collate);
-                        eme_convert_charset(RECURRENCE_TBNAME,$charset,$collate);
-                        eme_convert_charset(LOCATIONS_TBNAME,$charset,$collate);
-                        eme_convert_charset(BOOKINGS_TBNAME,$charset,$collate);
-                        eme_convert_charset(PEOPLE_TBNAME,$charset,$collate);
-                        eme_convert_charset(CATEGORIES_TBNAME,$charset,$collate);
-                }
-      update_option('eme_conversion_needed', 0 );
-      print "<div id=\"message\" class=\"updated\">".__('Conversion done, please check your events and restore from backup if you see any sign of troubles.')."</div>";
-   }
-   
    if ($order != "DESC")
       $order = "ASC";
    if ($offset == "")
@@ -3079,13 +3053,14 @@ $j_eme_event(document).ready( function() {
 }
 
 function eme_admin_map_script() {
+   global $plugin_page;
    // when the action is the POST of a new event, don't do the javascript
-   if (isset ( $_GET ['page'] ) && $_GET ['page'] == 'eme-new_event' && isset ( $_REQUEST ['action'] ) && $_REQUEST ['action'] == 'insert_event') {
+   if ($plugin_page == 'eme-new_event' && isset ( $_REQUEST ['action'] ) && $_REQUEST ['action'] == 'insert_event') {
       return;
    }
 
    # we also do this for locations, since the locations page also needs the loadMap javascript function
-   if ((isset ( $_GET ['page'] ) && ($_GET ['page'] == 'eme-locations' || $_GET ['page'] == 'eme-new_event')) ||
+   if (( ($plugin_page == 'eme-locations' || $plugin_page == 'eme-new_event')) ||
        (isset ( $_REQUEST ['action'] ) && ($_REQUEST ['action'] == 'edit_event' || $_REQUEST ['action'] == 'edit_recurrence'))) {
          if (isset($_REQUEST ['event_id']))
             $event_ID = intval($_REQUEST ['event_id']);
@@ -3163,7 +3138,7 @@ function eme_admin_map_script() {
             // We check on the new/edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             if (
-               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) && 
+               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
                      (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage'))) { ?>
             eventLocation = $j_eme_admin("input[name='location-select-name']").val(); 
             eventTown = $j_eme_admin("input[name='location-select-town']").val();
