@@ -61,9 +61,11 @@ function eme_add_booking_form($event_id) {
          $ret_string .= eme_paypal_form($event,$booking_id_done);
       if ($event['use_2co'])
          $ret_string .= eme_2co_form($event,$booking_id_done);
+      if ($event['use_webmoney'])
+         $ret_string .= eme_webmoney_form($event,$booking_id_done);
       if ($event['use_google'])
          $ret_string .= eme_google_form($event,$booking_id_done);
-      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'])
+      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'])
          return $ret_string;
    }
 
@@ -190,11 +192,14 @@ function eme_catch_rsvp() {
    global $booking_id_done;
    $result = "";
 
-   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="paypal_ipn") {
-      return eme_paypal_ipn();
+   if (isset($_GET['eme_eventAction']) && ($_GET['eme_eventAction']=="paypal_notification" || $_GET['eme_eventAction']=="paypal_ipn")) {
+      return eme_paypal_notification();
    }
-   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="2co_ins") {
-      return eme_2co_ins();
+   if (isset($_GET['eme_eventAction']) && ($_GET['eme_eventAction']=="2co_notification" || $_GET['eme_eventAction']=="2co_ins")) {
+      return eme_2co_notification();
+   }
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="webmoney_notification") {
+      return eme_webmoney_notification();
    }
    // make sure we don't get too far without proper info
    if (!(isset($_POST['eme_eventAction']) && isset($_POST['event_id']))) {
@@ -1361,12 +1366,45 @@ function eme_registration_approval_form_table($event_id=0) {
 <?php
 }
 
+function eme_webmoney_form($event,$booking_id) {
+   $booking = eme_get_booking($booking_id);
+   $events_page_link = eme_get_events_page(true, false);
+   $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
+   $price=$event['price']*$booking['booking_seats'];
+
+   require_once('webmoney/webmoney.inc.php');
+   $wm_request = new WM_Request();
+   $wm_request->payment_amount =$price;
+   $wm_request->payment_desc = $name;
+   $wm_request->payment_no = $booking_id;
+   $wm_request->payee_purse = get_option('eme_webmoney_purse');
+   $wm_request->success_method = WM_POST;
+   if (stristr ( $events_page_link, "?" ))
+      $joiner = "&amp;";
+   else
+      $joiner = "?";
+   $result_link = $events_page_link.$joiner."eme_eventAction=webmoney";
+   $wm_request->result_url = $result_link;
+   $wm_request->success_url = eme_event_url($event);
+   $wm_request->fail_url = eme_event_url($event);
+   if (get_option('eme_webmoney_demo')) {
+      $wm_request->sim_mode = WM_ALL_SUCCESS;
+   }
+   $wm_request->btn_label = 'Pay via Webmoney';
+
+   $form_html = "<br>".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html .= $wm_request->SetForm(false);
+   return $form_html;
+}
+
 function eme_2co_form($event,$booking_id) {
+   $booking = eme_get_booking($booking_id);
    $events_page_link = eme_get_events_page(true, false);
    $business=get_option('eme_2co_business');
    $url=CO_URL;
    $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
    $price=$event['price'];
+   $quantity=$booking['booking_seats'];
    $cur=$event['currency'];
 
    $form_html = "<br>".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
@@ -1377,6 +1415,7 @@ function eme_2co_form($event,$booking_id) {
    $form_html.="<input type='hidden' name='li_0_product_id' value='$booking_id' >";
    $form_html.="<input type='hidden' name='li_0_name' value='$name' >";
    $form_html.="<input type='hidden' name='li_0_price' value='$price' >";
+   $form_html.="<input type='hidden' name='li_0_quantity' value='$price' >";
    $form_html.="<input type='hidden' name='currency_code' value='$cur' >";
    $form_html.="<input name='submit' type='submit' value='Pay via 2Checkout' >";
    if (get_option('eme_2co_demo')) {
@@ -1413,7 +1452,7 @@ function eme_paypal_form($event,$booking_id) {
       $joiner = "&amp;";
    else
       $joiner = "?";
-   $ipn_link = $events_page_link.$joiner."eme_eventAction=paypal_ipn";
+   $notification_link = $events_page_link.$joiner."eme_eventAction=paypal_notification";
 
    $form_html = "<br>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme');
    require_once "paypal/Paypal.php";
@@ -1441,18 +1480,18 @@ function eme_paypal_form($event,$booking_id) {
    $p->add_field('business', get_option('eme_paypal_business'));
    $p->add_field('return', eme_event_url($event));
    $p->add_field('cancel_return', eme_event_url($event));
-   $p->add_field('notify_url', $ipn_link);
+   $p->add_field('notify_url', $notification_link);
    $p->add_field('item_name', sprintf(__("Booking for '%s'","eme"),eme_sanitize_html($event['event_name'])));
    $p->add_field('item_number', $booking_id);
-   $p->add_field('amount', $event['price']);
    $p->add_field('currency_code',$event['currency']);
+   $p->add_field('amount', $event['price']);
    $p->add_field('quantity', $booking['booking_seats']);
 
    $form_html .= $p->get_button();
    return $form_html;
 }
 
-function eme_paypal_ipn() {
+function eme_paypal_notification() {
    require_once 'paypal/IPN.php';
    $ipn = new IPN;
 
@@ -1505,7 +1544,7 @@ function eme_paypal_ipn() {
    }
 }
 
-function eme_google_response() {
+function eme_google_notification() {
   // this function is here for google payment handling, but since that
   // needs a certificate, I don't use it yet
   // Even for just the callback uri, https is required if not using the sandbox
@@ -1639,7 +1678,7 @@ function eme_google_response() {
   }
 }
 
-function eme_2co_ins() {
+function eme_2co_notification() {
    $business=get_option('eme_2co_business');
    $secret=get_option('eme_2co_secret');
 
@@ -1650,22 +1689,51 @@ function eme_2co_ins() {
          $insMessage[$k] = $v;
       }
  
+      $hashSid = $insMessage['vendor_id'];
+      if ($hashSid != $business) {
+         die ('Not the 2Checkout Account number it should be ...');
+      }
       $hashOrder = $insMessage['sale_id'];
       $hashInvoice = $insMessage['invoice_id'];
-      $StringToHash = strtoupper(md5($hashOrder . $business . $hashInvoice . $secret));
+      $StringToHash = strtoupper(md5($hashOrder . $hashSid . $hashInvoice . $secret));
  
       if ($StringToHash != $insMessage['md5_hash']) {
          die('Hash Incorrect');
       }
+
+      $booking_id=$insMessage['item_id_1'];
       // TODO: do some extra checks, like the price payed and such
+      #$booking=eme_get_booking($booking_id);
+      #$event = eme_get_event($booking['event_id']);
  
       if ($insMessage['invoice_status'] == 'approved' || $insMessage['invoice_status'] == 'deposited') {
-          $booking_id=$insMessage['item_id_1'];
           eme_update_booking_payed($booking_id,1);
       }
    }
 }
 
+function eme_webmoney_notification() {
+   $webmoney_purse = get_option('eme_webmoney_purse');
+   $webmoney_secret = get_option('eme_webmoney_secret');
+
+   require_once('webmoney/webmoney.inc.php');
+   $wm_notif = new WM_Notification(); 
+   if ($wm_notif->GetForm() != WM_RES_NOPARAM) {
+      $booking_id=$wm_notif->payment_no;
+      $booking=eme_get_booking($booking_id);
+      $event = eme_get_event($booking['event_id']);
+      $amount=$wm_notif->payment_amount;
+      if ($webmoney_purse != $wm_notif->payee_purse) {
+         die ('Not the webmoney purse it should be ...');
+      }
+      #if ($booking['event_seats']*$event['price'] != $amount) {
+      #   die ('Not the webmoney amount I expected ...');
+      #}
+      if ($wm_notif->CheckMD5($webmoney_purse, $amount, $booking_id, $webmoney_secret) == WM_RES_OK) {
+          eme_update_booking_payed($booking_id,1);
+      }
+   }
+}
 
 // template function
 function eme_is_event_rsvpable() {

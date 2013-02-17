@@ -225,6 +225,7 @@ function eme_events_page() {
       
       $event ['use_paypal'] = (isset ($_POST ['use_paypal']) && is_numeric($_POST ['use_paypal'])) ? $_POST ['use_paypal']:0;
       $event ['use_2co'] = (isset ($_POST ['use_2co']) && is_numeric($_POST ['use_2co'])) ? $_POST ['use_2co']:0;
+      $event ['use_webmoney'] = (isset ($_POST ['use_webmoney']) && is_numeric($_POST ['use_webmoney'])) ? $_POST ['use_webmoney']:0;
       $event ['use_google'] = (isset ($_POST ['use_google']) && is_numeric($_POST ['use_google'])) ? $_POST ['use_google']:0;
       $event ['price'] = (isset ($_POST ['price']) && is_numeric($_POST ['price'])) ? $_POST ['price']:0;
       $event ['currency'] = isset ($_POST ['currency']) ? $_POST ['currency']:"EUR";
@@ -2113,6 +2114,7 @@ function eme_event_form($event, $title, $element) {
    $event ['use_paypal'] ? $use_paypal_checked = "checked='checked'" : $use_paypal_checked = '';
    $event ['use_2co'] ? $use_2co_checked = "checked='checked'" : $use_2co_checked = '';
    $event ['use_google'] ? $use_google_checked = "checked='checked'" : $use_google_checked = '';
+   $event ['use_webmoney'] ? $use_webmoney_checked = "checked='checked'" : $use_webmoney_checked = '';
    
    ob_start();
    ?>
@@ -2315,9 +2317,10 @@ function eme_event_form($event, $title, $element) {
                               </select><br />
                             <br />
                               <?php _e ( 'Payment methods','eme' ); ?><br />
-                              <input id="paypal-checkbox" name='use_paypal' value='1' type='checkbox' <?php echo $use_paypal_checked; ?> /><?php _e ( 'Paypal ','eme' ); ?><br />
-                              <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout ','eme' ); ?><br />
-                              <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout ','eme' ); ?><br />
+                              <input id="paypal-checkbox" name='use_paypal' value='1' type='checkbox' <?php echo $use_paypal_checked; ?> /><?php _e ( 'Paypal','eme' ); ?><br />
+                              <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout','eme' ); ?><br />
+                              <input id="webmoney-checkbox" name='use_webmoney' value='1' type='checkbox' <?php echo $use_webmoney_checked; ?> /><?php _e ( 'Webmoney','eme' ); ?><br />
+                              <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout','eme' ); ?><br />
                            </p>
                            <?php if ($event ['event_rsvp']) {
                                  eme_bookings_compact_table ( $event['event_id'] );

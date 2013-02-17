@@ -514,6 +514,7 @@ function eme_create_events_table($charset,$collate) {
          use_paypal bool DEFAULT 0,
          use_google bool DEFAULT 0,
          use_2co bool DEFAULT 0,
+         use_webmoney bool DEFAULT 0,
          price DECIMAL(7,2) DEFAULT 0,
          currency text DEFAULT NULL,
          rsvp_number_days tinyint unsigned DEFAULT 0,
@@ -571,6 +572,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'use_paypal', "alter table $table_name add use_paypal bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_google', "alter table $table_name add use_google bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_2co', "alter table $table_name add use_2co bool DEFAULT 0;");
+      maybe_add_column($table_name, 'use_webmoney', "alter table $table_name add use_webmoney bool DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint unsigned DEFAULT 0;");
       maybe_add_column($table_name, 'price', "alter table $table_name add price DECIMAL(7,2) DEFAULT 0;");
       maybe_add_column($table_name, 'currency', "alter table $table_name add currency text DEFAULT NULL;");

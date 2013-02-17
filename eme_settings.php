@@ -115,6 +115,9 @@ function eme_add_options($reset=0) {
    'eme_2co_demo' => 0,
    'eme_2co_business' => '',
    'eme_2co_secret' => '',
+   'eme_webmoney_demo' => 0,
+   'eme_webmoney_purse' => '',
+   'eme_webmoney_secret' => '',
    'eme_event_initial_state' => STATUS_DRAFT,
    );
    
@@ -134,7 +137,7 @@ function eme_add_option($key, $value, $reset) {
 // WP options registration/deletion
 ////////////////////////////////////
 function eme_options_delete() {
-   $options = array ('eme_version', 'eme_events_page', 'eme_display_calendar_in_events_page', 'eme_event_list_item_format_header', 'eme_event_list_item_format', 'eme_event_list_item_format_footer', 'eme_event_page_title_format', 'eme_event_html_title_format', 'eme_single_event_format', 'eme_list_events_page', 'eme_events_page_title', 'eme_no_events_message', 'eme_location_page_title_format','eme_location_html_title_format', 'eme_location_baloon_format', 'eme_single_location_format', 'eme_location_event_list_item_format', 'eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat', 'eme_location_no_events_message', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_seo_permalink', 'eme_rss_main_title', 'eme_rss_main_description', 'eme_rss_title_format', 'eme_rss_description_format', 'eme_rss_show_pubdate', 'eme_rsvp_mail_notify_is_active', 'eme_contactperson_email_body', 'eme_contactperson_cancelled_email_body', 'eme_contactperson_pending_email_body', 'eme_respondent_email_body', 'eme_registration_recorded_ok_html', 'eme_mail_sender_name', 'eme_smtp_username', 'eme_smtp_password', 'eme_default_contact_person','eme_captcha_for_booking', 'eme_mail_sender_address', 'eme_mail_receiver_address', 'eme_smtp_host', 'eme_rsvp_mail_send_method', 'eme_rsvp_mail_port', 'eme_rsvp_mail_SMTPAuth', 'eme_rsvp_registered_users_only', 'eme_rsvp_reg_for_new_events', 'eme_rsvp_default_number_spaces', 'eme_rsvp_addbooking_submit_string', 'eme_rsvp_delbooking_submit_string', 'eme_image_max_width', 'eme_image_max_height', 'eme_image_max_size', 'eme_full_calendar_event_format', 'eme_use_select_for_locations', 'eme_attributes_enabled', 'eme_recurrence_enabled','eme_rsvp_enabled','eme_categories_enabled','eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_registration_pending_email_body','eme_registration_denied_email_body','eme_registration_cancelled_email_body','eme_attendees_list_format','eme_bookings_list_format','eme_bookings_list_header_format','eme_bookings_list_footer_format','eme_uninstall_drop_tables','eme_uninstall_drop_data','eme_time_remove_leading_zeros','eme_rsvp_hide_full_events','eme_events_admin_limit','eme_donation_done','eme_hello_to_user','eme_filter_form_format','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_shortcodes_in_widgets','eme_load_js_in_header','eme_use_client_clock','eme_event_list_number_items', 'eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_edit_events', 'eme_cap_list_events', 'eme_cap_add_locations', 'eme_cap_edit_locations', 'eme_cap_author_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings', 'eme_event_html_headers_format', 'eme_location_html_headers_format','eme_permalink_events_prefix','eme_permalink_locations_prefix','eme_paypal_url','eme_paypal_business', 'eme_2co_business', 'eme_2co_secret', 'eme_2co_demo', 'eme_google_checkout_type', 'eme_google_merchant_id', 'eme_google_merchant_key', 'eme_location_list_format_header', 'eme_location_list_format_item', 'eme_location_list_format_footer','eme_event_initial_state', 'eme_registration_form_format');
+   $options = array ('eme_version', 'eme_events_page', 'eme_display_calendar_in_events_page', 'eme_event_list_item_format_header', 'eme_event_list_item_format', 'eme_event_list_item_format_footer', 'eme_event_page_title_format', 'eme_event_html_title_format', 'eme_single_event_format', 'eme_list_events_page', 'eme_events_page_title', 'eme_no_events_message', 'eme_location_page_title_format','eme_location_html_title_format', 'eme_location_baloon_format', 'eme_single_location_format', 'eme_location_event_list_item_format', 'eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat', 'eme_location_no_events_message', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_seo_permalink', 'eme_rss_main_title', 'eme_rss_main_description', 'eme_rss_title_format', 'eme_rss_description_format', 'eme_rss_show_pubdate', 'eme_rsvp_mail_notify_is_active', 'eme_contactperson_email_body', 'eme_contactperson_cancelled_email_body', 'eme_contactperson_pending_email_body', 'eme_respondent_email_body', 'eme_registration_recorded_ok_html', 'eme_mail_sender_name', 'eme_smtp_username', 'eme_smtp_password', 'eme_default_contact_person','eme_captcha_for_booking', 'eme_mail_sender_address', 'eme_mail_receiver_address', 'eme_smtp_host', 'eme_rsvp_mail_send_method', 'eme_rsvp_mail_port', 'eme_rsvp_mail_SMTPAuth', 'eme_rsvp_registered_users_only', 'eme_rsvp_reg_for_new_events', 'eme_rsvp_default_number_spaces', 'eme_rsvp_addbooking_submit_string', 'eme_rsvp_delbooking_submit_string', 'eme_image_max_width', 'eme_image_max_height', 'eme_image_max_size', 'eme_full_calendar_event_format', 'eme_use_select_for_locations', 'eme_attributes_enabled', 'eme_recurrence_enabled','eme_rsvp_enabled','eme_categories_enabled','eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_registration_pending_email_body','eme_registration_denied_email_body','eme_registration_cancelled_email_body','eme_attendees_list_format','eme_bookings_list_format','eme_bookings_list_header_format','eme_bookings_list_footer_format','eme_uninstall_drop_tables','eme_uninstall_drop_data','eme_time_remove_leading_zeros','eme_rsvp_hide_full_events','eme_events_admin_limit','eme_donation_done','eme_hello_to_user','eme_filter_form_format','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_shortcodes_in_widgets','eme_load_js_in_header','eme_use_client_clock','eme_event_list_number_items', 'eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_edit_events', 'eme_cap_list_events', 'eme_cap_add_locations', 'eme_cap_edit_locations', 'eme_cap_author_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings', 'eme_event_html_headers_format', 'eme_location_html_headers_format','eme_permalink_events_prefix','eme_permalink_locations_prefix','eme_paypal_url','eme_paypal_business', 'eme_2co_business', 'eme_2co_secret', 'eme_2co_demo', 'eme_webmoney_purse', 'eme_webmoney_secret', 'eme_webmoney_demo', 'eme_google_checkout_type', 'eme_google_merchant_id', 'eme_google_merchant_key', 'eme_location_list_format_header', 'eme_location_list_format_item', 'eme_location_list_format_footer','eme_event_initial_state', 'eme_registration_form_format');
    foreach ( $options as $opt ) {
       delete_option ( $opt );
    }
@@ -179,7 +182,7 @@ function eme_options_register() {
                  $options = array ('eme_rsvp_mail_notify_is_active','eme_contactperson_email_body','eme_contactperson_cancelled_email_body','eme_contactperson_pending_email_body','eme_respondent_email_body','eme_registration_pending_email_body','eme_registration_cancelled_email_body','eme_registration_denied_email_body','eme_mail_sender_name','eme_mail_sender_address','eme_rsvp_mail_send_method','eme_smtp_host','eme_rsvp_mail_port','eme_rsvp_mail_SMTPAuth','eme_smtp_username','eme_smtp_password');
 	         break;
 	      case 'payments' :
-                 $options = array ('eme_paypal_url','eme_paypal_business','eme_2co_demo','eme_2co_business','eme_2co_secret','eme_google_checkout_type','eme_google_merchant_id','eme_google_merchant_key');
+                 $options = array ('eme_paypal_url','eme_paypal_business','eme_2co_demo','eme_2co_business','eme_2co_secret','eme_google_checkout_type','eme_google_merchant_id','eme_google_merchant_key','eme_webmoney_purse', 'eme_webmoney_secret', 'eme_webmoney_demo');
 	         break;
 	      case 'other' :
                  $options = array ('eme_image_max_width','eme_image_max_height','eme_image_max_size','eme_event_html_headers_format','eme_location_html_headers_format');
@@ -503,12 +506,29 @@ function eme_options_page() {
          $joiner = "&amp;";
       else
          $joiner = "?";
-      $ins_link = $events_page_link.$joiner."eme_eventAction=2co_ins";
+      $notification_link = $events_page_link.$joiner."eme_eventAction=2co_notification";
 
       eme_options_select ( __('2Checkout live or test','eme'), 'eme_2co_demo', array (1 => __('2Checkout Sandbox (for testing)','eme'), 0 => __ ( '2Checkout Live', 'eme' )), __('Choose wether you want to test 2Checkout in a sandbox or go live and really use 2Checkout.','eme') );
       eme_options_input_text (__('2Checkout Account number','eme'),'eme_2co_business', __("2Checkout Account number.",'eme'));
       eme_options_input_text (__('2Checkout Secret','eme'),'eme_2co_secret', __("2Checkout secret.",'eme'));
-      echo "<tr>".__('Info: the url for Instant Notifications is: ','eme').$ins_link.'</tr>';
+      echo "<tr>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</tr>';
+   ?>
+</table>
+
+<h3><?php _e ( 'RSVP: Webmoney options', 'eme' ); ?></h3>
+<table class='form-table'>
+   <?php
+      $events_page_link = eme_get_events_page(true, false);
+      if (stristr ( $events_page_link, "?" ))
+         $joiner = "&amp;";
+      else
+         $joiner = "?";
+      $notification_link = $events_page_link.$joiner."eme_eventAction=webmoney_notification";
+
+      eme_options_select ( __('Webmoney live or test','eme'), 'eme_webmoney_demo', array (1 => __('Webmoney Sandbox (for testing)','eme'), 0 => __ ( 'Webmoney Live', 'eme' )), __('Choose wether you want to test Webmoney in a sandbox or go live and really use Webmoney.','eme') );
+      eme_options_input_text (__('Webmoney Purse','eme'),'eme_webmoney_purse', __("Webmoney Purse.",'eme'));
+      eme_options_input_text (__('Webmoney Secret','eme'),'eme_webmoney_secret', __("Webmoney secret.",'eme'));
+      echo "<tr>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</tr>';
    ?>
 </table>
 
