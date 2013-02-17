@@ -97,10 +97,6 @@ function eme_events_page() {
       $extra_conditions[] = 'event_status = '.$status;
    }
 
-   // check if the user is allowed to do anything
-   if ( !current_user_can( get_option('eme_cap_add_event') ) ) {
-      $action="";
-   }
    $current_userid=get_current_user_id();
 
    if ($order != "DESC")
@@ -116,11 +112,11 @@ function eme_events_page() {
    
    // DELETE action
    if ($action == 'deleteEvents') {
-      foreach ( $selectedEvents as $event_ID ) {
-         $tmp_event = array();
-         $tmp_event = eme_get_event ( $event_ID );
-         if (current_user_can( get_option('eme_cap_edit_events')) ||
-             (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
+      if (current_user_can( get_option('eme_cap_edit_events')) ||
+         (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
+         foreach ( $selectedEvents as $event_ID ) {
+            $tmp_event = array();
+            $tmp_event = eme_get_event ( $event_ID );
             if ($tmp_event['recurrence_id']>0) {
                # if the event is part of a recurrence and it is the last event of the recurrence, delete the recurrence
                # else just delete the singe event
@@ -133,8 +129,12 @@ function eme_events_page() {
                eme_db_delete_event ( $tmp_event );
             }
          }
+         $feedback_message = __ ( 'Event(s) deleted!', 'eme' );
+      } else {
+         $feedback_message = __ ( 'You have no right to delete events!', 'eme' );
       }
       
+      echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
       $events = eme_get_events ( $list_limit+1, "future", $order, $offset );
       eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
       return;
@@ -158,8 +158,16 @@ function eme_events_page() {
 
    // UPDATE or CREATE action
    if ($action == 'insert_event' || $action == 'update_event' || $action == 'update_recurrence') {
+      if ( ! (current_user_can( get_option('eme_cap_add_event')) || current_user_can( get_option('eme_cap_edit_events'))) ) {
+         $feedback_message = __('You have no right to insert or update events','eme');
+         echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
+         $events = eme_get_events ( $list_limit+1, "future" );
+         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         return;
+      }
+
       $event = array();
-      $location = array ();
+      $location = eme_new_location ();
       $event ['event_name'] = isset($_POST ['event_name']) ? trim(stripslashes ( $_POST ['event_name'] )) : '';
       if (!current_user_can( get_option('eme_cap_publish_event')) ) {
          $event['event_status']=STATUS_DRAFT;   
@@ -299,7 +307,7 @@ function eme_events_page() {
                $new_location = eme_insert_location ( $location );
                if (!$new_location) {
                   echo "<div id='message' class='error '>
-                        <p>" . __ ( "Could not insert location: either you don't have the right to insert locations or there's a DB problem.", "eme" ) . " $validation_result</p>
+                        <p>" . __ ( "Could not create the new location for this event: either you don't have the right to insert locations or there's a DB problem.", "eme" ) . "</p>
                         </div>";
                   return;
                }
@@ -380,13 +388,20 @@ function eme_events_page() {
 
    if ($action == 'edit_event') {
       if (! $event_ID) {
-         $title = __ ( "Insert New Event", 'eme' );
-         eme_event_form ( $event, $title, $event_ID );
+         if (current_user_can( get_option('eme_cap_add_event'))) {
+            $title = __ ( "Insert New Event", 'eme' );
+            eme_event_form ( $event, $title, $event_ID );
+         } else {
+            $feedback_message = __('You have no right to add events!','eme');
+            echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
+            $events = eme_get_events ( $list_limit+1, "future" );
+            eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         }
       } else {
          $event = eme_get_event ( $event_ID );
          if (current_user_can( get_option('eme_cap_edit_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
-                     // UPDATE old event
+            // UPDATE old event
             $title = __ ( "Edit Event", 'eme' ) . " '" . $event ['event_name'] . "'";
             eme_event_form ( $event, $title, $event_ID );
          } else {
@@ -3401,10 +3416,12 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    $event['creation_date_gmt']=current_time('mysql', true);
    $event['modif_date_gmt']=current_time('mysql', true);
 
-   // some sanity checks
+   // remove possible unwanted fields
    if (isset($event['event_id'])) {
       unset($event['event_id']);
    }
+
+   // some sanity checks
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
    }
@@ -3547,7 +3564,7 @@ function eme_countdown($atts) {
 add_shortcode('events_countdown', 'eme_countdown');
 
 function eme_image_url_for_event($event) {
-   if ($event['recurrence_id']>0) {
+   if (isset($event['recurrence_id']) && $event['recurrence_id']>0) {
       $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
       $image_baseurl= IMAGE_UPLOAD_URL."/recurrence-".$event['recurrence_id'];
    } else {
@@ -3568,7 +3585,7 @@ function eme_image_url_for_event($event) {
 function eme_upload_event_picture($event) {
    if(!file_exists(IMAGE_UPLOAD_DIR))
             mkdir(IMAGE_UPLOAD_DIR, 0777);
-   if ($event['recurrence_id']>0)
+   if (isset($event['recurrence_id']) && $event['recurrence_id']>0)
       $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
    else
       $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];

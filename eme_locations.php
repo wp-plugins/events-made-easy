@@ -1,5 +1,19 @@
 <?php
 $feedback_message = "";
+
+function eme_new_location() {
+   $location = array();
+   $location['location_name'] = '';
+   $location['location_address'] = '';
+   $location['location_town'] = '';
+   $location['location_latitude'] = '';
+   $location['location_longitude'] = '';
+   $location['location_description'] = '';
+   $location['location_category_ids'] = '';
+   $location['location_url'] = '';
+   $location['location_slug'] = '';
+   return $location;
+}
  
 function eme_locations_page() {
    $current_userid=get_current_user_id();
@@ -31,7 +45,7 @@ function eme_locations_page() {
       if (current_user_can( get_option('eme_cap_edit_locations')) ||
             (current_user_can( get_option('eme_cap_author_locations')) && ($orig_location['location_author']==$current_userid))) {
          // location update required
-         $location = array();
+         $location = eme_new_location();
          $location['location_id'] = intval($_POST['location_ID']);
          $location['location_name'] = trim(stripslashes($_POST['location_name']));
          $location['location_address'] = stripslashes($_POST['location_address']); 
@@ -87,7 +101,7 @@ function eme_locations_page() {
       }
    } elseif(isset($_POST['action']) && $_POST['action'] == "addlocation") {
       if (current_user_can( get_option('eme_cap_add_locations'))) {
-         $location = array();
+         $location = eme_new_location();
          $location['location_name'] = trim(stripslashes($_POST['location_name']));
          $location['location_address'] = stripslashes($_POST['location_address']);
          $location['location_town'] = stripslashes($_POST['location_town']); 
@@ -273,16 +287,7 @@ function eme_locations_edit_layout($location, $message = "") {
 
 function eme_locations_table_layout($locations, $new_location, $message = "") {
    if (!is_array($new_location)) {
-      $new_location = array();
-      $new_location['location_name'] = '';
-      $new_location['location_address'] = '';
-      $new_location['location_town'] = '';
-      $new_location['location_latitude'] = '';
-      $new_location['location_longitude'] = '';
-      $new_location['location_description'] = '';
-      $new_location['location_category_ids'] = '';
-      $new_location['location_url'] = '';
-      $new_location['location_slug'] = '';
+      $new_location = eme_new_location();
    }
 
    ob_start();
@@ -463,7 +468,7 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
          foreach ($events as $event) {
             $location_id=$event['location_id'];
             if ($location_id && $event['location_name'] != "") {
-               $this_location = array();
+               $this_location = eme_new_location();
                $this_location['location_id'] = $location_id;
                $this_location['location_name'] = $event['location_name'];
                $this_location['location_address'] = $event['location_address'];
@@ -536,17 +541,8 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
 function eme_get_location($location_id=0) { 
    global $wpdb;
 
-   $location=array();
    if (!$location_id) {
-      $location ['location_id']='';
-      $location ['location_name']='';
-      $location ['location_address']='';
-      $location ['location_town']='';
-      $location ['location_latitude']='';
-      $location ['location_longitude']='';
-      $location ['location_image_url']='';
-      $location ['location_url']='';
-      $location ['location_slug']='';
+      $location = eme_new_location();
    } else {
       $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
       $sql = "SELECT * FROM $locations_table WHERE location_id ='$location_id'";
@@ -666,7 +662,7 @@ function eme_insert_location($location) {
    $location['location_creation_date_gmt']=current_time('mysql', true);
    $location['location_modif_date_gmt']=current_time('mysql', true);
 
-   if (current_user_can( get_option('eme_cap_edit_locations'))) {
+   if (current_user_can( get_option('eme_cap_add_locations'))) {
       $wpdb->show_errors(true);
       if (!$wpdb->insert($table_name,$location)) {
          $wpdb->print_error();
