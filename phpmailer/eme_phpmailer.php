@@ -38,7 +38,7 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
 
       if ($receiveremail != "") {
          $mail->AddAddress($receiveremail,$receivername);
-         if (get_option('eme_smtp_debug');
+         if (get_option('eme_smtp_debug'))
             $mail->SMTPDebug = true;
          if(!$mail->Send()){
             #echo "<br />Message was not sent<br/ >";
