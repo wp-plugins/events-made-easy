@@ -25,6 +25,7 @@ function eme_new_event() {
       "use_paypal" => 0,
       "use_google" => 0,
       "use_2co" => 0,
+      "use_webmoney" => 0,
       "price" => 0,
       "currency" => "EUR",
       "rsvp_number_days" => 0,
