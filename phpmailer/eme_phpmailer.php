@@ -2,7 +2,7 @@
 // phpmailer support
 function eme_send_mail($subject="no title",$body="No message specified", $receiveremail, $receivername='', $replytoemail='', $replytoname='') {
 
-   require_once(ABSPATH . "/wp-includes/class-phpmailer.php");
+   require_once(ABSPATH . WPINC . "/class-phpmailer.php");
    // there's a bug in class-phpmailer from wordpress, so we need to copy class-smtp.php
    // in this dir for smtp to work
       
@@ -15,15 +15,15 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
       $mail->SetLanguage('en', dirname(__FILE__).'/');
 
       $mail->PluginDir = dirname(__FILE__).'/';
-      get_option('eme_rsvp_mail_send_method') == 'qmail' ?       
+      get_option('eme_rsvp_mail_send_method') == 'qmail' ?
          $mail->IsQmail() :
-         $mail->Mailer = get_option('eme_rsvp_mail_send_method');                     
+         $mail->Mailer = get_option('eme_rsvp_mail_send_method');
       $mail->Host = get_option('eme_smtp_host');
-      $mail->port = get_option('eme_rsvp_mail_port');  
+      $mail->port = get_option('eme_rsvp_mail_port');
       if(get_option('eme_rsvp_mail_SMTPAuth') == '1')
          $mail->SMTPAuth = TRUE;
-      $mail->Username = get_option('eme_smtp_username');  
-      $mail->Password = get_option('eme_smtp_password');  
+      $mail->Username = get_option('eme_smtp_username');
+      $mail->Password = get_option('eme_smtp_password');
       if (get_option('eme_mail_sender_address') == "") {
          $mail->From = $replytoemail;
          $mail->FromName = $replytoname;
@@ -38,10 +38,11 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
 
       if ($receiveremail != "") {
          $mail->AddAddress($receiveremail,$receivername);
-         //$mail->SMTPDebug = true;        
-         if(!$mail->Send()){   
-            echo "Message was not sent<br/ >";   
-            echo "Mailer Error: " . $mail->ErrorInfo;
+         if (get_option('eme_smtp_debug');
+            $mail->SMTPDebug = true;
+         if(!$mail->Send()){
+            #echo "<br />Message was not sent<br/ >";
+            #echo "Mailer Error: " . $mail->ErrorInfo;
             return false;
          } else {
             return true;

@@ -68,6 +68,8 @@ function eme_get_contact($event) {
    if (!get_userdata($contact_id)) $contact_id = get_option('eme_default_contact_person');
    if ($contact_id < 1)
       $contact_id = $event['event_author'];
+   if ($contact_id < 1)
+      $contact_id = get_current_user_id();
    $userinfo=get_userdata($contact_id);
    return $userinfo;
 }
