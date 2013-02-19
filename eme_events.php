@@ -43,6 +43,7 @@ function eme_new_event() {
       "event_respondent_email_body" => '',
       "event_registration_pending_email_body" => '',
       "event_registration_form_format" => '',
+      "event_registration_recorded_ok_html" => '',
       "event_slug" => '',
       "event_image_url" => '',
       "event_url" => '',
