@@ -231,6 +231,7 @@ function eme_events_page() {
       $event ['use_google'] = (isset ($_POST ['use_google']) && is_numeric($_POST ['use_google'])) ? $_POST ['use_google']:0;
       $event ['price'] = (isset ($_POST ['price']) && is_numeric($_POST ['price'])) ? $_POST ['price']:0;
       $event ['currency'] = isset ($_POST ['currency']) ? $_POST ['currency']:"EUR";
+      $event ['event_image_url'] = isset ($_POST ['event_image_url']) ? $_POST ['event_image_url']:"";
 
       if (isset ( $_POST ['event_contactperson_id'] ) && $_POST ['event_contactperson_id'] != '') {
          $event ['event_contactperson_id'] = $_POST ['event_contactperson_id'];
@@ -2669,15 +2670,48 @@ function eme_event_form($event, $title, $element) {
                         <div id="event_current_image" class="postarea">
                         <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
                                  _e('Current image:', 'eme');
-                                 echo "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+                                 echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."' width='200' />";
+                              } else {
+                                 echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
                               }
+                              // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
                         ?>
+
                         </div>
                         <br />
-                        <input id="event_image" name="event_image" type="file" size="35" />
-                        <?php _e ( 'Select an image to upload', 'eme' )?><br />
-                        <input id="eme_remove_old_image" name="eme_remove_old_image" type="checkbox" value="1" />
-                        <?php _e ( 'Remove existing image', 'eme' )?>
+
+<div class="uploader">
+  <input type="hidden" name="event_image_url" id="event_image_url" />
+  <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
+</div>
+<script>
+jQuery(document).ready(function($){
+
+  $('#eme_remove_old_image').click(function(e) {
+        $('#event_image_url').val('');
+        $('#eme_event_image_example' ).attr("src",'');
+  });
+  $('#event_image_button').click(function(e) {
+    var button = $(this);
+    var _orig_send_attachment = wp.media.editor.send.attachment;
+    var eme_custom_media = true;
+
+    wp.media.editor.send.attachment = function(props, attachment){
+      if ( eme_custom_media ) {
+        $('#event_image_url').val(attachment.url);
+        $('#eme_event_image_example' ).attr("src",attachment.url);
+      } else {
+        return _orig_send_attachment.apply( this, [props, attachment] );
+      };
+      eme_custom_media = false;
+    }
+
+    wp.media.editor.open(button);
+    return false;
+  });
+});
+</script>
+                        <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
                      </div>
                   </div>
                   <?php if(get_option('eme_attributes_enabled')) : ?>
@@ -3569,7 +3603,9 @@ function eme_countdown($atts) {
 add_shortcode('events_countdown', 'eme_countdown');
 
 function eme_image_url_for_event($event) {
-   if (isset($event['recurrence_id']) && $event['recurrence_id']>0) {
+   if (isset($event['event_image_url']) && $event['event_image_url'] != '' ) {
+      return $event['event_image_url'];
+   } elseif (isset($event['recurrence_id']) && $event['recurrence_id']>0) {
       $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
       $image_baseurl= IMAGE_UPLOAD_URL."/recurrence-".$event['recurrence_id'];
    } else {

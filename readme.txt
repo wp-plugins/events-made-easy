@@ -113,6 +113,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 == Changelog ==
 
 = 1.0.16 =
+* Feature: for events, the featured image now uses the WP media gallery
 * Feature: Webmoney support added
 * Improvement: you can now activate SMTP debugging if you have issues when sending mail via SMTP
 * Bugfix: when creating/editing an event, location creation is now also being checked for access rights
