@@ -3586,7 +3586,7 @@ function eme_wysiwyg(){
       wp_enqueue_script('quicktags');  
    }
 }
-add_action ( 'admin_init', 'eme_wysiwyg' );
+#add_action ( 'admin_init', 'eme_wysiwyg' );
 
 # return number of days until next event or until the specified event
 function eme_countdown($atts) {
