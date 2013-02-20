@@ -689,6 +689,7 @@ function eme_create_locations_table($charset,$collate) {
          location_creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          location_modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          location_modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
+         location_image_url text NULL,
          UNIQUE KEY (location_id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -708,6 +709,7 @@ function eme_create_locations_table($charset,$collate) {
       maybe_add_column($table_name, 'location_modif_date_gmt', "alter table $table_name add location_modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'location_url', "alter table $table_name add location_url text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'location_slug', "alter table $table_name add location_slug text DEFAULT NULL;"); 
+      maybe_add_column($table_name, 'location_image_url', "alter table $table_name add location_image_url text NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY location_name text NOT NULL ;");
       }

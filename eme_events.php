@@ -1662,7 +1662,9 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 
          $this_event ['event_attributes'] = @unserialize($this_event ['event_attributes']);
          $this_event ['event_attributes'] = (!is_array($this_event ['event_attributes'])) ?  array() : $this_event ['event_attributes'] ;
-         $this_event ['event_image_url'] = eme_image_url_for_event($this_event);
+         // don't forget the images (for the older events that didn't use the wp gallery)
+         if (empty($this_event ['event_image_url']))
+            $this_event ['event_image_url'] = eme_image_url_for_event($this_event);
          array_push ( $inflated_events, $this_event );
       }
       if (has_filter('eme_event_list_filter')) $inflated_events=apply_filters('eme_event_list_filter',$inflated_events);
@@ -1735,7 +1737,9 @@ function eme_get_event($event_id) {
       $event ['event_attributes'] = @unserialize($event ['event_attributes']);
       $event ['event_attributes'] = (!is_array($event ['event_attributes'])) ?  array() : $event ['event_attributes'] ;
    }   
-   $event['event_image_url'] = eme_image_url_for_event($event);
+   // don't forget the images (for the older events that didn't use the wp gallery)
+   if (empty($event ['event_image_url']))
+      $event['event_image_url'] = eme_image_url_for_event($event);
    if (has_filter('eme_event_filter')) $event=apply_filters('eme_event_filter',$event);
    return $event;
 }
@@ -2670,7 +2674,7 @@ function eme_event_form($event, $title, $element) {
                         <div id="event_current_image" class="postarea">
                         <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
                                  _e('Current image:', 'eme');
-                                 echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."' width='200' />";
+                                 echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' width='200' />";
                               } else {
                                  echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
                               }
@@ -2680,10 +2684,11 @@ function eme_event_form($event, $title, $element) {
                         </div>
                         <br />
 
-<div class="uploader">
-  <input type="hidden" name="event_image_url" id="event_image_url" />
-  <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
-</div>
+                        <div class="uploader">
+                           <input type="hidden" name="event_image_url" id="event_image_url" />
+                           <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
+                           <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
+                        </div>
 <script>
 jQuery(document).ready(function($){
 
@@ -2711,7 +2716,6 @@ jQuery(document).ready(function($){
   });
 });
 </script>
-                        <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
                      </div>
                   </div>
                   <?php if(get_option('eme_attributes_enabled')) : ?>
@@ -3485,7 +3489,6 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
       $event['event_id']=$event_ID;
       // the eme_insert_event_action is only executed for single events, not those part of a recurrence
       if (!$event_is_part_of_recurrence && has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
-      eme_upload_event_picture($event);
       return $event_ID;
    }
 }
@@ -3526,7 +3529,6 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
       return false;
    } else {
       $event['event_id']=$event_id;
-      eme_upload_event_picture($event);
       // the eme_update_event_action is only executed for single events, not those part of a recurrence
       if (!$event_is_part_of_recurrence && has_action('eme_update_event_action')) {
          // we do this call so all parameters for the event are filled, otherwise for an update this might not be the case
@@ -3603,9 +3605,7 @@ function eme_countdown($atts) {
 add_shortcode('events_countdown', 'eme_countdown');
 
 function eme_image_url_for_event($event) {
-   if (isset($event['event_image_url']) && $event['event_image_url'] != '' ) {
-      return $event['event_image_url'];
-   } elseif (isset($event['recurrence_id']) && $event['recurrence_id']>0) {
+   if (isset($event['recurrence_id']) && $event['recurrence_id']>0) {
       $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
       $image_baseurl= IMAGE_UPLOAD_URL."/recurrence-".$event['recurrence_id'];
    } else {
@@ -3621,24 +3621,6 @@ function eme_image_url_for_event($event) {
       }
    }
    return '';
-}
-
-function eme_upload_event_picture($event) {
-   if(!file_exists(IMAGE_UPLOAD_DIR))
-            mkdir(IMAGE_UPLOAD_DIR, 0777);
-   if (isset($event['recurrence_id']) && $event['recurrence_id']>0)
-      $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
-   else
-      $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
-   if (isset ($_POST['eme_remove_old_image']) && ($_POST['eme_remove_old_image']==1))
-      eme_delete_image_files($image_basename);
-   $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-   if (isset($_FILES['event_image']) && isset($_FILES['event_image']['tmp_name']) && ($_FILES['event_image']['size'] > 0)) {
-      list($width, $height, $type, $attr) = getimagesize($_FILES['event_image']['tmp_name']);
-      $image_path = $image_basename.".".$mime_types[$type];
-      if (!move_uploaded_file($_FILES['event_image']['tmp_name'], $image_path))
-         $msg = "<p>".__('The image could not be loaded','eme')."</p>";
-   }
 }
 
 ?>

@@ -12,6 +12,7 @@ function eme_new_location() {
    $location['location_category_ids'] = '';
    $location['location_url'] = '';
    $location['location_slug'] = '';
+   $location['location_image_url'] = '';
    return $location;
 }
  
@@ -54,6 +55,7 @@ function eme_locations_page() {
          $location['location_longitude'] = $_POST['location_longitude'];
          $location['location_description'] = stripslashes($_POST['content']);
          $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
+         $location['location_image_url'] = isset($_POST ['location_image_url']) ? eme_strip_tags ( $_POST ['location_image_url'] ) : '';
          $location['location_slug'] = isset($_POST ['location_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['location_slug'] )) : eme_permalink_convert($location['location_name']);
          // we don't change the author
          //$location['location_author'] = $current_userid;
@@ -84,7 +86,6 @@ function eme_locations_page() {
          if ($validation_result == "OK") {
             if (eme_update_location($location)) {
                $message = __('The location has been updated.', 'eme');
-               eme_upload_location_picture($location);
             } else {
                $message = __('The location update failed.', 'eme');
             }
@@ -110,6 +111,7 @@ function eme_locations_page() {
          $location['location_description'] = stripslashes($_POST['content']);
          $location['location_author'] = $current_userid;
          $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
+         $location['location_image_url'] = isset($_POST ['location_image_url']) ? eme_strip_tags ( $_POST ['location_image_url'] ) : '';
          $location['location_slug'] = isset($_POST ['location_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['location_slug'] )) : eme_permalink_convert($location['location_name']);
          if (isset ($_POST['location_category_ids'])) {
             // the category id's need to begin and end with a comma
@@ -134,8 +136,6 @@ function eme_locations_page() {
             $new_location = eme_insert_location($location);
             if ($new_location) {
                $message = __('The location has been added.', 'eme'); 
-               // uploading the image
-               eme_upload_location_picture($new_location);
             } else {
                $message = __('There has been a problem adding the location.', 'eme'); 
             }      
@@ -182,56 +182,102 @@ function eme_locations_edit_layout($location, $message = "") {
          
          <!-- we need titlediv and title for qtranslate as ID -->
          <div id="titlediv" class="form-required">
-           <label><?php _e('Location name', 'eme') ?></label>
+            <h3>
+               <?php _e('Location name', 'eme') ?>
+            </h3>
+            <div class="inside">
            <input name="location_name" id="title" type="text" value="<?php echo eme_sanitize_html($location['location_name']); ?>" size="40" />
            <input type="hidden" name="translated_location_name" value="<?php echo eme_trans_sanitize_html($location['location_name']); ?>" />
-           <p><?php _e('The name of the location', 'eme') ?>.</p>
-                        <?php if ($location ['location_name'] != "") {
-                                 _e ('Permalink: ', 'eme' );
-                                 echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix')).$location['location_id']."/";
-                                 $slug = $location['location_slug'] ? $location['location_slug'] : $location['location_name'];
-                                 $slug = untrailingslashit(eme_permalink_convert($slug));
-                        ?>
-                                 <input type="text" id="slug" name="location_slug" value="<?php echo $slug; ?>" /><?php echo user_trailingslashit(""); ?>
-                        <?php
-                              }
-                        ?>
-
+           <?php if ($location ['location_name'] != "") {
+                    _e ('Permalink: ', 'eme' );
+                    echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix')).$location['location_id']."/";
+                    $slug = $location['location_slug'] ? $location['location_slug'] : $location['location_name'];
+                    $slug = untrailingslashit(eme_permalink_convert($slug));
+           ?>
+                    <input type="text" id="slug" name="location_slug" value="<?php echo $slug; ?>" /><?php echo user_trailingslashit(""); ?>
+           <?php
+                  }
+           ?>
+           </div>
          </div>
-         <div class="form-field">
-            <label for="location_address"><?php _e('Location address', 'eme') ?></label>
+         <div class="postbox">
+            <h3>
+               <?php _e('Location address', 'eme') ?>
+            </h3>
+            <div class="inside">
             <input id="location_address" name="location_address" type="text" value="<?php echo eme_sanitize_html($location['location_address']); ?>" size="40"  />
-            <p><?php _e('The address of the location', 'eme') ?>.</p>
+            </div>
          </div>
  
-         <div class="form-field ">
-            <label for="location_town"><?php _e('Location town', 'eme') ?></label>
+         <div class="postbox">
+            <h3>
+               <?php _e('Location town', 'eme') ?>
+            </h3>
+            <div class="inside">
             <input name="location_town" id="location_town" type="text" value="<?php echo eme_sanitize_html($location['location_town']); ?>" size="40"  />
-            <p><?php _e('The town of the location', 'eme') ?>.</p>
+            </div>
          </div>
                         
-         <div class="form-field" style="display:none;">
+         <div class="postbox" style="display:none;">
             <label for="location_latitude">LAT</label>
             <input id="location_latitude" name="location_latitude" type="text" value="<?php echo eme_sanitize_html($location['location_latitude']); ?>" size="40"  />
          </div>
-         <div class="form-field" style="display:none;">
+         <div class="postbox" style="display:none;">
             <label for="location_longitude">LONG</label>
             <input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($location['location_longitude']); ?>" size="40"  />
          </div>
-         <div class="form-field">
-            <label for="location_image"><?php _e('Location image', 'eme') ?></label>
-            <input id="location_image" name="location_image" type="file" size="35" />
-            <p><?php _e('Select an image to upload', 'eme') ?>.</p>
-            <?php if (isset($location['location_image_url']) && !empty($location['location_image_url'])) {
-                     _e('Current image:', 'eme');
-                     echo "<img src='".$location['location_image_url']."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
-                  }
-            ?>
+
+         <div class="postbox">
+            <h3>
+               <?php _e('Location image', 'eme') ?>
+            </h3>
+            <div class="inside">
+             <?php if (isset($location['location_image_url']) && !empty($location['location_image_url'])) {
+                       echo "<img id='eme_location_image_example' src='".$location['location_image_url']."' width='200' />";
+                    } else {
+                       echo "<img id='eme_location_image_example' src='' alt='' width='200' />";
+                    }
+                    // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
+              ?>
+                <input type="hidden" name="location_image_url" id="location_image_url" />
+                <input type="button" name="location_image_button" id="location_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
+                <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
+            </div>
+<script>
+jQuery(document).ready(function($){
+
+  $('#eme_remove_old_image').click(function(e) {
+        $('#location_image_url').val('');
+        $('#eme_location_image_example' ).attr("src",'');
+  });
+  $('#location_image_button').click(function(e) {
+    var button = $(this);
+    var _orig_send_attachment = wp.media.editor.send.attachment;
+    var eme_custom_media = true;
+
+    wp.media.editor.send.attachment = function(props, attachment){
+      if ( eme_custom_media ) {
+        $('#location_image_url').val(attachment.url);
+        $('#eme_location_image_example' ).attr("src",attachment.url);
+      } else {
+        return _orig_send_attachment.apply( this, [props, attachment] );
+      };
+      eme_custom_media = false;
+    }
+
+    wp.media.editor.open(button);
+    return false;
+  });
+});
+</script>
         </div>
  
         <?php if(get_option('eme_categories_enabled')) :?>
-        <div>
-           <label for="location_category_ids"><?php _e('Category', 'eme') ?></label><br />
+        <div class="postbox">
+            <h3>
+               <?php _e('Category', 'eme') ?>
+            </h3>
+            <div class="inside">
            <?php
            $categories = eme_get_categories();
            foreach ( $categories as $category) {
@@ -245,6 +291,7 @@ function eme_locations_edit_layout($location, $message = "") {
            <?php
            }
            ?>
+            </div>
         </div>
         <?php endif; ?>
 
@@ -252,18 +299,20 @@ function eme_locations_edit_layout($location, $message = "") {
             $gmap_is_active = get_option('eme_gmap_is_active');
             if ($gmap_is_active) :
           ?>   
-         <div><?php 
+         <div class="postbox"><?php 
                if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
                   _e("Because qtranslate is active, the title of the location will not update automatically in the balloon, so don't panic there.");
                }
               ?>
          </div>
-         <div id="eme-admin-map-not-found"><p><?php _e('Map not found','eme') ?></p></div>
-         <div id="eme-admin-location-map"></div>
+         <div class="postbox" id="eme-admin-map-not-found"><p><?php _e('Map not found','eme') ?></p></div>
+         <div class="postbox" id="eme-admin-location-map"></div>
          <br style="clear:both;" />
          <?php endif; ?>
-         <div id="loc_description">
-            <label><?php _e('Location description', 'eme') ?></label>
+         <div class="postbox" id="loc_description">
+            <h3>
+               <?php _e('Location description', 'eme') ?>
+            </h3>
             <div class="inside">
                <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
                   <!-- we need content for qtranslate as ID -->
@@ -272,15 +321,18 @@ function eme_locations_edit_layout($location, $message = "") {
                <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
             </div>
          </div>
-         <div class="form-field">
-            <label for="location_url" ><?php _e ( 'External link', 'eme' ); ?></label>
+         <div class="postbox">
+            <h3>
+               <?php _e ( 'External link', 'eme' ); ?>
+            </h3>
+            <div class="inside">
             <input name="location_url" id="location_url" type="text" value="<?php echo eme_sanitize_html($location['location_url']); ?>" size="40"  />
             <p><?php _e ( 'If this is filled in, the single location URL will point to this url instead of the standard location page.', 'eme' )?></p>
+            </div>
          </div>
          <p class="submit"><input type="submit" class="button-primary" name="submit" value="<?php _e('Update location', 'eme') ?>" /></p>
-
-         </form>
       </div>
+      </form>
    </div>
    <?php
 }
@@ -389,12 +441,44 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                            <label for="location_longitude">LONG</label>
                            <input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($new_location['location_longitude']); ?>" size="40"  />
                         </div>
-                        
                         <div class="form-field">
-                           <label for="location_image"><?php _e('Location image', 'eme') ?></label>
-                           <input id="location_image" name="location_image" type="file" size="35" />
-                            <p><?php _e('Select an image to upload', 'eme') ?>.</p>
+                           <label for="eme_location_image_example"><?php _e('Location image', 'eme') ?></label>
+                          <div id="event_current_image" class="postarea">
+                          <img id='eme_location_image_example' src='' alt='' width='200' />
                         </div>
+                        <div class="uploader">
+                          <input type="hidden" name="location_image_url" id="location_image_url" />
+                          <input type="button" name="location_image_button" id="location_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
+                          <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
+                        </div>
+<script>
+jQuery(document).ready(function($){
+
+  $('#eme_remove_old_image').click(function(e) {
+        $('#location_image_url').val('');
+        $('#eme_location_image_example' ).attr("src",'');
+  });
+  $('#location_image_button').click(function(e) {
+    var button = $(this);
+    var _orig_send_attachment = wp.media.editor.send.attachment;
+    var eme_custom_media = true;
+
+    wp.media.editor.send.attachment = function(props, attachment){
+      if ( eme_custom_media ) {
+        $('#location_image_url').val(attachment.url);
+        $('#eme_location_image_example' ).attr("src",attachment.url);
+      } else {
+        return _orig_send_attachment.apply( this, [props, attachment] );
+      };
+      eme_custom_media = false;
+    }
+
+    wp.media.editor.open(button);
+    return false;
+  });
+});
+</script>
+                           </div>
 
                         <?php if(get_option('eme_categories_enabled')) :?>
                            <div>
@@ -529,9 +613,10 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
 
       $sql = "SELECT * FROM $locations_table WHERE location_name != '' $where ORDER BY location_name";
       $locations = $wpdb->get_results($sql, ARRAY_A); 
-      // don't forget the images ...
+      // don't forget the images (for the older locations that didn't use the wp gallery)
       foreach ($locations as $key=>$location) {
-         $locations[$key]['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
+         if (empty($locations[$key]['location_image_url']))
+            $locations[$key]['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
       }
    }
    if (has_filter('eme_location_list_filter')) $locations=apply_filters('eme_location_list_filter',$locations);
@@ -547,7 +632,9 @@ function eme_get_location($location_id=0) {
       $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
       $sql = "SELECT * FROM $locations_table WHERE location_id ='$location_id'";
       $location = $wpdb->get_row($sql, ARRAY_A);
-      $location['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
+      // don't forget the images (for the older locations that didn't use the wp gallery)
+      if (empty($location['location_image_url']))
+         $location['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
    }
 
    if (has_filter('eme_location_filter')) $location=apply_filters('eme_location_filter',$location);
@@ -604,21 +691,6 @@ function eme_validate_location($location) {
       if ($location[$field] == "" ) {
          $troubles .= "<li>".$description.__(" is missing!", "eme")."</li>";
       }
-   }
-   if (isset($_FILES['location_image']) && ($_FILES['location_image']['size'] > 0) ) { 
-      if (is_uploaded_file($_FILES['location_image']['tmp_name'])) {
-         $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-         $maximum_size = get_option('eme_image_max_size'); 
-         if ($_FILES['location_image']['size'] > $maximum_size) 
-               $troubles = "<li>".__('The image file is too big! Maximum size:', 'eme')." $maximum_size</li>";
-         list($width, $height, $type, $attr) = getimagesize($_FILES['location_image']['tmp_name']);
-         $maximum_width = get_option('eme_image_max_width'); 
-         $maximum_height = get_option('eme_image_max_height'); 
-         if (($width > $maximum_width) || ($height > $maximum_height)) 
-               $troubles .= "<li>". __('The image is too big! Maximum size allowed:')." $maximum_width x $maximum_height</li>";
-         if (($type!=1) && ($type!=2) && ($type!=3)) 
-                  $troubles .= "<li>".__('The image is in a wrong format!')."</li>";
-      } 
    }
 
    if ($troubles == "") {
@@ -700,20 +772,6 @@ function eme_location_has_events($location_id) {
    $sql = "SELECT COUNT(event_id) FROM $events_table WHERE location_id = $location_id $condition";
    $affected_events = $wpdb->get_results($sql);
    return ($affected_events > 0);
-}
-
-function eme_upload_location_picture($location) {
-   if(!file_exists(IMAGE_UPLOAD_DIR))
-            mkdir(IMAGE_UPLOAD_DIR, 0777);
-   $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-   if (isset($_FILES['location_image']) && isset($_FILES['location_image']['tmp_name']) && ($_FILES['location_image']['size'] > 0)) {
-      list($width, $height, $type, $attr) = getimagesize($_FILES['location_image']['tmp_name']);
-      $image_basename= IMAGE_UPLOAD_DIR."/location-".$location['location_id'];
-      eme_delete_image_files($image_basename);
-      $image_path = $image_basename.".".$mime_types[$type];
-      if (!move_uploaded_file($_FILES['location_image']['tmp_name'], $image_path)) 
-         $msg = "<p>".__('The image could not be loaded','eme')."</p>";
-   }
 }
 
 function eme_global_map($atts) {
