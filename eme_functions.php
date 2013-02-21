@@ -114,6 +114,8 @@ function eme_event_url($event) {
    } else {
       if (function_exists('qtrans_getLanguage')) {
          $language=qtrans_getLanguage();
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
       } else {
          $language="";
       }
@@ -146,6 +148,8 @@ function eme_location_url($location) {
    } else {
       if (function_exists('qtrans_getLanguage')) {
          $language=qtrans_getLanguage();
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
       } else {
          $language="";
       }
@@ -178,6 +182,8 @@ function eme_calendar_day_url($day) {
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       if (function_exists('qtrans_getLanguage')) {
          $language=qtrans_getLanguage();
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
       } else {
          $language="";
       }

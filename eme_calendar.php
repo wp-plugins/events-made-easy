@@ -415,6 +415,11 @@ function eme_ajaxize_calendar() {
       // so we get it like this to be sure
       $language=qtrans_getLanguage();
       $jquery_override_lang=", lang: '".$language."'";
+   } elseif (defined('ICL_LANGUAGE_CODE')) {
+      // if permalinks are on, $_GET doesn't contain lang as a parameter
+      // so we get it like this to be sure
+      $language=ICL_LANGUAGE_CODE;
+      $jquery_override_lang=", lang: '".$language."'";
    } elseif (isset($_GET['lang'])) {
       $jquery_override_lang=", lang: '".$_GET['lang']."'";
    } else {

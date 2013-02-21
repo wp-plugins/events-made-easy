@@ -300,7 +300,7 @@ jQuery(document).ready(function($){
             if ($gmap_is_active) :
           ?>   
          <div class="postbox"><?php 
-               if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
+               if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
                   _e("Because qtranslate is active, the title of the location will not update automatically in the balloon, so don't panic there.");
                }
               ?>
@@ -1284,7 +1284,7 @@ add_action ('admin_head', 'eme_locations_autocomplete');
 function eme_locations_autocomplete() {
         $use_select_for_locations = get_option('eme_use_select_for_locations');
    // qtranslate there? Then we need the select
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
+   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
       $use_select_for_locations=1;
    }
 
