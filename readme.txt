@@ -115,6 +115,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.16 =
 * Feature: for events and locations, the featured image now uses the WP media gallery
 * Feature: Webmoney support added
+* Feature: rss and ical shortcodes now support a location id, to limit events shown to a specific location
 * Improvement: you can now activate SMTP debugging if you have issues when sending mail via SMTP
 * Bugfix: when creating/editing an event, location creation is now also being checked for access rights
 

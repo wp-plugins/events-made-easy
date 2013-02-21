@@ -3246,10 +3246,10 @@ if ($gmap_is_active) {
 
 }
 
-function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5) {
+function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5, $location_id='') {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
-      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5 );
+      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '' );
       
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
@@ -3259,7 +3259,7 @@ function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $
    $echo = ($echo==="false" || $echo==="O") ? false : $echo;
    if ($text == '')
       $text = "RSS";
-   $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit");
+   $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit&location_id=$location_id");
    $link = "<a href='$url'>$text</a>";
    
    if ($justurl)
@@ -3273,8 +3273,8 @@ function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $
 }
 
 function eme_rss_link_shortcode($atts) {
-   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5 ), $atts ) );
-   $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person" );
+   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '' ), $atts ) );
+   $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&location_id=$location_id" );
    return $result;
 }
 add_shortcode ( 'events_rss_link', 'eme_rss_link_shortcode' );
@@ -3306,6 +3306,11 @@ function eme_rss() {
       } else {
          $category=0;
       }
+      if (isset($_GET['location_id'])) {
+         $location_id=$_GET['location_id'];
+      } else {
+         $location_id='';
+      }
       if (isset($_GET['scope'])) {
          $scope=$_GET['scope'];
       } else {
@@ -3336,7 +3341,7 @@ Weblog Editor 2.0
 <?php
       $title_format = get_option('eme_rss_title_format' );
       $description_format = str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", get_option('eme_rss_description_format' ) ) );
-      $events = eme_get_events ( $limit, $scope, $order, 0, "", $category, $author, $contact_person );
+      $events = eme_get_events ( $limit, $scope, $order, 0, $location_id, $category, $author, $contact_person );
       # some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
       if (empty ( $events )) {
          echo "<item>\n";
