@@ -2087,16 +2087,23 @@ function eme_event_form($event, $title, $element) {
       $event_RSVP_checked = (get_option('eme_rsvp_reg_for_new_events')) ? "checked='checked'" : "";
       $registration_wp_users_only = (get_option('eme_rsvp_registered_users_only')) ? "checked='checked'" : "";
       $registration_requires_approval = (get_option('eme_rsvp_require_approval')) ? "checked='checked'" : "";
+
+      $use_paypal_checked = (get_option('eme_paypal_business')) ? "checked='checked'" : '';
+      $use_google_checked = (get_option('eme_google_merchant_id')) ? "checked='checked'" : '';
+      $use_2co_checked = (get_option('eme_2co_business')) ? "checked='checked'" : '';
+      $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : '';
+
    } else {
       $event ['event_rsvp'] ? $event_RSVP_checked = "checked='checked'" : $event_RSVP_checked = '';
       $event_number_spaces=$event ['event_seats'];
       $event ['registration_wp_users_only'] ? $registration_wp_users_only = "checked='checked'" : $registration_wp_users_only = '';
       $event ['registration_requires_approval'] ? $registration_requires_approval = "checked='checked'" : $registration_requires_approval = '';
+
+      $use_paypal_checked = ($event ['use_paypal']) ? "checked='checked'" : '';
+      $use_google_checked = ($event ['use_google']) ? "checked='checked'" : '';
+      $use_2co_checked = ($event ['use_2co']) ? "checked='checked'" : '';
+      $use_webmoney_checked = ($event ['use_webmoney']) ? "checked='checked'" : '';
    }
-   $event ['use_paypal'] ? $use_paypal_checked = "checked='checked'" : $use_paypal_checked = '';
-   $event ['use_2co'] ? $use_2co_checked = "checked='checked'" : $use_2co_checked = '';
-   $event ['use_google'] ? $use_google_checked = "checked='checked'" : $use_google_checked = '';
-   $event ['use_webmoney'] ? $use_webmoney_checked = "checked='checked'" : $use_webmoney_checked = '';
    
    ob_start();
    ?>
