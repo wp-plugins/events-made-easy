@@ -28,7 +28,7 @@ function eme_new_event() {
       "use_webmoney" => 0,
       "price" => get_option('eme_default_price'),
       "currency" => get_option('eme_default_currency'),
-      "rsvp_number_days" => 0,
+      "rsvp_number_days" => get_option('eme_rsvp_number_days'),
       "registration_requires_approval" => 0,
       "registration_wp_users_only" => 0,
       "event_seats" => 0,
