@@ -302,4 +302,29 @@ function eme_admin_localised_date($mydate) {
    $date_format = eme_get_date_format($current_userid);
    return date_i18n ( $date_format, strtotime($mydate));
 }
+
+function eme_currency_array() {
+   $currency_array = array ();
+   $currency_array ['AUD'] = __ ( 'Australian Dollar', 'eme' );
+   $currency_array ['CAD'] = __ ( 'Canadian Dollar', 'eme' );
+   $currency_array ['CZK'] = __ ( 'Czech Koruna', 'eme' );
+   $currency_array ['DKK'] = __ ( 'Danish Krone', 'eme' );
+   $currency_array ['EUR'] = __ ( 'Euro', 'eme' );
+   $currency_array ['HKD'] = __ ( 'Hong Kong Dollar', 'eme' );
+   $currency_array ['HUF'] = __ ( 'Hungarian Forint', 'eme' );
+   $currency_array ['ILS'] = __ ( 'Israeli New Sheqel', 'eme' );
+   $currency_array ['JPY'] = __ ( 'Japanese Yen', 'eme' );
+   $currency_array ['MXN'] = __ ( 'Mexican Peso', 'eme' );
+   $currency_array ['NOK'] = __ ( 'Norwegian Krone', 'eme' );
+   $currency_array ['NZD'] = __ ( 'New Zealand Dollar', 'eme' );
+   $currency_array ['PHP'] = __ ( 'Philippine Peso', 'eme' );
+   $currency_array ['PLN'] = __ ( 'Polish Zloty', 'eme' );
+   $currency_array ['GBP'] = __ ( 'Pound Sterling', 'eme' );
+   $currency_array ['SGD'] = __ ( 'Singapore Dollar', 'eme' );
+   $currency_array ['SEK'] = __ ( 'Swedish Krona', 'eme' );
+   $currency_array ['CHF'] = __ ( 'Swiss Franc', 'eme' );
+   $currency_array ['THB'] = __ ( 'Thai Baht', 'eme' );
+   $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
+   return $currency_array;
+}
 ?>

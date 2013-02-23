@@ -119,6 +119,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: a little extra for more WPML support (added, but not guaranteed)
 * Improvement: you can now activate SMTP debugging if you have issues when sending mail via SMTP
 * Improvement: the booking format now also can use #_PAYED to show the payed status
+* Improvement: ability to set default currency, price and "Require approval for registration"
 * Bugfix: when creating/editing an event, location creation is now also being checked for access rights
 
 = 1.0.15 =
