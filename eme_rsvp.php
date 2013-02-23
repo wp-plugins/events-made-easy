@@ -850,6 +850,8 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
             $field_replace.=$answer['field_name'].": ".$answer['answer']."\n";
          }
          $replacement = $field_replace;
+      } elseif (preg_match('/#_PAYED/', $result, $matches)) {
+         $replacement = ($booking['booking_payed'])? __('Yes') : __('No');
       } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield($field_id);

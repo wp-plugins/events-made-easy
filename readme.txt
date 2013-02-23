@@ -118,6 +118,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: rss and ical shortcodes now support a location id, to limit events shown to a specific location
 * Feature: a little extra for more WPML support (added, but not guaranteed)
 * Improvement: you can now activate SMTP debugging if you have issues when sending mail via SMTP
+* Improvement: the booking format now also can use #_PAYED to show the payed status
 * Bugfix: when creating/editing an event, location creation is now also being checked for access rights
 
 = 1.0.15 =
