@@ -122,6 +122,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Improvement: the booking format now also can use #_PAYED to show the payed status
 * Improvement: ability to set default currency, price and "Require approval for registration"
 * Improvement: the "Allow RSVP until" can now also be given a default value
+* Improvement: the week/month/year scopes in [events_filterform] now show the text 'select week/month/year' by default.
 * Bugfix: when creating/editing an event, location creation is now also being checked for access rights
 
 = 1.0.15 =

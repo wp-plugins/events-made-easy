@@ -24,7 +24,7 @@ function eme_create_week_scope($count) {
    $start_day=time()-$day_offset*86400;
    $end_day=$start_day+6*86400;
    $scope=array();
-   $scope[0] = "";
+   $scope[0] = __('Select Week','eme');
    for ( $i = 0; $i < $count; $i++) {
       $this_scope=date('Y-m-d',$start_day+$i*7*86400)."--".date('Y-m-d',$end_day+$i*7*86400);
       $scope_text = date_i18n (get_option('date_format'),$start_day+$i*7*86400)." -- ".date_i18n (get_option('date_format'),$end_day+$i*7*86400);
@@ -36,7 +36,7 @@ function eme_create_week_scope($count) {
 function eme_create_month_scope($count) {
    $day_offset=date('j')-1;
    $scope=array();
-   $scope[0] = "";
+   $scope[0] = __('Select Month','eme');
    for ( $i = 0; $i < $count; $i++) {
       $year=date('Y', strtotime("$i month")-$day_offset*86400);
       $month=date('m', strtotime("$i month")-$day_offset*86400);
@@ -53,7 +53,7 @@ function eme_create_month_scope($count) {
 function eme_create_year_scope($count) {
    $day_offset=date('j')-1;
    $scope=array();
-   $scope[0] = "";
+   $scope[0] = __('Select Year','eme');
    for ( $i = 0; $i < $count; $i++) {
       $year=date('Y', strtotime("$i year")-$day_offset*86400);
       $limit_start = "$year-01-01";
