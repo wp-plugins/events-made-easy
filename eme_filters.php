@@ -78,29 +78,10 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    $town_post_name="eme_town_filter";
    $scope_post_name="eme_scope_filter";
 
-   if (isset($_REQUEST[$scope_post_name])) {
-      $selected_scope = $_REQUEST[$scope_post_name];
-   } else {
-      $selected_scope = "---";
-   }
-
-   if (isset($_REQUEST[$loc_post_name])) {
-      $selected_location=eme_sanitize_request($_REQUEST[$loc_post_name]);
-   } else {
-      $selected_location="---";
-   }
-
-   if (isset($_REQUEST[$town_post_name])) {
-      $selected_town=eme_sanitize_request($_REQUEST[$town_post_name]);
-   } else {
-      $selected_town="---";
-   }
-
-   if (isset($_REQUEST[$cat_post_name])) {
-      $selected_category=eme_sanitize_request($_REQUEST[$cat_post_name]);
-   } else {
-      $selected_category="---";
-   }
+   $selected_scope = isset($_REQUEST[$scope_post_name]) ? eme_sanitize_request($_REQUEST[$scope_post_name]) : '';
+   $selected_location = isset($_REQUEST[$loc_post_name]) ? eme_sanitize_request($_REQUEST[$loc_post_name]) : '';
+   $selected_town = isset($_REQUEST[$town_post_name]) ? eme_sanitize_request($_REQUEST[$town_post_name]) : '';
+   $selected_category = isset($_REQUEST[$cat_post_name]) ? eme_sanitize_request($_REQUEST[$cat_post_name]) : '';
 
    $extra_conditions_arr=array();
    if ($category != '')
@@ -120,16 +101,18 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
          $categories = eme_get_categories($eventful,"future",$extra_conditions);
          if (strstr($fields,'categories') && $categories) {
             $cat_list = array();
-            $cat_list[0]="---";
             foreach ($categories as $this_category) {
                $id=$this_category['category_id'];
                $cat_list[$id]=eme_trans_sanitize_html($this_category['category_name']);
             }
             asort($cat_list);
-            if ($multiple)
+            if ($multiple) {
+               $cat_list = array(0=>__('Select one or more categories','eme'))+$cat_list;
                $replacement = eme_ui_multiselect($selected_category,$cat_post_name,$cat_list,$multisize);
-            else
+            } else {
+               $cat_list = array(0=>__('Select a category','eme'))+$cat_list;
                $replacement = eme_ui_select($selected_category,$cat_post_name,$cat_list);
+            }
          }
 
       } elseif (preg_match('/^#_(EVENTFUL_)?FILTER_LOCS$/', $result)) {
@@ -140,16 +123,18 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
 
          if (strstr($fields,'locations') && $locations) {
             $loc_list = array();
-            $loc_list[0]="---";
             foreach ($locations as $this_location) {
                $id=$this_location['location_id'];
                $loc_list[$id]=eme_trans_sanitize_html($this_location['location_name']);
             }
             asort($loc_list);
-            if ($multiple)
+            if ($multiple) {
+               $loc_list = array(0=>__('Select one or more locations','eme'))+$loc_list;
                $replacement = eme_ui_multiselect($selected_location,$loc_post_name,$loc_list,$multisize);
-            else
+            } else {
+               $loc_list = array(0=>__('Select a location','eme'))+$loc_list;
                $replacement = eme_ui_select($selected_location,$loc_post_name,$loc_list);
+            }
          }
 
       } elseif (preg_match('/^#_(EVENTFUL_)?FILTER_TOWNS$/', $result)) {
@@ -159,16 +144,18 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
          $towns = eme_get_locations($eventful,"future");
          if (strstr($fields,'towns') && $towns) {
             $town_list = array();
-            $town_list[0]="---";
             foreach ($towns as $this_town) {
                $id=eme_trans_sanitize_html($this_town['location_town']);
                $town_list[$id]=$id;
             }
             asort($town_list);
-            if ($multiple)
+            if ($multiple) {
+               $town_list = array(0=>__('Select one or more towns','eme'))+$town_list;
                $replacement = eme_ui_multiselect($selected_town,$town_post_name,$town_list,$multisize);
-            else
+            } else {
+               $town_list[0] = array(0=>__('Select a town','eme'))+$town_list;
                $replacement = eme_ui_select($selected_town,$town_post_name,$town_list);
+            }
          }
 
       } elseif (preg_match('/^#_FILTER_WEEKS$/', $result)) {
