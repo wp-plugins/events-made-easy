@@ -117,6 +117,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: Webmoney support added
 * Feature: rss and ical shortcodes now support a location id, to limit events shown to a specific location
 * Feature: a little extra for more WPML support (added, but not guaranteed)
+* Feature: added #_IS_REGISTERED conditional tag, returns 1 if WP user has already registered for the event, 0 otherwise
 * Improvement: you can now activate SMTP debugging if you have issues when sending mail via SMTP
 * Improvement: the booking format now also can use #_PAYED to show the payed status
 * Improvement: ability to set default currency, price and "Require approval for registration"
