@@ -50,7 +50,7 @@ function eme_ical_single_event($event, $title_format, $description_format) {
 function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="") {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
-      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'ICAL', category=> '' );
+      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'ICAL', 'category'=> '', 'location_id' =>'' );
 
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
