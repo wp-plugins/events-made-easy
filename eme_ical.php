@@ -47,22 +47,27 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    return $res;
 }
 
-function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "") {
+function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="") {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
       $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'ICAL', category=> '' );
 
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
-      $echo = (bool) $r ['echo'];
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : $justurl;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $justurl = ($justurl==="false" || $justurl==="0") ? false : $justurl;
+
    if ($text == '')
       $text = "ICAL";
-   if (!empty($category)) {
-      $url = site_url ("/?eme_ical=public&category=$category");
-   } else {
-      $url = site_url ("/?eme_ical=public");
-   }
+   $url = site_url ("/?eme_ical=public");
+   if (!empty($location_id))
+      $url = add_query_arg( array( 'location_id' => $location_id ), $url );
+   if (!empty($category))
+      $url = add_query_arg( array( 'category' => $category ), $url );
+
    $link = "<a href='$url'>$text</a>";
 
    if ($justurl)
@@ -76,8 +81,10 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "") 
 }
 
 function eme_ical_link_shortcode($atts) {
-   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'ICAL', 'category' => '' ), $atts ) );
-   $result = eme_ical_link ( "justurl=$justurl&echo=0&text=$text&category=$category" );
+   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'ICAL', 'category' => '', 'location_id' =>'' ), $atts ) );
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : $justurl;
+   $justurl = ($justurl==="false" || $justurl==="0") ? false : $justurl;
+   $result = eme_ical_link ( $justurl,0,$text,$category,$location_id );
    return $result;
 }
 add_shortcode ( 'events_ical_link', 'eme_ical_link_shortcode' );
@@ -110,11 +117,9 @@ function eme_ical() {
       $event=eme_get_event(intval($_GET ['event_id']));
       echo eme_ical_single_event($event,$title_format,$description_format);
    } elseif (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public') {
-      if (isset( $_GET ['category'] )) {
-         $events = eme_get_events ( 0,"future","ASC",0,"",$_GET ['category'] );
-      } else {
-         $events = eme_get_events ( 0 );
-      }
+      $location_id = isset( $_GET['location_id'] ) ? url_decode($_GET['location_id']) : '';
+      $category = isset( $_GET['category'] ) ? url_decode($_GET['category']) : '';
+      $events = eme_get_events ( 0,"future","ASC",0,$location_id,$category);
       foreach ( $events as $event ) {
          echo eme_ical_single_event($event,$title_format,$description_format);
       }
