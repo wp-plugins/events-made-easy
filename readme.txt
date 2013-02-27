@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.17 =
+* Feature: added support for paypal encrypted button
+
 = 1.0.16 =
 * Feature: for events and locations, the featured image now uses the WP media gallery
 * Feature: Webmoney support added

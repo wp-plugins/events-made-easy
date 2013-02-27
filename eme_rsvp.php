@@ -1473,8 +1473,16 @@ function eme_paypal_form($event,$booking_id) {
    // false to disable button (if you want to rely only on the javascript auto-submission) not recommended
    $p->button = __('Pay via Paypal','eme');
 
-   // use encryption (strongly recommended!)
-   $p->encrypt = false;
+   if (get_option('eme_paypal_s_encrypt')) {
+      // use encryption (strongly recommended!)
+      $p->encrypt = true;
+      $p->private_key = get_option('eme_paypal_s_privkey');
+      $p->public_cert = get_option('eme_paypal_s_pubcert');
+      $p->paypal_cert = get_option('eme_paypal_s_paypalcert');
+      $p->cert_id = get_option('eme_paypal_s_certid');
+   } else {
+      $p->encrypt = false;
+   }
 
    // the actual button parameters
    // https://www.paypal.com/IntegrationCenter/ic_std-variable-reference.html

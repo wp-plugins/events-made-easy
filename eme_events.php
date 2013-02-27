@@ -3010,6 +3010,25 @@ $j_eme_event(document).ready( function() {
          $j_eme_event('tr#eme_smtp_password_row').hide();
       }
    });
+   if ($j_eme_event('input[name=eme_paypal_s_encrypt]:checked').val() != 1) {
+      $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
+      $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
+      $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
+      $j_eme_event('tr#eme_paypal_s_certid_row').hide();
+   }
+   $j_eme_event('input[name=eme_paypal_s_encrypt]').change(function() {
+      if($j_eme_event(this).val() == 1) {
+         $j_eme_event('tr#eme_paypal_s_pubcert_row').show(); 
+         $j_eme_event('tr#eme_paypal_s_privkey_row').show();
+         $j_eme_event('tr#eme_paypal_s_paypalcert_row').show();
+         $j_eme_event('tr#eme_paypal_s_certid_row').show();
+      } else {
+         $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
+         $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
+         $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
+         $j_eme_event('tr#eme_paypal_s_certid_row').hide();
+      }
+   });
    updateIntervalDescriptor(); 
    updateIntervalSelectors();
    updateShowHideRecurrence();
