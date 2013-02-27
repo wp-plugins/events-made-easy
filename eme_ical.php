@@ -117,8 +117,8 @@ function eme_ical() {
       $event=eme_get_event(intval($_GET ['event_id']));
       echo eme_ical_single_event($event,$title_format,$description_format);
    } elseif (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public') {
-      $location_id = isset( $_GET['location_id'] ) ? url_decode($_GET['location_id']) : '';
-      $category = isset( $_GET['category'] ) ? url_decode($_GET['category']) : '';
+      $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
+      $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
       $events = eme_get_events ( 0,"future","ASC",0,$location_id,$category);
       foreach ( $events as $event ) {
          echo eme_ical_single_event($event,$title_format,$description_format);
