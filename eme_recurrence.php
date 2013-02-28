@@ -118,7 +118,6 @@ function eme_db_insert_recurrence($event, $recurrence ){
 
    $recurrence['recurrence_id'] = $recurrence_id;
    $event['recurrence_id'] = $recurrence['recurrence_id'];
-   eme_upload_event_picture($event);
    eme_insert_events_for_recurrence($event,$recurrence);
    if (has_action('eme_insert_recurrence_action')) do_action('eme_insert_recurrence_action',$event,$recurrence);
    return $recurrence_id;
@@ -166,7 +165,6 @@ function eme_db_update_recurrence($event, $recurrence) {
    $wpdb->show_errors(true);
    $wpdb->update($recurrence_table, $recurrence, $where); 
    $event['recurrence_id'] = $recurrence['recurrence_id'];
-   eme_upload_event_picture($event);
    eme_update_events_for_recurrence($event,$recurrence); 
    if (has_action('eme_update_recurrence_action')) do_action('eme_update_recurrence_action',$event,$recurrence);
    return 1;
