@@ -51,16 +51,16 @@ function loadGMap() {
 				longitudes.push(item.location_longitude);
 				if (parseFloat(item.location_latitude) > max_latitude) {
 					max_latitude = parseFloat(item.location_latitude);
-            }
+				}
 				if (parseFloat(item.location_latitude) < min_latitude) {
 					min_latitude = parseFloat(item.location_latitude);
-            }
+				}
 				if (parseFloat(item.location_longitude) > max_longitude) {
 					max_longitude = parseFloat(item.location_longitude);
-            }
+				}
 				if (parseFloat(item.location_longitude) < min_longitude) {
 					min_longitude = parseFloat(item.location_longitude); 
-            }
+				}
 			});
 
 			//console.log("Latitudes: " + latitudes + " MAX: " + max_latitude + " MIN: " + min_latitude);
@@ -103,13 +103,13 @@ function loadGMap() {
 					infowindow: infowindow,
 					infowindowcontent: balloon_content
 				});
-            if (document.getElementById('location-'+item.location_id)) {
+				if (document.getElementById('location-'+item.location_id)) {
 				   $j_eme_locations('li#location-'+item.location_id+' a').click(function() {
 				   	infowindow.setContent(balloon_content);
 				   	infowindow.open(map,marker);
 				   	$j_eme_locations(window).scrollTop($j_eme_locations('#eme_global_map').position().top);
 				   });
-            }
+				}
 				google.maps.event.addListener(marker, "click", function() {
 					// This also works, but relies on global variables:
 					// infowindow.setContent(balloon_content);

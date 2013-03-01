@@ -25,9 +25,10 @@ function eme_new_event() {
       "use_paypal" => 0,
       "use_google" => 0,
       "use_2co" => 0,
-      "price" => 0,
-      "currency" => "EUR",
-      "rsvp_number_days" => 0,
+      "use_webmoney" => 0,
+      "price" => get_option('eme_default_price'),
+      "currency" => get_option('eme_default_currency'),
+      "rsvp_number_days" => get_option('eme_rsvp_number_days'),
       "registration_requires_approval" => 0,
       "registration_wp_users_only" => 0,
       "event_seats" => 0,
@@ -42,6 +43,7 @@ function eme_new_event() {
       "event_respondent_email_body" => '',
       "event_registration_pending_email_body" => '',
       "event_registration_form_format" => '',
+      "event_registration_recorded_ok_html" => '',
       "event_slug" => '',
       "event_image_url" => '',
       "event_url" => '',
@@ -97,38 +99,8 @@ function eme_events_page() {
       $extra_conditions[] = 'event_status = '.$status;
    }
 
-   
-   // check if the user is allowed to do anything
-   if ( !current_user_can( get_option('eme_cap_add_event') ) ) {
-      $action="";
-   }
    $current_userid=get_current_user_id();
 
-   // Disable Hello to new user if requested
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['disable_hello_to_user'] ) && $_GET ['disable_hello_to_user'] == 'true')
-      update_option('eme_hello_to_user', 0 );
-
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['disable_donate_message'] ) && $_GET ['disable_donate_message'] == 'true')
-      update_option('eme_donation_done', 1 );
-
-   // do the UTF-8 conversion if wanted
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['do_character_conversion'] ) && $_GET ['do_character_conversion'] == 'true' && $wpdb->has_cap('collation')) {
-                if ( ! empty($wpdb->charset)) {
-                        $charset = "CHARACTER SET $wpdb->charset";
-         $collate="";
-         if ( ! empty($wpdb->collate) )
-            $collate = "COLLATE $wpdb->collate";
-                        eme_convert_charset(EVENTS_TBNAME,$charset,$collate);
-                        eme_convert_charset(RECURRENCE_TBNAME,$charset,$collate);
-                        eme_convert_charset(LOCATIONS_TBNAME,$charset,$collate);
-                        eme_convert_charset(BOOKINGS_TBNAME,$charset,$collate);
-                        eme_convert_charset(PEOPLE_TBNAME,$charset,$collate);
-                        eme_convert_charset(CATEGORIES_TBNAME,$charset,$collate);
-                }
-      update_option('eme_conversion_needed', 0 );
-      print "<div id=\"message\" class=\"updated\">".__('Conversion done, please check your events and restore from backup if you see any sign of troubles.')."</div>";
-   }
-   
    if ($order != "DESC")
       $order = "ASC";
    if ($offset == "")
@@ -142,11 +114,11 @@ function eme_events_page() {
    
    // DELETE action
    if ($action == 'deleteEvents') {
-      foreach ( $selectedEvents as $event_ID ) {
-         $tmp_event = array();
-         $tmp_event = eme_get_event ( $event_ID );
-         if (current_user_can( get_option('eme_cap_edit_events')) ||
-             (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
+      if (current_user_can( get_option('eme_cap_edit_events')) ||
+         (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
+         foreach ( $selectedEvents as $event_ID ) {
+            $tmp_event = array();
+            $tmp_event = eme_get_event ( $event_ID );
             if ($tmp_event['recurrence_id']>0) {
                # if the event is part of a recurrence and it is the last event of the recurrence, delete the recurrence
                # else just delete the singe event
@@ -159,11 +131,17 @@ function eme_events_page() {
                eme_db_delete_event ( $tmp_event );
             }
          }
+         $feedback_message = __ ( 'Event(s) deleted!', 'eme' );
+      } else {
+         $feedback_message = __ ( 'You have no right to delete events!', 'eme' );
       }
       
+      echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
       $events = eme_get_events ( $list_limit+1, "future", $order, $offset );
       eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      return;
    }
+
    if ($action == 'deleteRecurrence') {
       foreach ( $selectedEvents as $event_ID ) {
          $tmp_event = array();
@@ -177,12 +155,21 @@ function eme_events_page() {
       }
       $events = eme_get_events ( $list_limit+1, "future", $order, $offset );
       eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      return;
    }
 
    // UPDATE or CREATE action
    if ($action == 'insert_event' || $action == 'update_event' || $action == 'update_recurrence') {
+      if ( ! (current_user_can( get_option('eme_cap_add_event')) || current_user_can( get_option('eme_cap_edit_events'))) ) {
+         $feedback_message = __('You have no right to insert or update events','eme');
+         echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
+         $events = eme_get_events ( $list_limit+1, "future" );
+         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         return;
+      }
+
       $event = array();
-      $location = array ();
+      $location = eme_new_location ();
       $event ['event_name'] = isset($_POST ['event_name']) ? trim(stripslashes ( $_POST ['event_name'] )) : '';
       if (!current_user_can( get_option('eme_cap_publish_event')) ) {
          $event['event_status']=STATUS_DRAFT;   
@@ -240,9 +227,11 @@ function eme_events_page() {
       
       $event ['use_paypal'] = (isset ($_POST ['use_paypal']) && is_numeric($_POST ['use_paypal'])) ? $_POST ['use_paypal']:0;
       $event ['use_2co'] = (isset ($_POST ['use_2co']) && is_numeric($_POST ['use_2co'])) ? $_POST ['use_2co']:0;
+      $event ['use_webmoney'] = (isset ($_POST ['use_webmoney']) && is_numeric($_POST ['use_webmoney'])) ? $_POST ['use_webmoney']:0;
       $event ['use_google'] = (isset ($_POST ['use_google']) && is_numeric($_POST ['use_google'])) ? $_POST ['use_google']:0;
       $event ['price'] = (isset ($_POST ['price']) && is_numeric($_POST ['price'])) ? $_POST ['price']:0;
       $event ['currency'] = isset ($_POST ['currency']) ? $_POST ['currency']:"EUR";
+      $event ['event_image_url'] = isset ($_POST ['event_image_url']) ? $_POST ['event_image_url']:"";
 
       if (isset ( $_POST ['event_contactperson_id'] ) && $_POST ['event_contactperson_id'] != '') {
          $event ['event_contactperson_id'] = $_POST ['event_contactperson_id'];
@@ -298,109 +287,125 @@ function eme_events_page() {
       $event['event_attributes'] = serialize($event_attributes);
       
       $validation_result = eme_validate_event ( $event );
-      if ($validation_result == "OK") {
-         // validation successful
-         if(isset($_POST['location-select-id']) && $_POST['location-select-id'] != "") {
-            $event['location_id'] = $_POST['location-select-id'];
-         } else {
-            if (empty($location['location_name']) && empty($location['location_address']) && empty($location['location_town'])) {
-               $event['location_id'] = 0;
-            } else {
-               $related_location = eme_get_identical_location ( $location );
-               // print_r($related_location); 
-               if ($related_location) {
-                  $event['location_id'] = $related_location['location_id'];
-               } else {
-                  $new_location = eme_insert_location ( $location );
-                  $event['location_id'] = $new_location['location_id'];
-               }
-            }
-         }
-         if (! $event_ID && ! $recurrence_ID) {
-            $event['event_author']=$current_userid;
-            // new event or new recurrence
-            if (isset($_POST ['repeated_event']) && $_POST ['repeated_event']) {
-               //insert new recurrence
-               if (!eme_db_insert_recurrence ( $event, $recurrence )) {
-                  $feedback_message = __ ( 'Database insert failed!', 'eme' );
-               } else {
-                  $feedback_message = __ ( 'New recurrent event inserted!', 'eme' );
-                  //if (has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
-               }
-            } else {
-               // INSERT new event 
-               if (!eme_db_insert_event($event)) {
-                  $feedback_message = __ ( 'Database insert failed!', 'eme' );
-               } else {
-                  $feedback_message = __ ( 'New event successfully inserted!', 'eme' );
-               }
-            }
-         } else {
-            // something exists
-            if ($recurrence_ID) {
-               $tmp_recurrence = eme_get_recurrence ( $recurrence_ID );
-               if (current_user_can( get_option('eme_cap_edit_events')) ||
-                   (current_user_can( get_option('eme_cap_author_event')) && ($tmp_recurrence['event_author']==$current_userid || $tmp_recurrence['event_contactperson_id']==$current_userid))) {
-                  // UPDATE old recurrence
-                  $recurrence ['recurrence_id'] = $recurrence_ID;
-                  //print_r($recurrence); 
-                  if (eme_db_update_recurrence ($event, $recurrence )) {
-                     $feedback_message = __ ( 'Recurrence updated!', 'eme' );
-                     //if (has_action('eme_update_event_action')) do_action('eme_update_event_action',$event);
-                  } else {
-                     $feedback_message = __ ( 'Something went wrong with the recurrence update...', 'eme' );
-                  }
-               } else {
-                  $feedback_message = __('You have no right to update','eme'). " '" . $tmp_event ['event_name'] . "' !";
-               }
-            } else {
-               $tmp_event = eme_get_event ( $event_ID );
-               if (current_user_can( get_option('eme_cap_edit_events')) ||
-                   (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {
-                  if (isset($_POST ['repeated_event']) && $_POST ['repeated_event']) {
-                     // we go from single event to recurrence: create the recurrence and delete the single event
-                     eme_db_insert_recurrence ( $event, $recurrence );
-                     eme_db_delete_event ( $tmp_event );
-                     $feedback_message = __ ( 'New recurrent event inserted!', 'eme' );
-                     //if (has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
-                  } else {
-                     // UPDATE old event
-                     // unlink from recurrence in case it was generated by one
-                     $event ['recurrence_id'] = 0;
-                     if (eme_db_update_event ($event,$event_ID)) {
-                        $feedback_message = "'" . $event ['event_name'] . "' " . __ ( 'updated', 'eme' ) . "!";
-                     } else {
-                        $feedback_message = __('Failed to update','eme')." '" . $event ['event_name']. "' !";
-                     }
-                     //if (has_action('eme_update_event_action')) do_action('eme_update_event_action',$event);
-                  }
-               } else {
-                  $feedback_message = __('You have no right to update','eme'). " '" . $tmp_event ['event_name'] . "' !";
-               }
-            }
-         }
-         
-         //$wpdb->query($sql); 
-         echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( $list_limit+1, "future" );
-         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
-      } else {
+      if ($validation_result != "OK") {
          // validation unsuccessful       
          echo "<div id='message' class='error '>
                   <p>" . __ ( "Ach, there's a problem here:", "eme" ) . " $validation_result</p>
               </div>";
          eme_event_form ( $event, "Edit event $event_ID", $event_ID );
+         return;
       }
+
+      // validation successful
+      if(isset($_POST['location-select-id']) && $_POST['location-select-id'] != "") {
+         $event['location_id'] = $_POST['location-select-id'];
+      } else {
+         if (empty($location['location_name']) && empty($location['location_address']) && empty($location['location_town'])) {
+            $event['location_id'] = 0;
+         } else {
+            $related_location = eme_get_identical_location ( $location );
+            // print_r($related_location); 
+            if ($related_location) {
+               $event['location_id'] = $related_location['location_id'];
+            } else {
+               $new_location = eme_insert_location ( $location );
+               if (!$new_location) {
+                  echo "<div id='message' class='error '>
+                        <p>" . __ ( "Could not create the new location for this event: either you don't have the right to insert locations or there's a DB problem.", "eme" ) . "</p>
+                        </div>";
+                  return;
+               }
+               $event['location_id'] = $new_location['location_id'];
+            }
+         }
+      }
+      if (! $event_ID && ! $recurrence_ID) {
+         $event['event_author']=$current_userid;
+         // new event or new recurrence
+         if (isset($_POST ['repeated_event']) && $_POST ['repeated_event']) {
+            //insert new recurrence
+            if (!eme_db_insert_recurrence ( $event, $recurrence )) {
+               $feedback_message = __ ( 'Database insert failed!', 'eme' );
+            } else {
+               $feedback_message = __ ( 'New recurrent event inserted!', 'eme' );
+               //if (has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
+            }
+         } else {
+            // INSERT new event 
+            if (!eme_db_insert_event($event)) {
+               $feedback_message = __ ( 'Database insert failed!', 'eme' );
+            } else {
+               $feedback_message = __ ( 'New event successfully inserted!', 'eme' );
+            }
+         }
+      } else {
+         // something exists
+         if ($recurrence_ID) {
+            $tmp_recurrence = eme_get_recurrence ( $recurrence_ID );
+            if (current_user_can( get_option('eme_cap_edit_events')) ||
+                (current_user_can( get_option('eme_cap_author_event')) && ($tmp_recurrence['event_author']==$current_userid || $tmp_recurrence['event_contactperson_id']==$current_userid))) {
+               // UPDATE old recurrence
+               $recurrence ['recurrence_id'] = $recurrence_ID;
+               //print_r($recurrence); 
+               if (eme_db_update_recurrence ($event, $recurrence )) {
+                  $feedback_message = __ ( 'Recurrence updated!', 'eme' );
+                  //if (has_action('eme_update_event_action')) do_action('eme_update_event_action',$event);
+               } else {
+                  $feedback_message = __ ( 'Something went wrong with the recurrence update...', 'eme' );
+               }
+            } else {
+               $feedback_message = __('You have no right to update','eme'). " '" . $tmp_event ['event_name'] . "' !";
+            }
+         } else {
+            $tmp_event = eme_get_event ( $event_ID );
+            if (current_user_can( get_option('eme_cap_edit_events')) ||
+                (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {
+               if (isset($_POST ['repeated_event']) && $_POST ['repeated_event']) {
+                  // we go from single event to recurrence: create the recurrence and delete the single event
+                  eme_db_insert_recurrence ( $event, $recurrence );
+                  eme_db_delete_event ( $tmp_event );
+                  $feedback_message = __ ( 'New recurrent event inserted!', 'eme' );
+                  //if (has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
+               } else {
+                  // UPDATE old event
+                  // unlink from recurrence in case it was generated by one
+                  $event ['recurrence_id'] = 0;
+                  if (eme_db_update_event ($event,$event_ID)) {
+                     $feedback_message = "'" . $event ['event_name'] . "' " . __ ( 'updated', 'eme' ) . "!";
+                  } else {
+                     $feedback_message = __('Failed to update','eme')." '" . $event ['event_name']. "' !";
+                  }
+                  //if (has_action('eme_update_event_action')) do_action('eme_update_event_action',$event);
+               }
+            } else {
+               $feedback_message = __('You have no right to update','eme'). " '" . $tmp_event ['event_name'] . "' !";
+            }
+         }
+      }
+         
+      //$wpdb->query($sql); 
+      echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
+      $events = eme_get_events ( $list_limit+1, "future" );
+      eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      return;
    }
+
    if ($action == 'edit_event') {
       if (! $event_ID) {
-         $title = __ ( "Insert New Event", 'eme' );
-         eme_event_form ( $event, $title, $event_ID );
+         if (current_user_can( get_option('eme_cap_add_event'))) {
+            $title = __ ( "Insert New Event", 'eme' );
+            eme_event_form ( $event, $title, $event_ID );
+         } else {
+            $feedback_message = __('You have no right to add events!','eme');
+            echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
+            $events = eme_get_events ( $list_limit+1, "future" );
+            eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         }
       } else {
          $event = eme_get_event ( $event_ID );
          if (current_user_can( get_option('eme_cap_edit_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
-                     // UPDATE old event
+            // UPDATE old event
             $title = __ ( "Edit Event", 'eme' ) . " '" . $event ['event_name'] . "'";
             eme_event_form ( $event, $title, $event_ID );
          } else {
@@ -410,7 +415,7 @@ function eme_events_page() {
             eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
          }
       }
-      
+      return;
    }
 
    //Add duplicate event if requested
@@ -425,7 +430,9 @@ function eme_events_page() {
          $events = eme_get_events ( $list_limit+1, "future" );
          eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
       }
+      return;
    }
+
    if ($action == 'edit_recurrence') {
       $event_ID = intval($_GET ['recurrence_id']);
       $recurrence = eme_get_recurrence ( $event_ID );
@@ -439,6 +446,7 @@ function eme_events_page() {
          $events = eme_get_events ( $list_limit+1, "future" );
          eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
       }
+      return;
    }
    
    if ($action == "-1" || $action == "") {
@@ -463,6 +471,7 @@ function eme_events_page() {
  
       $events = eme_get_events ( $list_limit+1, $scope, $order, $offset, "", $category, '', '', 1, '', $extra_conditions);
       eme_events_table ( $events, $list_limit, $title, $scope, $offset, $category );
+      return;
    }
 }
 
@@ -480,248 +489,6 @@ function eme_get_all_pages() {
    // $output [$page->ID] = $page->post_title;
    }
    return $output;
-}
-
-// Function composing the options page
-function eme_options_page() {
-   ?>
-<div class="wrap">
-<div id='icon-options-general' class='icon32'><br />
-</div>
-<h2><?php _e ( 'Event Manager Options', 'eme' ); ?></h2>
-<?php admin_show_warnings();?>
-<p> 
-<?php printf(__( "Please also check <a href='%s'>your profile</a> for some per-user EME settings.", 'eme' ),admin_url('profile.php')); ?>
-</p>
-<form id="eme_options_form" method="post" action="options.php">
-<h3><?php _e ( 'General options', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_radio_binary ( __ ( 'Use dropdown for locations?' ), 'eme_use_select_for_locations', __ ( 'Select yes to select location from a drop-down menu; location selection will be faster, but you will lose the ability to insert locations with events.','eme' )."<br />".__ ( 'When the qtranslate plugin is installed and activated, this setting will be ignored and always considered \'Yes\'.','eme' ) );
-   eme_options_radio_binary ( __ ( 'Use recurrence?' ), 'eme_recurrence_enabled', __ ( 'Select yes to enable the possibility to create recurrent events.','eme' ) ); 
-   eme_options_radio_binary ( __ ( 'Use RSVP?' ), 'eme_rsvp_enabled', __ ( 'Select yes to enable the RSVP feature so people can register for an event and book places.','eme' ) );
-   eme_options_radio_binary ( __ ( 'Use categories?' ), 'eme_categories_enabled', __ ( 'Select yes to enable the category features.','eme' ) );
-   eme_options_radio_binary ( __ ( 'Use attributes?' ), 'eme_attributes_enabled', __ ( 'Select yes to enable the attributes feature.','eme' ) );
-   eme_options_radio_binary ( __ ( 'Enable Google Maps integration?' ), 'eme_gmap_is_active', __ ( 'Check this option to enable Google Map integration.','eme' ) );
-   eme_options_radio_binary ( __ ( 'Enable map scroll-wheel zooming?' ), 'eme_gmap_zooming', __ ( 'Yes, enables map scroll-wheel zooming. No, enables scroll-wheel page scrolling over maps. (It will be necessary to refresh your web browser on a map page to see the effect of this change.)', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'Always include JS in header?' ), 'eme_load_js_in_header', __ ( 'Some themes are badely designed and can have issues showing the google maps or advancing in the calendar. If so, try activating this option which will cause the javascript to always be included in the header of every page (off by default).','eme' ) );
-   eme_options_radio_binary ( __ ( 'Use the client computer clock for the calendar', 'eme' ), 'eme_use_client_clock', __ ( 'Check this option if you want to use the clock of the client as base to calculate current day for the calendar.', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'Delete all EME data when upgrading or deactivating?', 'eme' ), 'eme_uninstall_drop_data', __ ( 'Check this option if you want to delete all EME data (database tables and options) when upgrading or deactivating the plugin.', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'Enable shortcodes in widgets', 'eme' ), 'eme_shortcodes_in_widgets', __ ( 'Check this option if you want to enable the use of shortcodes in widgets (affects shortcodes of any plugin used in widgets, so use with care).', 'eme' ) );
-   eme_options_select (__('State for new event','eme'), 'eme_event_initial_state', eme_status_array(), __ ('Initial state for a new event','eme') );
-   ?>
-</table>
-
-<h3><?php _e ( 'Permalink options', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_radio_binary ( __ ( 'Enable event permalinks if possible?','eme' ), 'eme_seo_permalink', __ ( 'If Yes, EME will render SEO permalinks if permalinks are activated.', 'eme' ) . "<br \><strong>" . __ ( 'It is necessary to click \'Save Changes\' on the  WordPress \'Settings/Permalinks\' page before you will see the effect of this change.','eme' )."</strong>");
-   eme_options_input_text ( __('Events permalink prefix', 'eme' ), 'eme_permalink_events_prefix', __( 'The permalink prefix used for events and the calendar.','eme') );
-   eme_options_input_text ( __('Locations permalink prefix', 'eme' ), 'eme_permalink_locations_prefix', __( 'The permalink prefix used for locations.','eme') );
-   ?>
-</table>
-
-<h3><?php _e ( 'Access rights', 'eme' ); ?></h3>
-<p><?php _e ( 'Tip: Use a plugin like "User Role Editor" to add/edit capabilities and roles.', 'eme' ); ?></p>
-<table class="form-table">
-   <?php
-   eme_options_select (__('Add event','eme'), 'eme_cap_add_event', eme_get_all_caps (), sprintf(__('Permission needed to add a new event. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_ADD_EVENT)) );
-   eme_options_select (__('Author event','eme'), 'eme_cap_author_event', eme_get_all_caps (), sprintf(__('Permission needed to edit own events. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_AUTHOR_EVENT)) );
-   eme_options_select (__('Publish event','eme'), 'eme_cap_publish_event', eme_get_all_caps (), sprintf(__('Permission needed to make an event public. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_PUBLISH_EVENT)) );
-   eme_options_select (__('List events','eme'), 'eme_cap_list_events', eme_get_all_caps (), sprintf(__('Permission needed to just list all events, useful for CSV exports for bookings and such. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_LIST_EVENTS)) . "<br><b>". __('All your event admins need this as well, otherwise the menu will not show.','eme')."</b>" );
-   eme_options_select (__('Edit events','eme'), 'eme_cap_edit_events', eme_get_all_caps (), sprintf(__('Permission needed to edit all events. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_EDIT_EVENTS)) );
-   eme_options_select (__('Add location','eme'), 'eme_cap_add_locations', eme_get_all_caps (), sprintf(__('Permission needed to add locations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_ADD_LOCATION)) );
-   eme_options_select (__('Author location','eme'), 'eme_cap_author_locations', eme_get_all_caps (), sprintf(__('Permission needed to edit own locations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_AUTHOR_LOCATION)) );
-   eme_options_select (__('Edit location','eme'), 'eme_cap_edit_locations', eme_get_all_caps (), sprintf(__('Permission needed to edit all locations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_EDIT_LOCATIONS)) );
-   eme_options_select (__('Edit categories','eme'), 'eme_cap_categories', eme_get_all_caps (), sprintf(__('Permission needed to edit all categories. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_CATEGORIES)) );
-   eme_options_select (__('View people','eme'), 'eme_cap_people', eme_get_all_caps (), sprintf(__('Permission needed to view registered people info. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_PEOPLE)) );
-   eme_options_select (__('Approve registrations','eme'), 'eme_cap_approve', eme_get_all_caps (), sprintf(__('Permission needed to approve pending registrations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_APPROVE)) );
-   eme_options_select (__('Edit registrations','eme'), 'eme_cap_registrations', eme_get_all_caps (), sprintf(__('Permission needed to edit approved registrations. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_REGISTRATIONS)) );
-   eme_options_select (__('Edit form fields','eme'), 'eme_cap_forms', eme_get_all_caps (), sprintf(__('Permission needed to edit form fields. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_FORMS)) );
-   eme_options_select (__('Cleanup','eme'), 'eme_cap_cleanup', eme_get_all_caps (), sprintf(__('Permission needed to execute cleanup actions. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_CLEANUP)) );
-   eme_options_select (__('Edit settings','eme'), 'eme_cap_settings', eme_get_all_caps (),sprintf(__('Permission needed to edit settings. Default: %s','eme'), eme_capNamesCB(DEFAULT_CAP_SETTINGS)) );
-   ?>
-</table>
-<h3><?php _e ( 'Events page', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_select ( __ ( 'Events page' ), 'eme_events_page', eme_get_all_pages (), __ ( 'This option allows you to select which page to use as an events page.', 'eme' )."<br /><strong>".__ ( 'The content of this page (including shortcodes of any kind) will be ignored completely and dynamically replaced by events data.','eme' )."</strong>" );
-   eme_options_radio_binary ( __ ( 'Show events page in lists?', 'eme' ), 'eme_list_events_page', __ ( 'Check this option if you want the events page to appear together with other pages in pages lists.', 'eme' )."<br /><strong>".__ ( 'This option should no longer be used, it will be deprecated. Using the [events_list] shortcode in a self created page is recommended.', 'eme' )."</strong>" ); 
-   eme_options_radio_binary ( __ ( 'Display calendar in events page?', 'eme' ), 'eme_display_calendar_in_events_page', __ ( 'This option allows to display the calendar in the events page, instead of the default list. It is recommended not to display both the calendar widget and a calendar page.','eme' ) );
-   eme_options_input_text ( __('Number of events to show per page in admin interface', 'eme' ), 'eme_events_admin_limit', __( 'Indicates the number of events shown on one page in the admin interface (min. 5, max. 200)','eme') );
-   eme_options_input_text ( __('Number of events to show in lists', 'eme' ), 'eme_event_list_number_items', __( 'The number of events to show in a list if no specific limit is specified (used in the shortcode events_list, RSS feed, the placeholders #_NEXTEVENTS and #_PASTEVENTS, ...). Use 0 for no limit.','eme') );
-   ?>
-</table>
-<h3><?php _e ( 'Events format', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_radio_binary ( __ ( 'Remove leading zeros from minutes?', 'eme' ), 'eme_time_remove_leading_zeros', __ ( 'PHP date/time functions have no notation to show minutes without leading zeros. Checking this option will return e.g. 9 for 09 and empty for 00.', 'eme' ) ); 
-   eme_options_textarea ( __ ( 'Default event list format header', 'eme' ), 'eme_event_list_item_format_header', __( 'This content will appear just above your code for the default event list format. If you leave this empty, the value <code>&lt;ul class=\'eme_events_list\'&gt;</code> will be used.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Default event list format', 'eme' ), 'eme_event_list_item_format', __ ( 'The format of any events in a list.<br/>Insert one or more of the following placeholders: <code>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_NOTES</code>.<br/> Use <code>#_EXCERPT</code> to show <code>#_NOTES</code> until you place a <code>&lt;!&ndash;&ndash;more&ndash;&ndash;&gt;</code> marker.<br/> Use <code>#_LINKEDNAME</code> for the event name with a link to the given event page.<br/> Use <code>#_EVENTPAGEURL</code> to print the event page URL and make your own customised links.<br/> Use <code>#_LOCATIONPAGEURL</code> to print the location page URL and make your own customised links.<br/>Use <code>#_EDITEVENTLINK</code> to add a link to edit page for the event, which will appear only when a user is logged in.<br/>To insert date and time values, use <a href="http://www.php.net/manual/en/function.date.php">PHP time format characters</a>  with a <code>#</code> symbol before them, i.e. <code>#m</code>, <code>#M</code>, <code>#j</code>, etc.<br/> For the end time, put <code>#@</code> in front of the character, e.g. <code>#@h</code>, <code>#@i</code>, etc.<br/> You can also create a date format without prepending <code>#</code> by wrapping it in #_{} or #@_{} (e.g. <code>#_{d/m/Y}</code>). If there is no end date, the value is not shown.<br/>Use <code>#_12HSTARTTIME</code> and <code>#_12HENDTIME</code> for AM/PM start-time/end-time notation, idem <code>#_24HSTARTTIME</code> and <code>#_24HENDTIME</code>.<br/>Feel free to use HTML tags as <code>li</code>, <code>br</code> and so on.<br/>For custom attributes, you use <code>#_ATT{key}{alternative text}</code>, the second braces are optional and will appear if the attribute is not defined or left blank for that event. This key will appear as an option when adding attributes to your event.', 'eme' )."<br />".__('Use <code>#_PAST_FUTURE_CLASS</code> to return a class name indicating this event is future or past (<code>eme-future-event</code> or <code>eme-past-event</code>), use the returned value in e.g. the li-statement for each event in the list of events','eme') .'<br />'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Default event list format footer', 'eme' ), 'eme_event_list_item_format_footer', __ ( 'This content will appear just below your code for the default event list format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be used.', 'eme' ) );
-
-   eme_options_input_text ( __ ( 'Single event page title format', 'eme' ), 'eme_event_page_title_format', __ ( 'The format of a single event page title. Follow the previous formatting instructions.', 'eme' ) );
-   eme_options_input_text ( __ ( 'Single event html title format', 'eme' ), 'eme_event_html_title_format', __ ( 'The format of a single event html page title. Follow the previous formatting instructions.', 'eme' ). __( ' The default is: ','eme'). DEFAULT_EVENT_HTML_TITLE_FORMAT);
-   eme_options_textarea ( __ ( 'Default single event format', 'eme' ), 'eme_single_event_format', __ ( 'The format of a single event page.<br/>Follow the previous formatting instructions. <br/>Use <code>#_MAP</code> to insert a map.<br/>Use <code>#_CONTACTNAME</code>, <code>#_CONTACTEMAIL</code>, <code>#_CONTACTPHONE</code> to insert respectively the name, e-mail address and phone number of the designated contact person. <br/>Use <code>#_ADDBOOKINGFORM</code> to insert a form to allow the user to respond to your events reserving one or more places (RSVP).<br/> Use <code>#_REMOVEBOOKINGFORM</code> to insert a form where users, inserting their name and e-mail address, can remove their bookings.', 'eme' ).__('<br/>Use <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> to insert the booking form only if the user has not registered yet. Similar use <code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> to insert the booking removal form only if the user has already registered before. These two codes only work for WP users.','eme').__('<br/> Use <code>#_DIRECTIONS</code> to insert a form so people can ask directions to the event.','eme').__('<br/> Use <code>#_CATEGORIES</code> to insert a comma-seperated list of categories an event is in.','eme').__('<br/> Use <code>#_ATTENDEES</code> to get a list of the names attending the event.','eme') .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('the documentation', 'eme').'</a>' );
-   eme_options_input_text ( __ ( 'Monthly period date format', 'eme' ), 'eme_show_period_monthly_dateformat', __ ( 'The format of the date-string used when you use showperiod=monthly as an option to &#91;the events_list] shortcode, also used for monthly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: ','eme'). DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT );
-   eme_options_input_text ( __ ( 'Yearly period date format', 'eme' ), 'eme_show_period_yearly_dateformat', __ ( 'The format of the date-string used when you use showperiod=yearly as an option to &#91;the events_list] shortcode, also used for yearly pagination. Use php date() compatible settings.', 'eme') . __( ' The default is: ','eme'). DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT );
-   eme_options_input_text ( __ ( 'Events page title', 'eme' ), 'eme_events_page_title', __ ( 'The title on the multiple events page.', 'eme' ) );
-   eme_options_input_text ( __ ( 'No events message', 'eme' ), 'eme_no_events_message', __ ( 'The message displayed when no events are available.', 'eme' ) );
-   ?>
-</table>
-<h3><?php _e ( 'Events filtering format', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_textarea ( __ ( 'Default event list filtering format', 'eme' ), 'eme_filter_form_format', __ ( 'This defines the layout of the event list filtering form when using the shortcode <code>[events_filterform]</code>. Use <code>#_FILTER_CATS</code>, <code>#_FILTER_LOCS</code>, <code>#_FILTER_TOWNS</code>, <code>#_FILTER_WEEKS</code>, <code>#_FILTER_MONTHS</code>.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=28'>".__('the documentation', 'eme').'</a>' );
-   ?>
-</table>
-<h3><?php _e ( 'Calendar format', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_input_text ( __ ( 'Small calendar title', 'eme' ), 'eme_small_calendar_event_title_format', __ ( 'The format of the title, corresponding to the text that appears when hovering on an eventful calendar day.', 'eme' ) );
-   eme_options_input_text ( __ ( 'Small calendar title separator', 'eme' ), 'eme_small_calendar_event_title_separator', __ ( 'The separator appearing on the above title when more than one event is taking place on the same day.', 'eme' ) );
-   eme_options_input_text ( __ ( 'Full calendar events format', 'eme' ), 'eme_full_calendar_event_format', __ ( 'The format of each event when displayed in the full calendar. Remember to include <code>li</code> tags before and after the event.', 'eme' ) );
-   ?>
-</table>
-
-<h3><?php _e ( 'Locations format', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_textarea ( __ ( 'Default location list format header', 'eme' ), 'eme_location_list_format_header', __( 'This content will appear just above your code for the default location list format. If you leave this empty, the value <code>&lt;ul class=\'eme_locations_list\'&gt;</code> will be used.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) );
-   eme_options_textarea ( __ ( 'Default location list item format', 'eme' ), 'eme_location_list_format_item', __ ( 'The format of a location in a location list. If you leave this empty, the value <code>&lt;li class=\"location-#_LOCATIONID\"&gt;#_LOCATIONNAME&lt;/li&gt;</code> will be used.<br/>See the documentation for a list of available placeholders for locations.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=26'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Default location list format footer', 'eme' ), 'eme_location_list_format_footer', __ ( 'This content will appear just below your code for the default location list format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be used.<br/>Used by the shortcode <code>[events_locations]</code>', 'eme' ) );
-
-   eme_options_input_text ( __ ( 'Single location page title format', 'eme' ), 'eme_location_page_title_format', __ ( 'The format of a single location page title.<br/>Follow the previous formatting instructions.', 'eme' ) );
-   eme_options_input_text ( __ ( 'Single location html title format', 'eme' ), 'eme_location_html_title_format', __ ( 'The format of a single location html page title.<br/>Follow the previous formatting instructions.', 'eme' ). __( ' The default is: ','eme'). DEFAULT_LOCATION_HTML_TITLE_FORMAT);
-   eme_options_textarea ( __ ( 'Default single location page format', 'eme' ), 'eme_single_location_format', __ ( 'The format of a single location page.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>.<br/> Use <code>#_MAP</code> to display a map of the event location, and <code>#_IMAGE</code> to display an image of the location.<br/> Use <code>#_NEXTEVENTS</code> to insert a list of the upcoming events, <code>#_PASTEVENTS</code> for a list of past events, <code>#_ALLEVENTS</code> for a list of all events taking place in this location.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=26'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Default location balloon format', 'eme' ), 'eme_location_baloon_format', __ ( 'The format of the text appearing in the balloon describing the location in the map.<br/>Insert one or more of the following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_DESCRIPTION</code>,<code>#_IMAGE</code>, <code>#_LOCATIONPAGEURL</code> or <code>#_DIRECTIONS</code>.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Default location event list format', 'eme' ), 'eme_location_event_list_item_format', __ ( 'The format of the events list inserted in the location page through the <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> element. <br/> Follow the events formatting instructions', 'eme' ) );
-   eme_options_textarea ( __ ( 'Default no events message', 'eme' ), 'eme_location_no_events_message', __ ( 'The message to be displayed in the list generated by <code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> when no events are available.', 'eme' ) );
-   ?>
-</table>
-
-<h3><?php _e ( 'RSS feed format', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_input_text ( __ ( 'RSS main title', 'eme' ), 'eme_rss_main_title', __ ( 'The main title of your RSS events feed.', 'eme' ) );
-   eme_options_input_text ( __ ( 'RSS main description', 'eme' ), 'eme_rss_main_description', __ ( 'The main description of your RSS events feed.', 'eme' ) );
-   eme_options_input_text ( __ ( 'RSS title format', 'eme' ), 'eme_rss_title_format', __ ( 'The format of the title of each item in the events RSS feed.', 'eme' ) );
-   eme_options_input_text ( __ ( 'RSS description format', 'eme' ), 'eme_rss_description_format', __ ( 'The format of the description of each item in the events RSS feed. Follow the previous formatting instructions.', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'RSS Pubdate usage', 'eme' ), 'eme_rss_show_pubdate', __ ( 'Show the event creation/modification date as PubDate info in the in the events RSS feed.', 'eme' ) );
-   ?>
-</table>
-
-<h3><?php _e ( 'RSVP: registrations and bookings', 'eme' ); ?></h3>
-<table class='form-table'>
-     <?php
-   $indexed_users[-1]=__('Event author','eme');
-   $indexed_users+=eme_get_indexed_users();
-   eme_options_select ( __ ( 'Default contact person', 'eme' ), 'eme_default_contact_person', $indexed_users, __ ( 'Select the default contact person. This user will be employed whenever a contact person is not explicitly specified for an event', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'By default require WP membership to be able to register?', 'eme' ), 'eme_rsvp_registered_users_only', __ ( 'Check this option if you want by default that only WP registered users can book for an event.', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'By default enable registrations for new events?', 'eme' ), 'eme_rsvp_reg_for_new_events', __ ( 'Check this option if you want to enable registrations by default for new events.', 'eme' ) );
-   eme_options_input_text ( __ ( 'Default number of spaces', 'eme' ), 'eme_rsvp_default_number_spaces', __ ( 'The default number of spaces an event has.', 'eme' ) );
-   eme_options_input_text ( __ ( 'Min number of spaces to book', 'eme' ), 'eme_rsvp_addbooking_min_spaces', __ ( 'The minimum number of spaces a person can book in one go (it can be 0, for e.g. just an attendee list).', 'eme' ) );
-   eme_options_input_text ( __ ( 'Max number of spaces to book', 'eme' ), 'eme_rsvp_addbooking_max_spaces', __ ( 'The maximum number of spaces a person can book in one go.', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'Use captcha for booking form?', 'eme' ), 'eme_captcha_for_booking', __ ( 'Check this option if you want to use a captcha on the booking form, to thwart spammers a bit.', 'eme' ) );
-   eme_options_radio_binary ( __ ( 'Hide fully booked events?', 'eme' ), 'eme_rsvp_hide_full_events', __ ( 'Check this option if you want to hide events that are fully booked from the calendar and events listing in the front.', 'eme' ) );
-   eme_options_input_text ( __ ( 'Add booking form submit text', 'eme' ), 'eme_rsvp_addbooking_submit_string', __ ( "The string of the submit button on the add booking form", 'eme' ) );
-   eme_options_input_text ( __ ( 'Delete booking form submit text', 'eme' ), 'eme_rsvp_delbooking_submit_string', __ ( "The string of the submit button on the delete booking form", 'eme' ) );
-   eme_options_input_text ( __ ( 'Attendees list format', 'eme' ), 'eme_attendees_list_format', __ ( "The format for the attendees list when using the <code>#_ATTENDEES</code> placeholder. Use <code>#_NAME</code>, <code>#_EMAIL</code>, <code>#_PHONE</code>, <code>#_ID</code>.", 'eme' ). __("Use <code>#_USER_RESERVEDSPACES</code> to show the number of seats for that person.", 'eme' ) );
-   eme_options_input_text ( __ ( 'Bookings list header format', 'eme' ), 'eme_bookings_list_header_format', __ ( "The header format for the bookings list when using the <code>#_BOOKINGS</code> placeholder.", 'eme' ). sprintf(__(" The default is '%s'",'eme'),eme_sanitize_html(DEFAULT_BOOKINGS_LIST_HEADER_FORMAT)));
-   eme_options_input_text ( __ ( 'Bookings list format', 'eme' ), 'eme_bookings_list_format', __ ( "The format for the bookings list when using the <code>#_BOOKINGS</code> placeholder.", 'eme' ). __('For all placeholders you can use here, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('the documentation', 'eme').'</a>' .__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme').'</a>' );
-   eme_options_input_text ( __ ( 'Bookings list footer format', 'eme' ), 'eme_bookings_list_footer_format', __ ( "The footer format for the bookings list when using the <code>#_BOOKINGS</code> placeholder.", 'eme' ). sprintf(__(" The default is '%s'",'eme'),eme_sanitize_html(DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT)));
-   eme_options_input_text ( __ ( 'Booking recorded message', 'eme' ), 'eme_registration_recorded_ok_html', __ ( "The text (html allowed) shown to the user when the booking has been made successfully.", 'eme' ) );
-   ?>
-</table>
-
-<h3><?php _e ( 'RSVP: mail options', 'eme' ); ?></h3>
-<table class='form-table'>
-   <?php
-   eme_options_radio_binary ( __ ( 'Enable the RSVP e-mail notifications?', 'eme' ), 'eme_rsvp_mail_notify_is_active', __ ( 'Check this option if you want to receive an email when someone books places for your events.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Contact person email format', 'eme' ), 'eme_contactperson_email_body', __ ( 'The format of the email which will be sent to the contact person. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Contact person cancelled email format', 'eme' ), 'eme_contactperson_cancelled_email_body', __ ( 'The format of the email which will be sent to the contact person for a cancellation. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Contact person pending email format', 'eme' ), 'eme_contactperson_pending_email_body', __ ( 'The format of the email which will be sent to the contact person if approval is needed. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code>, <code>#_RESPEMAIL</code> and <code>#_RESPPHONE</code> to display respectively the name, e-mail, address and phone of the respondent.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment. <br/> Use <code>#_RESERVEDSPACES</code> and <code>#_AVAILABLESPACES</code> to display respectively the number of booked and available seats.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Respondent email format', 'eme' ), 'eme_respondent_email_body', __ ( 'The format of the email which will be sent to the respondent. Follow the events formatting instructions. <br/>Use <code>#_RESPNAME</code> to display the name of the respondent.<br/>Use <code>#_CONTACTNAME</code> and <code>#_PLAIN_CONTACTEMAIL</code> to display respectively the name and e-mail of the contact person.<br/>Use <code>#_SPACES</code> to display the number of spaces reserved by the respondent. Use <code>#_COMMENT</code> to display the respondent\'s comment.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Registration pending email format', 'eme' ), 'eme_registration_pending_email_body', __ ( 'The format of the email which will be sent to the respondent when the event requires registration approval.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Registration cancelled email format', 'eme' ), 'eme_registration_cancelled_email_body', __ ( 'The format of the email which will be sent to the respondent when the respondent cancels the registrations for an event.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Registration denied email format', 'eme' ), 'eme_registration_denied_email_body', __ ( 'The format of the email which will be sent to the respondent when the admin denies the registration request if the event requires registration approval.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
-   eme_options_input_text ( __ ( 'Notification sender name', 'eme' ), 'eme_mail_sender_name', __ ( "Insert the display name of the notification sender.", 'eme' ) );
-   eme_options_input_text ( __ ( 'Notification sender address', 'eme' ), 'eme_mail_sender_address', __ ( "Insert the address of the notification sender. It must correspond with your Gmail account user", 'eme' ) );
-   eme_options_select ( __ ( 'Mail sending method', 'eme' ), 'eme_rsvp_mail_send_method', array ('smtp' => 'SMTP', 'mail' => __ ( 'PHP mail function', 'eme' ), 'sendmail' => 'Sendmail', 'qmail' => 'Qmail' ), __ ( 'Select the method to send email notification.', 'eme' ) );
-   eme_options_input_text ( 'SMTP host', 'eme_smtp_host', __ ( "The SMTP host. Usually it corresponds to 'localhost'. If you use Gmail, set this value to 'ssl://smtp.gmail.com:465'.", 'eme' ) );
-   eme_options_input_text ( 'Mail sending port', 'eme_rsvp_mail_port', __ ( "The port through which you e-mail notifications will be sent. Make sure the firewall doesn't block this port", 'eme' ) );
-   eme_options_radio_binary ( __ ( 'Use SMTP authentication?', 'eme' ), 'eme_rsvp_mail_SMTPAuth', __ ( 'SMTP authentication is often needed. If you use Gmail, make sure to set this parameter to Yes', 'eme' ) );
-   eme_options_input_text ( __ ( 'SMTP username', 'eme' ), 'eme_smtp_username', __ ( "Insert the username to be used to access your SMTP server.", 'eme' ) );
-   eme_options_input_password ( __ ( 'SMTP password', 'eme' ), "eme_smtp_password", __ ( "Insert the password to be used to access your SMTP server", 'eme' ) );
-   ?>
-</table>
-
-<h3><?php _e ( 'RSVP: paypal options', 'eme' ); ?></h3>
-<table class='form-table'>
-   <?php
-      eme_options_select ( __('PayPal live or test','eme'), 'eme_paypal_url', array (PAYPAL_SANDBOX_URL => __('Paypal Sandbox (for testing)','eme'), PAYPAL_LIVE_URL => __ ( 'Paypal Live', 'eme' )), __('Choose wether you want to test paypal in a paypal sandbox or go live and really use paypal.','eme') );
-      eme_options_input_text (__('PayPal business info','eme'),'eme_paypal_business', __("Paypal business ID or email.",'eme'));
-   ?>
-</table>
-
-<h3><?php _e ( 'RSVP: 2Checkout options', 'eme' ); ?></h3>
-<table class='form-table'>
-   <?php
-      $events_page_link = eme_get_events_page(true, false);
-      if (stristr ( $events_page_link, "?" ))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
-      $ins_link = $events_page_link.$joiner."eme_eventAction=2co_ins";
-
-      eme_options_select ( __('2Checkout live or test','eme'), 'eme_2co_demo', array (1 => __('2Checkout Sandbox (for testing)','eme'), 0 => __ ( '2Checkout Live', 'eme' )), __('Choose wether you want to test 2Checkout in a sandbox or go live and really use 2Checkout.','eme') );
-      eme_options_input_text (__('2Checkout Account number','eme'),'eme_2co_business', __("2Checkout Account number.",'eme'));
-      eme_options_input_text (__('2Checkout Secret','eme'),'eme_2co_secret', __("2Checkout secret.",'eme'));
-      echo "<tr>".__('Info: the url for Instant Notifications is: ','eme').$ins_link.'</tr>';
-   ?>
-</table>
-
-<h3><?php _e ( 'RSVP: Google Checkout options', 'eme' ); ?></h3>
-<table class='form-table'>
-   <?php
-      eme_options_select ( __('Google Checkout live or test','eme'), 'eme_google_checkout_type', array (GOOGLE_SANDBOX => __('Google Checkout Sandbox (for testing)','eme'), GOOGLE_LIVE => __ ( 'Google Checkout Live', 'eme' )), __('Choose wether you want to test Google Checkout in a sandbox or go live and really use Google Checkout.','eme') );
-      eme_options_input_text (__('Google Checkout merchant ID','eme'),'eme_google_merchant_id', __("Google Checkout Merchant ID.",'eme'));
-      eme_options_input_text (__('Google Checkout merchant Key','eme'),'eme_google_merchant_key', __("Google Checkout Merchant Key.",'eme'));
-   ?>
-</table>
-
-<h3><?php _e ( 'RSVP: form format', 'eme' ); ?></h3>
-<table class='form-table'>
-   <?php
-      eme_options_textarea (__('Form format','eme'),'eme_registration_form_format', __("The look and feel of the form for registrations. #_NAME, #_EMAIL and #_SEATS are obligated fields, if not present then the form will not be shown. Use #_FIELD1, #_FIELD2, ... for own defined fields.",'eme')  .'<br/>'.__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme').'</a>');
-   ?>
-</table>
-
-<h3><?php _e ( 'Images size', 'eme' ); ?></h3>
-<table class='form-table'>
-   <?php
-   eme_options_input_text ( __ ( 'Maximum width (px)', 'eme' ), 'eme_image_max_width', __ ( 'The maximum allowed width for images uploaded, in pixels', 'eme' ) );
-   eme_options_input_text ( __ ( 'Maximum height (px)', 'eme' ), 'eme_image_max_height', __ ( "The maximum allowed height for images uploaded, in pixels", 'eme' ) );
-   eme_options_input_text ( __ ( 'Maximum size (bytes)', 'eme' ), 'eme_image_max_size', __ ( "The maximum allowed size for images uploaded, in bytes", 'eme' ) );
-   ?>
-</table>
-
-<h3><?php _e ( 'Extra html headers', 'eme' ); ?></h3>
-<table class="form-table">
-   <?php
-   eme_options_textarea ( __ ( 'Extra event html headers', 'eme' ), 'eme_event_html_headers_format', __ ( 'Here you can define extra html headers when viewing a single event, typically used to add meta tags for facebook or SEO. All event placeholders can be used, but will be stripped from resulting html.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Extra location html headers', 'eme' ), 'eme_location_html_headers_format', __ ( 'Here you can define extra html headers when viewing a single location, typically used to add meta tags for facebook or SEO. All location placeholders can be used, but will be stripped from resulting html.', 'eme' ) );
-   ?>
-</table>
-
-<p class="submit"><input type="submit" id="eme_options_submit" name="Submit" value="<?php _e ( 'Save Changes' )?>" /></p>
-   <?php
-   settings_fields ( 'eme-options' );
-   ?> 
-</form>
-</div>
-<?php
-
 }
 
 //This is the content of the event page
@@ -873,6 +640,7 @@ function eme_page_title($data) {
          return $page_title;
       } elseif (eme_is_single_location_page()) {
          $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+         $stored_page_title_format = get_option('eme_location_page_title_format' );
          $page_title = eme_replace_locations_placeholders ( $stored_page_title_format, $location );
          return $page_title;
       } else {
@@ -1003,11 +771,18 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $defaults = array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'echo' => 1 , 'category' => '', 'showperiod' => '', $author => '', $contact_person => '', 'paging'=>0, 'long_events' => 0, 'location_id' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '');
       $r = wp_parse_args ( $limit, $defaults );
       extract ( $r );
-      $echo = (bool) $r ['echo'];
       // for AND categories: the user enters "+" and this gets translated to " " by wp_parse_args
       // so we fix it again
       $category = preg_replace("/ /","+",$category);
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
+   $paging = ($paging==="true" || $paging==="1") ? true : $paging;
+   $show_ongoing = ($show_ongoing==="true" || $show_ongoing==="1") ? true : $show_ongoing;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $long_events = ($long_events==="false" || $long_events==="0") ? false : $long_events;
+   $paging = ($paging==="false" || $paging==="0") ? false : $paging;
+   $show_ongoing = ($show_ongoing==="false" || $show_ongoing==="0") ? false : $show_ongoing;
    if ($scope == "")
       $scope = "future";
    if ($order != "DESC")
@@ -1365,8 +1140,11 @@ function eme_get_events_page($justurl = 0, $echo = 1, $text = '') {
       
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
-      $echo = (bool) $r ['echo'];
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : $justurl;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $justurl = ($justurl==="false" || $justurl==="0") ? false : $justurl;
    
    $page_link = get_permalink ( get_option ( 'eme_events_page' ) );
    if ($justurl) {
@@ -1884,7 +1662,9 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 
          $this_event ['event_attributes'] = @unserialize($this_event ['event_attributes']);
          $this_event ['event_attributes'] = (!is_array($this_event ['event_attributes'])) ?  array() : $this_event ['event_attributes'] ;
-         $this_event ['event_image_url'] = eme_image_url_for_event($this_event);
+         // don't forget the images (for the older events that didn't use the wp gallery)
+         if (empty($this_event ['event_image_url']))
+            $this_event ['event_image_url'] = eme_image_url_for_event($this_event);
          array_push ( $inflated_events, $this_event );
       }
       if (has_filter('eme_event_list_filter')) $inflated_events=apply_filters('eme_event_list_filter',$inflated_events);
@@ -1957,7 +1737,9 @@ function eme_get_event($event_id) {
       $event ['event_attributes'] = @unserialize($event ['event_attributes']);
       $event ['event_attributes'] = (!is_array($event ['event_attributes'])) ?  array() : $event ['event_attributes'] ;
    }   
-   $event['event_image_url'] = eme_image_url_for_event($event);
+   // don't forget the images (for the older events that didn't use the wp gallery)
+   if (empty($event ['event_image_url']))
+      $event['event_image_url'] = eme_image_url_for_event($event);
    if (has_filter('eme_event_filter')) $event=apply_filters('eme_event_filter',$event);
    return $event;
 }
@@ -2222,32 +2004,12 @@ function eme_event_form($event, $title, $element) {
 
    $use_select_for_locations = get_option('eme_use_select_for_locations');
    // qtranslate there? Then we need the select, otherwise locations will be created again...
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
+   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
       $use_select_for_locations=1;
    }
    $event_status_array = eme_status_array ();
    $saved_bydays = array();
-   $currency_array = array ();
-   $currency_array ['AUD'] = __ ( 'Australian Dollar', 'eme' );
-   $currency_array ['CAD'] = __ ( 'Canadian Dollar', 'eme' );
-   $currency_array ['CZK'] = __ ( 'Czech Koruna', 'eme' );
-   $currency_array ['DKK'] = __ ( 'Danish Krone', 'eme' );
-   $currency_array ['EUR'] = __ ( 'Euro', 'eme' );
-   $currency_array ['HKD'] = __ ( 'Hong Kong Dollar', 'eme' );
-   $currency_array ['HUF'] = __ ( 'Hungarian Forint', 'eme' );
-   $currency_array ['ILS'] = __ ( 'Israeli New Sheqel', 'eme' );
-   $currency_array ['JPY'] = __ ( 'Japanese Yen', 'eme' );
-   $currency_array ['MXN'] = __ ( 'Mexican Peso', 'eme' );
-   $currency_array ['NOK'] = __ ( 'Norwegian Krone', 'eme' );
-   $currency_array ['NZD'] = __ ( 'New Zealand Dollar', 'eme' );
-   $currency_array ['PHP'] = __ ( 'Philippine Peso', 'eme' );
-   $currency_array ['PLN'] = __ ( 'Polish Zloty', 'eme' );
-   $currency_array ['GBP'] = __ ( 'Pound Sterling', 'eme' );
-   $currency_array ['SGD'] = __ ( 'Singapore Dollar', 'eme' );
-   $currency_array ['SEK'] = __ ( 'Swedish Krona', 'eme' );
-   $currency_array ['CHF'] = __ ( 'Swiss Franc', 'eme' );
-   $currency_array ['THB'] = __ ( 'Thai Baht', 'eme' );
-   $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
+   $currency_array = eme_currency_array();
 
    // let's determine if it is a new event, handy
    if (! $element) {
@@ -2321,24 +2083,27 @@ function eme_event_form($event, $title, $element) {
    
    // for new events, check the setting wether or not to enable RSVP
    if ($is_new_event) {
-      if (get_option('eme_rsvp_reg_for_new_events'))
-         $event_RSVP_checked = "checked='checked'";
-      else
-         $event_RSVP_checked = "";
       $event_number_spaces=intval(get_option('eme_rsvp_default_number_spaces'));
-      if (get_option('eme_rsvp_registered_users_only'))
-         $registration_wp_users_only = "checked='checked'";
-      else
-         $registration_wp_users_only = "";
+      $event_RSVP_checked = (get_option('eme_rsvp_reg_for_new_events')) ? "checked='checked'" : "";
+      $registration_wp_users_only = (get_option('eme_rsvp_registered_users_only')) ? "checked='checked'" : "";
+      $registration_requires_approval = (get_option('eme_rsvp_require_approval')) ? "checked='checked'" : "";
+
+      $use_paypal_checked = (get_option('eme_paypal_business')) ? "checked='checked'" : '';
+      $use_google_checked = (get_option('eme_google_merchant_id')) ? "checked='checked'" : '';
+      $use_2co_checked = (get_option('eme_2co_business')) ? "checked='checked'" : '';
+      $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : '';
+
    } else {
       $event ['event_rsvp'] ? $event_RSVP_checked = "checked='checked'" : $event_RSVP_checked = '';
       $event_number_spaces=$event ['event_seats'];
       $event ['registration_wp_users_only'] ? $registration_wp_users_only = "checked='checked'" : $registration_wp_users_only = '';
+      $event ['registration_requires_approval'] ? $registration_requires_approval = "checked='checked'" : $registration_requires_approval = '';
+
+      $use_paypal_checked = ($event ['use_paypal']) ? "checked='checked'" : '';
+      $use_google_checked = ($event ['use_google']) ? "checked='checked'" : '';
+      $use_2co_checked = ($event ['use_2co']) ? "checked='checked'" : '';
+      $use_webmoney_checked = ($event ['use_webmoney']) ? "checked='checked'" : '';
    }
-   $event ['registration_requires_approval'] ? $registration_requires_approval = "checked='checked'" : $registration_requires_approval = '';
-   $event ['use_paypal'] ? $use_paypal_checked = "checked='checked'" : $use_paypal_checked = '';
-   $event ['use_2co'] ? $use_2co_checked = "checked='checked'" : $use_2co_checked = '';
-   $event ['use_google'] ? $use_google_checked = "checked='checked'" : $use_google_checked = '';
    
    ob_start();
    ?>
@@ -2541,9 +2306,10 @@ function eme_event_form($event, $title, $element) {
                               </select><br />
                             <br />
                               <?php _e ( 'Payment methods','eme' ); ?><br />
-                              <input id="paypal-checkbox" name='use_paypal' value='1' type='checkbox' <?php echo $use_paypal_checked; ?> /><?php _e ( 'Paypal ','eme' ); ?><br />
-                              <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout ','eme' ); ?><br />
-                              <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout ','eme' ); ?><br />
+                              <input id="paypal-checkbox" name='use_paypal' value='1' type='checkbox' <?php echo $use_paypal_checked; ?> /><?php _e ( 'Paypal','eme' ); ?><br />
+                              <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout','eme' ); ?><br />
+                              <input id="webmoney-checkbox" name='use_webmoney' value='1' type='checkbox' <?php echo $use_webmoney_checked; ?> /><?php _e ( 'Webmoney','eme' ); ?><br />
+                              <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout','eme' ); ?><br />
                            </p>
                            <?php if ($event ['event_rsvp']) {
                                  eme_bookings_compact_table ( $event['event_id'] );
@@ -2890,15 +2656,48 @@ function eme_event_form($event, $title, $element) {
                         <div id="event_current_image" class="postarea">
                         <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
                                  _e('Current image:', 'eme');
-                                 echo "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+                                 echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' width='200' />";
+                              } else {
+                                 echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
                               }
+                              // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
                         ?>
+
                         </div>
                         <br />
-                        <input id="event_image" name="event_image" type="file" size="35" />
-                        <?php _e ( 'Select an image to upload', 'eme' )?><br />
-                        <input id="eme_remove_old_image" name="eme_remove_old_image" type="checkbox" value="1" />
-                        <?php _e ( 'Remove existing image', 'eme' )?>
+
+                        <div class="uploader">
+                           <input type="hidden" name="event_image_url" id="event_image_url" />
+                           <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
+                           <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
+                        </div>
+<script>
+jQuery(document).ready(function($){
+
+  $('#eme_remove_old_image').click(function(e) {
+        $('#event_image_url').val('');
+        $('#eme_event_image_example' ).attr("src",'');
+  });
+  $('#event_image_button').click(function(e) {
+    var button = $(this);
+    var _orig_send_attachment = wp.media.editor.send.attachment;
+    var eme_custom_media = true;
+
+    wp.media.editor.send.attachment = function(props, attachment){
+      if ( eme_custom_media ) {
+        $('#event_image_url').val(attachment.url);
+        $('#eme_event_image_example' ).attr("src",attachment.url);
+      } else {
+        return _orig_send_attachment.apply( this, [props, attachment] );
+      };
+      eme_custom_media = false;
+    }
+
+    wp.media.editor.open(button);
+    return false;
+  });
+});
+</script>
                      </div>
                   </div>
                   <?php if(get_option('eme_attributes_enabled')) : ?>
@@ -3211,6 +3010,25 @@ $j_eme_event(document).ready( function() {
          $j_eme_event('tr#eme_smtp_password_row').hide();
       }
    });
+   if ($j_eme_event('input[name=eme_paypal_s_encrypt]:checked').val() != 1) {
+      $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
+      $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
+      $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
+      $j_eme_event('tr#eme_paypal_s_certid_row').hide();
+   }
+   $j_eme_event('input[name=eme_paypal_s_encrypt]').change(function() {
+      if($j_eme_event(this).val() == 1) {
+         $j_eme_event('tr#eme_paypal_s_pubcert_row').show(); 
+         $j_eme_event('tr#eme_paypal_s_privkey_row').show();
+         $j_eme_event('tr#eme_paypal_s_paypalcert_row').show();
+         $j_eme_event('tr#eme_paypal_s_certid_row').show();
+      } else {
+         $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
+         $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
+         $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
+         $j_eme_event('tr#eme_paypal_s_certid_row').hide();
+      }
+   });
    updateIntervalDescriptor(); 
    updateIntervalSelectors();
    updateShowHideRecurrence();
@@ -3294,13 +3112,14 @@ $j_eme_event(document).ready( function() {
 }
 
 function eme_admin_map_script() {
+   global $plugin_page;
    // when the action is the POST of a new event, don't do the javascript
-   if (isset ( $_GET ['page'] ) && $_GET ['page'] == 'eme-new_event' && isset ( $_REQUEST ['action'] ) && $_REQUEST ['action'] == 'insert_event') {
+   if ($plugin_page == 'eme-new_event' && isset ( $_REQUEST ['action'] ) && $_REQUEST ['action'] == 'insert_event') {
       return;
    }
 
    # we also do this for locations, since the locations page also needs the loadMap javascript function
-   if ((isset ( $_GET ['page'] ) && ($_GET ['page'] == 'eme-locations' || $_GET ['page'] == 'eme-new_event')) ||
+   if (( ($plugin_page == 'eme-locations' || $plugin_page == 'eme-new_event')) ||
        (isset ( $_REQUEST ['action'] ) && ($_REQUEST ['action'] == 'edit_event' || $_REQUEST ['action'] == 'edit_recurrence'))) {
          if (isset($_REQUEST ['event_id']))
             $event_ID = intval($_REQUEST ['event_id']);
@@ -3378,8 +3197,8 @@ function eme_admin_map_script() {
             // We check on the new/edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             if (
-               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) && 
-                     (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage'))) { ?>
+               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
+                     (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE'))) { ?>
             eventLocation = $j_eme_admin("input[name='location-select-name']").val(); 
             eventTown = $j_eme_admin("input[name='location-select-town']").val();
             eventAddress = $j_eme_admin("input[name='location-select-address']").val(); 
@@ -3428,18 +3247,20 @@ if ($gmap_is_active) {
 
 }
 
-function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5) {
+function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5, $location_id='') {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
-      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5 );
+      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '' );
       
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
-      $echo = (bool) $r ['echo'];
+      $echo = $r ['echo'];
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $echo = ($echo==="false" || $echo==="O") ? false : $echo;
    if ($text == '')
       $text = "RSS";
-   $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit");
+   $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit&location_id=$location_id");
    $link = "<a href='$url'>$text</a>";
    
    if ($justurl)
@@ -3453,8 +3274,8 @@ function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $
 }
 
 function eme_rss_link_shortcode($atts) {
-   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5 ), $atts ) );
-   $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person" );
+   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '' ), $atts ) );
+   $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&location_id=$location_id" );
    return $result;
 }
 add_shortcode ( 'events_rss_link', 'eme_rss_link_shortcode' );
@@ -3486,6 +3307,11 @@ function eme_rss() {
       } else {
          $category=0;
       }
+      if (isset($_GET['location_id'])) {
+         $location_id=$_GET['location_id'];
+      } else {
+         $location_id='';
+      }
       if (isset($_GET['scope'])) {
          $scope=$_GET['scope'];
       } else {
@@ -3516,7 +3342,7 @@ Weblog Editor 2.0
 <?php
       $title_format = get_option('eme_rss_title_format' );
       $description_format = str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", get_option('eme_rss_description_format' ) ) );
-      $events = eme_get_events ( $limit, $scope, $order, 0, "", $category, $author, $contact_person );
+      $events = eme_get_events ( $limit, $scope, $order, 0, $location_id, $category, $author, $contact_person );
       # some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
       if (empty ( $events )) {
          echo "<item>\n";
@@ -3639,10 +3465,12 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    $event['creation_date_gmt']=current_time('mysql', true);
    $event['modif_date_gmt']=current_time('mysql', true);
 
-   // some sanity checks
+   // remove possible unwanted fields
    if (isset($event['event_id'])) {
       unset($event['event_id']);
    }
+
+   // some sanity checks
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
    }
@@ -3667,7 +3495,6 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
       $event['event_id']=$event_ID;
       // the eme_insert_event_action is only executed for single events, not those part of a recurrence
       if (!$event_is_part_of_recurrence && has_action('eme_insert_event_action')) do_action('eme_insert_event_action',$event);
-      eme_upload_event_picture($event);
       return $event_ID;
    }
 }
@@ -3708,7 +3535,6 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
       return false;
    } else {
       $event['event_id']=$event_id;
-      eme_upload_event_picture($event);
       // the eme_update_event_action is only executed for single events, not those part of a recurrence
       if (!$event_is_part_of_recurrence && has_action('eme_update_event_action')) {
          // we do this call so all parameters for the event are filled, otherwise for an update this might not be the case
@@ -3749,14 +3575,14 @@ function eme_alert_events_page() {
 }
 add_action ( 'admin_notices', 'eme_alert_events_page' );
 
-//This adds the tinymce editor
-function eme_tinymce(){
+//This adds the wysiwyg editor
+function eme_wysiwyg(){
    global $plugin_page;
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
-      add_action( 'admin_print_footer_scripts', 'wp_tiny_mce', 25 );
-      if (function_exists('wp_tiny_mce_preload_dialogs')) {
-         add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-      }
+#      add_action( 'admin_print_footer_scripts', 'wp_tiny_mce', 25 );
+#      if (function_exists('wp_tiny_mce_preload_dialogs')) {
+#         add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
+#      }
       wp_enqueue_script('post');
       if ( user_can_richedit() )
          wp_enqueue_script('editor');
@@ -3766,7 +3592,7 @@ function eme_tinymce(){
       wp_enqueue_script('quicktags');  
    }
 }
-add_action ( 'admin_init', 'eme_tinymce' );
+#add_action ( 'admin_init', 'eme_wysiwyg' );
 
 # return number of days until next event or until the specified event
 function eme_countdown($atts) {
@@ -3785,7 +3611,7 @@ function eme_countdown($atts) {
 add_shortcode('events_countdown', 'eme_countdown');
 
 function eme_image_url_for_event($event) {
-   if ($event['recurrence_id']>0) {
+   if (isset($event['recurrence_id']) && $event['recurrence_id']>0) {
       $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
       $image_baseurl= IMAGE_UPLOAD_URL."/recurrence-".$event['recurrence_id'];
    } else {
@@ -3801,24 +3627,6 @@ function eme_image_url_for_event($event) {
       }
    }
    return '';
-}
-
-function eme_upload_event_picture($event) {
-   if(!file_exists(IMAGE_UPLOAD_DIR))
-            mkdir(IMAGE_UPLOAD_DIR, 0777);
-   if ($event['recurrence_id']>0)
-      $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$event['recurrence_id'];
-   else
-      $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
-   if (isset ($_POST['eme_remove_old_image']) && ($_POST['eme_remove_old_image']==1))
-      eme_delete_image_files($image_basename);
-   $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-   if (isset($_FILES['event_image']) && isset($_FILES['event_image']['tmp_name']) && ($_FILES['event_image']['size'] > 0)) {
-      list($width, $height, $type, $attr) = getimagesize($_FILES['event_image']['tmp_name']);
-      $image_path = $image_basename.".".$mime_types[$type];
-      if (!move_uploaded_file($_FILES['event_image']['tmp_name'], $image_path))
-         $msg = "<p>".__('The image could not be loaded','eme')."</p>";
-   }
 }
 
 ?>
