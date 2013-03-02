@@ -3575,24 +3575,14 @@ function eme_alert_events_page() {
 }
 add_action ( 'admin_notices', 'eme_alert_events_page' );
 
-//This adds the wysiwyg editor
-function eme_wysiwyg(){
+function eme_handlepostbox(){
    global $plugin_page;
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
-#      add_action( 'admin_print_footer_scripts', 'wp_tiny_mce', 25 );
-#      if (function_exists('wp_tiny_mce_preload_dialogs')) {
-#         add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-#      }
+      // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
-      if ( user_can_richedit() )
-         wp_enqueue_script('editor');
-      add_thickbox();
-      wp_enqueue_script('media-upload');
-      wp_enqueue_script('word-count');
-      wp_enqueue_script('quicktags');  
    }
 }
-#add_action ( 'admin_init', 'eme_wysiwyg' );
+add_action ( 'admin_init', 'eme_handlepostbox' );
 
 # return number of days until next event or until the specified event
 function eme_countdown($atts) {
