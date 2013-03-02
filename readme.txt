@@ -2,14 +2,14 @@
 Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
-Requires at least: 3.0.0
+Requires at least: 3.5
 Tested up to: 3.5.1
-Stable tag: 1.0.12
+Stable tag: 1.0.18
 
-Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL support. SEO compatible.
+Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL, 2Checkout, Webmoney and Google Checkout support. SEO compatible.
              
 == Description ==
-Events Made Easy (formally called 'Events Manager Extended') is a full-featured event management solution for Wordpress. Events Made Easy supports public, private, draft and recurring events, locations management, RSVP (+ approval if wanted) and maps. With Events Made Easy you can plan and publish your event, or let people reserve spaces for your weekly meetings. You can add events list, calendars and description to your blog using multiple sidebar widgets or shortcodes; if you are a web designer you can simply employ the template tags provided by Events Made Easy. 
+Events Made Easy (formally called 'Events Manager Extended') is a full-featured event management solution for Wordpress. Events Made Easy supports public, private, draft and recurring events, locations management, RSVP (+ optional approval), Paypal, 2Checkout, Google Checkout and Google maps. With Events Made Easy you can plan and publish your event, or let people reserve spaces for your weekly meetings. You can add events list, calendars and description to your blog using multiple sidebar widgets or shortcodes; if you are a web designer you can simply employ the template tags provided by Events Made Easy. 
 
 Events Made Easy integrates with Google Maps; thanks to geocoding, Events Made Easy can find the location of your event and accordingly display a map. 
 Events Made Easy also integrates payments for events using paypal. 
@@ -112,10 +112,42 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.18 =
+* Bugfix: make drop down postbox expanding work again
+
+= 1.0.17 =
+* Feature: added support for paypal encrypted button
+* Bugfix: url_decode should be urldecode
+* Bugfix: remove remaining occurences of eme_upload_event_picture()
+
+= 1.0.16 =
+* Feature: for events and locations, the featured image now uses the WP media gallery
+* Feature: Webmoney support added
+* Feature: rss and ical shortcodes now support a location id, to limit events shown to a specific location
+* Feature: a little extra for more WPML support (added, but not guaranteed)
+* Feature: added #_IS_REGISTERED conditional tag, returns 1 if WP user has already registered for the event, 0 otherwise
+* Improvement: you can now activate SMTP debugging if you have issues when sending mail via SMTP
+* Improvement: the booking format now also can use #_PAYED to show the payed status
+* Improvement: ability to set default currency, price and "Require approval for registration"
+* Improvement: the "Allow RSVP until" can now also be given a default value
+* Improvement: the week/month/year scopes in [events_filterform] now show the text 'select week/month/year' by default.
+* Bugfix: when creating/editing an event, location creation is now also being checked for access rights
+
+= 1.0.15 =
+* Improvement: more options for shortcodes that were booleans with 0 or 1 have now true/false support too
+* Bugfix: the page title for single location pages was not being set correctly
+
+= 1.0.14 =
+* Feature: new parameters "show_events" (default:0) and "show_locations" (default:1) for shortcode [locations_map], allows to show a list of events corresponding to the locations on the map
+* Improvement: the "Required field" text has a div-id surrounding it now, so you can change the look of it as wanted using CSS
+* Improvement: removed deprecated wp_tiny_mce as editor and solved some php warnings (and moved the minimum required version up to 3.3)
+* Improvement: a number of options for shortcodes were booleans with 0 or 1, now we added true/false support too
+
 = 1.0.13 =
 * Feature: integrated 2Checkout. Instant Notification is also possible, but you have to specify the url in your 2Checkout account. The value for this will be shown in the EME settings.
 * Feature: integrated Google Checkout, but no automatic payment handling since that requires client certificates. And for Google Checkout to work, the price must be in dollars or pounds (identical to your google wallet account, otherwise it will fail)
 * Feature/Bugfix: the paypal class didn't really support the business ID, should work now
+* Improvement: revamped the admin settings interface, it was getting too much for one page so I switched to tabs
 
 = 1.0.12 =
 * Bugfix: the participant info was not correctly replaced in mails sent

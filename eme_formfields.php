@@ -339,7 +339,7 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
       }
 
       if ($required)
-         $replacement .= "&nbsp;".__('(Required field)','eme');
+         $replacement .= "<div id='eme-required-field'>&nbsp;".__('(Required field)','eme')."</div>";
 
       if ($found) {
          $replacement = eme_translate($replacement);
