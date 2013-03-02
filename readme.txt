@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.0.19 =
+* Improvement: #ESC_ATT and #URL_ATT are now also recognized when looking for attributes definitions
+
 = 1.0.18 =
 * Bugfix: make drop down postbox expanding work again
 

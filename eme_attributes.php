@@ -23,10 +23,13 @@ function eme_attributes_form($event) {
       #get_option('eme_location_page_title_format' ).
 
    //We now have one long string of formats
-   preg_match_all("/#_ATT\{.+?\}(\{.+?\})?/", $formats, $placeholders);
+   preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $format, $placeholders);
+
    $attributes = array();
    //Now grab all the unique attributes we can use in our event.
    foreach($placeholders[0] as $result) {
+      $result = str_replace("#ESC","#",$result);
+      $result = str_replace("#URL","#",$result);
       $attribute = substr( substr($result, 0, strpos($result, '}')), 6 );
       if( !in_array($attribute, $attributes) ){       
          $attributes[] = $attribute ;
