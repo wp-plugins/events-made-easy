@@ -1433,8 +1433,8 @@ function eme_replace_placeholders($format, $event, $target="html") {
       }
       $replacement = "";
       $field = "event_".ltrim(strtolower($result), "#_");
-      // DETAILS is an alternative for NOTES
-      if ($field == "event_details")
+      // to catch every alternative (we just need to know if it is an excerpt or not)
+      if ($field != "event_excerpt")
          $field = "event_notes";
 
       // when on the single event page, never show just the excerpt
