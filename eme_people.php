@@ -136,11 +136,12 @@ function eme_csv_booking_report($event_id) {
    $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $out = fopen('php://output', 'w');
    $line=array();
-   $line[]='Name';
-   $line[]='Email';
-   $line[]='Phone';
-   $line[]='Seats';
-   $line[]='Comment';
+   $line[]=__('Name', 'eme');
+   $line[]=__('E-mail', 'eme');
+   $line[]=__('Phone number', 'eme');
+   $line[]=__('Seats', 'eme');
+   $line[]=__('Paid', 'eme');
+   $line[]=__('Comment', 'eme');
    foreach($answer_columns as $col) {
       $line[]=$col['field_name'];
    }
@@ -156,6 +157,7 @@ function eme_csv_booking_report($event_id) {
       $line[]=$person['person_email'];
       $line[]=$person['person_phone'];
       $line[]=$booking['booking_seats'];
+      $line[]=$booking['booking_payed']? __('Yes'): __('No');
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
       foreach($answer_columns as $col) {

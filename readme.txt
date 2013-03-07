@@ -114,6 +114,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.0.19 =
 * Improvement: #ESC_ATT and #URL_ATT are now also recognized when looking for attributes definitions
+* Improvement: the CSV export didn't show the paid status
 * Bugfix: #_EVENTDETAILS has never been working (#_NOTES and #_DETAILS did work ok)
 
 = 1.0.18 =
