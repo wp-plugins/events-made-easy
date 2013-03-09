@@ -78,10 +78,11 @@ function eme_get_user_phone($user_id) {
    return get_user_meta($user_id, 'eme_phone',true);
 }
 
-function eme_get_date_format($user_id) {
+function eme_get_date_format() {
    $format="";
-   if ($user_id)
-      $format = get_user_meta($user_id, 'eme_date_format',true);
+   $current_userid=get_current_user_id();
+   if ($current_userid)
+      $format = get_user_meta($current_userid, 'eme_date_format',true);
    if ($format == '') $format=get_option('date_format');
    return $format;
 }
@@ -275,7 +276,7 @@ function eme_status_array() {
    return $event_status_array;
 }
 
-function eme_localised_date($mydate) {
+function eme_datepicker_localised_date($mydate) {
    global $localised_date_formats;
 
    // $mydate should be in yyyy-mm-dd format
@@ -297,9 +298,8 @@ function eme_localised_date($mydate) {
    }
 }
 
-function eme_admin_localised_date($mydate) {
-   $current_userid=get_current_user_id();
-   $date_format = eme_get_date_format($current_userid);
+function eme_localised_date($mydate) {
+   $date_format = eme_get_date_format();
    return date_i18n ( $date_format, strtotime($mydate));
 }
 

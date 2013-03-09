@@ -1072,7 +1072,7 @@ function eme_registration_seats_form_table($event_id=0) {
    $events_with_pending_bookings=array();
    foreach ( $all_events as $event ) {
       if ($event ['event_rsvp']) {
-         $option_text=$event['event_name']." (".eme_admin_localised_date($event['event_start_date']).")"; 
+         $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")"; 
          echo "<option value='".$event['event_id']."' >".$option_text."</option>  ";
       }
    }
@@ -1145,8 +1145,8 @@ function eme_registration_seats_form_table($event_id=0) {
          $person = eme_get_person ($event_booking['person_id']);
          $event = eme_get_event($event_booking['event_id']);
          $class = ($i % 2) ? ' class="alternate"' : '';
-         $localised_start_date = eme_admin_localised_date($event['event_start_date']);
-         $localised_end_date = eme_admin_localised_date($event['event_end_date']);
+         $localised_start_date = eme_localised_date($event['event_start_date']);
+         $localised_end_date = eme_localised_date($event['event_end_date']);
          $style = "";
          $today = date ( "Y-m-d" );
          
@@ -1310,8 +1310,8 @@ function eme_registration_approval_form_table($event_id=0) {
          $person = eme_get_person ($event_booking['person_id']);
          $event = eme_get_event($event_booking['event_id']);
          $class = ($i % 2) ? ' class="alternate"' : '';
-         $localised_start_date = eme_admin_localised_date($event['event_start_date']);
-         $localised_end_date = eme_admin_localised_date($event['event_end_date']);
+         $localised_start_date = eme_localised_date($event['event_start_date']);
+         $localised_end_date = eme_localised_date($event['event_end_date']);
          $style = "";
          $today = date ( "Y-m-d" );
          

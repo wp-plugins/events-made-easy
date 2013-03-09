@@ -276,7 +276,7 @@ function eme_get_recurrence_desc($recurrence_id) {
 
    $weekdays_name = array(__('Monday'),__('Tuesday'),__('Wednesday'),__('Thursday'),__('Friday'),__('Saturday'),__('Sunday'));
    $monthweek_name = array('1' => __('the first %s of the month', 'eme'),'2' => __('the second %s of the month', 'eme'), '3' => __('the third %s of the month', 'eme'), '4' => __('the fourth %s of the month', 'eme'), '5' => __('the fifth %s of the month', 'eme'), '-1' => __('the last %s of the month', 'eme'));
-   $output = sprintf (__('From %1$s to %2$s', 'eme'),  $recurrence['recurrence_start_date'], $recurrence['recurrence_end_date']).", ";
+   $output = sprintf (__('From %1$s to %2$s', 'eme'),  eme_localised_date($recurrence['recurrence_start_date']), eme_localised_date($recurrence['recurrence_end_date'])).", ";
    if ($recurrence['recurrence_freq'] == 'daily')  {
       $freq_desc =__('everyday', 'eme');
       if ($recurrence['recurrence_interval'] > 1 ) {

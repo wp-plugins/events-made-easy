@@ -115,6 +115,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.0.19 =
 * Improvement: #ESC_ATT and #URL_ATT are now also recognized when looking for attributes definitions
 * Improvement: the CSV export didn't show the paid status
+* Bugfix: for recurrent events, the wanted date/time format was not being taken into account when being shown in the admin interface or when using #_RECURRENTDESC
 * Bugfix: #_EVENTDETAILS has never been working (#_NOTES and #_DETAILS did work ok)
 
 = 1.0.18 =

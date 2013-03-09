@@ -1882,8 +1882,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             break;
          $class = ($i % 2) ? ' class="alternate"' : '';
 
-         $localised_start_date = eme_admin_localised_date($event['event_start_date']);
-         $localised_end_date = eme_admin_localised_date($event['event_end_date']);
+         $localised_start_date = eme_localised_date($event['event_start_date']);
+         $localised_end_date = eme_localised_date($event['event_end_date']);
 
          $today = date ( "Y-m-d" );
          
@@ -2064,15 +2064,12 @@ function eme_event_form($event, $title, $element) {
    if ($event['event_end_24h_time'] == "")
          $event['event_end_24h_time'] = date('H:i',time()+3600);
    
-   $localised_example = eme_localised_date("2008-11-28");
-   $localised_end_example = eme_localised_date("2008-11-28");
-   
-   $localised_start_date = eme_localised_date($event['event_start_date']);
-   $localised_end_date = eme_localised_date($event['event_end_date']);
+   $localised_start_date = eme_datepicker_localised_date($event['event_start_date']);
+   $localised_end_date = eme_datepicker_localised_date($event['event_end_date']);
    if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
-   $localised_rec_start_date = eme_localised_date($event['recurrence_start_date']);
+   $localised_rec_start_date = eme_datepicker_localised_date($event['recurrence_start_date']);
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
-   $localised_rec_end_date = eme_localised_date($event['recurrence_end_date']);
+   $localised_rec_end_date = eme_datepicker_localised_date($event['recurrence_end_date']);
    //if($event[$pref.'rsvp'])
     //   echo (eme_bookings_table($event[$pref.'id']));
    
