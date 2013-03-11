@@ -334,7 +334,7 @@ function eme_install() {
       if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1)) {
          $old_blog = $wpdb->blogid;
          // Get all blog ids
-         $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+         $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM %s",$wpdb->blogs));
          foreach ($blogids as $blog_id) {
             switch_to_blog($blog_id);
             _eme_install();
@@ -1528,26 +1528,18 @@ function eme_replace_placeholders($format, $event, $target="html") {
 }
 
 function eme_sanitize_request( $value ) {
-#  if( get_magic_quotes_gpc() ) 
-#     $value = stripslashes( $value );
-
-   //check if this function exists
-   if( function_exists( "mysql_real_escape_string" ) ) {
-      //$value = mysql_real_escape_string( $value );
-      if (is_array($value)) {
-         array_walk_recursive($value, 'escapeMe');
-      } else {
-         $value = mysql_real_escape_string($value);
-      }
+   global $wpdb;
+   if (is_array($value)) {
+      array_walk_recursive($value, 'escapeMe');
    } else {
-      //for PHP version < 4.3.0 use addslashes
-      $value = addslashes( $value );
+      $value = $wpdb->escape($value);
    }
    return $value;
 }
 
 function escapeMe(&$val) {
-   $val = mysql_real_escape_string($val);
+   global $wpdb;
+   $val = $wpdb->escape($val);
 }
 
 function sort_stringlenth($a,$b){
