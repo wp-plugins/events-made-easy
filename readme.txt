@@ -119,6 +119,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: #_EVENTDETAILS has never been working (#_NOTES and #_DETAILS did work ok)
 
 = 1.0.18 =
+* Improvement: the booking list format (used with #_BOOKINGS) now also supports #ESC_* for placeholders, so you can safely use shortcodes (like conditional tags) inside it
 * Bugfix: make drop down postbox expanding work again
 
 = 1.0.17 =

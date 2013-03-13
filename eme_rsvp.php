@@ -816,12 +816,18 @@ function eme_get_bookings_list_for($event_id) {
 }
 
 function eme_replace_booking_placeholders($format, $booking, $target="html") {
-   preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
+   preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+/", $format, $placeholders);
    $person  = eme_get_person ($booking['person_id']);
    $answers = eme_get_answers($booking['booking_id']);
    foreach($placeholders[0] as $result) {
       $replacement='';
       $found = 1;
+      $need_escape=0;
+      $orig_result = $result;
+      if (strstr($result,'#ESC')) {
+         $result = str_replace("#ESC","#",$result);
+         $need_escape=1;
+      }
       if (preg_match('/#_RESP(NAME|PHONE|ID|EMAIL)$/', $result)) {
          $field = preg_replace("/#_RESP/","",$result);
          $field = "person_".strtolower($field);
@@ -870,8 +876,12 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
       } else {
          $found = 0;
       }
+
+      if ($need_escape)
+         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+
       if ($found)
-         $format = str_replace($result, $replacement ,$format );
+         $format = str_replace($orig_result, $replacement ,$format );
    }
    return do_shortcode($format);   
 }

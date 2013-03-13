@@ -180,7 +180,7 @@ define('DEFAULT_RSVP_ENABLED', true);
 define('DEFAULT_RSVP_ADDBOOKINGFORM_SUBMIT_STRING', __('Send your booking', 'eme'));
 define('DEFAULT_RSVP_DELBOOKINGFORM_SUBMIT_STRING', __('Cancel your booking', 'eme'));
 define('DEFAULT_ATTENDEES_LIST_FORMAT','<li>#_NAME (#_USER_RESERVEDSPACES)</li>');
-define('DEFAULT_BOOKINGS_LIST_FORMAT','<li>#_NAME (#_USER_RESERVEDSPACES)</li>');
+define('DEFAULT_BOOKINGS_LIST_FORMAT','<li>#_RESPNAME (#_USER_RESERVEDSPACES)</li>');
 define('DEFAULT_BOOKINGS_LIST_HEADER_FORMAT',"<ul class='eme_bookings_list_ul'>");
 define('DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT','</ul>');
 define('DEFAULT_CATEGORIES_ENABLED', true);
