@@ -848,6 +848,10 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
          $replacement = $booking['booking_seats'];
       } elseif (preg_match('/#_SPACES$/', $result)) {
          $replacement = $booking['booking_seats'];
+      } elseif (preg_match('/#_BOOKINGCREATIONDATE$/', $result)) {
+         $replacement = eme_localised_date($booking['creation_date']);
+      } elseif (preg_match('/#_BOOKINGMODIFDATE$/', $result)) {
+         $replacement = eme_localised_date($booking['modif_date']);
       } elseif (preg_match('/#_TRANSFER_NBR_BE97$/', $result)) {
          $replacement = $booking['transfer_nbr_be97'];
       } elseif (preg_match('/#_FIELDS$/', $result)) {
