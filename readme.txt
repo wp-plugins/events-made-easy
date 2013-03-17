@@ -116,6 +116,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Improvement: #ESC_ATT and #URL_ATT are now also recognized when looking for attributes definitions
 * Improvement: the CSV export didn't show the paid status
 * Improvement: when editing a single event, delete buttons to edit the event and/or recurrence are now there (and asked for confirmation)
+* Improvement: when trying to view a non-existing location, now also a 404 is returned (as for events)
 * Bugfix: for recurrent events, the wanted date/time format was not being taken into account when being shown in the admin interface or when using #_RECURRENTDESC
 * Bugfix: #_EVENTDETAILS has never been working (#_NOTES and #_DETAILS did work ok)
 

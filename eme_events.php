@@ -713,8 +713,18 @@ function eme_template_redir() {
 # since it needs to be working for both permalinks and normal,
 # I can't use just any action hook. parse_query seems to do just fine
    if (isset ( $wp_query->query_vars ['event_id'])) {
-      $event_ID = intval($wp_query->query_vars ['event_id']);
-      if (!eme_check_exists($event_ID)) {
+      $event_id = intval($wp_query->query_vars ['event_id']);
+      if (!eme_check_event_exists($event_id)) {
+//         header('Location: '.home_url('404.php'));
+         status_header(404);
+         nocache_headers();
+         include( get_404_template() );
+         exit;
+      }
+   }
+   if (isset ( $wp_query->query_vars ['location_id'])) {
+      $location_id = intval($wp_query->query_vars ['location_id']);
+      if (!eme_check_location_exists($location_id)) {
 //         header('Location: '.home_url('404.php'));
          status_header(404);
          nocache_headers();
@@ -1728,6 +1738,9 @@ function eme_get_event($event_id) {
    //$wpdb->show_errors(true);
    $event = $wpdb->get_row ( $sql, ARRAY_A );
    //$wpdb->print_error();
+   if (!$event) {
+      return eme_new_event();
+   }
 
    if ($event['event_end_date'] == "") {
       $event['event_end_date'] = $event['event_start_date'];
@@ -1736,16 +1749,15 @@ function eme_get_event($event_id) {
       $event['event_end_year'] = $event['event_start_year'];
    }
       
-   if ($event && count($event>0)) {
-      $location = eme_get_location ( $event ['location_id'] );
-      // add all location info to the event
-      foreach ($location as $key => $value) {
-         $event [$key] = $value;
-      }
+   $location = eme_get_location ( $event ['location_id'] );
+   // add all location info to the event
+   foreach ($location as $key => $value) {
+      $event [$key] = $value;
+   }
 
-      $event ['event_attributes'] = @unserialize($event ['event_attributes']);
-      $event ['event_attributes'] = (!is_array($event ['event_attributes'])) ?  array() : $event ['event_attributes'] ;
-   }   
+   $event ['event_attributes'] = @unserialize($event ['event_attributes']);
+   $event ['event_attributes'] = (!is_array($event ['event_attributes'])) ?  array() : $event ['event_attributes'] ;
+
    // don't forget the images (for the older events that didn't use the wp gallery)
    if (empty($event ['event_image_url']))
       $event['event_image_url'] = eme_image_url_for_event($event);

@@ -627,18 +627,22 @@ function eme_get_location($location_id=0) {
    global $wpdb;
 
    if (!$location_id) {
-      $location = eme_new_location();
+      return eme_new_location();
    } else {
       $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
       $sql = "SELECT * FROM $locations_table WHERE location_id ='$location_id'";
       $location = $wpdb->get_row($sql, ARRAY_A);
+      if (!$location)
+         return eme_new_location();
+
       // don't forget the images (for the older locations that didn't use the wp gallery)
       if (empty($location['location_image_url']))
          $location['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
-   }
 
-   if (has_filter('eme_location_filter')) $location=apply_filters('eme_location_filter',$location);
-   return $location;
+      if (has_filter('eme_location_filter')) $location=apply_filters('eme_location_filter',$location);
+
+      return $location;
+   }
 }
 
 function eme_get_town_location_ids($towns) {

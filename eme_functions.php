@@ -205,10 +205,17 @@ function eme_calendar_day_url($day) {
    return $the_link;
 }
 
-function eme_check_exists($event_id) {
+function eme_check_event_exists($event_id) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $sql = "SELECT COUNT(*) from $events_table WHERE event_id='".$event_id."'";
+   return $wpdb->get_var($sql);
+}
+
+function eme_check_location_exists($location_id) {
+   global $wpdb;
+   $locations_table = $wpdb->prefix.LOCATIONS_TBNAME;
+   $sql = "SELECT COUNT(*) from $locations_table WHERE location_id='".$location_id."'";
    return $wpdb->get_var($sql);
 }
 
