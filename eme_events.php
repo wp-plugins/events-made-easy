@@ -111,6 +111,15 @@ function eme_events_page() {
       $list_limit=20;
       update_option('eme_events_admin_limit',$list_limit);
    }
+
+   if (isset($_POST['event_delete_button'])) {
+      $selectedEvents=array($event_ID);
+      $action = "deleteEvents";
+   }
+   if (isset($_POST['event_deleteRecurrence_button'])) {
+      $selectedEvents=array($event_ID);
+      $action = "deleteRecurrence";
+   }
    
    // DELETE action
    if ($action == 'deleteEvents') {
@@ -2104,7 +2113,7 @@ function eme_event_form($event, $title, $element) {
    
    ob_start();
    ?>
-   <form id="eventForm" method="post" enctype="multipart/form-data" action="<?php echo $form_destination; ?>">
+   <form id="eventForm" name="eventForm" method="post" enctype="multipart/form-data" action="<?php echo $form_destination; ?>">
       <div class="wrap">
          <div id="icon-events" class="icon32"><br /></div>
          <h2><?php echo eme_trans_sanitize_html($title); ?></h2>
@@ -2719,9 +2728,19 @@ jQuery(document).ready(function($){
                   </div>
                </div>
                <p class="submit">
-                  <input type="submit" name="events_update" value="<?php _e ( 'Submit Event', 'eme' ); ?> &raquo;" />
+                  <?php if ($is_new_event) { ?>
+                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Create Event', 'eme' ); ?> &raquo;" />
+                  <?php } else { 
+                     $delete_button_text=__ ( 'Are you sure you want to delete this event?', 'eme' );
+                     $deleteRecurrence_button_text=__ ( 'Are you sure you want to delete this recurrence?', 'eme' );
+                  ?>
+                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Edit Event', 'eme' ); ?> &raquo;" />
+                     <input type="submit" id="event_delete_button" name="event_delete_button" value="<?php _e ( 'Delete Event', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $delete_button_text; ?>');" />
+                     <?php if ($event ['recurrence_id']) { ?>
+                     <input type="submit" id="event_deleteRecurrence_button" name="event_deleteRecurrence_button" value="<?php _e ( 'Delete Recurrence', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $deleteRecurrence_button_text; ?>');" />
+                     <?php } ?> 
+                  <?php } ?>
                </p>
-
             </div>
          </div>
       </div>
@@ -2809,6 +2828,14 @@ function eme_admin_general_script() {
 <script type="text/javascript">
    //<![CDATA[
    // TODO: make more general, to support also latitude and longitude (when added)
+function areyousure(message) {
+   if (!confirm(message)) {
+         return false;
+   } else {
+         return true;
+   }
+}
+ 
 $j_eme_event=jQuery.noConflict();
 
 function updateIntervalDescriptor () { 
@@ -3087,8 +3114,7 @@ $j_eme_event(document).ready( function() {
 
    $j_eme_event('#eventForm').bind("submit", validateEventForm);
 
-
-   function areyousuretodelete() {
+   function areyousuretodeny() {
       if ($j_eme_event("select[name=action]").val() == "denyRegistration") {
         if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
            return false;
@@ -3098,8 +3124,9 @@ $j_eme_event(document).ready( function() {
       }
       return true;
    }
-   $j_eme_event('#eme-admin-pendingform').bind("submit", areyousuretodelete);
-   $j_eme_event('#eme-admin-changeregform').bind("submit", areyousuretodelete);
+
+   $j_eme_event('#eme-admin-pendingform').bind("submit", areyousuretodeny);
+   $j_eme_event('#eme-admin-changeregform').bind("submit", areyousuretodeny);
       
 });
 //]]>
