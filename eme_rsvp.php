@@ -1030,7 +1030,10 @@ function eme_registration_seats_page() {
             $result=$booking_res[0];
             $booking_id_done=$booking_res[1];
             eme_update_booking_payed($booking_id_done,$booking_payed);
-            print $result;
+            if (!$booking_id_done)
+               print "<div id='message' class='error'><p>$result</p></div>";
+            else
+               print "<div id='message'>$result</p></div>";
          }
 
          $bookings = isset($_POST ['bookings']) ? $_POST ['bookings'] : array();
