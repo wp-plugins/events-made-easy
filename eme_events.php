@@ -3479,7 +3479,7 @@ function eme_general_css() {
       wp_register_style('eme_stylesheet_extra',$eme_css_url,'eme_stylesheet');
    wp_enqueue_style('eme_stylesheet_extra'); 
 }
-add_action('wp_print_styles','eme_general_css');
+add_action('wp_enqueue_scripts','eme_general_css');
 
 function eme_general_footer() {
    global $eme_need_gmap_js;

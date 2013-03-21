@@ -121,6 +121,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Improvement: in the backend, you can now choose wether or not mails are being sent when approving or changing registrations
 * Bugfix: for recurrent events, the wanted date/time format was not being taken into account when being shown in the admin interface or when using #_RECURRENTDESC
 * Bugfix: #_EVENTDETAILS has never been working (#_NOTES and #_DETAILS did work ok)
+* Bugfix: according to http://codex.wordpress.org/Plugin_API/Action_Reference/wp_print_styles: wp_print_styles should not be used to enqueue styles or scripts on the front page. Use wp_enqueue_scripts instead.
 
 = 1.0.18 =
 * Improvement: the booking list format (used with #_BOOKINGS) now also supports #ESC_* for placeholders, so you can safely use shortcodes (like conditional tags) inside it
