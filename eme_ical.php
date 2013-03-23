@@ -47,10 +47,11 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    return $res;
 }
 
-function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="") {
+#function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="") {
+function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="", $scope="future", $author='',$contact_person='') {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
-      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'ICAL', 'category'=> '', 'location_id' =>'' );
+      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'category' => '', 'author' => '', 'contact_person' => '', 'location_id' => '' );
 
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
@@ -67,6 +68,12 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", 
       $url = add_query_arg( array( 'location_id' => $location_id ), $url );
    if (!empty($category))
       $url = add_query_arg( array( 'category' => $category ), $url );
+   if (!empty($scope))
+      $url = add_query_arg( array( 'scope' => $scope ), $url );
+   if (!empty($author))
+      $url = add_query_arg( array( 'scope' => $author ), $url );
+   if (!empty($contact_person))
+      $url = add_query_arg( array( 'scope' => $contact_person ), $url );
 
    $link = "<a href='$url'>$text</a>";
 
@@ -119,7 +126,10 @@ function eme_ical() {
    } elseif (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public') {
       $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
       $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
-      $events = eme_get_events ( 0,"future","ASC",0,$location_id,$category);
+      $scope = isset( $_GET['scope'] ) ? urldecode($_GET['scope']) : '';
+      $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
+      $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
+      $events = eme_get_events ( 0,$scope,"ASC",0,$location_id,$category, $author, $contact_person);
       foreach ( $events as $event ) {
          echo eme_ical_single_event($event,$title_format,$description_format);
       }
