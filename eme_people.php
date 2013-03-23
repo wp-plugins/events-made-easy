@@ -202,6 +202,14 @@ function eme_printable_booking_report($event_id) {
          <meta http-equiv="Content-type" content="text/html; charset=utf-8">
          <title>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></title>
           <link rel="stylesheet" href="<?php echo $stylesheet; ?>" type="text/css" media="screen" />
+          <?php
+            $file_name= get_stylesheet_directory()."/eme.css";
+            if (file_exists($file_name))
+               echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme.css' type='text/css' media='screen' />\n";
+            $file_name= get_stylesheet_directory()."/eme_print.css";
+            if (file_exists($file_name))
+               echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme_print.css' type='text/css' media='print' />\n";
+          ?>
       </head>
       <body id="printable">
          <div id="container">

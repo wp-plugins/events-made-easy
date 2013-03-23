@@ -113,6 +113,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 == Changelog ==
 
 = 1.0.19 =
+* Feature: added the possibility to use a print stylesheet called eme_print.css in your theme style dir
 * Feature: shortcode events_ical_link now has 3 extra options: scope, author and contact_person
 * Feature: the creation and modif date can now be shown for the bookings list (when using #_BOOKINGS) via 2 new placeholders: #_BOOKINGCREATIONDATE and #_BOOKINGMODIFDATE
 * Improvement: #ESC_ATT and #URL_ATT are now also recognized when looking for attributes definitions
