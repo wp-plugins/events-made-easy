@@ -119,7 +119,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 28);
+define('EME_DB_VERSION', 29);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -514,7 +514,7 @@ function eme_create_events_table($charset,$collate) {
          use_google bool DEFAULT 0,
          use_2co bool DEFAULT 0,
          use_webmoney bool DEFAULT 0,
-         price DECIMAL(7,2) DEFAULT 0,
+         price text DEFAULT NULL,
          currency text DEFAULT NULL,
          rsvp_number_days tinyint unsigned DEFAULT 0,
          event_seats mediumint(9) DEFAULT 0,
@@ -574,7 +574,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'use_2co', "alter table $table_name add use_2co bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_webmoney', "alter table $table_name add use_webmoney bool DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint unsigned DEFAULT 0;");
-      maybe_add_column($table_name, 'price', "alter table $table_name add price DECIMAL(7,2) DEFAULT 0;");
+      maybe_add_column($table_name, 'price', "alter table $table_name add price text DEFAULT NULL;");
       maybe_add_column($table_name, 'currency', "alter table $table_name add currency text DEFAULT NULL;");
       maybe_add_column($table_name, 'event_seats', "alter table $table_name add event_seats mediumint(9) DEFAULT 0;");
       maybe_add_column($table_name, 'location_id', "alter table $table_name add location_id mediumint(9) DEFAULT 0;");
@@ -620,8 +620,8 @@ function eme_create_events_table($charset,$collate) {
          $wpdb->query("ALTER TABLE $table_name DROP COLUMN event_author;");
          $wpdb->query("ALTER TABLE $table_name CHANGE event_creator_id event_author mediumint(9) DEFAULT 0;");
       }
-      if ($db_version<18) {
-         $wpdb->query("ALTER TABLE $table_name MODIFY price DECIMAL(7,2) DEFAULT 0;");
+      if ($db_version<29) {
+         $wpdb->query("ALTER TABLE $table_name MODIFY price text default NULL;");
       }
    }
 }
@@ -726,6 +726,7 @@ function eme_create_bookings_table($charset,$collate) {
          event_id mediumint(9) NOT NULL,
          person_id mediumint(9) NOT NULL, 
          booking_seats mediumint(9) NOT NULL,
+         booking_seats_mp varchar(250),
          booking_approved bool DEFAULT 0,
          booking_comment text DEFAULT NULL,
          creation_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
@@ -746,6 +747,7 @@ function eme_create_bookings_table($charset,$collate) {
       maybe_add_column($table_name, 'modif_date', "alter table $table_name add modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'modif_date_gmt', "alter table $table_name add modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'transfer_nbr_be97', "alter table $table_name add transfer_nbr_be97 varchar(20);"); 
+      maybe_add_column($table_name, 'booking_seats_mp', "alter table $table_name add booking_seats_mp varchar(250);"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_id mediumint(9) NOT NULL;");
          $wpdb->query("ALTER TABLE $table_name MODIFY person_id mediumint(9) NOT NULL;");
@@ -1202,7 +1204,7 @@ function eme_replace_placeholders($format, $event, $target="html") {
          $now = date("Y-m-d");
          $replacement = eme_daydifference($now,$event['event_end_date']);
 
-      } elseif (preg_match('/#_EVENTPRICE|#_PRICE$/', $result)) {
+      } elseif (preg_match('/#_EVENTPRICE$|#_PRICE$/', $result)) {
          $field = "price";
          if ($event[$field])
             $replacement = $event[$field];
@@ -1214,6 +1216,21 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
+      } elseif (preg_match('/#_EVENTPRICE(\d+)$|#_PRICE(\d+)$/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         if ($event["price"] && $field_id) {
+            $prices = preg_split("/\|\|/",$event["price"]);
+            if (is_array($prices)) {
+               $replacement = $prices[$field_id-1];
+               if ($target == "html") {
+                  $replacement = apply_filters('eme_general', $replacement); 
+               } elseif ($target == "rss")  {
+                  $replacement = apply_filters('eme_general_rss', $replacement);
+               } else {
+                  $replacement = apply_filters('eme_text', $replacement);
+               }
+            }
+         }
       } elseif (preg_match('/#_CURRENCY/', $result)) {
          $field = "currency";
          // currency is only important if the price is not empty as well

@@ -271,9 +271,10 @@ function eme_get_formfield_html($field_id) {
    return $html;
 }
 
-function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_required, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment) {
+function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment) {
    $required_fields_count = 0;
 
+   $format = $event['event_registration_form_format'];
    if (empty($format)) {
       $format = get_option('eme_registration_form_format');
    }
@@ -317,8 +318,12 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
          $required_fields_count++;
       } elseif (preg_match('/#_PHONE$/', $result)) {
          $replacement = "<input type='text' name='bookerPhone' value='$bookerPhone' />";
-      } elseif (preg_match('/#_SEATS|#_SPACES$/', $result)) {
+      } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
          $replacement = eme_ui_select($bookedSeats,"bookedSeats",$booked_places_options);
+         $required_fields_count++;
+      } elseif (preg_match('/#_SEATS(\d+)$|#_SPACES(\d+)$/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT$/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
@@ -348,8 +353,16 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
    }
 
    # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
+   # for multiprice: 3 + number of possible prices
    # if these are not present: we don't replace anything and the form is worthless
-   if ($required_fields_count == 4) {
+   if (eme_is_event_multiprice($event['event_id'])) {
+      $matches=preg_split('/\|\|/', $event['price']);
+      $count=count($matches);
+      if ($required_fields_count == 3+$count)
+         return $format;
+      else
+         return __('Not all required fields are present in the form', 'eme');
+   } elseif ($required_fields_count == 4) {
       return $format;
    } else {
       return __('Not all required fields are present in the form', 'eme');

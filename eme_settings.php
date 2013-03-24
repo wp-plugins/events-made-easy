@@ -131,7 +131,7 @@ function eme_add_options($reset=0) {
    'eme_webmoney_secret' => '',
    'eme_event_initial_state' => STATUS_DRAFT,
    'eme_default_currency' => 'EUR',
-   'eme_default_price' => 0,
+   'eme_default_price' => '0',
    'eme_rsvp_number_days' => 0,
    );
    

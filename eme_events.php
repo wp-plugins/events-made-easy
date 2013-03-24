@@ -238,7 +238,7 @@ function eme_events_page() {
       $event ['use_2co'] = (isset ($_POST ['use_2co']) && is_numeric($_POST ['use_2co'])) ? $_POST ['use_2co']:0;
       $event ['use_webmoney'] = (isset ($_POST ['use_webmoney']) && is_numeric($_POST ['use_webmoney'])) ? $_POST ['use_webmoney']:0;
       $event ['use_google'] = (isset ($_POST ['use_google']) && is_numeric($_POST ['use_google'])) ? $_POST ['use_google']:0;
-      $event ['price'] = (isset ($_POST ['price']) && is_numeric($_POST ['price'])) ? $_POST ['price']:0;
+      $event ['price'] = isset ($_POST ['price']) ? $_POST ['price']:'0';
       $event ['currency'] = isset ($_POST ['currency']) ? $_POST ['currency']:"EUR";
       $event ['event_image_url'] = isset ($_POST ['event_image_url']) ? $_POST ['event_image_url']:"";
 
@@ -2309,7 +2309,7 @@ function eme_event_form($event, $title, $element) {
                               <?php _e ( ' days before the event starts.','eme' ); ?>
                            <br />
                               <?php _e ( 'Price: ','eme' ); ?>
-                              <input id="price" type="text" name="price" maxlength='9' size='3' value="<?php echo $event ['price']; ?>" />
+                              <input id="price" type="text" name="price" maxlength='25' size='3' value="<?php echo $event ['price']; ?>" />
                               <select id="currency" name="currency">
                               <?php
                                  foreach ( $currency_array as $key=>$value) {

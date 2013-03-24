@@ -123,6 +123,7 @@ function fputcsv2 ($fh, $fields, $delimiter = ',', $enclosure = '"', $mysql_null
 }
 function eme_csv_booking_report($event_id) {
    $event = eme_get_event($event_id);
+   $is_multiprice = eme_is_event_multiprice($event_id);
    $current_userid=get_current_user_id();
    if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
         (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)))) {
@@ -139,7 +140,10 @@ function eme_csv_booking_report($event_id) {
    $line[]=__('Name', 'eme');
    $line[]=__('E-mail', 'eme');
    $line[]=__('Phone number', 'eme');
-   $line[]=__('Seats', 'eme');
+   if ($is_multiprice)
+      $line[]=__('Seats (Multiprice)', 'eme');
+   else
+      $line[]=__('Seats', 'eme');
    $line[]=__('Paid', 'eme');
    $line[]=__('Comment', 'eme');
    foreach($answer_columns as $col) {
@@ -151,12 +155,15 @@ function eme_csv_booking_report($event_id) {
       $line=array();
       $pending_string="";
       if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
-         $booking['booking_seats'].=" ".__('(pending)','eme');
+         $pending_string=__('(pending)','eme');
       }
       $line[]=$person['person_name'];
       $line[]=$person['person_email'];
       $line[]=$person['person_phone'];
-      $line[]=$booking['booking_seats'];
+      if ($is_multiprice)
+         $line[]=$booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
+      else
+         $line[]=$booking['booking_seats']." ".$pending_string;
       $line[]=$booking['booking_payed']? __('Yes'): __('No');
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
@@ -193,6 +200,8 @@ function eme_printable_booking_report($event_id) {
    $available_seats = eme_get_available_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
+   $is_multiprice = eme_is_event_multiprice($event_id);
+
    $stylesheet = EME_PLUGIN_URL."events_manager.css";
    ?>
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -224,7 +233,7 @@ function eme_printable_booking_report($event_id) {
                <th scope='col'><?php _e('Name', 'eme')?></th>
                <th scope='col'><?php _e('E-mail', 'eme')?></th>
                <th scope='col'><?php _e('Phone number', 'eme')?></th> 
-               <th scope='col'><?php _e('Seats', 'eme')?></th>
+               <th scope='col'><?php if ($is_multiprice) _e('Seats (Multiprice)', 'eme'); else _e('Seats', 'eme'); ?></th>
                <th scope='col'><?php _e('Paid', 'eme')?></th>
                <th scope='col'><?php _e('Comment', 'eme')?></th> 
             <?php
@@ -245,7 +254,13 @@ function eme_printable_booking_report($event_id) {
                <td><?php echo $person['person_name']?></td> 
                <td><?php echo $person['person_email']?></td>
                <td><?php echo $person['person_phone']?></td>
-               <td class='seats-number'><?php echo $booking['booking_seats']." ".$pending_string?></td>
+               <td class='seats-number'><?php 
+               if ($is_multiprice)
+                   echo $booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
+               else
+                   echo $booking['booking_seats']." ".$pending_string;
+               ?>
+               </td>
                <td><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
                <td><?=$booking['booking_comment'] ?></td> 
                <?php

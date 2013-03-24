@@ -113,6 +113,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 == Changelog ==
 
 = 1.0.19 =
+* Feature: multiprice events are now possible (see wordpress site for explanation: price and booked seats need to be seperated by "||"). Also, for multiprice events, the min number of seats to book is always 0
 * Feature: you can now send mails to all attendees for an event in the admin backend. This functionality has it's own access right settings as well.
 * Feature: added the possibility to use a print stylesheet called eme_print.css in your theme style dir
 * Feature: shortcode events_ical_link now has 3 extra options: scope, author and contact_person
