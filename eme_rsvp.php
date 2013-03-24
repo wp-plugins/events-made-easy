@@ -1431,8 +1431,10 @@ function eme_send_mails_page() {
 			   foreach ( $attendees as $attendee ) {
 				   $message = eme_replace_attendees_placeholders($message, $attendee, "text");
 				   $message = eme_translate($message);
+				   $message = eme_strip_tags($message);
 				   $subject = eme_replace_attendees_placeholders($subject, $attendee, "text");
 				   $subject = eme_translate($subject);
+				   $subject = eme_strip_tags($subject);
 				   eme_send_mail($subject,$message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
 			   }
 			   print "<div id='message' class='updated'><p>".__('The mail has been sent.','eme')."</p></div>";
@@ -1492,7 +1494,7 @@ function eme_send_mail_form($event_id=0) {
 	   <textarea name="message" value="" rows=10></textarea> 
 	   </div>
 	   <div id="titlediv">
-	   <?php _e('You can use any placholders mentioned here:','eme');
+	   <?php _e('You can use any placeholders mentioned here:','eme');
 	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('Event placeholders','eme')."</a>";
 	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a>";
 	   ?>
