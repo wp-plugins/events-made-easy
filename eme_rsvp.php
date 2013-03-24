@@ -782,13 +782,22 @@ function eme_get_bookings_for($event_ids,$pending_approved=0) {
    return $wpdb->get_results($sql, ARRAY_A);
 }
 
-function eme_get_attendees_list_for($event_id) {
+function eme_get_attendees_for($event_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT DISTINCT person_id FROM $bookings_table WHERE event_id = %s",$event_id);
    $person_ids = $wpdb->get_col($sql);
    if ($person_ids) {
       $attendees = eme_get_persons($person_ids);
+   } else {
+      $attendees= array();
+   }
+   return $attendees;
+}
+
+function eme_get_attendees_list_for($event_id) {
+   $attendees = eme_get_attendees_for($event_id);
+   if ($attendees) {
       $res="<ul class='eme_bookings_list_ul'>";
       foreach ($attendees as $attendee) {
          $res.=eme_replace_attendees_placeholders(get_option('eme_attendees_list_format'),$attendee,$event_id);
@@ -895,8 +904,8 @@ function eme_replace_attendees_placeholders($format, $attendee, $event_id, $targ
    foreach($placeholders[0] as $result) {
       $replacement='';
       $found = 1;
-      if (preg_match('/#_(NAME|PHONE|ID|EMAIL)$/', $result)) {
-         $field = preg_replace("/#_/","",$result);
+      if (preg_match('/#_(ATTEND)?(NAME|PHONE|ID|EMAIL)$/', $result)) {
+         $field = preg_replace("/#_ATTEND|#_/","",$result);
          $field = "person_".strtolower($field);
          $replacement = $attendee[$field];
          $replacement = eme_sanitize_html($replacement);
@@ -1389,7 +1398,115 @@ function eme_registration_approval_form_table($event_id=0) {
    </div>
    </form>
 </div>
+
 <?php
+}
+
+function eme_send_mails_page() {
+   global $wpdb;
+
+   $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
+   $action = isset($_POST ['action']) ? $_POST ['action'] : '';
+   $message = isset($_POST ['message']) ? $_POST ['message'] : '';
+   $subject = isset($_POST ['subject']) ? $_POST ['subject'] : '';
+
+   if ($event_id>0 && $action == 'send_mail') {
+	   if (empty($subject) || empty($message)) {
+		   print "<div id='message' class='error'><p>".__('Please enter both subject and message for the mail to be sent.','eme')."</p></div>";
+	   } else {
+		   $event = eme_get_event($event_id);
+		   $current_userid=get_current_user_id();
+		   if (current_user_can( get_option('eme_cap_send_other_mails')) ||
+				   (current_user_can( get_option('eme_cap_send_mails')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {  
+
+			   $event_name = $event['event_name'];
+			   $contact = eme_get_contact ($event);
+			   $contact_email = $contact->user_email;
+			   $contact_name = $contact->display_name;
+
+			   $message = eme_replace_placeholders($message, $event, "text");
+			   $subject = eme_replace_placeholders($subject, $event, "text");
+
+			   $attendees = eme_get_attendees_for($event_id);
+			   foreach ( $attendees as $attendee ) {
+				   $message = eme_replace_attendees_placeholders($message, $attendee, "text");
+				   $message = eme_translate($message);
+				   $subject = eme_replace_attendees_placeholders($subject, $attendee, "text");
+				   $subject = eme_translate($subject);
+				   eme_send_mail($subject,$message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
+			   }
+			   print "<div id='message' class='updated'><p>".__('The mail has been sent.','eme')."</p></div>";
+		   } else {
+			   print "<div id='message' class='error'><p>".__('You do not have the permission to send mails for this event.','eme')."</p></div>";
+		   }
+	   }
+   }
+
+   // now show the form
+   eme_send_mail_form($event_id);
+}
+
+function eme_send_mail_form($event_id=0) {
+?>
+<div class="wrap">
+<div id="icon-events" class="icon32"><br />
+</div>
+<h2><?php _e ('Send Mails to all attendees for a event','eme'); ?></h2>
+<?php admin_show_warnings();?>
+   <div id='message' class='updated'><p>
+<?php
+      _e('Warning: using this functionality to send mails to attendees can result in a php timeout, so not everybody will receive the mail then. This depends on the number of attendees, the load on the server, ... . If this happens, use the CSV export link to get the list of all attendees and use mass mailing tools (like OpenOffice) for your mailing.','eme');
+?>
+   </p></div>
+   <form id='send-mail' name='send-mail' action="" method="post">
+   <input type='hidden' name='page' value='eme-send-mails' />
+   <input type='hidden' name='action' value='send_mail' />
+   <select name="event_id" onchange="this.form.submit()">
+   <?php
+   $all_events=eme_get_events(0,"future");
+   $events_with_pending_bookings=array();
+   $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
+   $current_userid=get_current_user_id();
+   echo "<option value='0' >".__('Select the event','eme')."</option>  ";
+   foreach ( $all_events as $event ) {
+         $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")";
+	 if (current_user_can( get_option('eme_cap_send_other_mails')) ||
+			 (current_user_can( get_option('eme_cap_send_mails')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {  
+		 if ($event['event_id'] == $event_id) {
+			 echo "<option selected='selected' value='".$event['event_id']."' >".$option_text."</option>  ";
+		 } else {
+			 echo "<option value='".$event['event_id']."' >".$option_text."</option>  ";
+		 }
+	 }
+   }
+   ?>
+   </select>
+   <p>
+   <?php if ($event_id>0) {?>
+	   <div id="titlediv" class="form-field form-required">
+		   <label><?php _e('Subject','eme'); ?></label><br>
+		   <input type="text" name="subject" value="" />
+	   </div>
+	   <div id="titlediv" class="form-field form-required">
+	   <label><?php _e('Message','eme'); ?></label><br>
+	   <textarea name="message" value="" rows=10></textarea> 
+	   </div>
+	   <div id="titlediv">
+	   <?php _e('You can use any placholders mentioned here:','eme');
+	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('Event placeholders','eme')."</a>";
+	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a>";
+	   ?>
+	   </div>
+	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
+	   </form>
+
+   <?php
+	   $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
+	   $available_seats = eme_get_available_seats($event['event_id']);
+	   $total_seats = $event ['event_seats'];
+	   if ($total_seats!=$available_seats)
+		   echo "<br><br> <a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>";
+   }
 }
 
 function eme_webmoney_form($event,$booking_id) {
