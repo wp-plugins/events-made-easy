@@ -119,7 +119,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 29);
+define('EME_DB_VERSION', 30);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -729,6 +729,7 @@ function eme_create_bookings_table($charset,$collate) {
          booking_seats_mp varchar(250),
          booking_approved bool DEFAULT 0,
          booking_comment text DEFAULT NULL,
+         booking_price text DEFAULT NULL,
          creation_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
@@ -748,6 +749,7 @@ function eme_create_bookings_table($charset,$collate) {
       maybe_add_column($table_name, 'modif_date_gmt', "alter table $table_name add modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'transfer_nbr_be97', "alter table $table_name add transfer_nbr_be97 varchar(20);"); 
       maybe_add_column($table_name, 'booking_seats_mp', "alter table $table_name add booking_seats_mp varchar(250);"); 
+      maybe_add_column($table_name, 'booking_price', "alter table $table_name add booking_price text DEFAULT NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_id mediumint(9) NOT NULL;");
          $wpdb->query("ALTER TABLE $table_name MODIFY person_id mediumint(9) NOT NULL;");

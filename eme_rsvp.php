@@ -68,7 +68,7 @@ function eme_add_booking_form($event_id) {
    }
 
    // you can book the available number of seats, with a max of x per time
-   if (eme_is_event_multiprice($event_id))
+   if (eme_is_multiprice($event['price']))
       $min_allowed = 0;
    else
       $min_allowed = intval(get_option('eme_rsvp_addbooking_min_spaces'));
@@ -392,7 +392,7 @@ function eme_book_seats($event, $send_mail=1) {
                eme_update_phone($booker,$bookerPhone);
             }
 
-            $booking_id=eme_record_booking($event_id, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment);
+            $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment);
             eme_record_answers($booking_id);
             $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
             $result = eme_replace_placeholders($format, $event);
@@ -464,23 +464,22 @@ function eme_get_event_ids_by_booker_id($person_id) {
    return $result;
 }
 
-function eme_record_booking($event_id, $person_id, $seats, $seats_mp, $comment = "") {
+function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment = "") {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $event_id = intval($event_id);
    $person_id = intval($person_id);
    $seats = intval($seats);
    $comment = eme_sanitize_request($comment);
-   $booking['event_id']=$event_id;
+   $booking['event_id']=$event['event_id'];
    $booking['person_id']=$person_id;
    $booking['booking_seats']=$seats;
    $booking['booking_seats_mp']=join("||",$seats_mp);
+   $booking['booking_price']=$event['price'];
    $booking['booking_comment']=$comment;
    $booking['creation_date']=current_time('mysql', false);
    $booking['modif_date']=current_time('mysql', false);
    $booking['creation_date_gmt']=current_time('mysql', true);
    $booking['modif_date_gmt']=current_time('mysql', true);
-   $event = eme_get_event($event_id);
    // only if we're not adding a booking in the admin backend, check for approval needed
    if (!is_admin() && $event['registration_requires_approval']) {
       $booking['booking_approved']=0;
@@ -1002,7 +1001,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $contact_pending_body = eme_replace_booking_placeholders($contact_pending_body, $booking, "text");
 
    // total price to pay
-   $total_price=eme_get_booking_price($event,$booking);
+   $total_price=eme_get_total_booking_price($event,$booking);
    
    // rsvp specific placeholders
    #$placeholders = array('#_RESPNAME' => $person['person_name'], '#_RESPEMAIL' => $person['person_email'], '#_RESPPHONE' => $person['person_phone'], '#_SPACES' => $booking['booking_seats'],'#_COMMENT' => $booking['booking_comment'], '#_TRANSFER_NBR_BE97' => $booking['transfer_nbr_be97'], '#_TOTALPRICE' => $total_price, '#_FIELDS' => $field_replace );
@@ -1195,6 +1194,8 @@ function eme_registration_seats_form_table($event_id=0) {
          <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
          <th><?php _e ('Seats','eme'); ?></th>
+         <th><?php _e ('Event price','eme'); ?></th>
+         <th><?php _e ('Total price','eme'); ?></th>
          <th><?php _e ('Unique nbr','eme'); ?></th>
          <th><?php _e ('Paid','eme'); ?></th>
       </tr>
@@ -1255,6 +1256,12 @@ function eme_registration_seats_form_table($event_id=0) {
             <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats'];?>" />
          </td>
          <?php } ?>
+         <td>
+            <?php echo eme_get_booking_price($event,$event_booking); ?>
+         </td>
+         <td>
+            <?php echo eme_get_total_booking_price($event,$event_booking); ?>
+         </td>
          <td>
             <?php echo eme_sanitize_html($event_booking['transfer_nbr_be97']); ?>
          </td>
@@ -1368,6 +1375,8 @@ function eme_registration_approval_form_table($event_id=0) {
          <th><?php _e ( 'Date and time', 'eme' ); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
          <th><?php _e ('Seats','eme'); ?></th>
+         <th><?php _e ('Event price','eme'); ?></th>
+         <th><?php _e ('Total price','eme'); ?></th>
          <th><?php _e ('Unique nbr','eme'); ?></th>
          <th><?php _e ('Paid','eme'); ?></th>
       </tr>
@@ -1422,6 +1431,12 @@ function eme_registration_approval_form_table($event_id=0) {
             <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats'];?>" />
          </td>
          <?php } ?>
+         <td>
+            <?php echo eme_get_booking_price($event,$event_booking); ?>
+         </td>
+         <td>
+            <?php echo eme_get_total_booking_price($event,$event_booking); ?>
+         </td>
          <td>
             <?php echo eme_sanitize_html($event_booking['transfer_nbr_be97']); ?>
          </td>
@@ -1562,7 +1577,7 @@ function eme_webmoney_form($event,$booking_id) {
    $booking = eme_get_booking($booking_id);
    $events_page_link = eme_get_events_page(true, false);
    $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
-   $price=eme_get_booking_price($event,$booking);
+   $price=eme_get_total_booking_price($event,$booking);
 
    require_once('webmoney/webmoney.inc.php');
    $wm_request = new WM_Request();
@@ -1595,7 +1610,7 @@ function eme_2co_form($event,$booking_id) {
    $business=get_option('eme_2co_business');
    $url=CO_URL;
    $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
-   $price=eme_get_booking_price($event,$booking);
+   $price=eme_get_total_booking_price($event,$booking);
    $quantity=1;
    $cur=$event['currency'];
 
@@ -1619,7 +1634,7 @@ function eme_2co_form($event,$booking_id) {
 
 function eme_google_form($event,$booking_id) {
    $booking = eme_get_booking($booking_id);
-   $price=eme_get_booking_price($event,$booking);
+   $price=eme_get_total_booking_price($event,$booking);
    $quantity=1;
    $events_page_link = eme_get_events_page(true, false);
 
@@ -1641,7 +1656,7 @@ function eme_google_form($event,$booking_id) {
 
 function eme_paypal_form($event,$booking_id) {
    $booking = eme_get_booking($booking_id);
-   $price=eme_get_booking_price($event,$booking);
+   $price=eme_get_total_booking_price($event,$booking);
    $quantity=1;
    $events_page_link = eme_get_events_page(true, false);
    if (stristr ( $events_page_link, "?" ))
@@ -1957,9 +1972,19 @@ function eme_event_needs_approval($event_id) {
 }
 
 function eme_get_booking_price($event,$booking) {
+   if (!empty($booking['booking_price']))
+      $basic_price=$booking['booking_price'];
+   else
+      $basic_price=$event['price'];
+   return $basic_price;
+}
+
+function eme_get_total_booking_price($event,$booking) {
    $price=0;
-   if (eme_is_event_multiprice($event['event_id'])) {
-      $prices=preg_split("/\|\|/",$event['price']);
+   $basic_price= eme_get_booking_price($event,$booking);
+
+   if (eme_is_multiprice($basic_price)) {
+      $prices=preg_split("/\|\|/",$basic_price);
       $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
       foreach ($prices as $key=>$val) {
          $price += $val*$seats[$key];
@@ -1975,10 +2000,16 @@ function eme_is_event_multiprice($event_id) {
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $sql = $wpdb->prepare("SELECT price from $events_table where event_id=%d",$event_id);
    $price = $wpdb->get_var( $sql );
+   return eme_is_multiprice($price);
+}
+
+function eme_is_multiprice($price) {
+   global $wpdb;
    if (preg_match("/\|\|/",$price))
       return 1;
    else
       return 0;
 }
+
 
 ?>
