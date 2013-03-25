@@ -239,12 +239,12 @@ function eme_events_page() {
       $event['use_webmoney'] = (isset ($_POST['use_webmoney']) && is_numeric($_POST['use_webmoney'])) ? $_POST['use_webmoney']:0;
       $event['use_google'] = (isset ($_POST['use_google']) && is_numeric($_POST['use_google'])) ? $_POST['use_google']:0;
       $event['price'] = isset ($_POST['price']) ? $_POST['price']:0;
-      if (preg_match("/\|\|/",$event['price']) {
+      if (preg_match("/\|\|/",$event['price'])) {
          $multiprice=preg_split("/\|\|/",$event['price']);
          foreach ($multiprice as $key=>$value) {
             if (!is_numeric($value)) $multiprice[$key]=0;
          }
-         $event['price'] = join("/\|\|/",$multiprice);
+         $event['price'] = join("||",$multiprice);
       } else {
          if (!is_numeric($event['price'])) $event['price'] = 0;
       }
@@ -2319,7 +2319,9 @@ function eme_event_form($event, $title, $element) {
                               <?php _e ( ' days before the event starts.','eme' ); ?>
                            <br />
                               <?php _e ( 'Price: ','eme' ); ?>
-                              <input id="price" type="text" name="price" maxlength='25' size='3' value="<?php echo $event['price']; ?>" />
+                              <input id="price" type="text" name="price" maxlength='25' title="<?php _e('For multiple prices, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" />
+                           <br />
+                              <?php _e ( 'Currency: ','eme' ); ?>
                               <select id="currency" name="currency">
                               <?php
                                  foreach ( $currency_array as $key=>$value) {
