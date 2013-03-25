@@ -29,14 +29,14 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    //$dtend=$dtenddate."T".$dtendhour."Z";
    // we'll use localtime, so no "Z"
    $dtend=$dtenddate."T".$dtendhour;
+   $tzstring = get_option('timezone_string');
 
    $res = "";
    $res .= "BEGIN:VEVENT\r\n";
-   //echo "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z\r\n";
-   // we'll use localtime, so no "Z"
-   $res .= "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "\r\n";
-   $res .= "DTSTART:$dtstart\r\n";
-   $res .= "DTEND:$dtend\r\n";
+   //DTSTAMP must be in UTC format, so adding "Z" as well
+   $res .= "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z\r\n";
+   $res .= "DTSTART,$tzstring:$dtstart\r\n";
+   $res .= "DTEND,$tzstring:$dtend\r\n";
    $res .= "UID:$dtstart-$dtend-".$event['event_id']."@".$_SERVER['SERVER_NAME']."\r\n";
    $res .= "SUMMARY:$title\r\n";
    $res .= "DESCRIPTION:$description\r\n";
