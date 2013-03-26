@@ -117,7 +117,8 @@ function eme_events_page() {
       $action = "deleteEvents";
    }
    if (isset($_POST['event_deleteRecurrence_button'])) {
-      $selectedEvents=array($event_ID);
+      $recurrence=eme_get_recurrence($recurrence_ID);
+      $selectedEvents=array($recurrence['event_id']);
       $action = "deleteRecurrence";
    }
    
@@ -278,6 +279,7 @@ function eme_events_page() {
       $event['event_registration_pending_email_body'] = isset($_POST['event_registration_pending_email_body']) ? stripslashes ( $_POST['event_registration_pending_email_body'] ) : '';
       $event['event_registration_form_format'] = isset($_POST['event_registration_form_format']) ? stripslashes ( $_POST['event_registration_form_format'] ) : '';
       $event['event_url'] = isset($_POST['event_url']) ? eme_strip_tags ( $_POST['event_url'] ) : '';
+      $event['event_image_url'] = isset($_POST['event_image_url']) ? eme_strip_tags ( $_POST['event_image_url'] ) : '';
       $event['event_slug'] = isset($_POST['event_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST['event_slug'] )) : eme_permalink_convert($event['event_name']);
       if (isset ($_POST['event_category_ids'])) {
          // the category id's need to begin and end with a comma
@@ -2050,14 +2052,13 @@ function eme_event_form($event, $title, $element) {
    }
 
    $show_recurrent_form = 0;
-   // change prefix according to event/recurrence
    if (isset($_GET['action']) && $_GET['action'] == "edit_recurrence") {
-      $pref = "recurrence_";
+      $pref = "recurrence";
       $form_destination = "admin.php?page=events-manager&amp;action=update_recurrence&amp;recurrence_id=" . $element;
       $saved_bydays = explode ( ",", $event['recurrence_byday'] );
       $show_recurrent_form = 1;
    } else {
-      $pref = "event_";
+      $pref = "event";
       if ($is_new_event)
          $form_destination = "admin.php?page=eme-new_event&amp;action=insert_event";
       else
@@ -2101,9 +2102,6 @@ function eme_event_form($event, $title, $element) {
    $localised_rec_start_date = eme_datepicker_localised_date($event['recurrence_start_date']);
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
    $localised_rec_end_date = eme_datepicker_localised_date($event['recurrence_end_date']);
-   //if($event[$pref.'rsvp'])
-    //   echo (eme_bookings_table($event[$pref.'id']));
-   
 
    $freq_options = array ("daily" => __ ( 'Daily', 'eme' ), "weekly" => __ ( 'Weekly', 'eme' ), "monthly" => __ ( 'Monthly', 'eme' ) );
    $days_names = array (1 => __ ( 'Mon' ), 2 => __ ( 'Tue' ), 3 => __ ( 'Wed' ), 4 => __ ( 'Thu' ), 5 => __ ( 'Fri' ), 6 => __ ( 'Sat' ), 7 => __ ( 'Sun' ) );
@@ -2697,7 +2695,11 @@ function eme_event_form($event, $title, $element) {
                         <br />
 
                         <div class="uploader">
+                           <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) { ?>
+                           <input type="hidden" name="event_image_url" id="event_image_url" value="<?php echo $event['event_image_url']; ?>" />
+                           <?php } else { ?>
                            <input type="hidden" name="event_image_url" id="event_image_url" />
+                           <?php } ?>
                            <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
                            <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
                         </div>
@@ -2758,7 +2760,11 @@ jQuery(document).ready(function($){
                      $delete_button_text=__ ( 'Are you sure you want to delete this event?', 'eme' );
                      $deleteRecurrence_button_text=__ ( 'Are you sure you want to delete this recurrence?', 'eme' );
                   ?>
+                     <?php if ($pref == "recurrence") { ?>
+                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Edit Recurrence', 'eme' ); ?> &raquo;" />
+                     <?php } else { ?>
                      <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Edit Event', 'eme' ); ?> &raquo;" />
+                     <?php } ?>
                      <input type="submit" id="event_delete_button" name="event_delete_button" value="<?php _e ( 'Delete Event', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $delete_button_text; ?>');" />
                      <?php if ($event['recurrence_id']) { ?>
                      <input type="submit" id="event_deleteRecurrence_button" name="event_deleteRecurrence_button" value="<?php _e ( 'Delete Recurrence', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $deleteRecurrence_button_text; ?>');" />
