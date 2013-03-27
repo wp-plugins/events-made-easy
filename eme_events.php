@@ -2829,7 +2829,6 @@ function eme_admin_general_script() {
    eme_admin_general_css();
    ?>
 <script src="<?php echo EME_PLUGIN_URL; ?>js/eme.js" type="text/javascript"></script>
-<script src="<?php echo EME_PLUGIN_URL; ?>js/jquery-ui-datepicker/ui.datepicker.js" type="text/javascript"></script>
 <script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.js" type="text/javascript"></script>
 <?php
    
@@ -2841,9 +2840,7 @@ function eme_admin_general_script() {
    if (preg_match ( "/en_US|sk|zh|us|uk/i", $locale_code ))
       $show24Hours = 'false';
    
-   $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
    $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
-   if (file_exists($locale_file))
       ?>
 <script src="<?php echo $locale_file_url ?>" type="text/javascript"></script>
 <style type='text/css' media='all'>
@@ -3630,6 +3627,9 @@ function eme_handlepostbox(){
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
+   }
+   if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
+      wp_enqueue_script('jquery-ui-datepicker');
    }
 }
 add_action ( 'admin_init', 'eme_handlepostbox' );
