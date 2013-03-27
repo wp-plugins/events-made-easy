@@ -2838,18 +2838,13 @@ function eme_admin_general_script() {
    
    $show24Hours = 'true';
    // Setting 12 hours format for those countries using it
-   if (preg_match ( "/en|sk|zh|us|uk/", $locale_code ))
+   if (preg_match ( "/sk|zh|us|uk/", $locale_code ))
       $show24Hours = 'false';
    
    $locale_file = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
    // for english, no translation code is needed
-   if ($locale_code != "en") {
       ?>
 <script src="<?php echo $locale_file ?>" type="text/javascript"></script>
-<?php
-   }
-   ?>
-
 <style type='text/css' media='all'>
 @import
    "<?php echo EME_PLUGIN_URL; ?>js/jquery-ui-datepicker/ui.datepicker.css"
