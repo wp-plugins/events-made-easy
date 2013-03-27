@@ -283,28 +283,6 @@ function eme_status_array() {
    return $event_status_array;
 }
 
-function eme_datepicker_localised_date($mydate) {
-   global $localised_date_formats;
-
-   // $mydate should be in yyyy-mm-dd format
-   $locale_code = get_locale();
-   if (isset($localised_date_formats [$locale_code])) {
-      $localised_date_format = $localised_date_formats [$locale_code];
-   } else {
-      $localised_date_format = $localised_date_formats ["en"];
-   }
-
-   if ($mydate != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $mydate, $matches );
-      $year = $matches [1];
-      $month = sprintf("%02d",$matches [2]);
-      $day = sprintf("%02d",$matches [3]);
-      return str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-   } else {
-      return "";
-   }
-}
-
 function eme_localised_date($mydate) {
    $date_format = eme_get_date_format();
    return date_i18n ( $date_format, strtotime($mydate));

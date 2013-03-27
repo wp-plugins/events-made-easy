@@ -2096,12 +2096,8 @@ function eme_event_form($event, $title, $element) {
    if ($event['event_end_24h_time'] == "")
          $event['event_end_24h_time'] = date('H:i',time()+3600);
    
-   $localised_start_date = eme_datepicker_localised_date($event['event_start_date']);
-   $localised_end_date = eme_datepicker_localised_date($event['event_end_date']);
    if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
-   $localised_rec_start_date = eme_datepicker_localised_date($event['recurrence_start_date']);
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
-   $localised_rec_end_date = eme_datepicker_localised_date($event['recurrence_end_date']);
 
    $freq_options = array ("daily" => __ ( 'Daily', 'eme' ), "weekly" => __ ( 'Weekly', 'eme' ), "monthly" => __ ( 'Monthly', 'eme' ) );
    $days_names = array (1 => __ ( 'Mon' ), 2 => __ ( 'Tue' ), 3 => __ ( 'Wed' ), 4 => __ ( 'Thu' ), 5 => __ ( 'Fri' ), 6 => __ ( 'Sat' ), 7 => __ ( 'Sun' ) );
@@ -2132,7 +2128,27 @@ function eme_event_form($event, $title, $element) {
    }
    
    ob_start();
+// the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepicker will fill in also to "to_submit" form fields
    ?>
+
+<script type="text/javascript">
+ $j_eme_event(document).ready( function() {
+   var dateFormat = $j_eme_event("#localised-start-date").datepicker( "option", "dateFormat" );
+   $j_eme_event("#localised-start-date").datepicker("option", "dateFormat", "yy-mm-dd" );
+   $j_eme_event("#localised-end-date").datepicker("option", "dateFormat", "yy-mm-dd" );
+   $j_eme_event("#localised-rec-start-date").datepicker("option", "dateFormat", "yy-mm-dd" );
+   $j_eme_event("#localised-rec-end-date").datepicker("option", "dateFormat", "yy-mm-dd" );
+   $j_eme_event("#localised-start-date").datepicker("setDate", "<?php echo $event['event_start_date']; ?>");
+   $j_eme_event("#localised-end-date").datepicker("setDate", "<?php echo $event['event_end_date']; ?>");
+   $j_eme_event("#localised-rec-start-date").datepicker("setDate", "<?php echo $event['recurrence_start_date']; ?>");
+   $j_eme_event("#localised-rec-end-date").datepicker("setDate", "<?php echo $event['recurrence_end_date']; ?>");
+   $j_eme_event("#localised-start-date").datepicker("option", "dateFormat", dateFormat );
+   $j_eme_event("#localised-end-date").datepicker("option", "dateFormat", dateFormat );
+   $j_eme_event("#localised-rec-start-date").datepicker("option", "dateFormat",dateFormat );
+   $j_eme_event("#localised-rec-end-date").datepicker("option", "dateFormat", dateFormat );
+ });
+</script>
+
    <form id="eventForm" name="eventForm" method="post" enctype="multipart/form-data" action="<?php echo $form_destination; ?>">
       <div class="wrap">
          <div id="icon-events" class="icon32"><br /></div>
@@ -2405,10 +2421,10 @@ function eme_event_form($event, $title, $element) {
                         <?php _e ( 'Event date', 'eme' ); ?>
                      </h3>
                      <div class="inside">
-                        <input id="localised-start-date" type="text" name="localised_event_start_date" value="<?php echo $localised_start_date?>" style="display: none;" readonly="readonly" />
-                        <input id="start-date-to-submit" type="text" name="event_start_date" value="<?php echo $event['event_start_date']?>" style="background: #FCFFAA" />
-                        <input id="localised-end-date" type="text" name="localised_event_end_date" value="<?php echo $localised_end_date?>" style="display: none;" readonly="readonly" />
-                        <input id="end-date-to-submit" type="text" name="event_end_date" value="<?php echo $event['event_end_date']?>" style="background: #FCFFAA" />
+                        <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
+                        <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
+                        <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
+                        <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
                         <br />
                         <span id='event-date-explanation'>
                         <?php _e ( 'The event date.', 'eme' ); ?>
@@ -2420,10 +2436,10 @@ function eme_event_form($event, $title, $element) {
                         <?php _e ( 'Recurrence dates', 'eme' ); ?>
                      </h3>
                      <div class="inside">
-                        <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="<?php echo $localised_rec_start_date?>" readonly="readonly" />
-                        <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="<?php echo $event['recurrence_start_date']?>" style="background: #FCFFAA" />
-                        <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="<?php echo $localised_rec_end_date?>" readonly="readonly" />
-                        <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="<?php echo $event['recurrence_end_date']?>" style="background: #FCFFAA" />
+                        <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="" readonly="readonly" />
+                        <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="" style="background: #FCFFAA" />
+                        <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="" readonly="readonly" />
+                        <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="" style="background: #FCFFAA" />
                         <br />
                         <span id='recurrence-dates-explanation'>
                         <?php _e ( 'The recurrence beginning and end date.', 'eme' ); ?>
