@@ -2841,10 +2841,11 @@ function eme_admin_general_script() {
    if (preg_match ( "/sk|zh|us|uk/", $locale_code ))
       $show24Hours = 'false';
    
-   $locale_file = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
-   // for english, no translation code is needed
+   $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
+   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
+   if (file_exists($locale_file))
       ?>
-<script src="<?php echo $locale_file ?>" type="text/javascript"></script>
+<script src="<?php echo $locale_file_url ?>" type="text/javascript"></script>
 <style type='text/css' media='all'>
 @import
    "<?php echo EME_PLUGIN_URL; ?>js/jquery-ui-datepicker/ui.datepicker.css"
