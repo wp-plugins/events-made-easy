@@ -287,7 +287,7 @@ function eme_datepicker_localised_date($mydate) {
    global $localised_date_formats;
 
    // $mydate should be in yyyy-mm-dd format
-   $locale_code = substr ( get_locale (), 0, 2 );
+   $locale_code = get_locale();
    if (isset($localised_date_formats [$locale_code])) {
       $localised_date_format = $localised_date_formats [$locale_code];
    } else {

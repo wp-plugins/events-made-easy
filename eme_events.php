@@ -2083,8 +2083,8 @@ function eme_event_form($event, $title, $element) {
    
    $hours_locale = "24";
    // Setting 12 hours format for those countries using it
-   $locale_code = substr ( get_locale (), 0, 2 );
-   if (preg_match ( "/sk|zh|us|uk/", $locale_code ))
+   $locale_code = get_locale();
+   if (preg_match ( "/en-US/sk|zh|us|uk/i", $locale_code ))
       $hours_locale = "12";
 
    if ($event['event_start_12h_time'] == "")
@@ -2834,11 +2834,11 @@ function eme_admin_general_script() {
 <?php
    
    // Check if the locale is there and loads it
-   $locale_code = substr ( get_locale (), 0, 2 );
+   $locale_code = get_locale();
    
    $show24Hours = 'true';
    // Setting 12 hours format for those countries using it
-   if (preg_match ( "/sk|zh|us|uk/", $locale_code ))
+   if (preg_match ( "/en-US/sk|zh|us|uk/i", $locale_code ))
       $show24Hours = 'false';
    
    $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
