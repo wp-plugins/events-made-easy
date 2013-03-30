@@ -1105,11 +1105,12 @@ function eme_registration_seats_page() {
             $booking_res = eme_book_seats($event, $send_mail);
             $result=$booking_res[0];
             $booking_id_done=$booking_res[1];
-            eme_update_booking_payed($booking_id_done,$booking_payed);
-            if (!$booking_id_done)
+            if (!$booking_id_done) {
                print "<div id='message' class='error'><p>$result</p></div>";
-            else
-               print "<div id='message' class='update'>$result</div>";
+            } else {
+               print "<div id='message' class='updated'><p>$result</p></div>";
+               eme_update_booking_payed($booking_id_done,$booking_payed);
+            }
          } elseif ($action == 'approveRegistration' || $action == 'denyRegistration') {
             $bookings = isset($_POST ['bookings']) ? $_POST ['bookings'] : array();
             $selected_bookings = isset($_POST ['selected_bookings']) ? $_POST ['selected_bookings'] : array();
