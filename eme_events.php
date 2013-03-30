@@ -2333,7 +2333,7 @@ function eme_event_form($event, $title, $element) {
                               <?php _e ( ' days before the event starts.','eme' ); ?>
                            <br />
                               <?php _e ( 'Price: ','eme' ); ?>
-                              <input id="price" type="text" name="price" maxlength='25' title="<?php _e('For multiple prices, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" />
+                              <input id="price" type="text" name="price" maxlength='25' title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" />
                            <br />
                               <?php _e ( 'Currency: ','eme' ); ?>
                               <select id="currency" name="currency">

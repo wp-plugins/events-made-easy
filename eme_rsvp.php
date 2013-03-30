@@ -299,10 +299,25 @@ function eme_book_seats($event, $send_mail=1) {
 		   }
 	   }
    } else {
-      if (isset($_POST['bookedSeats_mp'])) {
-         $bookedSeats_mp = preg_split("/\|\|/",$_POST['bookedSeats_mp']);
-         foreach($bookedSeats_mp as $value) {
-            $bookedSeats += $value;
+      if (eme_is_multiprice($event['price'])) {
+         if (isset($_POST['bookedSeats_mp'])) {
+            $bookedSeats_mp = preg_split("/\|\|/",$_POST['bookedSeats_mp']);
+            $booking_prices = preg_split("/\|\|/",$event['price']);
+            $count1=count($booking_prices);
+            $count2=count($bookedSeats_mp);
+            if ($count1 != $count2) {
+               $result = sprintf(__("'%s' is a multiprice event, please fill in %d sets of spaces to reserve in the '%s' field.",'eme'),$event['event_name'],$count1,__('Seats (Multiprice)', 'eme'));
+               $res = array(0=>$result,1=>$booking_id);
+               return $res;
+            } else {
+               foreach($bookedSeats_mp as $value) {
+                  $bookedSeats += $value;
+               }
+            }
+         } else {
+            $result = sprintf(__("'%s' is a multiprice event, please fill in %d sets of spaces to reserve in the '%s' field.",'eme'),$event['event_name'],$count1,__('Seats (Multiprice)', 'eme'));
+            $res = array(0=>$result,1=>$booking_id);
+            return $res;
          }
       }
    }
@@ -1159,14 +1174,14 @@ function eme_registration_seats_form_table($event_id=0) {
                 </td>
             </tr>
             <tr><th scope='row'><?php _e('Seats', 'eme'); ?>*:</th><td><input type='text' name='bookedSeats' value='' /></td></tr>
-            <tr><th scope='row'><?php _e('Seats (Multiprice)', 'eme'); ?>*:</th><td><input type='text' name='bookedSeats_mp' value='' /></td></tr>
+            <tr><th scope='row'><?php _e('Seats (Multiprice)', 'eme'); ?>*:</th><td><input title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" type='text' name='bookedSeats_mp' value='' /></td></tr>
             <tr><th scope='row'><?php _e('Paid', 'eme'); ?>:</th><td><?php echo eme_ui_select_binary(0,"booking_payed"); ?></td></tr>
    </tbody>
    </table>
    <p>
    <?php _e('Send mails for new registration?','eme'); echo eme_ui_select_binary(1,"send_mail"); ?>
    </p>
-   <input id="doaction" class="button-secondary action" type="submit" value="<?php _e ( 'Register booking' )?>" />
+   <input type="submit" name="doaction" id="doaction" class="button-secondary action" value="<?php _e ( 'Register booking','eme' )?>" />
    </form>
 
    <div class="clear"></div>
@@ -1180,7 +1195,7 @@ function eme_registration_seats_form_table($event_id=0) {
    <option value="approveRegistration"><?php _e ( 'Update registration','eme' ); ?></option>
    <option value="denyRegistration"><?php _e ( 'Deny registration','eme' ); ?></option>
    </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
+   <input type="submit" name="doaction" id="doaction" class="button-secondary action" value="<?php _e ( 'Apply' )?>" />
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
@@ -1267,7 +1282,7 @@ function eme_registration_seats_form_table($event_id=0) {
          </td>
          <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
-            <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
+            <input title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
          </td>
          <?php } else { ?>
          <td>
@@ -1444,7 +1459,7 @@ function eme_registration_approval_form_table($event_id=0) {
          </td>
          <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
-            <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
+            <input title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
          </td>
          <?php } else { ?>
          <td>
