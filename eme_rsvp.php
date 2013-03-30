@@ -979,6 +979,8 @@ function eme_replace_attendees_placeholders($format, $attendee, $event_id, $targ
 
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event_id);
+      } elseif (preg_match('/#_ATTENDSPACES$/', $result)) {
+         $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event_id);
       } else {
          $found = 0;
       }
@@ -1530,13 +1532,13 @@ function eme_send_mails_page() {
 
 			   $attendees = eme_get_attendees_for($event_id);
 			   foreach ( $attendees as $attendee ) {
-				   $message = eme_replace_attendees_placeholders($message, $attendee, "text");
-				   $message = eme_translate($message);
-				   $message = eme_strip_tags($message);
-				   $subject = eme_replace_attendees_placeholders($subject, $attendee, "text");
-				   $subject = eme_translate($subject);
-				   $subject = eme_strip_tags($subject);
-				   eme_send_mail($subject,$message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
+				   $tmp_message = eme_replace_attendees_placeholders($message, $attendee, $event_id, "text");
+				   $tmp_message = eme_translate($tmp_message);
+				   $tmp_message = eme_strip_tags($tmp_message);
+				   $tmp_subject = eme_replace_attendees_placeholders($subject, $attendee, $event_id, "text");
+				   $tmp_subject = eme_translate($tmp_subject);
+				   $tmp_subject = eme_strip_tags($tmp_subject);
+				   eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
 			   }
 			   print "<div id='message' class='updated'><p>".__('The mail has been sent.','eme')."</p></div>";
 		   } else {
