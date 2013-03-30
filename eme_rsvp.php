@@ -427,8 +427,19 @@ function eme_get_booking($booking_id) {
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = "SELECT * FROM $bookings_table WHERE booking_id = '$booking_id';" ;
    $result = $wpdb->get_row($sql, ARRAY_A);
+   // for older bookings, the booking_price field might be empty
+   if (!$result['booking_price'])
+      $result['booking_price'] = eme_get_event_price($result['event_id']);
    return $result;
 }
+
+function eme_get_event_price($event_id) {
+   global $wpdb; 
+   $events_table = $wpdb->prefix.EVENTS_TBNAME;
+   $sql = $wpdb->prepare("SELECT price FROM $events_table WHERE event_id =%d",$event_id);
+   $result = $wpdb->get_var($sql);
+   return $result;
+   }
 
 function eme_get_bookings_by_person_id($person_id) {
    global $wpdb; 
@@ -601,23 +612,27 @@ function eme_approve_booking($booking_id) {
    //$wpdb->query($sql);
    return __('Booking approved', 'eme');
 }
-function eme_update_booking_seats($booking_id,$seats,$seats_mp) {
+function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    $where = array();
    $fields = array();
    $where['booking_id'] =$booking_id;
-   $fields['booking_seats_mp'] = $seats_mp;
 
    # if it is a multi-price event, the total number of seats is the sum of the other ones
-   if (eme_is_event_multiprice($booking['event_id'])) {
+   if (eme_is_multiprice($booking_price)) {
       $fields['booking_seats']=0;
-      $booking_seats_mp=preg_split("/\|\|/",$seats_mp);
-      foreach ($booking_seats_mp as $value) {
-         $fields['booking_seats'] += $value;
+      # make sure the correct amount of seats is defined for multiprice
+      $booking_prices_mp=preg_split("/\|\|/",$booking_price);
+      $booking_seats_mp=preg_split("/\|\|/",$seats);
+      foreach ($booking_prices_mp as $key=>$value) {
+         if (!isset($booking_seats_mp[$key]))
+            $booking_seats_mp[$key] = 0;
+         $fields['booking_seats'] += intval($booking_seats_mp[$key]);
       }
+      $fields['booking_seats_mp'] = join("||",$booking_seats_mp);
    } else {
-      $fields['booking_seats'] = $seats;
+      $fields['booking_seats'] = intval($seats);
    }
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
@@ -672,6 +687,7 @@ function eme_are_seats_available_for($event_id, $seats) {
  
 function eme_bookings_table($event_id) {
    $bookings =  eme_get_bookings_for($event_id);
+   $event =  eme_get_event($event_id);
    $destination = admin_url("edit.php"); 
    $result = "<form id='bookings-filter' name='bookings-filter' method='get' action='$destination'>
                   <input type='hidden' name='page' value='eme_registration_seats_page'/>
@@ -690,7 +706,7 @@ function eme_bookings_table($event_id) {
                               <td>".eme_sanitize_html($person['person_email'])."</td>
                               <td>".eme_sanitize_html($person['person_phone'])."</td>
                  ";
-      if (eme_is_event_multiprice($event_id)) {
+      if (eme_is_multiprice(eme_get_booking_price($event,$booking))) {
          $result .= "<td>".$booking['booking_seats_mp']."</td>";
       } else {
          $result .= "<td>".$booking['booking_seats']."</td>";
@@ -705,7 +721,7 @@ function eme_bookings_table($event_id) {
                      </table></div>
                      <div class='tablenav'>
                         <div class='alignleft actions'>
-                         <input class=button-secondary action' type='submit' name='doaction2' value='Delete'/>
+                         <input class=button-secondary action' type='submit' name='doaction' value='Delete'/>
                            <br class='clear'/>
                         </div>
                         <br class='clear'/>
@@ -1061,7 +1077,10 @@ function eme_registration_seats_page() {
             }
          }
       } else {
-         $action = isset($_POST ['action']) ? $_POST ['action'] : '';
+         if (isset($_POST ['doaction']))
+            $action = isset($_POST ['action']) ? $_POST ['action'] : '';
+         else
+            $action = '';
          $send_mail = isset($_POST ['send_mail']) ? intval($_POST ['send_mail']) : 1;
 
          if ($action == 'addRegistration') {
@@ -1080,20 +1099,19 @@ function eme_registration_seats_page() {
             $bookings = isset($_POST ['bookings']) ? $_POST ['bookings'] : array();
             $selected_bookings = isset($_POST ['selected_bookings']) ? $_POST ['selected_bookings'] : array();
             $bookings_seats = isset($_POST ['bookings_seats']) ? $_POST ['bookings_seats'] : array();
-            $bookings_seats_mp = isset($_POST ['bookings_seats_mp']) ? $_POST ['bookings_seats_mp'] : array();
             $bookings_payed = isset($_POST ['bookings_payed']) ? $_POST ['bookings_payed'] : array();
+
             foreach ( $bookings as $key=>$booking_id ) {
                if (!in_array($booking_id,$selected_bookings)) {
                   continue;
                }
                // make sure the seats are integers
-               $bookings_seats[$key]=intval($bookings_seats[$key]);
                $booking = eme_get_booking ($booking_id);
                if ($action == 'approveRegistration') {
                   if ($booking['booking_payed']!= intval($bookings_payed[$key]))
                      eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
-                  if ($booking['booking_seats']!= $bookings_seats[$key] || $booking['booking_seats_mp']!= $bookings_seats_mp[$key]) {
-                     eme_update_booking_seats($booking_id,$bookings_seats[$key],$bookings_seats_mp[$key]);
+                  if ($booking['booking_seats']!= $bookings_seats[$key]) {
+                     eme_update_booking_seats($booking_id,$booking['event_id'],$bookings_seats[$key],$booking['booking_price']);
                      if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
                   }
                } elseif ($action == 'denyRegistration') {
@@ -1148,7 +1166,7 @@ function eme_registration_seats_form_table($event_id=0) {
    <p>
    <?php _e('Send mails for new registration?','eme'); echo eme_ui_select_binary(1,"send_mail"); ?>
    </p>
-   <input id="post-query-submit" class="button-secondary" type="submit" value="<?php _e ( 'Register booking' )?>" />
+   <input id="doaction" class="button-secondary action" type="submit" value="<?php _e ( 'Register booking' )?>" />
    </form>
 
    <div class="clear"></div>
@@ -1162,7 +1180,7 @@ function eme_registration_seats_form_table($event_id=0) {
    <option value="approveRegistration"><?php _e ( 'Update registration','eme' ); ?></option>
    <option value="denyRegistration"><?php _e ( 'Deny registration','eme' ); ?></option>
    </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
+   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
@@ -1247,9 +1265,9 @@ function eme_registration_seats_form_table($event_id=0) {
          <td>
             <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
          </td>
-         <?php if (eme_is_event_multiprice($event_booking['event_id'])) { ?>
+         <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
-            <input type="text" name="bookings_seats_mp[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
+            <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
          </td>
          <?php } else { ?>
          <td>
@@ -1292,7 +1310,10 @@ function eme_registration_approval_page() {
 
    if (current_user_can( get_option('eme_cap_approve'))) {
       // do the actions if required
-      $action = isset($_POST ['action']) ? $_POST ['action'] : '';
+      if (isset($_POST ['doaction']))
+         $action = isset($_POST ['action']) ? $_POST ['action'] : '';
+      else
+         $action='';
       $pending_bookings = isset($_POST ['pending_bookings']) ? $_POST ['pending_bookings'] : array();
       $selected_bookings = isset($_POST ['selected_bookings']) ? $_POST ['selected_bookings'] : array();
       $bookings_seats = isset($_POST ['bookings_seats']) ? $_POST ['bookings_seats'] : array();
@@ -1303,7 +1324,6 @@ function eme_registration_approval_page() {
             continue;
          }
          $booking = eme_get_booking ($booking_id);
-         $person  = eme_get_person ($booking['person_id']);
          // update the db
          if ($action == 'approveRegistration') {
             eme_approve_booking($booking_id);
@@ -1312,8 +1332,8 @@ function eme_registration_approval_page() {
                $bookings_seats[$key]=1;
             if ($booking['booking_payed']!= intval($bookings_payed[$key]))
                eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
-            if ($booking['booking_seats']!= intval($bookings_seats[$key])) {
-               eme_update_booking_seats($booking_id,intval($bookings_seats[$key]));
+            if ($booking['booking_seats']!= $bookings_seats[$key]) {
+               eme_update_booking_seats($booking_id,$booking['event_id'],$bookings_seats[$key],$booking['booking_price']);
             }
             if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
          } elseif ($action == 'denyRegistration') {
@@ -1343,7 +1363,7 @@ function eme_registration_approval_form_table($event_id=0) {
    <option value="approveRegistration"><?php _e ( 'Approve registration','eme' ); ?></option>
    <option value="denyRegistration"><?php _e ( 'Deny registration','eme' ); ?></option>
    </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
+   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
@@ -1422,9 +1442,9 @@ function eme_registration_approval_form_table($event_id=0) {
          <td>
             <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
          </td>
-         <?php if (eme_is_event_multiprice($event_booking['event_id'])) { ?>
+         <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
-            <input type="text" name="bookings_seats_mp[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
+            <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
          </td>
          <?php } else { ?>
          <td>
@@ -1468,7 +1488,10 @@ function eme_send_mails_page() {
    global $wpdb;
 
    $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
-   $action = isset($_POST ['action']) ? $_POST ['action'] : '';
+   if (isset($_POST ['doaction']))
+      $action = isset($_POST ['action']) ? $_POST ['action'] : '';
+   else
+      $action = '';
    $message = isset($_POST ['message']) ? $_POST ['message'] : '';
    $subject = isset($_POST ['subject']) ? $_POST ['subject'] : '';
 
@@ -1561,7 +1584,7 @@ function eme_send_mail_form($event_id=0) {
 	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a>";
 	   ?>
 	   </div>
-	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
+	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
 	   </form>
 
    <?php
