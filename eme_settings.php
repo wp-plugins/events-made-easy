@@ -161,7 +161,7 @@ function eme_metabox_options_delete() {
    global $wpdb;
    $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
    foreach ($screens as $screen) {
-      foreach ( array( 'metaboxhidden', 'closedpostboxes', 'wp_metaboxorder', 'screen_layout' ) as $option )
+      foreach ( array( 'metaboxhidden', 'closedpostboxes', 'wp_metaboxorder','meta-box-order', 'screen_layout' ) as $option )
          $keys[] = "'{$option}_{$screen}'";
    }
    $keys = '( ' . implode( ', ', $keys ) . ' )';
