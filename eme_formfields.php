@@ -363,6 +363,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       } else {
          $res = __('Not all required fields are present in the booking form.', 'eme');
          $res.= '<br />'.__("Since this is a multiprice event, make sure you changed the setting 'Registration Form Format' for the event to include #_SEATxx placeholders for each price.",'eme');
+         $res.= '<br />'.__("See the documentation about multiprice events.",'eme');
          return "<div id='message' class='eme-rsvp-message'>$res</div>";
       }
    } elseif ($required_fields_count == 4) {
