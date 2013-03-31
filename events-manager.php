@@ -877,8 +877,10 @@ function eme_create_events_submenu () {
       // edit event also needs just "add" as capability, otherwise you will not be able to edit own created events
       $plugin_page = add_submenu_page('events-manager', __('Edit'),__('Edit'),get_option('eme_cap_list_events'),'events-manager','eme_events_page');
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
+      add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
       $plugin_page = add_submenu_page('events-manager', __('Add new', 'eme'), __('Add new','eme'), get_option('eme_cap_add_event'), 'eme-new_event', "eme_new_event_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
+      add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
       $plugin_page = add_submenu_page('events-manager', __('Locations', 'eme'), __('Locations', 'eme'), get_option('eme_cap_add_locations'), 'eme-locations', "eme_locations_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       if (get_option('eme_categories_enabled')) {

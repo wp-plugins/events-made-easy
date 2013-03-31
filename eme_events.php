@@ -2035,11 +2035,6 @@ function eme_event_form($event, $title, $element) {
    
    admin_show_warnings();
 
-   $use_select_for_locations = get_option('eme_use_select_for_locations');
-   // qtranslate there? Then we need the select, otherwise locations will be created again...
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
-      $use_select_for_locations=1;
-   }
    $event_status_array = eme_status_array ();
    $saved_bydays = array();
    $currency_array = eme_currency_array();
@@ -2081,12 +2076,6 @@ function eme_event_form($event, $title, $element) {
       }
    }
    
-   $hours_locale = "24";
-   // Setting 12 hours format for those countries using it
-   $locale_code = get_locale();
-   if (preg_match ( "/en_US|sk|zh|us|uk/i", $locale_code ))
-      $hours_locale = "12";
-
    if ($event['event_start_12h_time'] == "")
          $event['event_start_12h_time'] = date('h:iA');
    if ($event['event_start_24h_time'] == "")
@@ -2392,382 +2381,33 @@ function eme_event_form($event, $title, $element) {
             <!-- END OF SIDEBAR -->
             <div id="post-body">
                <div id="post-body-content" class="meta-box-sortables">
-                  <!-- we need titlediv for qtranslate as ID -->
-                  <div id="titlediv" class="stuffbox">
-                     <h3>
-                        <?php _e ( 'Name', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <!-- we need title for qtranslate as ID -->
-                        <input type="text" id="title" name="event_name" value="<?php echo eme_sanitize_html($event['event_name']); ?>" />
-                        <br />
-                        <?php _e ( 'The event name. Example: Birthday party', 'eme' )?>
-                        <br />
-                        <br />
-                        <?php if ($event['event_name'] != "") {
-                                 _e ('Permalink: ', 'eme' );
-                                 echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_events_prefix')).$event['event_id']."/";
-                                 $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
-				 $slug = untrailingslashit(eme_permalink_convert($slug));
-                        ?>
-                                 <input type="text" id="slug" name="event_slug" value="<?php echo $slug; ?>" /><?php echo user_trailingslashit(""); ?>
-                        <?php
-                              }
-                        ?>
-                     </div>
-                  </div>
-                  <div id="div_event_date" class="stuffbox">
-                     <h3 id='event-date-title'>
-                        <?php _e ( 'Event date', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
-                        <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
-                        <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
-                        <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
-                        <br />
-                        <span id='event-date-explanation'>
-                        <?php _e ( 'The event date.', 'eme' ); ?>
-                        </span>
-                     </div>
-                  </div>
-                  <div id="div_recurrence_date" class="stuffbox">
-                     <h3 id='recurrence-dates-title'>
-                        <?php _e ( 'Recurrence dates', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="" readonly="readonly" />
-                        <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="" style="background: #FCFFAA" />
-                        <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="" readonly="readonly" />
-                        <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="" style="background: #FCFFAA" />
-                        <br />
-                        <span id='recurrence-dates-explanation'>
-                        <?php _e ( 'The recurrence beginning and end date.', 'eme' ); ?>
-                        </span>
-                     </div>
-                  </div>
-                  <div id="div_event_time" class="stuffbox">
-                     <h3>
-                        <?php _e ( 'Event time', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <input id="start-time" type="text" size="8" maxlength="8" name="event_start_time" value="<?php echo $event['event_start_' . $hours_locale . "h_time"]; ?>" />
-                        -
-                        <input id="end-time" type="text" size="8" maxlength="8" name="event_end_time" value="<?php echo $event['event_end_' . $hours_locale . "h_time"]; ?>" />
-                        <br />
-                        <?php _e ( 'The time of the event beginning and end', 'eme' )?>
-                        . </div>
-                  </div>
-                  <div id="div_location_coordinates" class="stuffbox" style='display: none;'>
-                     <h3>
-                        <?php _e ( 'Coordinates', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <input id='location_latitude' name='location_latitude' type='text' value='<?php echo $event['location_latitude']; ?>' size='15' />
-                        -
-                        <input id='location_longitude' name='location_longitude' type='text' value='<?php echo $event['location_longitude']; ?>' size='15' />
-                     </div>
-                  </div>
-                  <div id="div_event_page_title_format" class="postbox <?php if ($event['event_page_title_format']=="") echo "closed"; ?>">
-                     <div class="handlediv" title="Click to toggle">
-                        <br />
-                     </div>
-                     <h3 class='hndle'><span>
-                        <?php _e ( 'Single Event Title Format', 'eme' ); ?>
-                        </span>
-                     </h3>
-                     <div class="inside">
-                        <textarea name="event_page_title_format" id="event_page_title_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_page_title_format']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the single event title.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
-                     </div>
-                  </div>
-                  <div id="div_event_single_event_format" class="postbox <?php if ($event['event_single_event_format']=="") echo "closed"; ?>">
-                                                        <div class="handlediv" title="Click to toggle">
-                        <br />
-                                                        </div>
-                     <h3 class='hndle'><span>
-                        <?php _e ( 'Single Event Format', 'eme' ); ?>
-                        </span>
-                     </h3>
-                     <div class="inside">
-                        <textarea name="event_single_event_format" id="event_single_event_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_single_event_format']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the single event page.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
-                     </div>
-                  </div>
-                  <div id="div_event_contactperson_email_body" class="postbox <?php if ($event['event_contactperson_email_body']=="") echo "closed"; ?>">
-                     <div class="handlediv" title="Click to toggle">
-                        <br />
-                     </div>
-                     <h3 class='hndle'><span>
-                        <?php _e ( 'Contact Person Email Format', 'eme' ); ?>
-                        </span>
-                     </h3>
-                     <div class="inside">
-                        <textarea name="event_contactperson_email_body" id="event_contactperson_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_contactperson_email_body']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the email which will be sent to the contact person.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
-                     </div>
-                  </div>
-                  <div id="div_event_registration_recorded_ok_html" class="postbox <?php if ($event['event_registration_recorded_ok_html']=="") echo "closed"; ?>">
-                     <div class="handlediv" title="Click to toggle">
-                        <br />
-                     </div>
-                     <h3 class='hndle'><span>
-                        <?php _e ( 'Booking recorded html Format', 'eme' ); ?>
-                        </span>
-                     </h3>
-                     <div class="inside">
-                        <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The text (html allowed) shown to the user when the booking has been made successfully.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
-                     </div>
-                  </div>
-                  <div id="div_event_respondent_email_body" class="postbox <?php if ($event['event_respondent_email_body']=="") echo "closed"; ?>">
-                     <div class="handlediv" title="Click to toggle">
-                        <br />
-                     </div>
-                     <h3 class='hndle'><span>
-                        <?php _e ( 'Respondent Email Format', 'eme' ); ?>
-                        </span>
-                     </h3>
-                     <div class="inside">
-                        <textarea name="event_respondent_email_body" id="event_respondent_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_respondent_email_body']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the email which will be sent to the respondent.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
-                     </div>
-                  </div>
-                  <div id="div_event_registration_pending_email_body" class="postbox <?php if ($event['event_registration_pending_email_body']=="") echo "closed"; ?>">
-                     <div class="handlediv" title="Click to toggle">
-                        <br />
-                     </div>
-                     <h3 class='hndle'><span>
-                        <?php _e ( 'Registration Pending Email Format', 'eme' ); ?>
-                        </span>
-                     </h3>
-                     <div class="inside">
-                        <textarea name="event_registration_pending_email_body" id="event_registration_pending_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_pending_email_body']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the email which will be sent to the respondent if the registration is pending.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
-                     </div>
-                  </div>
-                  <div id="div_event_registration_form_format" class="postbox <?php if ($event['event_registration_form_format']=="") echo "closed"; ?>">
-                     <div class="handlediv" title="Click to toggle">
-                        <br />
-                     </div>
-                     <h3 class='hndle'><span>
-                        <?php _e ( 'Registration Form Format', 'eme' ); ?>
-                        </span>
-                     </h3>
-                     <div class="inside">
-                        <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The registration form format.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
-                     </div>
-                  </div>
-                   <div id="div_location_name" class="stuffbox" style='overflow: hidden;'>
-                     <h3>
-                        <?php _e ( 'Location', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <table id="eme-location-data">
-                           <tr>
-                           <?php  if($use_select_for_locations) {
-                              $location_0['location_id']=0;
-                              $location_0['location_name']= '';
-                              $locations = eme_get_locations();
-                           ?>
-                              <th><?php _e('Location','eme') ?></th>
-                              <td> 
-                                 <select name="location-select-id" id='location-select-id' size="1">
-         <option value="<?php echo $location_0['location_id'] ?>" ><?php echo eme_trans_sanitize_html($location_0['location_name']) ?></option>
-                                 <?php 
-                                 $selected_location=$location_0;
-                                 foreach($locations as $location) :
-                                    $selected = "";
-                                    if(isset($event['location_id']))  { 
-                                       $location_id =  $event['location_id'];
-                                       if ($location_id == $location['location_id']) {
-                                          $selected_location=$location;
-                                          $selected = "selected='selected' ";
-                                       }
-                                    }
-                                 ?>
-         <option value="<?php echo $location['location_id'] ?>" <?php echo $selected ?>><?php echo eme_trans_sanitize_html($location['location_name']) ?></option>
-                                 <?php endforeach; ?>
-                                 </select>
-                                 <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>'/>
-                                 <input type='hidden' name='location-select-town' value='<?php echo eme_trans_sanitize_html($selected_location['location_town'])?>'/>
-                                 <input type='hidden' name='location-select-address' value='<?php echo eme_trans_sanitize_html($selected_location['location_address'])?>'/>      
-                              </td>
-                           <?php } else { ?>
-                              <th><?php _e ( 'Name','eme' )?>
-                                 &nbsp;</th>
-                              <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /></td>
-                           <?php } ?>
-                           <?php
-                              $gmap_is_active = get_option('eme_gmap_is_active' );
-                              if ($gmap_is_active) {
-                           ?>
-                              <td rowspan='6'>
-                                 <div id='eme-admin-map-not-found'>
-                                    <p>
-                                       <?php _e ( 'Map not found','eme' ); ?>
-                                    </p>
-                                 </div>
-                                 <div id='eme-admin-location-map'></div></td>
-                              <?php
-         }
-         ; // end of IF_GMAP_ACTIVE ?>
-                           </tr>
-                            <?php  if(!$use_select_for_locations) : ?>
-                           <tr>
-<td colspan='2'><p><?php _e ( 'The name of the location where the event takes place. You can use the name of a venue, a square, etc', 'eme' );?>
-<br />
-      <?php _e ( 'If you leave this empty, the map will NOT be shown for this event', 'eme' );?></p></td>
-                           </tr>
-                           <?php else: ?>
-                           <tr >
-<td colspan='2'  rowspan='5' style='vertical-align: top'>
-                                    <p><?php
-   _e ( 'Select a location for your event', 'eme' )?></p>
-</td>
-                           </tr>
-                           <?php endif; ?>
-                            <?php  if(!$use_select_for_locations) : ?> 
-                           <tr>
-                              <th><?php _e ( 'Address:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_address" type="text" name="location_address" value="<?php echo $event['location_address']; ?>" /></td>
-                           </tr>
-                           <tr>
-                              <td colspan='2'><p>
-                                    <?php _e ( 'The address of the location where the event takes place. Example: 21, Dominick Street', 'eme' )?>
-                              </p></td>
-                           </tr>
-                           <tr>
-                              <th><?php _e ( 'Town:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_town" type="text" name="location_town" value="<?php echo $event['location_town']?>" /></td>
-                           </tr>
-                           <tr>
-                              <td colspan='2'><p>
-                                    <?php _e ( 'The town where the location is located. If you\'re using the Google Map integration and want to avoid geotagging ambiguities include the country in the town field. Example: Verona, Italy.', 'eme' )?>
-                                 </p></td>
-                           </tr>
-                           <?php endif; ?>
-                        </table>
-                     </div>
-                  </div>
-                  <div id="div_event_notes" class="postbox">
-                     <h3>
-                        <?php _e ( 'Details', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                  <!-- we need content for qtranslate as ID -->
-                           <?php wp_editor($event['event_notes'],"content"); ?>
-                        </div>
-                        <br />
-                        <?php _e ( 'Details about the event', 'eme' )?>
-                     </div>
-                  </div>
-                  <div id="div_event_image" class="postbox">
-                     <h3>
-                        <?php _e ( 'Event image', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <div id="event_current_image" class="postarea">
-                        <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
-                                 _e('Current image:', 'eme');
-                                 echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' width='200' />";
-                              } else {
-                                 echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
-                              }
-                              // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
-                        ?>
+	       <?php 
+	             $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
+		     foreach ($screens as $screen) {
+			     if ($event['event_page_title_format']=="")
+				     add_filter('postbox_classes_'.$screen.'_div_event_page_title_format','eme_closed');
+			     if ($event['event_single_event_format']=="")
+				     add_filter('postbox_classes_'.$screen.'_div_event_single_event_format','eme_closed');
+			     if ($event['event_contactperson_email_body']=="")
+				     add_filter('postbox_classes_'.$screen.'_div_event_contactperson_email_body','eme_closed');
+			     if ($event['event_registration_recorded_ok_html']=="")
+				     add_filter('postbox_classes_'.$screen.'_div_event_registration_recorded_ok_html','eme_closed');
+			     if ($event['event_respondent_email_body']=="")
+				     add_filter('postbox_classes_'.$screen.'_div_event_respondent_email_body','eme_closed');
+			     if ($event['event_registration_recorded_ok_html']=="")
+				     add_filter('postbox_classes_'.$screen.'_div_event_registration_pending_email_body','eme_closed');
+			     if ($event['event_registration_form_format']=="")
+				     add_filter('postbox_classes_'.$screen.'_div_event_registration_form_format','eme_closed');
+		     }
 
-                        </div>
-                        <br />
-
-                        <div class="uploader">
-                           <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) { ?>
-                           <input type="hidden" name="event_image_url" id="event_image_url" value="<?php echo $event['event_image_url']; ?>" />
-                           <?php } else { ?>
-                           <input type="hidden" name="event_image_url" id="event_image_url" />
-                           <?php } ?>
-                           <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
-                           <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
-                        </div>
-<script>
-jQuery(document).ready(function($){
-
-  $('#eme_remove_old_image').click(function(e) {
-        $('#event_image_url').val('');
-        $('#eme_event_image_example' ).attr("src",'');
-  });
-  $('#event_image_button').click(function(e) {
-    var button = $(this);
-    var _orig_send_attachment = wp.media.editor.send.attachment;
-    var eme_custom_media = true;
-
-    wp.media.editor.send.attachment = function(props, attachment){
-      if ( eme_custom_media ) {
-        $('#event_image_url').val(attachment.url);
-        $('#eme_event_image_example' ).attr("src",attachment.url);
-      } else {
-        return _orig_send_attachment.apply( this,[props, attachment] );
-      };
-      eme_custom_media = false;
-    }
-
-    wp.media.editor.open(button);
-    return false;
-  });
-});
-</script>
-                     </div>
-                  </div>
-                  <?php if(get_option('eme_attributes_enabled')) : ?>
-                  <div id="div_event_attributes" class="postbox">
-                     <h3>
-                        <?php _e ( 'Attributes', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <?php eme_attributes_form($event); ?>
-                     </div>
-                  </div>
-                  <?php endif; ?>
-                  <div id="urldiv" class="stuffbox">
-                     <h3>
-                        <?php _e ( 'External link', 'eme' ); ?>
-                     </h3>
-                     <div class="inside">
-                        <input type="text" id="event_url" name="event_url" value="<?php echo eme_sanitize_html($event['event_url']); ?>" />
-                        <br />
-                        <?php _e ( 'If this is filled in, the single event URL will point to this url instead of the standard event page.', 'eme' )?>
-                     </div>
-                  </div>
+		     if ($is_new_event) {
+			     do_meta_boxes('events_page_eme-new_event',"post",$event);
+		     } else {
+			     do_meta_boxes('toplevel_page_events-manager',"post",$event);
+		     }
+		?>
+                  <input id='location_latitude' name='location_latitude' type='hidden' value='<?php echo $event['location_latitude']; ?>' size='15' />
+                  <input id='location_longitude' name='location_longitude' type='hidden' value='<?php echo $event['location_longitude']; ?>' size='15' />
                </div>
                <p class="submit">
                   <?php if ($is_new_event) { ?>
@@ -2790,6 +2430,8 @@ jQuery(document).ready(function($){
             </div>
          </div>
       </div>
+      <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
+      <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
    </form>
 <?php
    echo ob_get_clean();
@@ -2831,6 +2473,11 @@ function eme_validate_event($event) {
    else
       return "OK";
 
+}
+
+function eme_closed($data) {
+   $data[]="closed";
+   return $data;
 }
 
 function eme_admin_general_css() {
@@ -3168,9 +2815,348 @@ $j_eme_event(document).ready( function() {
    $j_eme_event('#eme-admin-changeregform').bind("submit", areyousuretodeny);
       
 });
+
 //]]>
 </script>
 
+<?php
+}
+
+function eme_admin_event_boxes() {
+   global $plugin_page;
+   $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
+   foreach ($screens as $screen) {
+        if (preg_match("/$plugin_page/",$screen)) {
+	   add_meta_box("div_event_name", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
+	   add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
+	   add_meta_box("div_recurrence_date", __('Recurrence dates', 'eme'), "eme_meta_box_div_recurrence_date",$screen,"post");
+	   add_meta_box("div_event_time", __('Event time', 'eme'), "eme_meta_box_div_event_time",$screen,"post");
+	   add_meta_box("div_event_page_title_format", __('Single Event Title Format', 'eme'), "eme_meta_box_div_event_page_title_format",$screen,"post");
+	   add_meta_box("div_event_single_event_format", __('Single Event Format', 'eme'), "eme_meta_box_div_event_single_event_format",$screen,"post");
+	   add_meta_box("div_event_contactperson_email_body", __('Contact Person Email Format', 'eme'), "eme_meta_box_div_event_contactperson_email_body",$screen,"post");
+	   add_meta_box("div_event_registration_recorded_ok_html", __('Booking recorded html Format', 'eme'), "eme_meta_box_div_event_registration_recorded_ok_html",$screen,"post");
+	   add_meta_box("div_event_respondent_email_body", __('Respondent Email Format', 'eme'), "eme_meta_box_div_event_respondent_email_body",$screen,"post");
+	   add_meta_box("div_event_registration_pending_email_body", __('Registration Pending Email Format', 'eme'), "eme_meta_box_div_event_registration_pending_email_body",$screen,"post");
+	   add_meta_box("div_event_registration_form_format", __('Registration Form Format', 'eme'), "eme_meta_box_div_event_registration_form_format",$screen,"post");
+	   add_meta_box("div_location_name", __('Location', 'eme'), "eme_meta_box_div_location_name",$screen,"post");
+	   add_meta_box("div_event_notes", __('Details', 'eme'), "eme_meta_box_div_event_notes",$screen,"post");
+	   add_meta_box("div_event_image", __('Event image', 'eme'), "eme_meta_box_div_event_image",$screen,"post");
+           if (get_option('eme_attributes_enabled'))
+	      add_meta_box("div_event_attributes", __('Attributes', 'eme'), "eme_meta_box_div_event_attributes",$screen,"post");
+	   add_meta_box("div_event_url", __('External link', 'eme'), "eme_meta_box_div_event_url",$screen,"post");
+        }
+   }
+}
+
+function eme_meta_box_div_event_name($event){
+?>
+                        <!-- we need title for qtranslate as ID -->
+                        <input type="text" id="title" name="event_name" value="<?php echo eme_sanitize_html($event['event_name']); ?>" />
+                        <br />
+                        <?php _e ( 'The event name. Example: Birthday party', 'eme' )?>
+                        <br />
+                        <br />
+                        <?php if ($event['event_name'] != "") {
+                                 _e ('Permalink: ', 'eme' );
+                                 echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_events_prefix')).$event['event_id']."/";
+                                 $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
+                                 $slug = untrailingslashit(eme_permalink_convert($slug));
+                        ?>
+                                 <input type="text" id="slug" name="event_slug" value="<?php echo $slug; ?>" /><?php echo user_trailingslashit(""); ?>
+                        <?php
+                              }
+}
+
+function eme_meta_box_div_event_date($event){
+?>
+                        <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
+                        <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
+                        <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
+                        <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
+                        <br />
+                        <span id='event-date-explanation'>
+                        <?php _e ( 'The event date.', 'eme' ); ?>
+                        </span>
+<?php
+}
+
+function eme_meta_box_div_recurrence_date($event){
+?>
+                        <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="" readonly="readonly" />
+                        <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="" style="background: #FCFFAA" />
+                        <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="" readonly="readonly" />
+                        <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="" style="background: #FCFFAA" />
+                        <br />
+                        <span id='recurrence-dates-explanation'>
+                        <?php _e ( 'The recurrence beginning and end date.', 'eme' ); ?>
+                        </span>
+<?php
+}
+
+function eme_meta_box_div_event_page_title_format($event) {
+?>
+                        <textarea name="event_page_title_format" id="event_page_title_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_page_title_format']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The format of the single event title.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+<?php
+}
+
+function eme_meta_box_div_event_time($event) {
+   $hours_locale = "24";
+   // Setting 12 hours format for those countries using it
+   $locale_code = get_locale();
+   if (preg_match ( "/en_US|sk|zh|us|uk/i", $locale_code ))
+      $hours_locale = "12";
+
+?>
+                        <input id="start-time" type="text" size="8" maxlength="8" name="event_start_time" value="<?php echo $event['event_start_' . $hours_locale . "h_time"]; ?>" />
+                        -
+                        <input id="end-time" type="text" size="8" maxlength="8" name="event_end_time" value="<?php echo $event['event_end_' . $hours_locale . "h_time"]; ?>" />
+                        <br />
+                        <?php _e ( 'The time of the event beginning and end', 'eme' )?>
+                        .
+<?php
+}
+
+function eme_meta_box_div_event_single_event_format($event) {
+?>
+                        <textarea name="event_single_event_format" id="event_single_event_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_single_event_format']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The format of the single event page.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+<?php
+}
+
+function eme_meta_box_div_event_contactperson_email_body($event) {
+?>
+                        <textarea name="event_contactperson_email_body" id="event_contactperson_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_contactperson_email_body']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The format of the email which will be sent to the contact person.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+<?php
+}
+
+function eme_meta_box_div_event_registration_recorded_ok_html($event) {
+?>
+                        <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The text (html allowed) shown to the user when the booking has been made successfully.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+<?php
+}
+
+function eme_meta_box_div_event_respondent_email_body($event) {
+?>
+                        <textarea name="event_respondent_email_body" id="event_respondent_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_respondent_email_body']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The format of the email which will be sent to the respondent.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+<?php
+}
+
+function eme_meta_box_div_event_registration_pending_email_body($event) {
+?>
+                        <textarea name="event_registration_pending_email_body" id="event_registration_pending_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_pending_email_body']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The format of the email which will be sent to the respondent if the registration is pending.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+<?php
+}
+
+function eme_meta_box_div_event_registration_form_format($event) {
+?>
+                        <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
+                        <br />
+                        <p><?php _e ( 'The registration form format.','eme');?>
+                        <br />
+                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+                        </p>
+<?php
+}
+
+function eme_meta_box_div_location_name($event) {
+   $use_select_for_locations = get_option('eme_use_select_for_locations');
+   // qtranslate there? Then we need the select, otherwise locations will be created again...
+   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+      $use_select_for_locations=1;
+   }
+?>
+                        <table id="eme-location-data">
+                           <tr>
+                           <?php  if($use_select_for_locations) {
+                              $location_0['location_id']=0;
+                              $location_0['location_name']= '';
+                              $locations = eme_get_locations();
+                           ?>
+                              <th><?php _e('Location','eme') ?></th>
+                              <td> 
+                                 <select name="location-select-id" id='location-select-id' size="1">
+         <option value="<?php echo $location_0['location_id'] ?>" ><?php echo eme_trans_sanitize_html($location_0['location_name']) ?></option>
+                                 <?php 
+                                 $selected_location=$location_0;
+                                 foreach($locations as $location) :
+                                    $selected = "";
+                                    if(isset($event['location_id']))  { 
+                                       $location_id =  $event['location_id'];
+                                       if ($location_id == $location['location_id']) {
+                                          $selected_location=$location;
+                                          $selected = "selected='selected' ";
+                                       }
+                                    }
+                                 ?>
+         <option value="<?php echo $location['location_id'] ?>" <?php echo $selected ?>><?php echo eme_trans_sanitize_html($location['location_name']) ?></option>
+                                 <?php endforeach; ?>
+                                 </select>
+                                 <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>'/>
+                                 <input type='hidden' name='location-select-town' value='<?php echo eme_trans_sanitize_html($selected_location['location_town'])?>'/>
+                                 <input type='hidden' name='location-select-address' value='<?php echo eme_trans_sanitize_html($selected_location['location_address'])?>'/>      
+                              </td>
+                           <?php } else { ?>
+                              <th><?php _e ( 'Name','eme' )?>
+                                 &nbsp;</th>
+                              <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /></td>
+                           <?php } ?>
+                           <?php
+                              $gmap_is_active = get_option('eme_gmap_is_active' );
+                              if ($gmap_is_active) {
+                           ?>
+                              <td rowspan='6'>
+                                 <div id='eme-admin-map-not-found'>
+                                    <p>
+                                       <?php _e ( 'Map not found','eme' ); ?>
+                                    </p>
+                                 </div>
+                                 <div id='eme-admin-location-map'></div></td>
+                              <?php
+         }
+         ; // end of IF_GMAP_ACTIVE ?>
+                           </tr>
+                            <?php  if(!$use_select_for_locations) : ?>
+                           <tr>
+                              <td colspan='2'><p>
+                                 <?php _e ( 'The name of the location where the event takes place. You can use the name of a venue, a square, etc', 'eme' );?>
+<br />
+                                 <?php _e ( 'If you leave this empty, the map will NOT be shown for this event', 'eme' );?>
+                              </p></td>
+                           </tr>
+                           <?php else: ?>
+                           <tr >
+                              <td colspan='2'  rowspan='5' style='vertical-align: top'><p>
+                                     <?php _e ( 'Select a location for your event', 'eme' )?>
+                              </p></td>
+                           </tr>
+                           <?php endif; ?>
+                            <?php  if(!$use_select_for_locations) : ?> 
+                           <tr>
+                              <th><?php _e ( 'Address:', 'eme' )?> &nbsp;</th>
+                              <td><input id="location_address" type="text" name="location_address" value="<?php echo $event['location_address']; ?>" /></td>
+                           </tr>
+                           <tr>
+                              <td colspan='2'><p>
+                                    <?php _e ( 'The address of the location where the event takes place. Example: 21, Dominick Street', 'eme' )?>
+                              </p></td>
+                           </tr>
+                           <tr>
+                              <th><?php _e ( 'Town:', 'eme' )?> &nbsp;</th>
+                              <td><input id="location_town" type="text" name="location_town" value="<?php echo $event['location_town']?>" /></td>
+                           </tr>
+                           <tr>
+                              <td colspan='2'><p>
+                                    <?php _e ( 'The town where the location is located. If you\'re using the Google Map integration and want to avoid geotagging ambiguities include the country in the town field. Example: Verona, Italy.', 'eme' )?>
+                                 </p></td>
+                           </tr>
+                           <?php endif; ?>
+                        </table>
+<?php
+}
+ 
+function eme_meta_box_div_event_notes($event) {
+?>
+                        <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
+                  <!-- we need content for qtranslate as ID -->
+                           <?php wp_editor($event['event_notes'],"content"); ?>
+                        </div>
+                        <br />
+                        <?php _e ( 'Details about the event', 'eme' )?>
+<?php
+}
+
+function eme_meta_box_div_event_image($event) {
+?>
+                        <div id="event_current_image" class="postarea">
+                        <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
+                                 _e('Current image:', 'eme');
+                                 echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' width='200' />";
+                              } else {
+                                 echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
+                              }
+                              // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
+                        ?>
+                        </div>
+                        <br />
+
+                        <div class="uploader">
+                           <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) { ?>
+                           <input type="hidden" name="event_image_url" id="event_image_url" value="<?php echo $event['event_image_url']; ?>" />
+                           <?php } else { ?>
+                           <input type="hidden" name="event_image_url" id="event_image_url" />
+                           <?php } ?>
+                           <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
+                           <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
+                        </div>
+<script>
+jQuery(document).ready(function($){
+
+  $('#eme_remove_old_image').click(function(e) {
+        $('#event_image_url').val('');
+        $('#eme_event_image_example' ).attr("src",'');
+  });
+  $('#event_image_button').click(function(e) {
+    var button = $(this);
+    var _orig_send_attachment = wp.media.editor.send.attachment;
+    var eme_custom_media = true;
+
+    wp.media.editor.send.attachment = function(props, attachment){
+      if ( eme_custom_media ) {
+        $('#event_image_url').val(attachment.url);
+        $('#eme_event_image_example' ).attr("src",attachment.url);
+      } else {
+        return _orig_send_attachment.apply( this,[props, attachment] );
+      };
+      eme_custom_media = false;
+    }
+
+    wp.media.editor.open(button);
+    return false;
+  });
+});
+</script>
+ 
+<?php
+}
+
+function eme_meta_box_div_event_attributes($event) {
+    eme_attributes_form($event);
+}
+
+function eme_meta_box_div_event_url($event) {
+?>
+                        <input type="text" id="event_url" name="event_url" value="<?php echo eme_sanitize_html($event['event_url']); ?>" />
+                        <br />
+                        <?php _e ( 'If this is filled in, the single event URL will point to this url instead of the standard event page.', 'eme' )?>
 <?php
 }
 
@@ -3304,6 +3290,7 @@ function eme_admin_map_script() {
 <?php
    }
 }
+
 $gmap_is_active = get_option('eme_gmap_is_active' );
 if ($gmap_is_active) {
    add_action ( 'admin_head', 'eme_admin_map_script' );

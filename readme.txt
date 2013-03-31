@@ -118,6 +118,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: added the possibility to use a print stylesheet called eme_print.css in your theme style dir
 * Feature: shortcode events_ical_link now has 3 extra options: scope, author and contact_person
 * Feature: the creation and modif date can now be shown for the bookings list (when using #_BOOKINGS) via 2 new placeholders: #_BOOKINGCREATIONDATE and #_BOOKINGMODIFDATE
+* Improvement: revamped the edit/add event interface: you can now use wordpress 'screen options' in the admin page to decide which parts to show and in what sequence
 * Improvement: the price for each event is stored per booking now, so if the price changes afterwards it doesn't affect the booking in question
 * Improvement: ical format includes the timezone now
 * Improvement: #ESC_ATT and #URL_ATT are now also recognized when looking for attributes definitions
