@@ -2330,6 +2330,8 @@ function eme_event_form($event, $title, $element) {
                                  foreach ( $currency_array as $key=>$value) {
                                     if ($event['currency'] && ($event['currency']==$key)) {
                                        $selected = "selected='selected'";
+                                    } elseif (!$event['currency'] && ($key==get_option('eme_default_currency'))) {
+                                       $selected = "selected='selected'";
                                     } else {
                                        $selected = "";
                                     }
@@ -2381,31 +2383,31 @@ function eme_event_form($event, $title, $element) {
             <!-- END OF SIDEBAR -->
             <div id="post-body">
                <div id="post-body-content" class="meta-box-sortables">
-	       <?php 
-	             $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
-		     foreach ($screens as $screen) {
-			     if ($event['event_page_title_format']=="")
-				     add_filter('postbox_classes_'.$screen.'_div_event_page_title_format','eme_closed');
-			     if ($event['event_single_event_format']=="")
-				     add_filter('postbox_classes_'.$screen.'_div_event_single_event_format','eme_closed');
-			     if ($event['event_contactperson_email_body']=="")
-				     add_filter('postbox_classes_'.$screen.'_div_event_contactperson_email_body','eme_closed');
-			     if ($event['event_registration_recorded_ok_html']=="")
-				     add_filter('postbox_classes_'.$screen.'_div_event_registration_recorded_ok_html','eme_closed');
-			     if ($event['event_respondent_email_body']=="")
-				     add_filter('postbox_classes_'.$screen.'_div_event_respondent_email_body','eme_closed');
-			     if ($event['event_registration_recorded_ok_html']=="")
-				     add_filter('postbox_classes_'.$screen.'_div_event_registration_pending_email_body','eme_closed');
-			     if ($event['event_registration_form_format']=="")
-				     add_filter('postbox_classes_'.$screen.'_div_event_registration_form_format','eme_closed');
-		     }
+               <?php 
+               $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
+               foreach ($screens as $screen) {
+                  if ($event['event_page_title_format']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_page_title_format','eme_closed');
+                  if ($event['event_single_event_format']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_single_event_format','eme_closed');
+                  if ($event['event_contactperson_email_body']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_contactperson_email_body','eme_closed');
+                  if ($event['event_registration_recorded_ok_html']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_registration_recorded_ok_html','eme_closed');
+                  if ($event['event_respondent_email_body']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_respondent_email_body','eme_closed');
+                  if ($event['event_registration_recorded_ok_html']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_registration_pending_email_body','eme_closed');
+                  if ($event['event_registration_form_format']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_registration_form_format','eme_closed');
+               }
 
-		     if ($is_new_event) {
-			     do_meta_boxes('events_page_eme-new_event',"post",$event);
-		     } else {
-			     do_meta_boxes('toplevel_page_events-manager',"post",$event);
-		     }
-		?>
+               if ($is_new_event) {
+                  do_meta_boxes('events_page_eme-new_event',"post",$event);
+               } else {
+                  do_meta_boxes('toplevel_page_events-manager',"post",$event);
+               }
+               ?>
                   <input id='location_latitude' name='location_latitude' type='hidden' value='<?php echo $event['location_latitude']; ?>' size='15' />
                   <input id='location_longitude' name='location_longitude' type='hidden' value='<?php echo $event['location_longitude']; ?>' size='15' />
                </div>
@@ -2827,23 +2829,23 @@ function eme_admin_event_boxes() {
    $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
    foreach ($screens as $screen) {
         if (preg_match("/$plugin_page/",$screen)) {
-	   add_meta_box("div_event_name", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
-	   add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
-	   add_meta_box("div_recurrence_date", __('Recurrence dates', 'eme'), "eme_meta_box_div_recurrence_date",$screen,"post");
-	   add_meta_box("div_event_time", __('Event time', 'eme'), "eme_meta_box_div_event_time",$screen,"post");
-	   add_meta_box("div_event_page_title_format", __('Single Event Title Format', 'eme'), "eme_meta_box_div_event_page_title_format",$screen,"post");
-	   add_meta_box("div_event_single_event_format", __('Single Event Format', 'eme'), "eme_meta_box_div_event_single_event_format",$screen,"post");
-	   add_meta_box("div_event_contactperson_email_body", __('Contact Person Email Format', 'eme'), "eme_meta_box_div_event_contactperson_email_body",$screen,"post");
-	   add_meta_box("div_event_registration_recorded_ok_html", __('Booking recorded html Format', 'eme'), "eme_meta_box_div_event_registration_recorded_ok_html",$screen,"post");
-	   add_meta_box("div_event_respondent_email_body", __('Respondent Email Format', 'eme'), "eme_meta_box_div_event_respondent_email_body",$screen,"post");
-	   add_meta_box("div_event_registration_pending_email_body", __('Registration Pending Email Format', 'eme'), "eme_meta_box_div_event_registration_pending_email_body",$screen,"post");
-	   add_meta_box("div_event_registration_form_format", __('Registration Form Format', 'eme'), "eme_meta_box_div_event_registration_form_format",$screen,"post");
-	   add_meta_box("div_location_name", __('Location', 'eme'), "eme_meta_box_div_location_name",$screen,"post");
-	   add_meta_box("div_event_notes", __('Details', 'eme'), "eme_meta_box_div_event_notes",$screen,"post");
-	   add_meta_box("div_event_image", __('Event image', 'eme'), "eme_meta_box_div_event_image",$screen,"post");
+           add_meta_box("div_event_name", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
+           add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
+           add_meta_box("div_recurrence_date", __('Recurrence dates', 'eme'), "eme_meta_box_div_recurrence_date",$screen,"post");
+           add_meta_box("div_event_time", __('Event time', 'eme'), "eme_meta_box_div_event_time",$screen,"post");
+           add_meta_box("div_event_page_title_format", __('Single Event Title Format', 'eme'), "eme_meta_box_div_event_page_title_format",$screen,"post");
+           add_meta_box("div_event_single_event_format", __('Single Event Format', 'eme'), "eme_meta_box_div_event_single_event_format",$screen,"post");
+           add_meta_box("div_event_contactperson_email_body", __('Contact Person Email Format', 'eme'), "eme_meta_box_div_event_contactperson_email_body",$screen,"post");
+           add_meta_box("div_event_registration_recorded_ok_html", __('Booking recorded html Format', 'eme'), "eme_meta_box_div_event_registration_recorded_ok_html",$screen,"post");
+           add_meta_box("div_event_respondent_email_body", __('Respondent Email Format', 'eme'), "eme_meta_box_div_event_respondent_email_body",$screen,"post");
+           add_meta_box("div_event_registration_pending_email_body", __('Registration Pending Email Format', 'eme'), "eme_meta_box_div_event_registration_pending_email_body",$screen,"post");
+           add_meta_box("div_event_registration_form_format", __('Registration Form Format', 'eme'), "eme_meta_box_div_event_registration_form_format",$screen,"post");
+           add_meta_box("div_location_name", __('Location', 'eme'), "eme_meta_box_div_location_name",$screen,"post");
+           add_meta_box("div_event_notes", __('Details', 'eme'), "eme_meta_box_div_event_notes",$screen,"post");
+           add_meta_box("div_event_image", __('Event image', 'eme'), "eme_meta_box_div_event_image",$screen,"post");
            if (get_option('eme_attributes_enabled'))
-	      add_meta_box("div_event_attributes", __('Attributes', 'eme'), "eme_meta_box_div_event_attributes",$screen,"post");
-	   add_meta_box("div_event_url", __('External link', 'eme'), "eme_meta_box_div_event_url",$screen,"post");
+              add_meta_box("div_event_attributes", __('Attributes', 'eme'), "eme_meta_box_div_event_attributes",$screen,"post");
+           add_meta_box("div_event_url", __('External link', 'eme'), "eme_meta_box_div_event_url",$screen,"post");
         }
    }
 }

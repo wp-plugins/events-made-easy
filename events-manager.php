@@ -440,6 +440,7 @@ function _eme_uninstall() {
       eme_drop_table(ANSWERS_TBNAME);
       eme_delete_events_page();
       eme_options_delete();
+      eme_metabox_options_delete();
    }
 
     // SEO rewrite rules

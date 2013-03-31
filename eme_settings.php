@@ -157,6 +157,20 @@ function eme_options_delete() {
    }
 }
 
+function eme_metabox_options_delete() {
+   global $wpdb;
+   $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
+   foreach ($screens as $screen) {
+      foreach ( array( 'metaboxhidden', 'closedpostboxes', 'wp_metaboxorder', 'screen_layout' ) as $option )
+         $keys[] = "'{$option}_{$screen}'";
+   }
+   $keys = '( ' . implode( ', ', $keys ) . ' )';
+   $wpdb->query( "
+         DELETE FROM {$wpdb->usermeta}
+         WHERE meta_key IN {$keys}
+         " );
+}
+
 function eme_options_register() {
 
    // only the options you want changed in the Settings page, not eg. eme_hello_to_user, eme_donation_done
