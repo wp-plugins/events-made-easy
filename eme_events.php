@@ -250,7 +250,7 @@ function eme_events_page() {
          if (!is_numeric($event['price'])) $event['price'] = 0;
       }
 
-      $event['currency'] = isset ($_POST['currency']) ? $_POST['currency']:"EUR";
+      $event['currency'] = isset ($_POST['currency']) ? $_POST['currency']:"";
       $event['event_image_url'] = isset ($_POST['event_image_url']) ? $_POST['event_image_url']:"";
 
       if (isset ( $_POST['event_contactperson_id'] ) && $_POST['event_contactperson_id'] != '') {
