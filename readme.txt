@@ -112,13 +112,13 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
-= 1.0.19 =
+= 1.1.0 =
 * Feature: multiprice events are now possible (see wordpress site for explanation: price and booked seats need to be seperated by "||"). Also, for multiprice events, the min number of seats to book is always 0
 * Feature: you can now send mails to all attendees for an event in the admin backend. This functionality has it's own access right settings as well.
+* Feature: revamped the edit/add event interface: you can now use wordpress 'screen options' in the admin page to decide which parts to show and in what sequence
 * Feature: added the possibility to use a print stylesheet called eme_print.css in your theme style dir
 * Feature: shortcode events_ical_link now has 3 extra options: scope, author and contact_person
 * Feature: the creation and modif date can now be shown for the bookings list (when using #_BOOKINGS) via 2 new placeholders: #_BOOKINGCREATIONDATE and #_BOOKINGMODIFDATE
-* Improvement: revamped the edit/add event interface: you can now use wordpress 'screen options' in the admin page to decide which parts to show and in what sequence
 * Improvement: the price for each event is stored per booking now, so if the price changes afterwards it doesn't affect the booking in question
 * Improvement: ical format includes the timezone now
 * Improvement: #ESC_ATT and #URL_ATT are now also recognized when looking for attributes definitions
