@@ -118,7 +118,6 @@ function eme_db_insert_recurrence($event, $recurrence ){
 
    $recurrence['recurrence_id'] = $recurrence_id;
    $event['recurrence_id'] = $recurrence['recurrence_id'];
-   eme_upload_event_picture($event);
    eme_insert_events_for_recurrence($event,$recurrence);
    if (has_action('eme_insert_recurrence_action')) do_action('eme_insert_recurrence_action',$event,$recurrence);
    return $recurrence_id;
@@ -166,7 +165,6 @@ function eme_db_update_recurrence($event, $recurrence) {
    $wpdb->show_errors(true);
    $wpdb->update($recurrence_table, $recurrence, $where); 
    $event['recurrence_id'] = $recurrence['recurrence_id'];
-   eme_upload_event_picture($event);
    eme_update_events_for_recurrence($event,$recurrence); 
    if (has_action('eme_update_recurrence_action')) do_action('eme_update_recurrence_action',$event,$recurrence);
    return 1;
@@ -278,7 +276,7 @@ function eme_get_recurrence_desc($recurrence_id) {
 
    $weekdays_name = array(__('Monday'),__('Tuesday'),__('Wednesday'),__('Thursday'),__('Friday'),__('Saturday'),__('Sunday'));
    $monthweek_name = array('1' => __('the first %s of the month', 'eme'),'2' => __('the second %s of the month', 'eme'), '3' => __('the third %s of the month', 'eme'), '4' => __('the fourth %s of the month', 'eme'), '5' => __('the fifth %s of the month', 'eme'), '-1' => __('the last %s of the month', 'eme'));
-   $output = sprintf (__('From %1$s to %2$s', 'eme'),  $recurrence['recurrence_start_date'], $recurrence['recurrence_end_date']).", ";
+   $output = sprintf (__('From %1$s to %2$s', 'eme'),  eme_localised_date($recurrence['recurrence_start_date']), eme_localised_date($recurrence['recurrence_end_date'])).", ";
    if ($recurrence['recurrence_freq'] == 'daily')  {
       $freq_desc =__('everyday', 'eme');
       if ($recurrence['recurrence_interval'] > 1 ) {

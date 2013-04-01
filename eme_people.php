@@ -60,13 +60,20 @@ function eme_ajax_actions() {
          eme_csv_booking_report(intval($_GET['event_id']));
    }
    if (isset($_GET['query']) && $_GET['query'] == 'GlobalMapData') { 
-      eme_global_map_json((bool) $_GET['eventful'],$_GET['scope'],$_GET['category']);
+      $eventful = isset($_GET['eventful'])?$_GET['eventful']:false;
+      $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
+      $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
+
+      eme_global_map_json((bool)$eventful,$_GET['scope'],$_GET['category']);
       die();
    }
 }
 
 function eme_global_map_json($eventful = false, $scope = "all", $category = '', $offset = 0) {
-   $locations = eme_get_locations((bool) $eventful,$scope,$category,$offset);
+   $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
+   $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
+
+   $locations = eme_get_locations((bool)$eventful,$scope,$category,$offset);
    $json_locations = array();
    foreach($locations as $location) {
       $json_location = array();
@@ -116,6 +123,7 @@ function fputcsv2 ($fh, $fields, $delimiter = ',', $enclosure = '"', $mysql_null
 }
 function eme_csv_booking_report($event_id) {
    $event = eme_get_event($event_id);
+   $is_multiprice = eme_is_multiprice($event['price']);
    $current_userid=get_current_user_id();
    if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
         (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)))) {
@@ -129,11 +137,15 @@ function eme_csv_booking_report($event_id) {
    $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $out = fopen('php://output', 'w');
    $line=array();
-   $line[]='Name';
-   $line[]='Email';
-   $line[]='Phone';
-   $line[]='Seats';
-   $line[]='Comment';
+   $line[]=__('Name', 'eme');
+   $line[]=__('E-mail', 'eme');
+   $line[]=__('Phone number', 'eme');
+   if ($is_multiprice)
+      $line[]=__('Seats (Multiprice)', 'eme');
+   else
+      $line[]=__('Seats', 'eme');
+   $line[]=__('Paid', 'eme');
+   $line[]=__('Comment', 'eme');
    foreach($answer_columns as $col) {
       $line[]=$col['field_name'];
    }
@@ -143,12 +155,16 @@ function eme_csv_booking_report($event_id) {
       $line=array();
       $pending_string="";
       if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
-         $booking['booking_seats'].=" ".__('(pending)','eme');
+         $pending_string=__('(pending)','eme');
       }
       $line[]=$person['person_name'];
       $line[]=$person['person_email'];
       $line[]=$person['person_phone'];
-      $line[]=$booking['booking_seats'];
+      if ($is_multiprice)
+         $line[]=$booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
+      else
+         $line[]=$booking['booking_seats']." ".$pending_string;
+      $line[]=$booking['booking_payed']? __('Yes'): __('No');
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
       foreach($answer_columns as $col) {
@@ -184,6 +200,8 @@ function eme_printable_booking_report($event_id) {
    $available_seats = eme_get_available_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
+   $is_multiprice = eme_is_multiprice($event['price']);
+
    $stylesheet = EME_PLUGIN_URL."events_manager.css";
    ?>
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -193,11 +211,19 @@ function eme_printable_booking_report($event_id) {
          <meta http-equiv="Content-type" content="text/html; charset=utf-8">
          <title>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></title>
           <link rel="stylesheet" href="<?php echo $stylesheet; ?>" type="text/css" media="screen" />
+          <?php
+            $file_name= get_stylesheet_directory()."/eme.css";
+            if (file_exists($file_name))
+               echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme.css' type='text/css' media='screen' />\n";
+            $file_name= get_stylesheet_directory()."/eme_print.css";
+            if (file_exists($file_name))
+               echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme_print.css' type='text/css' media='print' />\n";
+          ?>
       </head>
       <body id="printable">
          <div id="container">
          <h1>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></h1> 
-         <p><?php echo eme_admin_localised_date($event['event_start_date']); ?></p>
+         <p><?php echo eme_localised_date($event['event_start_date']); ?></p>
          <p><?php if ($event['location_id']) echo eme_replace_placeholders("#_LOCATIONNAME, #_ADDRESS, #_TOWN", $event); ?></p>
          <?php if ($event['price']) ?>
             <p><?php _e ( 'Price: ','eme' ); echo eme_replace_placeholders("#_CURRENCY #_PRICE", $event)?></p>
@@ -207,7 +233,7 @@ function eme_printable_booking_report($event_id) {
                <th scope='col'><?php _e('Name', 'eme')?></th>
                <th scope='col'><?php _e('E-mail', 'eme')?></th>
                <th scope='col'><?php _e('Phone number', 'eme')?></th> 
-               <th scope='col'><?php _e('Seats', 'eme')?></th>
+               <th scope='col'><?php if ($is_multiprice) _e('Seats (Multiprice)', 'eme'); else _e('Seats', 'eme'); ?></th>
                <th scope='col'><?php _e('Paid', 'eme')?></th>
                <th scope='col'><?php _e('Comment', 'eme')?></th> 
             <?php
@@ -228,7 +254,13 @@ function eme_printable_booking_report($event_id) {
                <td><?php echo $person['person_name']?></td> 
                <td><?php echo $person['person_email']?></td>
                <td><?php echo $person['person_phone']?></td>
-               <td class='seats-number'><?php echo $booking['booking_seats']." ".$pending_string?></td>
+               <td class='seats-number'><?php 
+               if ($is_multiprice)
+                   echo $booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
+               else
+                   echo $booking['booking_seats']." ".$pending_string;
+               ?>
+               </td>
                <td><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
                <td><?=$booking['booking_comment'] ?></td> 
                <?php
