@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.1.1 =
+* Minor Bugfix: only include the datepicker locale if it exist
+
 = 1.1.0 =
 * Feature: multiprice events are now possible (see wordpress site for explanation: price and booked seats need to be seperated by "||"). Also, for multiprice events, the min number of seats to book is always 0
 * Feature: you can now send mails to all attendees for an event in the admin backend. This functionality has it's own access right settings as well.
