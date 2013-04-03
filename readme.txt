@@ -113,6 +113,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 == Changelog ==
 
 = 1.1.1 =
+* Bugfix: make qtranslate work again (one-liner fix)
 * Minor Bugfix: only include the datepicker locale if it exist
 
 = 1.1.0 =

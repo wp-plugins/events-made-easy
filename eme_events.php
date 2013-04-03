@@ -2835,7 +2835,8 @@ function eme_admin_event_boxes() {
    $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
    foreach ($screens as $screen) {
         if (preg_match("/$plugin_page/",$screen)) {
-           add_meta_box("div_event_name", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
+           // we need titlediv for qtranslate as ID
+           add_meta_box("titlediv", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
            add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
            add_meta_box("div_recurrence_date", __('Recurrence dates', 'eme'), "eme_meta_box_div_recurrence_date",$screen,"post");
            add_meta_box("div_event_time", __('Event time', 'eme'), "eme_meta_box_div_event_time",$screen,"post");
