@@ -1900,10 +1900,11 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
+         <th><?php _e ('ID','eme'); ?></th>
          <th><?php _e ( 'Name', 'eme' ); ?></th>
-            <th><?php _e ( 'Status', 'eme' ); ?></th>
-            <th></th>
-            <th><?php _e ( 'Location', 'eme' ); ?></th>
+         <th><?php _e ( 'Status', 'eme' ); ?></th>
+         <th></th>
+         <th><?php _e ( 'Location', 'eme' ); ?></th>
          <th colspan="2"><?php _e ( 'Date and time', 'eme' ); ?></th>
       </tr>
    </thead>
@@ -1932,6 +1933,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          ?>
      <tr <?php echo "$class $style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event['event_id']; ?>' name='events[]' /></td>
+         <td><?php echo $event['event_id']; ?></td>
          <td><strong>
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id']); ?>"><?php echo eme_trans_sanitize_html($event['event_name']); ?></a>
          </strong>

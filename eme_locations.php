@@ -367,6 +367,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                      <thead>
                         <tr>
                            <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" class="select-all" value="1"/></th>
+                           <th><?php _e('ID', 'eme') ?></th>
                            <th><?php _e('Name', 'eme') ?></th>
                            <th><?php _e('Address', 'eme') ?></th>
                            <th><?php _e('Town', 'eme') ?></th>
@@ -375,6 +376,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                      <tfoot>
                         <tr>
                            <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" class="select-all" value="1"/></th>
+                           <th><?php _e('ID', 'eme') ?></th>
                            <th><?php _e('Name', 'eme') ?></th>
                            <th><?php _e('Address', 'eme') ?></th>
                            <th><?php _e('Town', 'eme') ?></th>
@@ -383,7 +385,8 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                      <tbody>
                         <?php foreach ($locations as $this_location) : ?>  
                         <tr>
-                           <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id'] ?>" name="locations[]"/></td>
+                           <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id']; ?>" name="locations[]"/></td>
+                           <td><?php echo $this_location['location_id']; ?></td>
                            <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;action=edit&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_town']); ?></td>
