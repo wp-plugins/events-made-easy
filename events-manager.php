@@ -270,9 +270,7 @@ if (!is_admin() && get_option('eme_shortcodes_in_widgets')) {
    add_filter('widget_text', 'do_shortcode', 11);
 }
 
-add_filter('rewrite_rules_array','eme_insertMyRewriteRules');
-add_filter('query_vars','eme_insertMyRewriteQueryVars');
-// Remember to flush_rules() when adding rules
+// the next is executed on activation/deaction of EME, so as to set the rewriterules correctly
 function eme_flushRules() {
    global $wp_rewrite;
    $wp_rewrite->flush_rules();
@@ -292,6 +290,7 @@ function eme_insertMyRewriteRules($rules) {
    $newrules[$locations_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&location_id=$matches[1]';
    return $newrules + $rules;
 }
+add_filter('rewrite_rules_array','eme_insertMyRewriteRules');
 
 // Adding the id var so that WP recognizes it
 function eme_insertMyRewriteQueryVars($vars) {
@@ -302,6 +301,7 @@ function eme_insertMyRewriteQueryVars($vars) {
     array_push($vars, 'eme_pmt_id');
     return $vars;
 }
+add_filter('query_vars','eme_insertMyRewriteQueryVars');
 
 // INCLUDES
 // We let the includes happen at the end, so all init-code is done
