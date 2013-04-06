@@ -835,20 +835,28 @@ function eme_get_bookings_for($event_ids,$pending_approved=0) {
    } else {
       $where="event_id = $event_ids";
    }
+   $sql = "SELECT * FROM $bookings_table WHERE $where";
    if ($pending_approved==1) {
-      $sql = "SELECT * FROM $bookings_table WHERE $where AND booking_approved=0";
+      $sql .= " AND booking_approved=0";
    } elseif ($pending_approved==2) {
-      $sql = "SELECT * FROM $bookings_table WHERE $where AND booking_approved=1";
-   } else {
-      $sql = "SELECT * FROM $bookings_table WHERE $where";
+      $sql .= " AND booking_approved=1";
    }
    return $wpdb->get_results($sql, ARRAY_A);
 }
 
-function eme_get_attendees_for($event_id) {
+function eme_get_attendees_for($event_id,$pending_approved=0,$only_unpayed=0) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT DISTINCT person_id FROM $bookings_table WHERE event_id = %s",$event_id);
+   if ($pending_approved==1) {
+      $sql .= " AND booking_approved=0";
+   } elseif ($pending_approved==2) {
+      $sql .= " AND booking_approved=1";
+   }
+   if ($only_unpayed) {
+      $sql .= " AND booking_payed=0";
+   }
+
    $person_ids = $wpdb->get_col($sql);
    if ($person_ids) {
       $attendees = eme_get_persons($person_ids);
@@ -1514,6 +1522,8 @@ function eme_send_mails_page() {
    $subject = isset($_POST ['subject']) ? $_POST ['subject'] : '';
 
    if ($event_id>0 && $action == 'send_mail') {
+           $pending_approved = isset($_POST ['target']) ? $_POST ['target'] : 0;
+           $only_unpayed = isset($_POST ['only_unpayed']) ? $_POST ['only_unpayed'] : 0;
 	   if (empty($subject) || empty($message)) {
 		   print "<div id='message' class='error'><p>".__('Please enter both subject and message for the mail to be sent.','eme')."</p></div>";
 	   } else {
@@ -1530,7 +1540,7 @@ function eme_send_mails_page() {
 			   $message = eme_replace_placeholders($message, $event, "text");
 			   $subject = eme_replace_placeholders($subject, $event, "text");
 
-			   $attendees = eme_get_attendees_for($event_id);
+			   $attendees = eme_get_attendees_for($event_id,$target,$only_unpayed);
 			   foreach ( $attendees as $attendee ) {
 				   $tmp_message = eme_replace_attendees_placeholders($message, $attendee, $event_id, "text");
 				   $tmp_message = eme_translate($tmp_message);
@@ -1569,13 +1579,12 @@ function eme_send_mail_form($event_id=0) {
    <select name="event_id" onchange="this.form.submit()">
    <?php
    $all_events=eme_get_events(0,"future");
-   $events_with_pending_bookings=array();
    $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
    $current_userid=get_current_user_id();
    echo "<option value='0' >".__('Select the event','eme')."</option>  ";
    foreach ( $all_events as $event ) {
          $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")";
-	 if (current_user_can( get_option('eme_cap_send_other_mails')) ||
+	 if ($event['event_rsvp'] && current_user_can( get_option('eme_cap_send_other_mails')) ||
 			 (current_user_can( get_option('eme_cap_send_mails')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {  
 		 if ($event['event_id'] == $event_id) {
 			 echo "<option selected='selected' value='".$event['event_id']."' >".$option_text."</option>  ";
@@ -1588,15 +1597,23 @@ function eme_send_mail_form($event_id=0) {
    </select>
    <p>
    <?php if ($event_id>0) {?>
+	   <div><p><label><?php _e('Select your target audience','eme'); ?>
+           <select name="target">
+           <option value=0><?php _e('All attendees','eme'); ?></option>
+           <option value=2><?php _e('Exclude pending registrations','eme'); ?></option>
+           <option value=1><?php _e('Only pending registrations','eme'); ?></option>
+           </select></p><p>
+           <input type="checkbox" name="only_unpayed" value="1" />&nbsp;<?php _e('Only send mails to attendees who did not pay yet','eme'); ?>
+	   </p></div>
 	   <div id="titlediv" class="form-field form-required">
 		   <label><?php _e('Subject','eme'); ?></label><br>
 		   <input type="text" name="subject" value="" />
 	   </div>
-	   <div id="titlediv" class="form-field form-required">
+	   <div class="form-field form-required">
 	   <label><?php _e('Message','eme'); ?></label><br>
 	   <textarea name="message" value="" rows=10></textarea> 
 	   </div>
-	   <div id="titlediv">
+	   <div>
 	   <?php _e('You can use any placeholders mentioned here:','eme');
 	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('Event placeholders','eme')."</a>";
 	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a>";
