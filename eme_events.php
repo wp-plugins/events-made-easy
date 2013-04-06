@@ -515,6 +515,10 @@ function eme_get_all_pages() {
 //This is the content of the event page
 function eme_events_page_content() {
    global $wpdb,$wp_query;
+   if (isset ( $wp_query->query_vars['eme_pmt_id'] ) && $wp_query->query_vars['eme_pmt_id'] != '') {
+      $page_body = eme_payment_form("",$wp_query->query_vars['eme_pmt_id']);
+      return $page_body;
+   }
    if (isset ( $wp_query->query_vars['location_id'] ) && $wp_query->query_vars['location_id'] != '') {
       $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
       $single_location_format = get_option('eme_single_location_format' );

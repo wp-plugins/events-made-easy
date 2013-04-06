@@ -288,6 +288,7 @@ function eme_insertMyRewriteRules($rules) {
    $newrules = array();
    $newrules[$events_prefix.'(\d{4})-(\d{2})-(\d{2})'] = 'index.php?page_id='.$page_id.'&calendar_day=$matches[1]-$matches[2]-$matches[3]';
    $newrules[$events_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&event_id=$matches[1]';
+   $newrules[$events_prefix.'p(\d*)'] = 'index.php?page_id='.$page_id.'&eme_pmt_id=$matches[1]';
    $newrules[$locations_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&location_id=$matches[1]';
    return $newrules + $rules;
 }
@@ -297,6 +298,8 @@ function eme_insertMyRewriteQueryVars($vars) {
     array_push($vars, 'event_id');
     array_push($vars, 'location_id');
     array_push($vars, 'calendar_day');
+    // a bit cryptic for the booking id
+    array_push($vars, 'eme_pmt_id');
     return $vars;
 }
 

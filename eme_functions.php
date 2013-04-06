@@ -129,12 +129,8 @@ function eme_event_url($event) {
          else
             $the_link = trailingslashit(home_url()).user_trailingslashit($name);
       } else {
-         $events_page_link = eme_get_events_page(true, false);
-         if (stristr ( $events_page_link, "?" ))
-            $joiner = "&amp;";
-         else
-            $joiner = "?";
-         $the_link = $events_page_link.$joiner."event_id=".$event['event_id'];
+         $the_link = eme_get_events_page(true, false);
+         $the_link = add_query_arg( array( 'event_id' => $event['event_id'] ), $the_link );
       }
    }
    return $the_link;
@@ -164,13 +160,8 @@ function eme_location_url($location) {
             else
                $the_link = trailingslashit(home_url()).user_trailingslashit($name);
          } else {
-            $events_page_link = eme_get_events_page(true, false);
-            if (stristr ( $events_page_link, "?" )) {
-               $joiner = "&amp;";
-            } else {
-               $joiner = "?";
-            }
-            $the_link = $events_page_link.$joiner."location_id=".$location['location_id'];
+            $the_link = eme_get_events_page(true, false);
+            $the_link = add_query_arg( array( 'location_id' => $location['location_id'] ), $the_link );
          }
       }
    }
@@ -195,12 +186,50 @@ function eme_calendar_day_url($day) {
       else
          $the_link = trailingslashit(home_url()).user_trailingslashit($name);
    } else {
-      $events_page_link = eme_get_events_page(true, false);
-      if (stristr ( $events_page_link, "?" ))
-         $joiner = "&amp;";
+      $the_link = eme_get_events_page(true, false);
+      if (function_exists('qtrans_getLanguage')) {
+         $language=qtrans_getLanguage();
+         $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
+         $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+      } else {
+         $language="";
+      }
+      $the_link = add_query_arg( array( 'calendar_day' => $day ), $the_link );
+   }
+   return $the_link;
+}
+
+function eme_payment_url($booking_id) {
+   global $wp_rewrite;
+
+   if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
+      if (function_exists('qtrans_getLanguage')) {
+         $language=qtrans_getLanguage();
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
+      } else {
+         $language="";
+      }
+      $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
+      $name=$events_prefix."p$booking_id";
+      if (!empty($language))
+         $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
       else
-         $joiner = "?";
-      $the_link = $events_page_link.$joiner."calendar_day=".$day;
+         $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+   } else {
+      $the_link = eme_get_events_page(true, false);
+      if (function_exists('qtrans_getLanguage')) {
+         $language=qtrans_getLanguage();
+         $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
+         $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+      } else {
+         $language="";
+      }
+      $the_link = add_query_arg( array( 'eme_pmt_id' => $booking_id ), $the_link );
    }
    return $the_link;
 }

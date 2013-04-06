@@ -3,6 +3,40 @@ $form_add_message = "";
 $form_error_message = "";
 $form_delete_message = "";
 
+function eme_payment_form($event,$booking_id) {
+   if (empty($event)) {
+      $event_id=eme_get_event_id_by_booking_id($booking_id);
+      if ($event_id)
+         $event = eme_get_event($event_id);
+   }
+   $booking = eme_get_booking($booking_id);
+   if (!is_array($booking))
+      return "";
+   if ($booking['booking_payed'])
+      return "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('This booking has already been payed for','eme')."</div>";
+
+   if (is_array($event)) {
+      $total_price=eme_get_total_booking_price($event,$booking);
+      $ret_string = "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
+      $ret_string .= "<br>".sprintf(__("The booking price in %s is: %d",'eme'),$event['currency'],$total_price);
+      if ($event['use_paypal'])
+         $ret_string .= eme_paypal_form($event,$booking_id);
+      if ($event['use_2co'])
+         $ret_string .= eme_2co_form($event,$booking_id);
+      if ($event['use_webmoney'])
+         $ret_string .= eme_webmoney_form($event,$booking_id);
+      if ($event['use_google'])
+         $ret_string .= eme_google_form($event,$booking_id);
+
+      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'])
+         return $ret_string;
+      else
+         return "";
+   } else {
+      return "";
+   }
+}
+
 function eme_add_booking_form($event_id) {
    global $form_add_message, $form_error_message, $current_user;
    global $booking_id_done;
@@ -54,17 +88,8 @@ function eme_add_booking_form($event_id) {
    # you did a successfull registration, so now we decide wether to show the form again, or the paypal form
    if(!empty($form_add_message) && empty($form_error_message)) {
       $ret_string = "<div class='eme-rsvp-message'>$form_add_message</div>";
-      $ret_string .= "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
-      if ($event['use_paypal'])
-         $ret_string .= eme_paypal_form($event,$booking_id_done);
-      if ($event['use_2co'])
-         $ret_string .= eme_2co_form($event,$booking_id_done);
-      if ($event['use_webmoney'])
-         $ret_string .= eme_webmoney_form($event,$booking_id_done);
-      if ($event['use_google'])
-         $ret_string .= eme_google_form($event,$booking_id_done);
-      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'])
-         return $ret_string;
+      $ret_string .= eme_payment_form($event,$booking_id_done);
+      return $ret_string;
    }
 
    // you can book the available number of seats, with a max of x per time
@@ -443,7 +468,7 @@ function eme_get_booking($booking_id) {
    $sql = "SELECT * FROM $bookings_table WHERE booking_id = '$booking_id';" ;
    $result = $wpdb->get_row($sql, ARRAY_A);
    // for older bookings, the booking_price field might be empty
-   if (!$result['booking_price'])
+   if ($result['booking_price']==="")
       $result['booking_price'] = eme_get_event_price($result['event_id']);
    return $result;
 }
@@ -459,7 +484,7 @@ function eme_get_event_price($event_id) {
 function eme_get_bookings_by_person_id($person_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT * FROM $bookings_table WHERE person_id = '$person_id';" ;
+   $sql = $wpdb->prepare("SELECT * FROM $bookings_table WHERE person_id = %d",$person_id);
    $result = $wpdb->get_results($sql, ARRAY_A);
    return $result;
 }
@@ -470,7 +495,7 @@ function eme_get_booking_by_person_event_id($person_id,$event_id) {
 function eme_get_booking_ids_by_person_event_id($person_id,$event_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   $sql = "SELECT booking_id FROM $bookings_table WHERE person_id = '$person_id' AND event_id = '$event_id'";
+   $sql = $wpdb->prepare("SELECT booking_id FROM $bookings_table WHERE person_id = %d AND event_id = %d",$person_id,$event_id);
    $result = $wpdb->get_col($sql);
    return $result;
 }
@@ -478,14 +503,22 @@ function eme_get_booking_ids_by_person_event_id($person_id,$event_id) {
 function eme_get_booked_seats_by_person_event_id($person_id,$event_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE person_id = '$person_id' AND event_id = '$event_id'";
+   $sql = $wpdb->prepare("SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE person_id = %d AND event_id = %d",$person_id,$event_id);
    return $wpdb->get_var($sql);
+}
+
+function eme_get_event_id_by_booking_id($booking_id) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = $wpdb->prepare("SELECT DISTINCT event_id FROM $bookings_table WHERE booking_id = %d",$booking_id);
+   $result = $wpdb->get_var($sql);
+   return $result;
 }
 
 function eme_get_event_ids_by_booker_id($person_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT DISTINCT event_id FROM $bookings_table WHERE person_id = '$person_id';" ;
+   $sql = $wpdb->prepare("SELECT DISTINCT event_id FROM $bookings_table WHERE person_id = %d",$person_id);
    $result = $wpdb->get_col($sql);
    return $result;
 }
@@ -822,7 +855,7 @@ function eme_get_bookingids_for($event_id) {
    return $wpdb->get_col($sql);
 }
 
-function eme_get_bookings_for($event_ids,$pending_approved=0) {
+function eme_get_bookings_for($event_ids,$pending_approved=0,$only_unpayed=0) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    
@@ -840,6 +873,9 @@ function eme_get_bookings_for($event_ids,$pending_approved=0) {
       $sql .= " AND booking_approved=0";
    } elseif ($pending_approved==2) {
       $sql .= " AND booking_approved=1";
+   }
+   if ($only_unpayed) {
+      $sql .= " AND booking_payed=0";
    }
    return $wpdb->get_results($sql, ARRAY_A);
 }
@@ -934,6 +970,8 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
          $replacement = eme_localised_date($booking['modif_date']);
       } elseif (preg_match('/#_TRANSFER_NBR_BE97$/', $result)) {
          $replacement = $booking['transfer_nbr_be97'];
+      } elseif (preg_match('/#_PAYMENT_URL$/', $result)) {
+         $replacement = eme_payment_url($booking['booking_id']);
       } elseif (preg_match('/#_FIELDS$/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {
@@ -1522,8 +1560,9 @@ function eme_send_mails_page() {
    $subject = isset($_POST ['subject']) ? $_POST ['subject'] : '';
 
    if ($event_id>0 && $action == 'send_mail') {
-           $pending_approved = isset($_POST ['target']) ? $_POST ['target'] : 0;
-           $only_unpayed = isset($_POST ['only_unpayed']) ? $_POST ['only_unpayed'] : 0;
+      $pending_approved = isset($_POST ['pending_approved']) ? $_POST ['pending_approved'] : 0;
+      $only_unpayed = isset($_POST ['only_unpayed']) ? $_POST ['only_unpayed'] : 0;
+      $target = isset($_POST ['target']) ? $_POST ['target'] : 'attendees';
 	   if (empty($subject) || empty($message)) {
 		   print "<div id='message' class='error'><p>".__('Please enter both subject and message for the mail to be sent.','eme')."</p></div>";
 	   } else {
@@ -1540,15 +1579,31 @@ function eme_send_mails_page() {
 			   $message = eme_replace_placeholders($message, $event, "text");
 			   $subject = eme_replace_placeholders($subject, $event, "text");
 
-			   $attendees = eme_get_attendees_for($event_id,$target,$only_unpayed);
-			   foreach ( $attendees as $attendee ) {
-				   $tmp_message = eme_replace_attendees_placeholders($message, $attendee, $event_id, "text");
-				   $tmp_message = eme_translate($tmp_message);
-				   $tmp_message = eme_strip_tags($tmp_message);
-				   $tmp_subject = eme_replace_attendees_placeholders($subject, $attendee, $event_id, "text");
-				   $tmp_subject = eme_translate($tmp_subject);
-				   $tmp_subject = eme_strip_tags($tmp_subject);
-				   eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
+            if ($target == 'attendees') {
+               $attendees = eme_get_attendees_for($event_id,$pending_approved,$only_unpayed);
+               foreach ( $attendees as $attendee ) {
+                  $tmp_message = eme_replace_attendees_placeholders($message, $attendee, $event_id, "text");
+                  $tmp_message = eme_translate($tmp_message);
+                  $tmp_message = eme_strip_tags($tmp_message);
+                  $tmp_subject = eme_replace_attendees_placeholders($subject, $attendee, $event_id, "text");
+                  $tmp_subject = eme_translate($tmp_subject);
+                  $tmp_subject = eme_strip_tags($tmp_subject);
+                  eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
+               }
+            } elseif ($target == 'bookings') {
+               $bookings = eme_get_bookings_for($event_id,$pending_approved,$only_unpayed);
+               foreach ( $bookings as $booking ) {
+                  $attendee = eme_get_person($booking['person_id']);
+                  if ($attendee && is_array($attendee)) {
+                     $tmp_message = eme_replace_booking_placeholders($message, $booking, "text");
+                     $tmp_message = eme_translate($tmp_message);
+                     $tmp_message = eme_strip_tags($tmp_message);
+                     $tmp_subject = eme_replace_booking_placeholders($subject, $booking, "text");
+                     $tmp_subject = eme_translate($tmp_subject);
+                     $tmp_subject = eme_strip_tags($tmp_subject);
+                     eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
+                  }
+               }
 			   }
 			   print "<div id='message' class='updated'><p>".__('The mail has been sent.','eme')."</p></div>";
 		   } else {
@@ -1566,7 +1621,7 @@ function eme_send_mail_form($event_id=0) {
 <div class="wrap">
 <div id="icon-events" class="icon32"><br />
 </div>
-<h2><?php _e ('Send Mails to all attendees for a event','eme'); ?></h2>
+<h2><?php _e ('Send Mails to attendees or bookings for a event','eme'); ?></h2>
 <?php admin_show_warnings();?>
    <div id='message' class='updated'><p>
 <?php
@@ -1597,9 +1652,15 @@ function eme_send_mail_form($event_id=0) {
    </select>
    <p>
    <?php if ($event_id>0) {?>
-	   <div><p><label><?php _e('Select your target audience','eme'); ?>
+	   <div><p><label><?php _e('Select the type of mail','eme'); ?>
            <select name="target">
-           <option value=0><?php _e('All attendees','eme'); ?></option>
+           <option value='attendees'><?php _e('Attendee mails','eme'); ?></option>
+           <option value='bookings'><?php _e('Booking mails','eme'); ?></option>
+           </select></p>
+      </div>
+	   <div><p><label><?php _e('Select your target audience','eme'); ?>
+           <select name="pending_approved">
+           <option value=0><?php _e('All','eme'); ?></option>
            <option value=2><?php _e('Exclude pending registrations','eme'); ?></option>
            <option value=1><?php _e('Only pending registrations','eme'); ?></option>
            </select></p><p>
@@ -1616,7 +1677,8 @@ function eme_send_mail_form($event_id=0) {
 	   <div>
 	   <?php _e('You can use any placeholders mentioned here:','eme');
 	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('Event placeholders','eme')."</a>";
-	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a>";
+	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a>(".__('for ','eme').__('Attendee mails','eme').")";
+	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('Booking placeholders','eme')."</a>(".__('for ','eme').__('Booking mails','eme').")";
 	   ?>
 	   </div>
 	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
@@ -2030,7 +2092,7 @@ function eme_event_needs_approval($event_id) {
 }
 
 function eme_get_booking_price($event,$booking) {
-   if (!empty($booking['booking_price']))
+   if ($booking['booking_price']!=="")
       $basic_price=$booking['booking_price'];
    else
       $basic_price=$event['price'];
@@ -2048,7 +2110,7 @@ function eme_get_total_booking_price($event,$booking) {
          $price += $val*$seats[$key];
       }
    } else {
-      $price = $event['price']*$booking['booking_seats'];
+      $price = $basic_price*$booking['booking_seats'];
    }
    return $price;
 }
