@@ -696,7 +696,7 @@ function eme_create_locations_table($charset,$collate) {
       $wpdb->query("INSERT INTO ".$table_name." (location_name, location_address, location_town, location_latitude, location_longitude)
                VALUES ('Arts Millenium Building', 'Newcastle Road','Galway', 53.275, -9.06532)");
       $wpdb->query("INSERT INTO ".$table_name." (location_name, location_address, location_town, location_latitude, location_longitude)
-               VALUES ('The Crane Bar', '2, Sea Road','Galway', 53.2692, -9.06151)");
+               VALUES ('The Crane Bar', '2, Sea Road','Galway', 53.2683224, -9.0626223)");
       $wpdb->query("INSERT INTO ".$table_name." (location_name, location_address, location_town, location_latitude, location_longitude)
                VALUES ('Taaffes Bar', '19 Shop Street','Galway', 53.2725, -9.05321)");
    } else {
