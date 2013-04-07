@@ -2414,8 +2414,6 @@ function eme_event_form($event, $title, $element) {
                   do_meta_boxes('toplevel_page_events-manager',"post",$event);
                }
                ?>
-                  <input id='location_latitude' name='location_latitude' type='hidden' value='<?php echo $event['location_latitude']; ?>' size='15' />
-                  <input id='location_longitude' name='location_longitude' type='hidden' value='<?php echo $event['location_longitude']; ?>' size='15' />
                </div>
                <p class="submit">
                   <?php if ($is_new_event) { ?>
@@ -2527,7 +2525,6 @@ function eme_admin_general_script() {
 </style>
 <script type="text/javascript">
    //<![CDATA[
-   // TODO: make more general, to support also latitude and longitude (when added)
 function areyousure(message) {
    if (!confirm(message)) {
          return false;
@@ -3038,10 +3035,11 @@ function eme_meta_box_div_location_name($event) {
                                  <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>'/>
                                  <input type='hidden' name='location-select-town' value='<?php echo eme_trans_sanitize_html($selected_location['location_town'])?>'/>
                                  <input type='hidden' name='location-select-address' value='<?php echo eme_trans_sanitize_html($selected_location['location_address'])?>'/>      
+                                 <input type='hidden' name='location-select-latitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_latitude'])?>'/>      
+                                 <input type='hidden' name='location-select-longitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_longitude'])?>'/>      
                               </td>
                            <?php } else { ?>
-                              <th><?php _e ( 'Name','eme' )?>
-                                 &nbsp;</th>
+                              <th><?php _e ( 'Name','eme' )?>&nbsp;</th>
                               <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /></td>
                            <?php } ?>
                            <?php
@@ -3059,41 +3057,54 @@ function eme_meta_box_div_location_name($event) {
          }
          ; // end of IF_GMAP_ACTIVE ?>
                            </tr>
-                            <?php  if(!$use_select_for_locations) : ?>
+                            <?php  if(!$use_select_for_locations) { ?>
                            <tr>
-                              <td colspan='2'><p>
+                              <td colspan='2'>
                                  <?php _e ( 'The name of the location where the event takes place. You can use the name of a venue, a square, etc', 'eme' );?>
 <br />
                                  <?php _e ( 'If you leave this empty, the map will NOT be shown for this event', 'eme' );?>
-                              </p></td>
+                              </td>
                            </tr>
-                           <?php else: ?>
+                           <?php } else { ?>
                            <tr >
-                              <td colspan='2'  rowspan='5' style='vertical-align: top'><p>
+                              <td colspan='2'  rowspan='5' style='vertical-align: top'>
                                      <?php _e ( 'Select a location for your event', 'eme' )?>
-                              </p></td>
+                              </td>
                            </tr>
-                           <?php endif; ?>
-                            <?php  if(!$use_select_for_locations) : ?> 
+                           <?php } ?>
+                           <?php if(!$use_select_for_locations) { ?> 
                            <tr>
                               <th><?php _e ( 'Address:', 'eme' )?> &nbsp;</th>
                               <td><input id="location_address" type="text" name="location_address" value="<?php echo $event['location_address']; ?>" /></td>
                            </tr>
                            <tr>
-                              <td colspan='2'><p>
+                              <td colspan='2'>
                                     <?php _e ( 'The address of the location where the event takes place. Example: 21, Dominick Street', 'eme' )?>
-                              </p></td>
+                              </td>
                            </tr>
                            <tr>
                               <th><?php _e ( 'Town:', 'eme' )?> &nbsp;</th>
                               <td><input id="location_town" type="text" name="location_town" value="<?php echo $event['location_town']?>" /></td>
                            </tr>
                            <tr>
-                              <td colspan='2'><p>
+                              <td colspan='2'>
                                     <?php _e ( 'The town where the location is located. If you\'re using the Google Map integration and want to avoid geotagging ambiguities include the country in the town field. Example: Verona, Italy.', 'eme' )?>
-                                 </p></td>
+                              </td>
                            </tr>
-                           <?php endif; ?>
+                           <tr>
+                              <th><?php _e ( 'Latitude:', 'eme' )?> &nbsp;</th>
+                              <td><input id="location_latitude" type="text" name="location_latitude" value="<?php echo $event['location_latitude']?>" /></td>
+                           </tr>
+                           <tr>
+                              <th><?php _e ( 'Longitude:', 'eme' )?> &nbsp;</th>
+                              <td><input id="location_longitude" type="text" name="location_longitude" value="<?php echo $event['location_longitude']?>" /></td>
+                           </tr>
+                           <tr>
+                              <td colspan='2'>
+                                    <?php _e ( 'If you\'re using the Google Map integration and are really serious about the correct place, use these.', 'eme' )?>
+                              </td>
+                           </tr>
+                           <?php } ?>
                         </table>
 <?php
 }
@@ -3203,9 +3214,9 @@ function eme_admin_map_script() {
 <script src="http://maps.google.com/maps/api/js?v=3.1&amp;sensor=false" type="text/javascript"></script>
 <script type="text/javascript">
          //<![CDATA[
-            $j_eme_admin=jQuery.noConflict();
-      
-         function loadMap(location, town, address) {
+          $j_eme_admin=jQuery.noConflict();
+
+          function loadMap(location, town, address) {
             var latlng = new google.maps.LatLng(-34.397, 150.644);
             var myOptions = {
                zoom: 13,
@@ -3252,6 +3263,36 @@ function eme_admin_map_script() {
                $j_eme_admin('#eme-admin-map-not-found').show();
             }
          }
+      
+         function loadMapLatLong(location, town, address, lat, long) {
+            if (lat != 0 && long != 0) {
+               var latlng = new google.maps.LatLng(lat, long);
+               var myOptions = {
+                  zoom: 13,
+                  center: latlng,
+                  scrollwheel: <?php echo get_option('eme_gmap_zooming') ? 'true' : 'false'; ?>,
+                  disableDoubleClickZoom: true,
+                  mapTypeControlOptions: {
+                     mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]
+                  },
+                  mapTypeId: google.maps.MapTypeId.ROADMAP
+               }
+               $j_eme_admin("#eme-admin-location-map").show();
+               var map = new google.maps.Map(document.getElementById("eme-admin-location-map"), myOptions);
+               var marker = new google.maps.Marker({
+                  map: map, 
+                  position: latlng
+               });
+               var infowindow = new google.maps.InfoWindow({
+                  content: '<div class=\"eme-location-balloon\"><strong>' + location +'</strong><p>' + address + '</p><p>' + town + '</p></div>'
+               });
+               infowindow.open(map,marker);
+               $j_eme_admin("#eme-admin-location-map").show();
+               $j_eme_admin('#eme-admin-map-not-found').hide();
+            } else {
+               loadMap(location, town, address);
+            }
+         }
  
          $j_eme_admin(document).ready(function() {
             <?php 
@@ -3266,35 +3307,84 @@ function eme_admin_map_script() {
             eventLocation = $j_eme_admin("input[name='location-select-name']").val(); 
             eventTown = $j_eme_admin("input[name='location-select-town']").val();
             eventAddress = $j_eme_admin("input[name='location-select-address']").val(); 
+            eventLat = $j_eme_admin("input#location-select-latitude").val();
+            eventLong = $j_eme_admin("input#location-select-longitude").val();
    
                <?php } else { ?>
             eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
             eventTown = $j_eme_admin("input#location_town").val(); 
             eventAddress = $j_eme_admin("input#location_address").val();
+            eventLat = $j_eme_admin("input#location_latitude").val();
+            eventLong = $j_eme_admin("input#location_longitude").val();
                <?php } ?>
 
-            loadMap(eventLocation, eventTown, eventAddress);
+            loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
          
+            $j_eme_admin("input[name='location_name']").focus(function(){
+               eventLocation = $j_eme_admin("input[name='location_name']").val();
+            });
+
             $j_eme_admin("input[name='location_name']").blur(function(){
-                  newEventLocation = $j_eme_admin("input[name='location_name']").val();
-                  if (newEventLocation !=eventLocation) {
-                     loadMap(newEventLocation, eventTown, eventAddress); 
-                     eventLocation = newEventLocation;
-                  }
+               newEventLocation = $j_eme_admin("input[name='location_name']").val();
+               eventTown = $j_eme_admin("input#location_town").val(); 
+               eventAddress = $j_eme_admin("input#location_address").val();
+               eventLat = $j_eme_admin("input#location_latitude").val();
+               eventLong = $j_eme_admin("input#location_longitude").val();
+               if (newEventLocation != eventLocation) {
+                  loadMapLatLong(newEventLocation, eventTown, eventAddress, eventLat, eventLong); 
+               }
+            });
+            $j_eme_admin("input#location_town").focus(function(){
+               eventTown = $j_eme_admin("input#location_town").val(); 
             });
             $j_eme_admin("input#location_town").blur(function(){
-                  newEventTown = $j_eme_admin("input#location_town").val(); 
-                  if (newEventTown !=eventTown) {
-                     loadMap(eventLocation, newEventTown, eventAddress); 
-                     eventTown = newEventTown;
-                  } 
+               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
+               newEventTown = $j_eme_admin("input#location_town").val();
+               eventAddress = $j_eme_admin("input#location_address").val();
+               eventLat = $j_eme_admin("input#location_latitude").val();
+               eventLong = $j_eme_admin("input#location_longitude").val();
+               if (newEventTown != eventTown) {
+                  loadMap(eventLocation, newEventTown, eventAddress); 
+               }
+            });
+            $j_eme_admin("input#location_address").focus(function(){
+               eventAddress = $j_eme_admin("input#location_address").val();
             });
             $j_eme_admin("input#location_address").blur(function(){
-                  newEventAddress = $j_eme_admin("input#location_address").val(); 
-                  if (newEventAddress != eventAddress) {
-                     loadMap(eventLocation, eventTown, newEventAddress);
-                     eventAddress = newEventAddress; 
-                  }
+               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
+               eventTown = $j_eme_admin("input#location_town").val(); 
+               newEventAddress = $j_eme_admin("input#location_address").val();
+               eventLat = $j_eme_admin("input#location_latitude").val();
+               eventLong = $j_eme_admin("input#location_longitude").val();
+               if (newEventAddress != eventAddress) {
+                  loadMap(eventLocation, eventTown, newEventAddress); 
+               }
+            });
+            $j_eme_admin("input#location_latitude").focus(function(){
+               eventLat = $j_eme_admin("input#location_latitude").val();
+            });
+            $j_eme_admin("input#location_latitude").blur(function(){
+               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
+               eventTown = $j_eme_admin("input#location_town").val(); 
+               eventAddress = $j_eme_admin("input#location_address").val();
+               newLat = $j_eme_admin("input#location_latitude").val();
+               eventLong = $j_eme_admin("input#location_longitude").val();
+               if (newLat != eventLat) {
+                  loadMapLatLong(eventLocation, eventTown, eventAddress, newLat, eventLong); 
+               }
+            });
+            $j_eme_admin("input#location_longitude").focus(function(){
+               eventLong = $j_eme_admin("input#location_longitude").val();
+            });
+            $j_eme_admin("input#location_longitude").blur(function(){
+               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
+               eventTown = $j_eme_admin("input#location_town").val(); 
+               eventAddress = $j_eme_admin("input#location_address").val();
+               eventLat = $j_eme_admin("input#location_latitude").val();
+               newLong = $j_eme_admin("input#location_longitude").val();
+               if (newLong != eventLong) {
+                  loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, newLong); 
+               }
             });
             }); 
             $j_eme_admin(document).unload(function() {

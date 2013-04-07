@@ -13,7 +13,7 @@ header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('b
 
 if(isset($_GET['id']) && $_GET['id'] != "") {
    $location = eme_get_location($_GET['id']);
-   echo '{"id":"'.$location['location_id'].'" , "name"  : "'.eme_trans_sanitize_html($location['location_name']).'","town" : "'.eme_trans_sanitize_html($location['location_town']).'","address" : "'.eme_trans_sanitize_html($location['location_address']).'" }';
+   echo '{"id":"'.$location['location_id'].'" , "name"  : "'.eme_trans_sanitize_html($location['location_name']).'","town" : "'.eme_trans_sanitize_html($location['location_town']).'","address" : "'.eme_trans_sanitize_html($location['location_address']).'", "latitude" : "'.eme_trans_sanitize_html($location['location_latitude']).'", "longitude" : "'.eme_trans_sanitize_html($location['location_longitude']).'" }';
    
 } else {
 
@@ -26,6 +26,8 @@ if(isset($_GET['id']) && $_GET['id'] != "") {
       $record['name']    = eme_trans_sanitize_html($item['location_name']); 
       $record['address'] = eme_trans_sanitize_html($item['location_address']);
       $record['town']    = eme_trans_sanitize_html($item['location_town']); 
+      $record['latitude']    = eme_trans_sanitize_html($item['location_latitude']); 
+      $record['longitude']    = eme_trans_sanitize_html($item['location_longitude']); 
       $return[]  = $record;
    }
 

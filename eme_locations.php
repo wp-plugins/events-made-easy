@@ -218,13 +218,20 @@ function eme_locations_edit_layout($location, $message = "") {
             </div>
          </div>
                         
-         <div class="postbox" style="display:none;">
-            <label for="location_latitude">LAT</label>
-            <input id="location_latitude" name="location_latitude" type="text" value="<?php echo eme_sanitize_html($location['location_latitude']); ?>" size="40"  />
-         </div>
-         <div class="postbox" style="display:none;">
-            <label for="location_longitude">LONG</label>
-            <input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($location['location_longitude']); ?>" size="40"  />
+         <div class="postbox">
+            <h3>
+               <?php _e('Location latitude/longitude', 'eme') ?>
+            </h3>
+            <div class="inside">
+            <table><tr>
+            <td><label for="location_latitude"><?php _e('Latitude', 'eme') ?></label></td>
+            <td><input id="location_latitude" name="location_latitude" type="text" value="<?php echo eme_sanitize_html($location['location_latitude']); ?>" size="40"  /></td>
+            </tr>
+            <tr>
+            <td><label for="location_longitude"><?php _e('Longitude', 'eme') ?></label></td>
+            <td><input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($location['location_longitude']); ?>" size="40"  /></td>
+            </tr></table>
+            </div>
          </div>
 
          <div class="postbox">
@@ -436,14 +443,15 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                            <p><?php _e('The town of the location', 'eme') ?>.</p>
                         </div>
                         
-                        <div class="form-field" style="display:none;">
-                           <label for="location_latitude">LAT</label>
+                        <div class="form-field">
+                           <label for="location_latitude"><?php _e('Latitude', 'eme') ?></label>
                            <input id="location_latitude" name="location_latitude" type="text" value="<?php echo eme_sanitize_html($new_location['location_latitude']); ?>" size="40"  />
-                        </div>
-                        <div class="form-field" style="display:none;">
-                           <label for="location_longitude">LONG</label>
+                           <br />
+                           <label for="location_longitude"><?php _e('Longitude', 'eme') ?></label>
                            <input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($new_location['location_longitude']); ?>" size="40"  />
+                           <p><?php _e('The latitude/longitude coordinates of the location, if you want to specify these manually', 'eme') ?>.</p>
                         </div>
+
                         <div class="form-field">
                            <label for="eme_location_image_example"><?php _e('Location image', 'eme') ?></label>
                           <div id="event_current_image" class="postarea">
@@ -1314,7 +1322,7 @@ function eme_locations_autocomplete() {
 
          var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>; 
 
-         <?php if(!$use_select_for_locations) :?>
+         <?php if (!$use_select_for_locations) { ?>
          $j_eme_loc("input#location_name").autocomplete("<?php echo EME_PLUGIN_URL; ?>locations-search.php", {
             width: 260,
             selectFirst: false,
@@ -1331,26 +1339,29 @@ function eme_locations_autocomplete() {
             item = eval("(" + data + ")"); 
             $j_eme_loc('input#location_address').val(item.address);
             $j_eme_loc('input#location_town').val(item.town);
+            $j_eme_loc('input#location_latitude').val(item.latitude);
+            $j_eme_loc('input#location_longitude').val(item.longitude);
             if(gmap_enabled) {
-               eventLocation = $j_eme_loc("input#location_name").val(); 
-               eventTown = $j_eme_loc("input#location_town").val(); 
-               eventAddress = $j_eme_loc("input#location_address").val();
-               loadMap(eventLocation, eventTown, eventAddress)
+               loadMapLatLong(item.name, item.town, item.address, item.latitude,item.longitude);
             } 
          });
-         <?php else : ?>
+         <?php } else { ?>
          $j_eme_loc('#location-select-id').change(function() {
             $j_eme_loc.getJSON("<?php echo EME_PLUGIN_URL; ?>locations-search.php",{id: $j_eme_loc(this).val()}, function(data){
                eventLocation = data.name;
                eventAddress = data.address;
                eventTown = data.town;
+               eventLat = data.latitude;
+               eventLong = data.longitude;
                $j_eme_loc("input[name='location-select-name']").val(eventLocation);
                $j_eme_loc("input[name='location-select-address']").val(eventAddress); 
                $j_eme_loc("input[name='location-select-town']").val(eventTown); 
-               loadMap(eventLocation, eventTown, eventAddress)
+               $j_eme_loc("input[name='location-select-latitude']").val(eventLat); 
+               $j_eme_loc("input[name='location-select-longitude']").val(eventLong); 
+               loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong)
                })
          });
-         <?php endif; ?>
+         <?php } ?>
       });   
       //]]> 
 

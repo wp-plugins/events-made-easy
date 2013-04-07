@@ -115,6 +115,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.1.1 =
 * Feature: new placeholder #_PAYMENT_URL for bookings, in case you want people to be able to pay later on, or for reminders
 * Feature: you can now select payed/unpayed and pending status when sending mails, good for sending reminders for payments etc ...
+* Feature: you can now specify the latitude/longitude of a location if wanted, overriding the detected values
 * Bugfix: make qtranslate work again (one-liner fix)
 * Minor Bugfix: only include the datepicker locale if it exist
 
