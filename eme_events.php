@@ -2512,6 +2512,11 @@ function eme_admin_general_script() {
    $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
    $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
    // for english, no translation code is needed
+   if (!file_exists($locale_file)) {
+      $locale_code = substr ( $locale_code, 0, 2 );
+      $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
+      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
+   }
    if ($locale_code != "en_US" && file_exists($locale_file)) {
 ?>
 <script src="<?php echo $locale_file_url ?>" type="text/javascript"></script>
