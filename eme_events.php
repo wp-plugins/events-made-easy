@@ -1102,11 +1102,11 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $output = get_option('eme_no_events_message' );
    }
 
-   // now add the pagination if needed
-   if ($paging==1)
+   // add the pagination if needed
+   if ($paging==1 && $events_count>0)
    	$output = $pagination_top . $output . $pagination_bottom;
   
-   // now see how to return the output
+   // see how to return the output
    if ($echo)
       echo $output;
    else
@@ -1833,7 +1833,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    echo admin_url("admin.php?page=events-manager&amp;action=edit_event")?>><?php
    _e ( 'New Event ...', 'eme' );
    ?></a></div>-->
-      <?php
+   <?php
    
    $scope_names = array ();
    $scope_names['past'] = __ ( 'Past events', 'eme' );
@@ -1895,9 +1895,10 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    </div>
    <?php
    if (empty ( $events )) {
-      _e ('No events', 'eme');
-   } else {
-      ?>
+      echo get_option('eme_no_events_message' );
+      return;
+   }
+   ?>
       
    <table class="widefat">
    <thead>
@@ -1913,7 +1914,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
       </tr>
    </thead>
    <tbody>
-     <?php
+   <?php
       $i = 1;
       foreach ( $events as $event ) {
          if ($limit && $i>$limit)
@@ -1934,7 +1935,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          if ($event['event_start_date'] < $today)
             $style = "style ='background-color: #FADDB7;'";
          
-         ?>
+     ?>
      <tr <?php echo "$class $style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event['event_id']; ?>' name='events[]' /></td>
          <td><?php echo $event['event_id']; ?></td>
@@ -2001,16 +2002,13 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             ?>
          </td>
    </tr>
-      <?php
-         $i ++;
-      }
-      ?>
+   <?php
+      $i++;
+   }
+   ?>
    
    </tbody>
    </table>
-   <?php
-   } // end of table
-   ?>
 
    </form>
 
