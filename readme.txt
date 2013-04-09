@@ -117,6 +117,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: you can now select payed/unpayed and pending status when sending mails, good for sending reminders for payments etc ...
 * Feature: you can now specify the latitude/longitude of a location if wanted, overriding the detected values
 * Bugfix: make qtranslate work again (one-liner fix)
+* Bugfix: make ical work correctly with timezone included
 * Improvement: only include the datepicker locale if it exist (like in 1.0.18), and take into account 2-letter locales again
 
 = 1.1.0 =
