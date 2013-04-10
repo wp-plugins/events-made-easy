@@ -118,9 +118,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: you can now specify the latitude/longitude of a location if wanted, overriding the detected values
 * Feature: you can now specify the cut-off hours for RSVP as well
 * Bugfix: make qtranslate work again (one-liner fix)
-* Bugfix: make ical work correctly with timezone included
+* Bugfix: make ical work correctly with server timezone included
 * Bugfix: wpdb prepare doesn't use correct backticks for column names, resulting in multisite issues (I tried to use the correct prepare syntax in 1.1.0)
-* Improvement: only include the datepicker locale if it exist (like in 1.0.18), and take into account 2-letter locales again
+* Improvement: only include the datepicker locale if it exist (like in 1.0.18), and take into account 2-letter locales again if the full locale doesn't exist
 
 = 1.1.0 =
 * Feature: multiprice events are now possible (see wordpress site for explanation: price and booked seats need to be seperated by "||"). Also, for multiprice events, the min number of seats to book is always 0
