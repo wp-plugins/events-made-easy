@@ -335,7 +335,7 @@ function eme_install($networkwide) {
       if ($networkwide) {
          $old_blog = $wpdb->blogid;
          // Get all blog ids
-         $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM %s",$wpdb->blogs));
+         $blogids = $wpdb->get_col("SELECT blog_id FROM ".$wpdb->blogs);
          foreach ($blogids as $blog_id) {
             switch_to_blog($blog_id);
             _eme_install();
@@ -415,7 +415,7 @@ function eme_uninstall($networkwide) {
       if ($networkwide) {
          $old_blog = $wpdb->blogid;
          // Get all blog ids
-         $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+         $blogids = $wpdb->get_col("SELECT blog_id FROM ".$wpdb->blogs);
          foreach ($blogids as $blog_id) {
             switch_to_blog($blog_id);
             _eme_uninstall();
@@ -452,7 +452,7 @@ function _eme_uninstall() {
 function eme_new_blog($blog_id, $user_id, $domain, $path, $site_id, $meta ) {
    global $wpdb;
  
-   if (is_plugin_active_for_network('events-made-easy/events-manager.php')) {
+   if (is_plugin_active_for_network(plugin_basename( __FILE__ ))) {
       $old_blog = $wpdb->blogid;
       switch_to_blog($blog_id);
       _eme_install();
