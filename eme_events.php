@@ -29,6 +29,7 @@ function eme_new_event() {
       "price" => get_option('eme_default_price'),
       "currency" => get_option('eme_default_currency'),
       "rsvp_number_days" => get_option('eme_rsvp_number_days'),
+      "rsvp_number_hours" => get_option('eme_rsvp_number_hours'),
       "registration_requires_approval" => 0,
       "registration_wp_users_only" => 0,
       "event_seats" => 0,
@@ -231,6 +232,7 @@ function eme_events_page() {
       
       $event['event_rsvp'] = (isset ($_POST['event_rsvp']) && is_numeric($_POST['event_rsvp'])) ? $_POST['event_rsvp']:0;
       $event['rsvp_number_days'] = (isset ($_POST['rsvp_number_days']) && is_numeric($_POST['rsvp_number_days'])) ? $_POST['rsvp_number_days']:0;
+      $event['rsvp_number_hours'] = (isset ($_POST['rsvp_number_hours']) && is_numeric($_POST['rsvp_number_hours'])) ? $_POST['rsvp_number_hours']:0;
       $event['registration_requires_approval'] = (isset ($_POST['registration_requires_approval']) && is_numeric($_POST['registration_requires_approval'])) ? $_POST['registration_requires_approval']:0;
       $event['registration_wp_users_only'] = (isset ($_POST['registration_wp_users_only']) && is_numeric($_POST['registration_wp_users_only'])) ? $_POST['registration_wp_users_only']:0;
       $event['event_seats'] = (isset ($_POST['event_seats']) && is_numeric($_POST['event_seats'])) ? $_POST['event_seats']:0;
@@ -2317,19 +2319,18 @@ function eme_event_form($event, $title, $element) {
                            <br />
                               <input id="wp_member_required-checkbox" name='registration_wp_users_only' value='1' type='checkbox' <?php echo $registration_wp_users_only; ?> />
                               <?php _e ( 'Require WP membership for registration','eme' ); ?>
-                           <br />
-                              <?php _e ( 'Spaces','eme' ); ?> :
-                              <input id="seats-input" type="text" name="event_seats" size='5' value="<?php echo $event_number_spaces; ?>" />
-                           <br />
-                              <?php _e ( 'Allow RSVP until ','eme' ); ?>
-                              <input id="rsvp_number_days" type="text" name="rsvp_number_days" maxlength='2' size='2' value="<?php echo $event['rsvp_number_days']; ?>" />
-                              <?php _e ( ' days before the event starts.','eme' ); ?>
-                           <br />
-                              <?php _e ( 'Price: ','eme' ); ?>
-                              <input id="price" type="text" name="price" maxlength='25' title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" />
-                           <br />
-                              <?php _e ( 'Currency: ','eme' ); ?>
-                              <select id="currency" name="currency">
+                           <br /><table>
+                              <tr>
+                              <td><?php _e ( 'Spaces','eme' ); ?> :</td>
+                              <td><input id="seats-input" type="text" name="event_seats" size='5' value="<?php echo $event_number_spaces; ?>" /></td>
+                              </tr>
+                              <tr>
+                              <td><?php _e ( 'Price: ','eme' ); ?></td>
+                              <td><input id="price" type="text" name="price" maxlength='25' title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" /></td>
+                              </tr>
+                              <tr>
+                              <td><?php _e ( 'Currency: ','eme' ); ?></td>
+                              <td><select id="currency" name="currency">
                               <?php
                                  foreach ( $currency_array as $key=>$value) {
                                     if ($event['currency'] && ($event['currency']==$key)) {
@@ -2342,8 +2343,18 @@ function eme_event_form($event, $title, $element) {
                                     echo "<option value='$key' $selected>$value</option>";
                                  }
                               ?>
-                              </select><br />
-                            <br />
+                              </select></td>
+                              </tr></table>
+                           <br />
+                              <?php _e ( 'Allow RSVP until ','eme' ); ?>
+                           <br />
+                              <input id="rsvp_number_days" type="text" name="rsvp_number_days" maxlength='2' size='2' value="<?php echo $event['rsvp_number_days']; ?>" />
+                              <?php _e ( ' days before the event starts.','eme' ); ?>
+                           <br />
+                              <input id="rsvp_number_hours" type="text" name="rsvp_number_hours" maxlength='2' size='2' value="<?php echo $event['rsvp_number_hours']; ?>" />
+                              <?php _e ( ' hours before the event starts.','eme' ); ?>
+                           <br />
+                           <br />
                               <?php _e ( 'Payment methods','eme' ); ?><br />
                               <input id="paypal-checkbox" name='use_paypal' value='1' type='checkbox' <?php echo $use_paypal_checked; ?> /><?php _e ( 'Paypal','eme' ); ?><br />
                               <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout','eme' ); ?><br />

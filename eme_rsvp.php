@@ -76,7 +76,7 @@ function eme_add_booking_form($event_id) {
    $destination = "#eme-rsvp-message";
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-   if (time()+$event['rsvp_number_days']*60*60*24 > $event_start_datetime ) {
+   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_add_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
@@ -176,7 +176,7 @@ function eme_delete_booking_form($event_id) {
    $destination = "#eme-rsvp-message";
    
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-   if (time()+$event['rsvp_number_days']*60*60*24 > $event_start_datetime ) {
+   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_delete_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_delete_message</div>";
@@ -1652,35 +1652,49 @@ function eme_send_mail_form($event_id=0) {
    </select>
    <p>
    <?php if ($event_id>0) {?>
-	   <div><p><label><?php _e('Select the type of mail','eme'); ?>
+      <table>
+      <tr>
+	   <td><label><?php _e('Select the type of mail','eme'); ?></td>
+      <td>
            <select name="target">
            <option value='attendees'><?php _e('Attendee mails','eme'); ?></option>
            <option value='bookings'><?php _e('Booking mails','eme'); ?></option>
-           </select></p>
-      </div>
-	   <div><p><label><?php _e('Select your target audience','eme'); ?>
+           </select>
+      </td>
+      </tr>
+      <tr>
+	   <td><label><?php _e('Select your target audience','eme'); ?></td>
+      <td>
            <select name="pending_approved">
            <option value=0><?php _e('All','eme'); ?></option>
            <option value=2><?php _e('Exclude pending registrations','eme'); ?></option>
            <option value=1><?php _e('Only pending registrations','eme'); ?></option>
            </select></p><p>
-           <input type="checkbox" name="only_unpayed" value="1" />&nbsp;<?php _e('Only send mails to attendees who did not pay yet','eme'); ?>
-	   </p></div>
-	   <div id="titlediv" class="form-field form-required">
+      </td>
+      </tr>
+      <tr>
+      <td><?php _e('Only send mails to attendees who did not pay yet','eme'); ?>&nbsp;</td>
+      <td>
+           <input type="checkbox" name="only_unpayed" value="1" />
+      </td>
+      </tr>
+      </table>
+	   <div id="titlediv" class="form-field form-required"><p>
 		   <label><?php _e('Subject','eme'); ?></label><br>
-		   <input type="text" name="subject" value="" />
+		   <input type="text" name="subject" value="" /></p>
 	   </div>
-	   <div class="form-field form-required">
+	   <div class="form-field form-required"><p>
 	   <label><?php _e('Message','eme'); ?></label><br>
-	   <textarea name="message" value="" rows=10></textarea> 
+	   <textarea name="message" value="" rows=10></textarea> </p>
 	   </div>
 	   <div>
 	   <?php _e('You can use any placeholders mentioned here:','eme');
 	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('Event placeholders','eme')."</a>";
-	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a>(".__('for ','eme').__('Attendee mails','eme').")";
-	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('Booking placeholders','eme')."</a>(".__('for ','eme').__('Booking mails','eme').")";
+	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a> (".__('for ','eme').__('Attendee mails','eme').")";
+	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('Booking placeholders','eme')."</a> (".__('for ','eme').__('Booking mails','eme').")";
 	   ?>
 	   </div>
+      <br />
 	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
 	   </form>
 

@@ -118,7 +118,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 30);
+define('EME_DB_VERSION', 31);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -517,6 +517,7 @@ function eme_create_events_table($charset,$collate) {
          price text DEFAULT NULL,
          currency text DEFAULT NULL,
          rsvp_number_days tinyint unsigned DEFAULT 0,
+         rsvp_number_hours tinyint unsigned DEFAULT 0,
          event_seats mediumint(9) DEFAULT 0,
          event_contactperson_id mediumint(9) DEFAULT 0,
          location_id mediumint(9) DEFAULT 0,
@@ -574,6 +575,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'use_2co', "alter table $table_name add use_2co bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_webmoney', "alter table $table_name add use_webmoney bool DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint unsigned DEFAULT 0;");
+      maybe_add_column($table_name, 'rsvp_number_hours', "alter table $table_name add rsvp_number_hours tinyint unsigned DEFAULT 0;");
       maybe_add_column($table_name, 'price', "alter table $table_name add price text DEFAULT NULL;");
       maybe_add_column($table_name, 'currency', "alter table $table_name add currency text DEFAULT NULL;");
       maybe_add_column($table_name, 'event_seats', "alter table $table_name add event_seats mediumint(9) DEFAULT 0;");
