@@ -328,11 +328,11 @@ include("eme_formfields.php");
 require_once("phpmailer/eme_phpmailer.php") ;
 //require_once("phpmailer/language/phpmailer.lang-en.php") ;
 
-function eme_install() {
+function eme_install($networkwide) {
    global $wpdb;
    if (function_exists('is_multisite') && is_multisite()) {
       // check if it is a network activation - if so, run the activation function for each blog id
-      if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1)) {
+      if ($networkwide) {
          $old_blog = $wpdb->blogid;
          // Get all blog ids
          $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM %s",$wpdb->blogs));
@@ -407,12 +407,12 @@ function _eme_install() {
     eme_flushRules();
 }
 
-function eme_uninstall() {
+function eme_uninstall($networkwide) {
    global $wpdb;
 
    if (function_exists('is_multisite') && is_multisite()) {
       // check if it is a network activation - if so, run the activation function for each blog id
-      if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1)) {
+      if ($networkwide) {
          $old_blog = $wpdb->blogid;
          // Get all blog ids
          $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
