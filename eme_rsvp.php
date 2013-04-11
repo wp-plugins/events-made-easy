@@ -953,16 +953,26 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
-      } elseif (preg_match('/#_COMMENT$/', $result)) {
+      } elseif (preg_match('/#_(RESPCOMMENT|COMMENT)$/', $result)) {
          $replacement = $booking['booking_comment'];
          $replacement = eme_sanitize_html($replacement);
          if ($target == "html")
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
+      } elseif (preg_match('/#_RESPSPACES(.+)/', $result, $matches)) {
+         $field_id = intval($matches[1])-1;
+         if ($field_id>&) $field_id=1;
+         if (eme_is_multiprice($booking['booking_price'])) {
+             $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
+             if (array_key_exists($field_id,$seats))
+                $replacement = $seats[$field_id];
+         }
+      } elseif (preg_match('/#_RESPSPACES$/', $result)) {
+         $replacement = $booking['booking_seats'];
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          $replacement = $booking['booking_seats'];
-      } elseif (preg_match('/#_SPACES$/', $result)) {
+      } elseif (preg_match('/#_(SPACES|BOOKEDSEATS)$/', $result)) {
          $replacement = $booking['booking_seats'];
       } elseif (preg_match('/#_BOOKINGCREATIONDATE$/', $result)) {
          $replacement = eme_localised_date($booking['creation_date']);

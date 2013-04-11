@@ -112,6 +112,10 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.1.2 =
+* Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the booking per category
+* Change: placeholders #_RESPSPACES and #_RESPCOMMENT now preferred for bookings
+
 = 1.1.1 =
 * Feature: new placeholder #_PAYMENT_URL for bookings, in case you want people to be able to pay later on, or for reminders
 * Feature: you can now select payed/unpayed and pending status when sending mails, good for sending reminders for payments etc ...
