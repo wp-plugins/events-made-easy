@@ -2517,13 +2517,15 @@ function eme_admin_general_script() {
    if (preg_match ( "/en_US|sk|zh|us|uk/i", $locale_code ))
       $show24Hours = 'false';
    
-   $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
-   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
+   // jquery ui locales are with dashes, not underscores
+   $locale_code = preg_replace( "/_/","-", $locale_code );
+   $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
+   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
    // for english, no translation code is needed
    if (!file_exists($locale_file)) {
       $locale_code = substr ( $locale_code, 0, 2 );
-      $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
-      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/ui.datepicker-$locale_code.js";
+      $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
+      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
    }
    if ($locale_code != "en_US" && file_exists($locale_file)) {
 ?>
