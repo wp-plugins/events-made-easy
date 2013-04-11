@@ -457,12 +457,11 @@ function eme_events_page() {
    }
 
    if ($action == 'edit_recurrence') {
-      $event_ID = intval($_GET['recurrence_id']);
-      $recurrence = eme_get_recurrence ( $event_ID );
+      $recurrence = eme_get_recurrence ( $recurrence_ID );
       if (current_user_can( get_option('eme_cap_edit_events')) ||
           (current_user_can( get_option('eme_cap_author_event')) && ($recurrence['event_author']==$current_userid || $recurrence['event_contactperson_id']==$current_userid))) {
          $title = __ ( "Reschedule", 'eme' ) . " '" . $recurrence['event_name'] . "'";
-         eme_event_form ( $recurrence, $title, $event_ID );
+         eme_event_form ( $recurrence, $title, $recurrence_ID );
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $recurrence['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";

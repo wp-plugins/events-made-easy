@@ -962,7 +962,7 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
             $replacement = apply_filters('eme_general_rss', $replacement); 
       } elseif (preg_match('/#_RESPSPACES(.+)/', $result, $matches)) {
          $field_id = intval($matches[1])-1;
-         if ($field_id>&) $field_id=1;
+         if ($field_id<0) $field_id=0;
          if (eme_is_multiprice($booking['booking_price'])) {
              $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
              if (array_key_exists($field_id,$seats))
