@@ -115,6 +115,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the booking per category
 * Feature: ability to use attributes and conditional tags in registration form added
+* Feature: added conditional tag #_IS_MULTIPRICE
 * Change: placeholders #_RESPSPACES and #_RESPCOMMENT now preferred for bookings
 
 = 1.1.1 =

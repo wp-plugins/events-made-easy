@@ -1425,6 +1425,12 @@ function eme_replace_placeholders($format, $event, $target="html") {
          else
             $replacement = 0;
 
+      } elseif (preg_match('/#_IS_MULTIPRICE/', $result)) {
+         if (eme_is_multiprice($event['price'])) {
+            $replacement = 1;
+         else
+            $replacement = 0;
+
       } else {
          $found = 0;
       }
