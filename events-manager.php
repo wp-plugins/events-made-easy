@@ -1223,11 +1223,12 @@ function eme_replace_placeholders($format, $event, $target="html") {
          }
 
       } elseif (preg_match('/#_EVENTPRICE(\d+)$|#_PRICE(\d+)$/', $result, $matches)) {
-         $field_id = intval($matches[1]);
+         $field_id = intval($matches[1])-1;
+         if ($field_id<0) $field_id=0;
          if ($event["price"] && $field_id) {
             $prices = preg_split("/\|\|/",$event["price"]);
             if (is_array($prices)) {
-               $replacement = $prices[$field_id-1];
+               $replacement = $prices[$field_id];
                if ($target == "html") {
                   $replacement = apply_filters('eme_general', $replacement); 
                } elseif ($target == "rss")  {
