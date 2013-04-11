@@ -1223,12 +1223,11 @@ function eme_replace_placeholders($format, $event, $target="html") {
          }
 
       } elseif (preg_match('/#_EVENTPRICE(\d+)$|#_PRICE(\d+)$/', $result, $matches)) {
-         $field_id = intval($matches[1])-1;
-         if ($field_id<0) $field_id=0;
+         $field_id = intval($matches[1]);
          if ($event["price"] && $field_id) {
             $prices = preg_split("/\|\|/",$event["price"]);
             if (is_array($prices)) {
-               $replacement = $prices[$field_id];
+               $replacement = $prices[$field_id-1];
                if ($target == "html") {
                   $replacement = apply_filters('eme_general', $replacement); 
                } elseif ($target == "rss")  {
@@ -1427,7 +1426,7 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = 0;
 
       } elseif (preg_match('/#_IS_MULTIPRICE/', $result)) {
-         if (eme_is_multiprice($event['price'])) {
+         if (eme_is_multiprice($event['price']))
             $replacement = 1;
          else
             $replacement = 0;
