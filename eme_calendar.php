@@ -114,6 +114,21 @@ function eme_get_calendar($args="") {
       $month_name = date_i18n('M', strtotime("$year-$month-$day"));
    }
 
+   // take into account some locale info
+   $locale_code = substr ( get_locale (), 0, 2 );
+   $showMonthAfterYear=0;
+   $yearSuffix="";
+   switch($locale_code) { 
+      case "hu": $showMonthAfterYear=1;break;
+      case "ja": $showMonthAfterYear=1;$yearSuffix="年";break;
+      case "ko": $showMonthAfterYear=1;$yearSuffix="년";break;
+      case "zh": $showMonthAfterYear=1;$yearSuffix="年";break;
+   }
+   if ($showMonthAfterYear)
+         $cal_datestring="$year$yearSuffix $month_name";
+   else
+         $cal_datestring="$month_name $year$yearSuffix";
+
    // Get the first day of the month 
    $month_start = mktime(0,0,0, (int) $month, 1, (int) $year);
    // Determine day of the week the month starts on.
@@ -223,10 +238,10 @@ function eme_get_calendar($args="") {
 
    if ($full) {
       $fullclass = 'fullcalendar';
-      $head = "<td class='month_name' colspan='7'>$previous_link $next_link $month_name $year</td>\n";
+      $head = "<td class='month_name' colspan='7'>$previous_link $next_link $cal_datestring</td>\n";
    } else {
       $fullclass='';
-      $head = "<td>$previous_link</td><td class='month_name' colspan='5'>$month_name $year</td><td>$next_link</td>\n";
+      $head = "<td>$previous_link</td><td class='month_name' colspan='5'>$cal_datestring</td><td>$next_link</td>\n";
    }
    // Build the heading portion of the calendar table
    $calendar .=  "<table class='eme-calendar-table $fullclass'>\n".
