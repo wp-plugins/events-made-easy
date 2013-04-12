@@ -1222,8 +1222,8 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif (preg_match('/#_EVENTPRICE(\d+)$|#_PRICE(\d+)$/', $result, $matches)) {
-         $field_id = intval($matches[1]);
+      } elseif (preg_match('/#_(EVENT)?PRICE(\d+)$/', $result, $matches)) {
+         $field_id = intval($matches[2]);
          if ($event["price"] && $field_id) {
             $prices = preg_split("/\|\|/",$event["price"]);
             if (is_array($prices)) {

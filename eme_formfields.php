@@ -313,7 +313,6 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       $format = str_replace($orig_result, $replacement ,$format );
    }
 
-
    // the 2 placeholders that can contain extra text are treated seperately first
    // the question mark is used for non greede (minimal) matching
    if (preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
@@ -387,6 +386,9 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       }
    }
 
+   // now any leftover event placeholders
+   $format = eme_replace_placeholders($format, $event);
+
    # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
    # for multiprice: 3 + number of possible prices
    # if these are not present: we don't replace anything and the form is worthless
@@ -402,7 +404,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          return "<div id='message' class='eme-rsvp-message'>$res</div>";
       }
    } elseif ($required_fields_count == 4) {
-      return do_shortcode($format);
+      return $format;
    } else {
       return __('Not all required fields are present in the booking form.', 'eme');
    }
