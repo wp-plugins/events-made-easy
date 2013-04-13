@@ -114,15 +114,15 @@ function eme_get_calendar($args="") {
       $month_name = date_i18n('M', strtotime("$year-$month-$day"));
    }
 
-   // take into account some locale info
+   // take into account some locale info: some always best show full month name, some show month after year, some have a year suffix
    $locale_code = substr ( get_locale (), 0, 2 );
    $showMonthAfterYear=0;
    $yearSuffix="";
    switch($locale_code) { 
-      case "hu": $showMonthAfterYear=1;break;
-      case "ja": $showMonthAfterYear=1;$yearSuffix="年";break;
-      case "ko": $showMonthAfterYear=1;$yearSuffix="년";break;
-      case "zh": $showMonthAfterYear=1;$yearSuffix="年";break;
+      case "hu": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));break;
+      case "ja": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
+      case "ko": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="년";break;
+      case "zh": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
    }
    if ($showMonthAfterYear)
          $cal_datestring="$year$yearSuffix $month_name";
