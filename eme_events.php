@@ -2509,12 +2509,10 @@ function eme_admin_general_script() {
 <script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.js" type="text/javascript"></script>
 <?php
    
-   // Check if the locale is there and loads it
-   $locale_code = get_locale();
-   
+   // check if the user wants AM/PM or 24 hour notation
+   $time_format = get_option('time_format');
    $show24Hours = 'true';
-   // Setting 12 hours format for those countries using it
-   if (preg_match ( "/en_US|sk|zh|us|uk/i", $locale_code ))
+   if (preg_match ( "/a/i", $time_format ))
       $show24Hours = 'false';
    
    // jquery ui locales are with dashes, not underscores
