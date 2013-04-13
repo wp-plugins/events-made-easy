@@ -339,6 +339,11 @@ function eme_localised_date($mydate) {
    return date_i18n ( $date_format, strtotime($mydate));
 }
 
+function eme_localised_time($mydate) {
+   $date_format = get_option('time_format');
+   return date_i18n ( $date_format, strtotime($mydate));
+}
+
 function eme_currency_array() {
    $currency_array = array ();
    $currency_array ['AUD'] = __ ( 'Australian Dollar', 'eme' );
