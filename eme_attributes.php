@@ -19,7 +19,9 @@ function eme_attributes_form($event) {
       get_option('eme_registration_pending_email_body' ).
       get_option('eme_registration_denied_email_body' ).
       get_option('eme_registration_cancelled_email_body' ).
-      get_option('eme_registration_form_format' );
+      get_option('eme_registration_form_format' ).
+      get_option('eme_attendees_list_format' ).
+      get_option('eme_bookings_list_format' );
       #get_option('eme_location_baloon_format' ).
       #get_option('eme_location_page_title_format' ).
 
