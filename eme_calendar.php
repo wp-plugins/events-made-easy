@@ -119,7 +119,7 @@ function eme_get_calendar($args="") {
    $showMonthAfterYear=0;
    $yearSuffix="";
    switch($locale_code) { 
-      case "hu": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));break;
+      case "hu": $showMonthAfterYear=1;break;
       case "ja": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
       case "ko": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="년";break;
       case "zh": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
