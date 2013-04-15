@@ -395,7 +395,8 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    if (eme_is_multiprice($event['price'])) {
       $matches=preg_split('/\|\|/', $event['price']);
       $count=count($matches);
-      if ($required_fields_count == 3+$count) {
+      // the count can be >3+$count if conditional tags are used to combine a form for single and multiple prices
+      if ($required_fields_count >= 3+$count) {
          return $format;
       } else {
          $res = __('Not all required fields are present in the booking form.', 'eme');
@@ -403,7 +404,8 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          $res.= '<br />'.__("See the documentation about multiprice events.",'eme');
          return "<div id='message' class='eme-rsvp-message'>$res</div>";
       }
-   } elseif ($required_fields_count == 4) {
+   } elseif ($required_fields_count >= 4) {
+      // the count can be > 4 if conditional tags are used to combine a form for single and multiple prices
       return $format;
    } else {
       return __('Not all required fields are present in the booking form.', 'eme');
