@@ -1542,15 +1542,29 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    if (is_numeric($location_id)) {
       if ($location_id>0)
          $conditions[] = " location_id = $location_id";
+   } elseif ($location_id == "none") {
+      $conditions[] = " location_id = ''";
    } elseif ( preg_match('/,/', $location_id) ) {
       $location_ids=explode(',', $location_id);
+      $location_conditions = array();
+      foreach ($location_ids as $loc) {
+         if (is_numeric($loc) && $loc>0) {
+            $location_conditions[] = " location_id = $loc";
+         } elseif ($loc == "none") {
+            $location_conditions[] = " location_id = ''";
+         }
+      }
+      $conditions[] = "(".implode(' OR', $location_conditions).")";
+   } elseif ( preg_match('/\+/', $location_id) ) {
+      $location_ids=explode('+', $location_id);
       $location_conditions = array();
       foreach ($location_ids as $loc) {
          if (is_numeric($loc) && $loc>0)
                $location_conditions[] = " location_id = $loc";
          }
-         $conditions[] = "(".implode(' OR', $location_conditions).")";
+         $conditions[] = "(".implode(' AND', $location_conditions).")";
    } elseif ( preg_match('/ /', $location_id) ) {
+      // url decoding of '+' is ' '
       $location_ids=explode(' ', $location_id);
       $location_conditions = array();
       foreach ($location_ids as $loc) {
@@ -1579,6 +1593,15 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = "(".implode(' OR', $category_conditions).")";
       } elseif ( preg_match('/\+/', $category) ) {
          $category = explode('+', $category);
+         $category_conditions = array();
+         foreach ($category as $cat) {
+            if (is_numeric($cat) && $cat>0)
+               $category_conditions[] = " FIND_IN_SET($cat,event_category_ids)";
+         }
+         $conditions[] = "(".implode(' AND ', $category_conditions).")";
+      } elseif ( preg_match('/ /', $category) ) {
+         // url decoding of '+' is ' '
+         $category = explode(' ', $category);
          $category_conditions = array();
          foreach ($category as $cat) {
             if (is_numeric($cat) && $cat>0)
