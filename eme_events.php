@@ -2448,15 +2448,15 @@ function eme_event_form($event, $title, $element) {
                </div>
                <p class="submit">
                   <?php if ($is_new_event) { ?>
-                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Create Event', 'eme' ); ?> &raquo;" />
+                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Save' ); ?> &raquo;" />
                   <?php } else { 
                      $delete_button_text=__ ( 'Are you sure you want to delete this event?', 'eme' );
                      $deleteRecurrence_button_text=__ ( 'Are you sure you want to delete this recurrence?', 'eme' );
                   ?>
                      <?php if ($pref == "recurrence") { ?>
-                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Edit Recurrence', 'eme' ); ?> &raquo;" />
+                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Update' ); ?> &raquo;" />
                      <?php } else { ?>
-                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Edit Event', 'eme' ); ?> &raquo;" />
+                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Update' ); ?> &raquo;" />
                      <?php } ?>
                      <input type="submit" id="event_delete_button" name="event_delete_button" value="<?php _e ( 'Delete Event', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $delete_button_text; ?>');" />
                      <?php if ($event['recurrence_id']) { ?>
