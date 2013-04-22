@@ -120,6 +120,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: location_id argument in shortcodes now supports 'none' to indicate no location
 * Improvement: updated Italian translation, tx to Antonio Venneri
 * Change: placeholders #_RESPSPACES and #_RESPCOMMENT now preferred for bookings
+* Bugfix: the div for a required field should have a class, not an id
 
 = 1.1.1 =
 * Feature: new placeholder #_PAYMENT_URL for bookings, in case you want people to be able to pay later on, or for reminders

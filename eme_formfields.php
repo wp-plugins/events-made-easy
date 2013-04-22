@@ -347,9 +347,13 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       if (preg_match('/#_NAME$/', $result)) {
          $replacement = "<input type='text' name='bookerName' value='$bookerName' $readonly />";
          $required_fields_count++;
+         // #_NAME is always required
+         $required=1;
       } elseif (preg_match('/#_EMAIL$/', $result)) {
          $replacement = "<input type='text' name='bookerEmail' value='$bookerEmail' $readonly />";
          $required_fields_count++;
+         // #_EMAIL is always required
+         $required=1;
       } elseif (preg_match('/#_PHONE$/', $result)) {
          $replacement = "<input type='text' name='bookerPhone' value='$bookerPhone' />";
       } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
@@ -378,7 +382,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       }
 
       if ($required)
-         $replacement .= "<div id='eme-required-field'>&nbsp;".__('(Required field)','eme')."</div>";
+         $replacement .= "<div class='eme-required-field'>&nbsp;".__('(Required field)','eme')."</div>";
 
       if ($found) {
          $replacement = eme_translate($replacement);
