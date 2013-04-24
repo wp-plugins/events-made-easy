@@ -203,6 +203,9 @@ function eme_printable_booking_report($event_id) {
    $is_multiprice = eme_is_multiprice($event['price']);
 
    $stylesheet = EME_PLUGIN_URL."events_manager.css";
+   foreach($answer_columns as $col) {
+      $formfield[$col["field_name"]]=eme_get_formfield_id_byname($col["field_name"]);
+   }
    ?>
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -230,15 +233,16 @@ function eme_printable_booking_report($event_id) {
          <h2><?php _e('Bookings data', 'eme');?></h2>
          <table id="bookings-table">
             <tr>
-               <th scope='col'><?php _e('Name', 'eme')?></th>
-               <th scope='col'><?php _e('E-mail', 'eme')?></th>
-               <th scope='col'><?php _e('Phone number', 'eme')?></th> 
-               <th scope='col'><?php if ($is_multiprice) _e('Seats (Multiprice)', 'eme'); else _e('Seats', 'eme'); ?></th>
-               <th scope='col'><?php _e('Paid', 'eme')?></th>
-               <th scope='col'><?php _e('Comment', 'eme')?></th> 
+               <th scope='col' class='eme_print_name'><?php _e('Name', 'eme')?></th>
+               <th scope='col' class='eme_print_email'><?php _e('E-mail', 'eme')?></th>
+               <th scope='col' class='eme_print_phone'><?php _e('Phone number', 'eme')?></th> 
+               <th scope='col' class='eme_print_seats'><?php if ($is_multiprice) _e('Seats (Multiprice)', 'eme'); else _e('Seats', 'eme'); ?></th>
+               <th scope='col' class='eme_print_paid'><?php _e('Paid', 'eme')?></th>
+               <th scope='col' class='eme_print_comment'><?php _e('Comment', 'eme')?></th> 
             <?php
             foreach($answer_columns as $col) {
-               print "<th scope='col'>".$col['field_name']."</th>";
+               $class="eme_print_formfield".$formfield[$col['field_name']];
+               print "<th scope='col' class='$class'>".$col['field_name']."</th>";
             }
             ?>
             </tr>
@@ -251,32 +255,33 @@ function eme_printable_booking_report($event_id) {
                }
                 ?>
             <tr>
-               <td><?php echo $person['person_name']?></td> 
-               <td><?php echo $person['person_email']?></td>
-               <td><?php echo $person['person_phone']?></td>
-               <td class='seats-number'><?php 
+               <td class='eme_print_name'><?php echo $person['person_name']?></td> 
+               <td class='eme_print_email'><?php echo $person['person_email']?></td>
+               <td class='eme_print_phone'><?php echo $person['person_phone']?></td>
+               <td class='eme_print_seats' class='seats-number'><?php 
                if ($is_multiprice)
                    echo $booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
                else
                    echo $booking['booking_seats']." ".$pending_string;
                ?>
                </td>
-               <td><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
-               <td><?=$booking['booking_comment'] ?></td> 
+               <td class='eme_print_paid'><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
+               <td class='eme_print_comment'><?=$booking['booking_comment'] ?></td> 
                <?php
                   $answers = eme_get_answers($booking['booking_id']);
                   foreach($answer_columns as $col) {
                      $found=0;
                      foreach ($answers as $answer) {
-                         if ($answer['field_name'] == $col['field_name']) {
-                            print "<td>".eme_sanitize_html($answer['answer'])."</td>";
-                            $found=1;
-                            break;
-                         }
+                        $class="eme_print_formfield".$formfield[$col['field_name']];
+                        if ($answer['field_name'] == $col['field_name']) {
+                           print "<td class='$class'>".eme_sanitize_html($answer['answer'])."</td>";
+                           $found=1;
+                           break;
+                        }
                      }
                      # to make sure the number of columns are correct, we add an empty answer if none was found
                      if (!$found)
-                        print "<td>&nbsp;</td>";
+                        print "<td class='$class'>&nbsp;</td>";
                   }
                ?>
             </tr>
@@ -302,7 +307,6 @@ function eme_printable_booking_report($event_id) {
       </html>
       <?php
       die();
-      
 } 
 
 function eme_people_table($message="") {

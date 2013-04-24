@@ -589,7 +589,7 @@ function eme_record_answers($booking_id) {
    foreach($_POST as $key =>$value) {
       if (preg_match('/FIELD(.+)/', $key, $matches)) {
          $field_id = intval($matches[1]);
-         $formfield = eme_get_formfield($field_id);
+         $formfield = eme_get_formfield_byid($field_id);
          $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
          $wpdb->query($sql);
       }
@@ -996,11 +996,11 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
          $replacement = ($booking['booking_payed'])? __('Yes') : __('No');
       } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $formfield = eme_get_formfield($field_id);
+         $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
       } elseif (preg_match('/#_FIELD(.+)$/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $formfield = eme_get_formfield($field_id);
+         $formfield = eme_get_formfield_byid($field_id);
          foreach ($answers as $answer) {
             if ($answer['field_name'] == $formfield['field_name'])
                $replacement = $answer['answer'];

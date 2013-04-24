@@ -167,7 +167,7 @@ function eme_formfields_table_layout($message = "") {
 
 function eme_formfields_edit_layout($message = "") {
    $field_id = intval($_GET['field_id']);
-   $formfield = eme_get_formfield($field_id);
+   $formfield = eme_get_formfield_byid($field_id);
    $fieldtypes = eme_get_fieldtypes();
    $layout = "
    <div class='wrap'>
@@ -233,12 +233,20 @@ function eme_get_fieldtypes(){
    return $wpdb->get_results("SELECT * FROM $fieldtypes_table", ARRAY_N);
 }
 
-function eme_get_formfield($field_id) { 
+function eme_get_formfield_byid($field_id) { 
    global $wpdb;
    $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME; 
-   $sql = "SELECT * FROM $formfields_table WHERE field_id ='$field_id'";   
+   $sql = $wpdb->prepare("SELECT * FROM $formfields_table WHERE field_id=%d",$field_id);
    return $wpdb->get_row($sql, ARRAY_A);
 }
+
+function eme_get_formfield_id_byname($field_name) { 
+   global $wpdb;
+   $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME; 
+   $sql = $wpdb->prepare("SELECT field_id  FROM $formfields_table WHERE field_name=%s",$field_name);
+   return $wpdb->get_var($sql);
+}
+
 
 function eme_get_fieldtype($type_id){
    global $wpdb;
@@ -249,7 +257,7 @@ function eme_get_fieldtype($type_id){
 }
 
 function eme_get_formfield_html($field_id) {
-   $formfield = eme_get_formfield($field_id);
+   $formfield = eme_get_formfield_byid($field_id);
    $value = eme_sanitize_html($formfield['field_info']);
    switch($formfield['field_type']) {
       case 1:
@@ -369,7 +377,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php'><br><input type='text' name='captcha_check' />";
       } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $formfield = eme_get_formfield($field_id);
+         $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
       } elseif (preg_match('/#_FIELD(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
