@@ -160,10 +160,14 @@ function eme_csv_booking_report($event_id) {
       $line[]=$person['person_name'];
       $line[]=$person['person_email'];
       $line[]=$person['person_phone'];
-      if ($is_multiprice)
+      if ($is_multiprice) {
+         // in cases where the event switched to multiprice, but somebody already registered while it was still single price: booking_seats_mp is then empty
+         if ($booking['booking_seats_mp'] == "")
+            $booking['booking_seats_mp']=$booking['booking_seats'];
          $line[]=$booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
-      else
+      } else {
          $line[]=$booking['booking_seats']." ".$pending_string;
+      }
       $line[]=$booking['booking_payed']? __('Yes'): __('No');
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
@@ -259,10 +263,14 @@ function eme_printable_booking_report($event_id) {
                <td class='eme_print_email'><?php echo $person['person_email']?></td>
                <td class='eme_print_phone'><?php echo $person['person_phone']?></td>
                <td class='eme_print_seats' class='seats-number'><?php 
-               if ($is_multiprice)
-                   echo $booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
-               else
-                   echo $booking['booking_seats']." ".$pending_string;
+               if ($is_multiprice) {
+                  // in cases where the event switched to multiprice, but somebody already registered while it was still single price: booking_seats_mp is then empty
+                  if ($booking['booking_seats_mp'] == "")
+                     $booking['booking_seats_mp']=$booking['booking_seats'];
+                  echo $booking['booking_seats']." (".$booking['booking_seats_mp'].") ".$pending_string;
+               } else {
+                  echo $booking['booking_seats']." ".$pending_string;
+               }
                ?>
                </td>
                <td class='eme_print_paid'><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
