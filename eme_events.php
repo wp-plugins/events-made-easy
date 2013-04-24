@@ -2551,6 +2551,7 @@ function eme_admin_general_script() {
       $show24Hours = 'false';
    
    // jquery ui locales are with dashes, not underscores
+   $locale_code = get_locale();
    $locale_code = preg_replace( "/_/","-", $locale_code );
    $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
    $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
