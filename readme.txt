@@ -118,6 +118,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: ability to use attributes and conditional tags in registration form added
 * Feature: added conditional tag #_IS_MULTIPRICE
 * Feature: location_id argument in shortcodes now supports 'none' to indicate no location
+* Feature: query string eme_town (+SEO) has been added, so only events for a specific town are shown. Not really sure how I'll use it, but it's there ...
 * Improvement: updated Italian translation, tx to Antonio Venneri
 * Change: placeholders #_RESPSPACES and #_RESPCOMMENT now preferred for bookings
 * Bugfix: the div for a required field should have a class, not an id

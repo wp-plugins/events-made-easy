@@ -520,6 +520,17 @@ function eme_events_page_content() {
       $page_body = eme_payment_form("",$wp_query->query_vars['eme_pmt_id']);
       return $page_body;
    }
+   if (isset ( $wp_query->query_vars['eme_town'] ) && $wp_query->query_vars['eme_town'] != '') {
+      $eme_town=eme_sanitize_request($wp_query->query_vars['eme_town']);
+      $location_ids = join(',',eme_get_town_location_ids($eme_town));
+      $stored_format = get_option('eme_event_list_item_format');
+      $event_list_format_header = get_option('eme_event_list_item_format_header' );
+      $event_list_format_header = ( $event_list_format_header != '' ) ?  $event_list_format_header : "<ul class='eme_events_list'>";
+      $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+      $event_list_format_footer = ( $event_list_format_footer != '' ) ?  $event_list_format_footer : "</ul>";
+      $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), $scope, "ASC", $stored_format, 0, '','',0,'','',0,$location_ids) .  $event_list_format_footer;
+      return $page_body;
+   }
    if (isset ( $wp_query->query_vars['location_id'] ) && $wp_query->query_vars['location_id'] != '') {
       $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
       $single_location_format = get_option('eme_single_location_format' );
