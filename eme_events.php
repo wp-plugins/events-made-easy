@@ -277,6 +277,7 @@ function eme_events_page() {
       $event['event_page_title_format'] = isset($_POST['event_page_title_format']) ? stripslashes ( $_POST['event_page_title_format'] ) : '';
       $event['event_single_event_format'] = isset($_POST['event_single_event_format']) ? stripslashes ( $_POST['event_single_event_format'] ) : '';
       $event['event_contactperson_email_body'] = isset($_POST['event_contactperson_email_body']) ? stripslashes ( $_POST['event_contactperson_email_body'] ) : '';
+      $event['event_registration_recorded_ok_html'] = isset($_POST['event_registration_recorded_ok_html']) ? stripslashes ( $_POST['event_registration_recorded_ok_html'] ) : '';
       $event['event_respondent_email_body'] = isset($_POST['event_respondent_email_body']) ? stripslashes ( $_POST['event_respondent_email_body'] ) : '';
       $event['event_registration_pending_email_body'] = isset($_POST['event_registration_pending_email_body']) ? stripslashes ( $_POST['event_registration_pending_email_body'] ) : '';
       $event['event_registration_form_format'] = isset($_POST['event_registration_form_format']) ? stripslashes ( $_POST['event_registration_form_format'] ) : '';

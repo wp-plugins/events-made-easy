@@ -121,6 +121,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: query string eme_town (+SEO) has been added, so only events for a specific town are shown. Not really sure how I'll use it, but it's there ...
 * Improvement: updated Italian translation, tx to Antonio Venneri
 * Change: placeholders #_RESPSPACES and #_RESPCOMMENT now preferred for bookings
+* Bugfix: the 'Booking recorded html Format' setting for a single event was not being saved
 * Bugfix: the div for a required field should have a class, not an id
 
 = 1.1.1 =
