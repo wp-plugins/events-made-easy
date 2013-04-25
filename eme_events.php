@@ -1230,14 +1230,14 @@ function eme_are_events_available($scope = "future",$order = "ASC", $location_id
 function eme_count_events_older_than($scope) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
-   $sql = "SELECT COUNT(*) from $events_table WHERE event_start_date<='".$scope."'";
+   $sql = "SELECT COUNT(*) from $events_table WHERE event_start_date<'".$scope."'";
    return $wpdb->get_var($sql);
 }
 
 function eme_count_events_newer_than($scope) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
-   $sql = "SELECT COUNT(*) from $events_table WHERE event_end_date>='".$scope."'";
+   $sql = "SELECT COUNT(*) from $events_table WHERE event_end_date>'".$scope."'";
    return $wpdb->get_var($sql);
 }
 

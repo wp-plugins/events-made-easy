@@ -124,6 +124,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Change: placeholders #_RESPSPACES and #_RESPCOMMENT now preferred for bookings
 * Bugfix: the 'Booking recorded html Format' setting for a single event was not being saved
 * Bugfix: the div for a required field should have a class, not an id
+* Bugfix: don't show a link to a month without events (occured if on the last day of the month an event was booked)
 
 = 1.1.1 =
 * Feature: new placeholder #_PAYMENT_URL for bookings, in case you want people to be able to pay later on, or for reminders
