@@ -3528,14 +3528,14 @@ function eme_rss() {
 <rss version="2.0">
 <channel>
 <title><?php
-      echo eme_sanitize_html(get_option('eme_rss_main_title' ));
+      echo eme_sanitize_rss(get_option('eme_rss_main_title' ));
       ?></title>
 <link><?php
       $events_page_link = eme_get_events_page(true, false);
-      echo $events_page_link;
+      echo eme_sanitize_rss($events_page_link);
       ?></link>
 <description><?php
-      echo eme_sanitize_html(get_option('eme_rss_main_description' ));
+      echo eme_sanitize_rss(get_option('eme_rss_main_description' ));
       ?></description>
 <docs>
 http://blogs.law.harvard.edu/tech/rss
@@ -3544,8 +3544,8 @@ http://blogs.law.harvard.edu/tech/rss
 Weblog Editor 2.0
 </generator>
 <?php
-      $title_format = get_option('eme_rss_title_format' );
-      $description_format = str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", get_option('eme_rss_description_format' ) ) );
+      $title_format = get_option('eme_rss_title_format');
+      $description_format = get_option('eme_rss_description_format');
       $events = eme_get_events ( $limit, $scope, $order, 0, $location_id, $category, $author, $contact_person );
       # some RSS readers don't like it when an empty feed without items is returned, so we add a dummy item then
       if (empty ( $events )) {
@@ -3555,9 +3555,9 @@ Weblog Editor 2.0
          echo "</item>\n";
       } else {
          foreach ( $events as $event ) {
-             $title = eme_replace_placeholders ( $title_format, $event, "rss" );
-             $description = eme_replace_placeholders ( $description_format, $event, "rss" );
-             $event_link = eme_event_url($event);
+             $title = eme_sanitize_rss(eme_replace_placeholders ( $title_format, $event, "rss" ));
+             $description = eme_sanitize_rss(eme_replace_placeholders ( $description_format, $event, "rss" ));
+             $event_link = eme_sanitize_rss(eme_event_url($event));
              echo "<item>\n";
              echo "<title>$title</title>\n";
              echo "<link>$event_link</link>\n";
@@ -3565,7 +3565,7 @@ Weblog Editor 2.0
                 echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
              echo "<description>$description</description>\n";
              if (get_option('eme_categories_enabled')) {
-                $categories = eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" );
+                $categories = eme_sanitize_rss(eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" ));
                 echo "<category>$categories</category>\n";
              }
              echo "</item>\n";

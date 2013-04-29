@@ -1597,6 +1597,11 @@ function eme_translate ( $value) {
       return $value;
 }
 
+function eme_sanitize_rss( $value ) {
+   $value =  str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", $value ) );
+   return "<![CDATA[".$value."]]>";
+}
+
 function eme_sanitize_html( $value ) {
    //return htmlentities($value,ENT_QUOTES,get_option('blog_charset'));
    return htmlspecialchars($value,ENT_QUOTES);
