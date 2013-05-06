@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.5
 Tested up to: 3.5.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL, 2Checkout, Webmoney and Google Checkout support. SEO compatible.
              
@@ -113,7 +113,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 == Changelog ==
 
 = 1.1.2 =
-* Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the booking per category
+* Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events
 * Feature: new placeholders #_BOOKINGCREATIONTIME and #_BOOKINGMODIFTIME for bookings list
 * Feature: ability to use attributes and conditional tags in registration form added
 * Feature: added conditional tag #_IS_MULTIPRICE
