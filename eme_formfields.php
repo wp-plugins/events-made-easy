@@ -167,7 +167,7 @@ function eme_formfields_table_layout($message = "") {
 
 function eme_formfields_edit_layout($message = "") {
    $field_id = intval($_GET['field_id']);
-   $formfield = eme_get_formfield($field_id);
+   $formfield = eme_get_formfield_byid($field_id);
    $fieldtypes = eme_get_fieldtypes();
    $layout = "
    <div class='wrap'>
@@ -233,12 +233,20 @@ function eme_get_fieldtypes(){
    return $wpdb->get_results("SELECT * FROM $fieldtypes_table", ARRAY_N);
 }
 
-function eme_get_formfield($field_id) { 
+function eme_get_formfield_byid($field_id) { 
    global $wpdb;
    $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME; 
-   $sql = "SELECT * FROM $formfields_table WHERE field_id ='$field_id'";   
+   $sql = $wpdb->prepare("SELECT * FROM $formfields_table WHERE field_id=%d",$field_id);
    return $wpdb->get_row($sql, ARRAY_A);
 }
+
+function eme_get_formfield_id_byname($field_name) { 
+   global $wpdb;
+   $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME; 
+   $sql = $wpdb->prepare("SELECT field_id  FROM $formfields_table WHERE field_name=%s",$field_name);
+   return $wpdb->get_var($sql);
+}
+
 
 function eme_get_fieldtype($type_id){
    global $wpdb;
@@ -249,7 +257,7 @@ function eme_get_fieldtype($type_id){
 }
 
 function eme_get_formfield_html($field_id) {
-   $formfield = eme_get_formfield($field_id);
+   $formfield = eme_get_formfield_byid($field_id);
    $value = eme_sanitize_html($formfield['field_info']);
    switch($formfield['field_type']) {
       case 1:
@@ -271,11 +279,46 @@ function eme_get_formfield_html($field_id) {
    return $html;
 }
 
-function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_required, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment) {
+function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment) {
    $required_fields_count = 0;
 
+   $format = $event['event_registration_form_format'];
    if (empty($format)) {
       $format = get_option('eme_registration_form_format');
+   }
+
+   // first we do the custom attributes, since these can contain other placeholders
+   preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $format, $results);
+   foreach($results[0] as $resultKey => $result) {
+      $need_escape = 0;
+      $need_urlencode = 0;
+      $orig_result = $result;
+      if (strstr($result,'#ESC')) {
+         $result = str_replace("#ESC","#",$result);
+         $need_escape=1;
+      } elseif (strstr($result,'#URL')) {
+         $result = str_replace("#URL","#",$result);
+         $need_urlencode=1;
+      }
+      $replacement = "";
+      //Strip string of placeholder and just leave the reference
+      $attRef = substr( substr($result, 0, strpos($result, '}')), 6 );
+      if (isset($event['event_attributes'][$attRef])) {
+         $replacement = $event['event_attributes'][$attRef];
+      }
+      if( trim($replacement) == ''
+            && isset($results[2][$resultKey])
+            && $results[2][$resultKey] != '' ) {
+         //Check to see if we have a second set of braces;
+         $replacement = substr( $results[2][$resultKey], 1, strlen(trim($results[2][$resultKey]))-2 );
+      }
+
+      if ($need_escape) {
+         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+      } elseif ($need_urlencode) {
+         $replacement = rawurlencode($replacement);
+      }
+      $format = str_replace($orig_result, $replacement ,$format );
    }
 
    // the 2 placeholders that can contain extra text are treated seperately first
@@ -312,13 +355,21 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
       if (preg_match('/#_NAME$/', $result)) {
          $replacement = "<input type='text' name='bookerName' value='$bookerName' $readonly />";
          $required_fields_count++;
+         // #_NAME is always required
+         $required=1;
       } elseif (preg_match('/#_EMAIL$/', $result)) {
          $replacement = "<input type='text' name='bookerEmail' value='$bookerEmail' $readonly />";
          $required_fields_count++;
+         // #_EMAIL is always required
+         $required=1;
       } elseif (preg_match('/#_PHONE$/', $result)) {
          $replacement = "<input type='text' name='bookerPhone' value='$bookerPhone' />";
-      } elseif (preg_match('/#_SEATS|#_SPACES$/', $result)) {
+      } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
          $replacement = eme_ui_select($bookedSeats,"bookedSeats",$booked_places_options);
+         $required_fields_count++;
+      } elseif (preg_match('/#_SEATS(\d+)$|#_SPACES(\d+)$/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT$/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
@@ -326,7 +377,7 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php'><br><input type='text' name='captcha_check' />";
       } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $formfield = eme_get_formfield($field_id);
+         $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
       } elseif (preg_match('/#_FIELD(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
@@ -339,7 +390,7 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
       }
 
       if ($required)
-         $replacement .= "&nbsp;".__('(Required field)','eme');
+         $replacement .= "<div class='eme-required-field'>&nbsp;".__('(Required field)','eme')."</div>";
 
       if ($found) {
          $replacement = eme_translate($replacement);
@@ -347,12 +398,29 @@ function eme_replace_formfields_placeholders ($format, $readonly, $bookerPhone_r
       }
    }
 
+   // now any leftover event placeholders
+   $format = eme_replace_placeholders($format, $event);
+
    # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
+   # for multiprice: 3 + number of possible prices
    # if these are not present: we don't replace anything and the form is worthless
-   if ($required_fields_count == 4) {
+   if (eme_is_multiprice($event['price'])) {
+      $matches=preg_split('/\|\|/', $event['price']);
+      $count=count($matches);
+      // the count can be >3+$count if conditional tags are used to combine a form for single and multiple prices
+      if ($required_fields_count >= 3+$count) {
+         return $format;
+      } else {
+         $res = __('Not all required fields are present in the booking form.', 'eme');
+         $res.= '<br />'.__("Since this is a multiprice event, make sure you changed the setting 'Registration Form Format' for the event to include #_SEATxx placeholders for each price.",'eme');
+         $res.= '<br />'.__("See the documentation about multiprice events.",'eme');
+         return "<div id='message' class='eme-rsvp-message'>$res</div>";
+      }
+   } elseif ($required_fields_count >= 4) {
+      // the count can be > 4 if conditional tags are used to combine a form for single and multiple prices
       return $format;
    } else {
-      return __('Not all required fields are present in the form', 'eme');
+      return __('Not all required fields are present in the booking form.', 'eme');
    }
 }
 

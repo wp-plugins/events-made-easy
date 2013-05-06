@@ -29,14 +29,14 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    //$dtend=$dtenddate."T".$dtendhour."Z";
    // we'll use localtime, so no "Z"
    $dtend=$dtenddate."T".$dtendhour;
+   $tzstring = get_option('timezone_string');
 
    $res = "";
    $res .= "BEGIN:VEVENT\r\n";
-   //echo "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z\r\n";
-   // we'll use localtime, so no "Z"
-   $res .= "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "\r\n";
-   $res .= "DTSTART:$dtstart\r\n";
-   $res .= "DTEND:$dtend\r\n";
+   //DTSTAMP must be in UTC format, so adding "Z" as well
+   $res .= "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z\r\n";
+   $res .= "DTSTART;TZID=$tzstring:$dtstart\r\n";
+   $res .= "DTEND;TZID=$tzstring:$dtend\r\n";
    $res .= "UID:$dtstart-$dtend-".$event['event_id']."@".$_SERVER['SERVER_NAME']."\r\n";
    $res .= "SUMMARY:$title\r\n";
    $res .= "DESCRIPTION:$description\r\n";
@@ -47,22 +47,34 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    return $res;
 }
 
-function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "") {
+#function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="") {
+function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="", $scope="future", $author='',$contact_person='') {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
-      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'ICAL', category=> '' );
+      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'category' => '', 'author' => '', 'contact_person' => '', 'location_id' => '' );
 
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
-      $echo = (bool) $r ['echo'];
    }
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : $justurl;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $justurl = ($justurl==="false" || $justurl==="0") ? false : $justurl;
+
    if ($text == '')
       $text = "ICAL";
-   if (!empty($category)) {
-      $url = site_url ("/?eme_ical=public&category=$category");
-   } else {
-      $url = site_url ("/?eme_ical=public");
-   }
+   $url = site_url ("/?eme_ical=public");
+   if (!empty($location_id))
+      $url = add_query_arg( array( 'location_id' => $location_id ), $url );
+   if (!empty($category))
+      $url = add_query_arg( array( 'category' => $category ), $url );
+   if (!empty($scope))
+      $url = add_query_arg( array( 'scope' => $scope ), $url );
+   if (!empty($author))
+      $url = add_query_arg( array( 'scope' => $author ), $url );
+   if (!empty($contact_person))
+      $url = add_query_arg( array( 'scope' => $contact_person ), $url );
+
    $link = "<a href='$url'>$text</a>";
 
    if ($justurl)
@@ -76,8 +88,10 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "") 
 }
 
 function eme_ical_link_shortcode($atts) {
-   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'ICAL', 'category' => '' ), $atts ) );
-   $result = eme_ical_link ( "justurl=$justurl&echo=0&text=$text&category=$category" );
+   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'ICAL', 'category' => '', 'location_id' =>'' ), $atts ) );
+   $justurl = ($justurl==="true" || $justurl==="1") ? true : $justurl;
+   $justurl = ($justurl==="false" || $justurl==="0") ? false : $justurl;
+   $result = eme_ical_link ( $justurl,0,$text,$category,$location_id );
    return $result;
 }
 add_shortcode ( 'events_ical_link', 'eme_ical_link_shortcode' );
@@ -110,11 +124,12 @@ function eme_ical() {
       $event=eme_get_event(intval($_GET ['event_id']));
       echo eme_ical_single_event($event,$title_format,$description_format);
    } elseif (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public') {
-      if (isset( $_GET ['category'] )) {
-         $events = eme_get_events ( 0,"future","ASC",0,"",$_GET ['category'] );
-      } else {
-         $events = eme_get_events ( 0 );
-      }
+      $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
+      $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
+      $scope = isset( $_GET['scope'] ) ? urldecode($_GET['scope']) : '';
+      $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
+      $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
+      $events = eme_get_events ( 0,$scope,"ASC",0,$location_id,$category, $author, $contact_person);
       foreach ( $events as $event ) {
          echo eme_ical_single_event($event,$title_format,$description_format);
       }

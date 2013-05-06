@@ -11,6 +11,12 @@ function eme_get_calendar_shortcode($atts) {
          'contact_person' => '',
          'location_id' => ''
       ), $atts)); 
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $full = ($full==="true" || $full==="1") ? true : $full;
+   $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $full = ($full==="false" || $full==="0") ? false : $full;
+   $long_events = ($long_events==="false" || $long_events==="0") ? false : $long_events;
 
    // this allows people to use specific months/years to show the calendar on
    if(isset($_GET['calmonth']) && $_GET['calmonth'] != '')   {
@@ -75,7 +81,12 @@ function eme_get_calendar($args="") {
    );
    $r = wp_parse_args( $args, $defaults );
    extract( $r );
-   $echo = (bool) $r ['echo'];
+   $echo = ($echo==="true" || $echo==="1") ? true : $echo;
+   $full = ($full==="true" || $full==="1") ? true : $full;
+   $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
+   $echo = ($echo==="false" || $echo==="0") ? false : $echo;
+   $full = ($full==="false" || $full==="0") ? false : $full;
+   $long_events = ($long_events==="false" || $long_events==="0") ? false : $long_events;
    
    // this comes from global wordpress preferences
    $start_of_week = get_option('start_of_week');
@@ -102,6 +113,21 @@ function eme_get_calendar($args="") {
    } else {
       $month_name = date_i18n('M', strtotime("$year-$month-$day"));
    }
+
+   // take into account some locale info: some always best show full month name, some show month after year, some have a year suffix
+   $locale_code = substr ( get_locale (), 0, 2 );
+   $showMonthAfterYear=0;
+   $yearSuffix="";
+   switch($locale_code) { 
+      case "hu": $showMonthAfterYear=1;break;
+      case "ja": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
+      case "ko": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="년";break;
+      case "zh": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
+   }
+   if ($showMonthAfterYear)
+         $cal_datestring="$year$yearSuffix $month_name";
+   else
+         $cal_datestring="$month_name $year$yearSuffix";
 
    // Get the first day of the month 
    $month_start = mktime(0,0,0, (int) $month, 1, (int) $year);
@@ -212,10 +238,10 @@ function eme_get_calendar($args="") {
 
    if ($full) {
       $fullclass = 'fullcalendar';
-      $head = "<td class='month_name' colspan='7'>$previous_link $next_link $month_name $year</td>\n";
+      $head = "<td class='month_name' colspan='7'>$previous_link $next_link $cal_datestring</td>\n";
    } else {
       $fullclass='';
-      $head = "<td>$previous_link</td><td class='month_name' colspan='5'>$month_name $year</td><td>$next_link</td>\n";
+      $head = "<td>$previous_link</td><td class='month_name' colspan='5'>$cal_datestring</td><td>$next_link</td>\n";
    }
    // Build the heading portion of the calendar table
    $calendar .=  "<table class='eme-calendar-table $fullclass'>\n".
@@ -403,6 +429,11 @@ function eme_ajaxize_calendar() {
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure
       $language=qtrans_getLanguage();
+      $jquery_override_lang=", lang: '".$language."'";
+   } elseif (defined('ICL_LANGUAGE_CODE')) {
+      // if permalinks are on, $_GET doesn't contain lang as a parameter
+      // so we get it like this to be sure
+      $language=ICL_LANGUAGE_CODE;
       $jquery_override_lang=", lang: '".$language."'";
    } elseif (isset($_GET['lang'])) {
       $jquery_override_lang=", lang: '".$_GET['lang']."'";

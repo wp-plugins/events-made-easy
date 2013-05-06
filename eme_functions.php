@@ -68,6 +68,8 @@ function eme_get_contact($event) {
    if (!get_userdata($contact_id)) $contact_id = get_option('eme_default_contact_person');
    if ($contact_id < 1)
       $contact_id = $event['event_author'];
+   if ($contact_id < 1)
+      $contact_id = get_current_user_id();
    $userinfo=get_userdata($contact_id);
    return $userinfo;
 }
@@ -76,10 +78,11 @@ function eme_get_user_phone($user_id) {
    return get_user_meta($user_id, 'eme_phone',true);
 }
 
-function eme_get_date_format($user_id) {
+function eme_get_date_format() {
    $format="";
-   if ($user_id)
-      $format = get_user_meta($user_id, 'eme_date_format',true);
+   $current_userid=get_current_user_id();
+   if ($current_userid)
+      $format = get_user_meta($current_userid, 'eme_date_format',true);
    if ($format == '') $format=get_option('date_format');
    return $format;
 }
@@ -110,8 +113,12 @@ function eme_event_url($event) {
    if ($event['event_url'] != '') {
       $the_link = $event['event_url'];
    } else {
+      $url_mode=1;
       if (function_exists('qtrans_getLanguage')) {
          $language=qtrans_getLanguage();
+         $url_mode=get_option('qtranslate_url_mode');
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
       } else {
          $language="";
       }
@@ -119,17 +126,21 @@ function eme_event_url($event) {
          $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
          $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
          $name=$events_prefix.$event['event_id']."/".eme_permalink_convert($slug);
-         if (!empty($language))
-            $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
-         else
+         if (!empty($language)) {
+            if ($url_mode==2) {
+               $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+            } else {
+               $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+               $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+            }
+         } else {
             $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+         }
       } else {
-         $events_page_link = eme_get_events_page(true, false);
-         if (stristr ( $events_page_link, "?" ))
-            $joiner = "&amp;";
-         else
-            $joiner = "?";
-         $the_link = $events_page_link.$joiner."event_id=".$event['event_id'];
+         $the_link = eme_get_events_page(true, false);
+         $the_link = add_query_arg( array( 'event_id' => $event['event_id'] ), $the_link );
+         if (!empty($language))
+            $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
       }
    }
    return $the_link;
@@ -142,8 +153,12 @@ function eme_location_url($location) {
    if ($location['location_url'] != '') {
       $the_link = $location['location_url'];
    } else {
+      $url_mode=1;
       if (function_exists('qtrans_getLanguage')) {
          $language=qtrans_getLanguage();
+         $url_mode=get_option('qtranslate_url_mode');
+      } elseif (defined('ICL_LANGUAGE_CODE')) {
+         $language=ICL_LANGUAGE_CODE;
       } else {
          $language="";
       }
@@ -152,18 +167,21 @@ function eme_location_url($location) {
             $locations_prefix=eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix'));
             $slug = $location['location_slug'] ? $location['location_slug'] : $location['location_name'];
             $name=$locations_prefix.$location['location_id']."/".eme_permalink_convert($slug);
-            if (!empty($language))
-               $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
-            else
-               $the_link = trailingslashit(home_url()).user_trailingslashit($name);
-         } else {
-            $events_page_link = eme_get_events_page(true, false);
-            if (stristr ( $events_page_link, "?" )) {
-               $joiner = "&amp;";
+            if (!empty($language)) {
+               if ($url_mode==2) {
+                  $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+               } else {
+                  $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+                  $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+               }
             } else {
-               $joiner = "?";
+               $the_link = trailingslashit(home_url()).user_trailingslashit($name);
             }
-            $the_link = $events_page_link.$joiner."location_id=".$location['location_id'];
+         } else {
+            $the_link = eme_get_events_page(true, false);
+            $the_link = add_query_arg( array( 'location_id' => $location['location_id'] ), $the_link );
+            if (!empty($language))
+               $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
          }
       }
    }
@@ -173,33 +191,82 @@ function eme_location_url($location) {
 function eme_calendar_day_url($day) {
    global $wp_rewrite;
 
+   $url_mode=1;
+   if (function_exists('qtrans_getLanguage')) {
+      $language=qtrans_getLanguage();
+      $url_mode=get_option('qtranslate_url_mode');
+   } elseif (defined('ICL_LANGUAGE_CODE')) {
+      $language=ICL_LANGUAGE_CODE;
+   } else {
+      $language="";
+   }
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
-      if (function_exists('qtrans_getLanguage')) {
-         $language=qtrans_getLanguage();
-      } else {
-         $language="";
-      }
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix.eme_permalink_convert($day);
-      if (!empty($language))
-         $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
-      else
+      if (!empty($language)) {
+         if ($url_mode==2) {
+            $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+         } else {
+            $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+            $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+         }
+      } else {
          $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+      }
    } else {
-      $events_page_link = eme_get_events_page(true, false);
-      if (stristr ( $events_page_link, "?" ))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
-      $the_link = $events_page_link.$joiner."calendar_day=".$day;
+      $the_link = eme_get_events_page(true, false);
+      $the_link = add_query_arg( array( 'calendar_day' => $day ), $the_link );
+      if (!empty($language))
+         $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
    }
    return $the_link;
 }
 
-function eme_check_exists($event_id) {
+function eme_payment_url($booking_id) {
+   global $wp_rewrite;
+
+   $url_mode=1;
+   if (function_exists('qtrans_getLanguage')) {
+      $language=qtrans_getLanguage();
+      $url_mode=get_option('qtranslate_url_mode');
+   } elseif (defined('ICL_LANGUAGE_CODE')) {
+      $language=ICL_LANGUAGE_CODE;
+   } else {
+      $language="";
+   }
+   if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
+      $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
+      $name=$events_prefix."p$booking_id";
+      if (!empty($language)) {
+         if ($url_mode==2) {
+            $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+         } else {
+            $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+            $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+         }
+      } else {
+         $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+      }
+   } else {
+      $the_link = eme_get_events_page(true, false);
+      $the_link = add_query_arg( array( 'eme_pmt_id' => $booking_id ), $the_link );
+      if (!empty($language))
+         $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+   }
+   return $the_link;
+}
+
+function eme_check_event_exists($event_id) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $sql = "SELECT COUNT(*) from $events_table WHERE event_id='".$event_id."'";
+   return $wpdb->get_var($sql);
+}
+
+function eme_check_location_exists($location_id) {
+   global $wpdb;
+   $locations_table = $wpdb->prefix.LOCATIONS_TBNAME;
+   $sql = "SELECT COUNT(*) from $locations_table WHERE location_id='".$location_id."'";
    return $wpdb->get_var($sql);
 }
 
@@ -268,30 +335,37 @@ function eme_status_array() {
 }
 
 function eme_localised_date($mydate) {
-   global $localised_date_formats;
-
-   // $mydate should be in yyyy-mm-dd format
-   $locale_code = substr ( get_locale (), 0, 2 );
-   if (isset($localised_date_formats [$locale_code])) {
-      $localised_date_format = $localised_date_formats [$locale_code];
-   } else {
-      $localised_date_format = $localised_date_formats ["en"];
-   }
-
-   if ($mydate != "") {
-      preg_match ( "/(\d{4})-(\d\d?)-(\d\d?)/", $mydate, $matches );
-      $year = $matches [1];
-      $month = sprintf("%02d",$matches [2]);
-      $day = sprintf("%02d",$matches [3]);
-      return str_replace ( "yy", $year, str_replace ( "mm", $month, str_replace ( "dd", $day, $localised_date_format ) ) );
-   } else {
-      return "";
-   }
+   $date_format = eme_get_date_format();
+   return date_i18n ( $date_format, strtotime($mydate));
 }
 
-function eme_admin_localised_date($mydate) {
-   $current_userid=get_current_user_id();
-   $date_format = eme_get_date_format($current_userid);
+function eme_localised_time($mydate) {
+   $date_format = get_option('time_format');
    return date_i18n ( $date_format, strtotime($mydate));
+}
+
+function eme_currency_array() {
+   $currency_array = array ();
+   $currency_array ['AUD'] = __ ( 'Australian Dollar', 'eme' );
+   $currency_array ['CAD'] = __ ( 'Canadian Dollar', 'eme' );
+   $currency_array ['CZK'] = __ ( 'Czech Koruna', 'eme' );
+   $currency_array ['DKK'] = __ ( 'Danish Krone', 'eme' );
+   $currency_array ['EUR'] = __ ( 'Euro', 'eme' );
+   $currency_array ['HKD'] = __ ( 'Hong Kong Dollar', 'eme' );
+   $currency_array ['HUF'] = __ ( 'Hungarian Forint', 'eme' );
+   $currency_array ['ILS'] = __ ( 'Israeli New Sheqel', 'eme' );
+   $currency_array ['JPY'] = __ ( 'Japanese Yen', 'eme' );
+   $currency_array ['MXN'] = __ ( 'Mexican Peso', 'eme' );
+   $currency_array ['NOK'] = __ ( 'Norwegian Krone', 'eme' );
+   $currency_array ['NZD'] = __ ( 'New Zealand Dollar', 'eme' );
+   $currency_array ['PHP'] = __ ( 'Philippine Peso', 'eme' );
+   $currency_array ['PLN'] = __ ( 'Polish Zloty', 'eme' );
+   $currency_array ['GBP'] = __ ( 'Pound Sterling', 'eme' );
+   $currency_array ['SGD'] = __ ( 'Singapore Dollar', 'eme' );
+   $currency_array ['SEK'] = __ ( 'Swedish Krona', 'eme' );
+   $currency_array ['CHF'] = __ ( 'Swiss Franc', 'eme' );
+   $currency_array ['THB'] = __ ( 'Thai Baht', 'eme' );
+   $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
+   return $currency_array;
 }
 ?>

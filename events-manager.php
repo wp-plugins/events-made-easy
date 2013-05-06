@@ -1,15 +1,14 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.0.12
+Version: 1.1.2
 Plugin URI: http://www.e-dynamics.be/wordpress
-Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
+Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
 Author URI: http://www.e-dynamics.be/
 */
 
 /*
-Copyright (c) 2009, Davide Benini.  $Revision: 1 $
 Copyright (c) 2010, Franky Van Liedekerke.
 Copyright (c) 2011, Franky Van Liedekerke.
 Copyright (c) 2012, Franky Van Liedekerke.
@@ -119,7 +118,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 24);
+define('EME_DB_VERSION', 31);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -151,6 +150,8 @@ define('DEFAULT_CAP_REGISTRATIONS','edit_others_posts');
 define('DEFAULT_CAP_FORMS','edit_others_posts');
 define('DEFAULT_CAP_CLEANUP','activate_plugins');
 define('DEFAULT_CAP_SETTINGS','activate_plugins');
+define('DEFAULT_CAP_SEND_MAILS','edit_posts');
+define('DEFAULT_CAP_SEND_OTHER_MAILS','edit_others_posts');
 define('DEFAULT_EVENT_LIST_ITEM_FORMAT', '<li>#j #M #Y - #H:#i<br /> #_LINKEDNAME<br />#_TOWN </li>');
 define('DEFAULT_SINGLE_EVENT_FORMAT', '<p>#j #M #Y - #H:#i</p><p>#_TOWN</p><p>#_NOTES</p><p>#_ADDBOOKINGFORM</p><p>#_MAP</p>'); 
 define('DEFAULT_EVENTS_PAGE_TITLE',__('Events','eme') ) ;
@@ -179,8 +180,8 @@ define('DEFAULT_RECURRENCE_ENABLED', true);
 define('DEFAULT_RSVP_ENABLED', true);
 define('DEFAULT_RSVP_ADDBOOKINGFORM_SUBMIT_STRING', __('Send your booking', 'eme'));
 define('DEFAULT_RSVP_DELBOOKINGFORM_SUBMIT_STRING', __('Cancel your booking', 'eme'));
-define('DEFAULT_ATTENDEES_LIST_FORMAT','<li>#_NAME (#_USER_RESERVEDSPACES)</li>');
-define('DEFAULT_BOOKINGS_LIST_FORMAT','<li>#_NAME (#_USER_RESERVEDSPACES)</li>');
+define('DEFAULT_ATTENDEES_LIST_FORMAT','<li>#_ATTENDNAME (#_ATTENDSPACES)</li>');
+define('DEFAULT_BOOKINGS_LIST_FORMAT','<li>#_RESPNAME (#_RESPSPACES)</li>');
 define('DEFAULT_BOOKINGS_LIST_HEADER_FORMAT',"<ul class='eme_bookings_list_ul'>");
 define('DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT','</ul>');
 define('DEFAULT_CATEGORIES_ENABLED', true);
@@ -205,9 +206,6 @@ define("GOOGLE_SANDBOX","sandbox");
 // DEBUG constant for developing
 // if you are hacking this plugin, set to TRUE, a log will show in admin pages
 define('DEBUG', false);
-
-// Localised date formats as in the jquery UI datepicker plugin
-$localised_date_formats = array("am" => "dd.mm.yy","ar" => "dd/mm/yy", "bg" => "dd.mm.yy", "ca" => "mm/dd/yy", "cs" => "dd.mm.yy", "da" => "dd-mm-yy", "de" =>"dd.mm.yy", "es" => "dd/mm/yy", "en" => "mm/dd/yy", "fi" => "dd.mm.yy", "fr" => "dd/mm/yy", "he" => "dd/mm/yy", "hu" => "yy-mm-dd", "hy" => "dd.mm.yy", "id" => "dd/mm/yy", "is" => "dd/mm/yy", "it" => "dd/mm/yy", "ja" => "yy/mm/dd", "ko" => "yy-mm-dd", "lt" => "yy-mm-dd", "lv" => "dd-mm-yy", "nb" => "yy-mm-dd", "nl" => "dd.mm.yy", "nn" => "yy-mm-dd", "no" => "yy-mm-dd", "pl" => "yy-mm-dd", "pt" => "dd/mm/yy", "ro" => "mm/dd/yy", "ru" => "dd.mm.yy", "sk" => "dd.mm.yy", "sv" => "yy-mm-dd", "th" => "dd/mm/yy", "tr" => "dd.mm.yy", "ua" => "dd.mm.yy", "uk" => "dd.mm.yy", "us" => "mm/dd/yy", "CN" => "yy-mm-dd", "TW" => "yy/mm/dd");
 
 add_action('init', 'nocache_headers');
 add_action('init', 'eme_load_textdomain');
@@ -272,9 +270,7 @@ if (!is_admin() && get_option('eme_shortcodes_in_widgets')) {
    add_filter('widget_text', 'do_shortcode', 11);
 }
 
-add_filter('rewrite_rules_array','eme_insertMyRewriteRules');
-add_filter('query_vars','eme_insertMyRewriteQueryVars');
-// Remember to flush_rules() when adding rules
+// the next is executed on activation/deaction of EME, so as to set the rewriterules correctly
 function eme_flushRules() {
    global $wp_rewrite;
    $wp_rewrite->flush_rules();
@@ -290,23 +286,31 @@ function eme_insertMyRewriteRules($rules) {
    $newrules = array();
    $newrules[$events_prefix.'(\d{4})-(\d{2})-(\d{2})'] = 'index.php?page_id='.$page_id.'&calendar_day=$matches[1]-$matches[2]-$matches[3]';
    $newrules[$events_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&event_id=$matches[1]';
+   $newrules[$events_prefix.'p(\d*)'] = 'index.php?page_id='.$page_id.'&eme_pmt_id=$matches[1]';
+   $newrules[$events_prefix.'town/(.*)'] = 'index.php?page_id='.$page_id.'&eme_town=$matches[1]';
    $newrules[$locations_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&location_id=$matches[1]';
    return $newrules + $rules;
 }
+add_filter('rewrite_rules_array','eme_insertMyRewriteRules');
 
 // Adding the id var so that WP recognizes it
 function eme_insertMyRewriteQueryVars($vars) {
     array_push($vars, 'event_id');
     array_push($vars, 'location_id');
     array_push($vars, 'calendar_day');
+    array_push($vars, 'eme_town');
+    // a bit cryptic for the booking id
+    array_push($vars, 'eme_pmt_id');
     return $vars;
 }
+add_filter('query_vars','eme_insertMyRewriteQueryVars');
 
 // INCLUDES
 // We let the includes happen at the end, so all init-code is done
 // (like eg. the load_textdomain). Some includes do stuff based on _GET
 // so they need the correct info before doing stuff
 include("captcha_check.php");
+include("eme_settings.php");
 include("eme_functions.php");
 include("eme_filters.php");
 include("eme_events.php");
@@ -326,14 +330,14 @@ include("eme_formfields.php");
 require_once("phpmailer/eme_phpmailer.php") ;
 //require_once("phpmailer/language/phpmailer.lang-en.php") ;
 
-function eme_install() {
+function eme_install($networkwide) {
    global $wpdb;
    if (function_exists('is_multisite') && is_multisite()) {
       // check if it is a network activation - if so, run the activation function for each blog id
-      if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1)) {
+      if ($networkwide) {
          $old_blog = $wpdb->blogid;
          // Get all blog ids
-         $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+         $blogids = $wpdb->get_col("SELECT blog_id FROM ".$wpdb->blogs);
          foreach ($blogids as $blog_id) {
             switch_to_blog($blog_id);
             _eme_install();
@@ -400,23 +404,20 @@ function _eme_install() {
      } else {
         eme_create_events_page(); 
      }
-      // wp-content must be chmodded 777. Maybe just wp-content.
-      if(!file_exists(IMAGE_UPLOAD_DIR))
-            mkdir(IMAGE_UPLOAD_DIR, 0777);
 
     // SEO rewrite rules
     eme_flushRules();
 }
 
-function eme_uninstall() {
+function eme_uninstall($networkwide) {
    global $wpdb;
 
    if (function_exists('is_multisite') && is_multisite()) {
       // check if it is a network activation - if so, run the activation function for each blog id
-      if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1)) {
+      if ($networkwide) {
          $old_blog = $wpdb->blogid;
          // Get all blog ids
-         $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+         $blogids = $wpdb->get_col("SELECT blog_id FROM ".$wpdb->blogs);
          foreach ($blogids as $blog_id) {
             switch_to_blog($blog_id);
             _eme_uninstall();
@@ -443,6 +444,7 @@ function _eme_uninstall() {
       eme_drop_table(ANSWERS_TBNAME);
       eme_delete_events_page();
       eme_options_delete();
+      eme_metabox_options_delete();
    }
 
     // SEO rewrite rules
@@ -452,7 +454,7 @@ function _eme_uninstall() {
 function eme_new_blog($blog_id, $user_id, $domain, $path, $site_id, $meta ) {
    global $wpdb;
  
-   if (is_plugin_active_for_network('events-made-easy/events-manager.php')) {
+   if (is_plugin_active_for_network(plugin_basename( __FILE__ ))) {
       $old_blog = $wpdb->blogid;
       switch_to_blog($blog_id);
       _eme_install();
@@ -513,9 +515,11 @@ function eme_create_events_table($charset,$collate) {
          use_paypal bool DEFAULT 0,
          use_google bool DEFAULT 0,
          use_2co bool DEFAULT 0,
-         price DECIMAL(7,2) DEFAULT 0,
+         use_webmoney bool DEFAULT 0,
+         price text DEFAULT NULL,
          currency text DEFAULT NULL,
          rsvp_number_days tinyint unsigned DEFAULT 0,
+         rsvp_number_hours tinyint unsigned DEFAULT 0,
          event_seats mediumint(9) DEFAULT 0,
          event_contactperson_id mediumint(9) DEFAULT 0,
          location_id mediumint(9) DEFAULT 0,
@@ -531,6 +535,7 @@ function eme_create_events_table($charset,$collate) {
          event_registration_form_format text NULL, 
          registration_requires_approval bool DEFAULT 0,
          registration_wp_users_only bool DEFAULT 0,
+         event_image_url text NULL,
          UNIQUE KEY (event_id)
          ) $charset $collate;";
       
@@ -570,8 +575,10 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'use_paypal', "alter table $table_name add use_paypal bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_google', "alter table $table_name add use_google bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_2co', "alter table $table_name add use_2co bool DEFAULT 0;");
+      maybe_add_column($table_name, 'use_webmoney', "alter table $table_name add use_webmoney bool DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint unsigned DEFAULT 0;");
-      maybe_add_column($table_name, 'price', "alter table $table_name add price DECIMAL(7,2) DEFAULT 0;");
+      maybe_add_column($table_name, 'rsvp_number_hours', "alter table $table_name add rsvp_number_hours tinyint unsigned DEFAULT 0;");
+      maybe_add_column($table_name, 'price', "alter table $table_name add price text DEFAULT NULL;");
       maybe_add_column($table_name, 'currency', "alter table $table_name add currency text DEFAULT NULL;");
       maybe_add_column($table_name, 'event_seats', "alter table $table_name add event_seats mediumint(9) DEFAULT 0;");
       maybe_add_column($table_name, 'location_id', "alter table $table_name add location_id mediumint(9) DEFAULT 0;");
@@ -596,6 +603,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'modif_date', "alter table $table_name add modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'modif_date_gmt', "alter table $table_name add modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'event_registration_form_format', "alter table $table_name add event_registration_form_format text NULL;"); 
+      maybe_add_column($table_name, 'event_image_url', "alter table $table_name add event_image_url text NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_name text;");
          $wpdb->query("ALTER TABLE $table_name MODIFY event_notes longtext;");
@@ -616,8 +624,8 @@ function eme_create_events_table($charset,$collate) {
          $wpdb->query("ALTER TABLE $table_name DROP COLUMN event_author;");
          $wpdb->query("ALTER TABLE $table_name CHANGE event_creator_id event_author mediumint(9) DEFAULT 0;");
       }
-      if ($db_version<18) {
-         $wpdb->query("ALTER TABLE $table_name MODIFY price DECIMAL(7,2) DEFAULT 0;");
+      if ($db_version<29) {
+         $wpdb->query("ALTER TABLE $table_name MODIFY price text default NULL;");
       }
    }
 }
@@ -684,6 +692,7 @@ function eme_create_locations_table($charset,$collate) {
          location_creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          location_modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          location_modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
+         location_image_url text NULL,
          UNIQUE KEY (location_id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -691,7 +700,7 @@ function eme_create_locations_table($charset,$collate) {
       $wpdb->query("INSERT INTO ".$table_name." (location_name, location_address, location_town, location_latitude, location_longitude)
                VALUES ('Arts Millenium Building', 'Newcastle Road','Galway', 53.275, -9.06532)");
       $wpdb->query("INSERT INTO ".$table_name." (location_name, location_address, location_town, location_latitude, location_longitude)
-               VALUES ('The Crane Bar', '2, Sea Road','Galway', 53.2692, -9.06151)");
+               VALUES ('The Crane Bar', '2, Sea Road','Galway', 53.2683224, -9.0626223)");
       $wpdb->query("INSERT INTO ".$table_name." (location_name, location_address, location_town, location_latitude, location_longitude)
                VALUES ('Taaffes Bar', '19 Shop Street','Galway', 53.2725, -9.05321)");
    } else {
@@ -703,6 +712,7 @@ function eme_create_locations_table($charset,$collate) {
       maybe_add_column($table_name, 'location_modif_date_gmt', "alter table $table_name add location_modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'location_url', "alter table $table_name add location_url text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'location_slug', "alter table $table_name add location_slug text DEFAULT NULL;"); 
+      maybe_add_column($table_name, 'location_image_url', "alter table $table_name add location_image_url text NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY location_name text NOT NULL ;");
       }
@@ -720,8 +730,10 @@ function eme_create_bookings_table($charset,$collate) {
          event_id mediumint(9) NOT NULL,
          person_id mediumint(9) NOT NULL, 
          booking_seats mediumint(9) NOT NULL,
+         booking_seats_mp varchar(250),
          booking_approved bool DEFAULT 0,
          booking_comment text DEFAULT NULL,
+         booking_price text DEFAULT NULL,
          creation_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
@@ -740,6 +752,8 @@ function eme_create_bookings_table($charset,$collate) {
       maybe_add_column($table_name, 'modif_date', "alter table $table_name add modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'modif_date_gmt', "alter table $table_name add modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'transfer_nbr_be97', "alter table $table_name add transfer_nbr_be97 varchar(20);"); 
+      maybe_add_column($table_name, 'booking_seats_mp', "alter table $table_name add booking_seats_mp varchar(250);"); 
+      maybe_add_column($table_name, 'booking_price', "alter table $table_name add booking_price text DEFAULT NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_id mediumint(9) NOT NULL;");
          $wpdb->query("ALTER TABLE $table_name MODIFY person_id mediumint(9) NOT NULL;");
@@ -837,157 +851,6 @@ function eme_create_answers_table($charset,$collate) {
    }
 }
 
-function eme_add_options($reset=0) {
-   $contact_person_email_body_localizable = __("#_RESPNAME (#_RESPEMAIL) will attend #_EVENTNAME on #m #d, #Y. He wants to reserve #_SPACES space(s).<br/>Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,<br/>Events Manager",'eme') ;
-   $contactperson_cancelled_email_body_localizable = __("#_RESPNAME (#_RESPEMAIL) has cancelled for #_EVENTNAME on #m #d, #Y. <br/>Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,<br/>Events Manager",'eme') ;
-   $contact_person_pending_email_body_localizable = __("#_RESPNAME (#_RESPEMAIL) would like to attend #_EVENTNAME on #m #d, #Y. He wants to reserve #_SPACES space(s).<br/>Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,<br/>Events Manager",'eme') ;
-   $respondent_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>you have successfully reserved #_SPACES space(s) for #_EVENTNAME.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_pending_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME is pending.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_cancelled_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been cancelled.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_denied_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been denied.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
-   $registration_recorded_ok_html_localizable = __('Your booking has been recorded','eme');
-   $registration_form_format_localizable = "<table class='eme-rsvp-form'>
-            <tr><th scope='row'>".__('Name', 'eme')."*:</th><td>#_NAME</td></tr>
-            <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_EMAIL</td></tr>
-            <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_PHONE</td></tr>
-            <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_SEATS</td></tr>
-            <tr><th scope='row'>".__('Comment', 'eme').":</th><td>#_COMMENT</td></tr>
-            #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
-            </table>
-            #_SUBMIT
-            ";
-   
-   $eme_options = array('eme_event_list_item_format' => DEFAULT_EVENT_LIST_ITEM_FORMAT,
-   'eme_display_calendar_in_events_page' => 0,
-   'eme_single_event_format' => DEFAULT_SINGLE_EVENT_FORMAT,
-   'eme_event_page_title_format' => DEFAULT_EVENT_PAGE_TITLE_FORMAT,
-   'eme_event_html_title_format' => DEFAULT_EVENT_HTML_TITLE_FORMAT,
-   'eme_show_period_monthly_dateformat' => DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT,
-   'eme_show_period_yearly_dateformat' => DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT,
-   'eme_filter_form_format' => DEFAULT_FILTER_FORM_FORMAT,
-   'eme_list_events_page' => 0,
-   'eme_events_page_title' => DEFAULT_EVENTS_PAGE_TITLE,
-   'eme_no_events_message' => __('No events','eme'),
-   'eme_location_page_title_format' => DEFAULT_LOCATION_PAGE_TITLE_FORMAT,
-   'eme_location_html_title_format' => DEFAULT_LOCATION_HTML_TITLE_FORMAT,
-   'eme_location_baloon_format' => DEFAULT_LOCATION_BALLOON_FORMAT,
-   'eme_location_event_list_item_format' => DEFAULT_LOCATION_EVENT_LIST_ITEM_FORMAT,
-   'eme_location_no_events_message' => DEFAULT_LOCATION_NO_EVENTS_MESSAGE,
-   'eme_single_location_format' => DEFAULT_SINGLE_LOCATION_FORMAT,
-   'eme_rss_main_title' => get_bloginfo('title')." - ".__('Events'),
-   'eme_rss_main_description' => get_bloginfo('description')." - ".__('Events'),
-   'eme_rss_description_format' => DEFAULT_RSS_DESCRIPTION_FORMAT,
-   'eme_rss_title_format' => DEFAULT_RSS_TITLE_FORMAT,
-   'eme_rss_show_pubdate' => 1,
-   'eme_gmap_is_active'=> DEFAULT_GMAP_ENABLED,
-   'eme_gmap_zooming'=> DEFAULT_GMAP_ZOOMING,
-   'eme_seo_permalink'=> DEFAULT_SEO_PERMALINK,
-   'eme_permalink_events_prefix' => 'events',
-   'eme_permalink_locations_prefix' => 'locations',
-   'eme_default_contact_person' => -1,
-   'eme_captcha_for_booking' => 0 ,
-   'eme_rsvp_mail_notify_is_active' => 0 ,
-   'eme_contactperson_email_body' => preg_replace("/<br ?\/?>/", "\n", $contact_person_email_body_localizable),
-   'eme_contactperson_cancelled_email_body' => preg_replace("/<br ?\/?>/", "\n", $contactperson_cancelled_email_body_localizable),
-   'eme_contactperson_pending_email_body' => preg_replace("/<br ?\/?>/", "\n", $contact_person_pending_email_body_localizable),
-   'eme_respondent_email_body' => preg_replace("/<br ?\/?>/", "\n", $respondent_email_body_localizable),
-   'eme_registration_pending_email_body' => preg_replace("/<br ?\/?>/", "\n", $registration_pending_email_body_localizable),
-   'eme_registration_cancelled_email_body' => preg_replace("/<br ?\/?>/", "\n", $registration_cancelled_email_body_localizable),
-   'eme_registration_denied_email_body' => preg_replace("/<br ?\/?>/", "\n", $registration_denied_email_body_localizable),
-   'eme_registration_recorded_ok_html' => $registration_recorded_ok_html_localizable,
-   'eme_registration_form_format' => $registration_form_format_localizable,
-   'eme_rsvp_mail_port' => 25,
-   'eme_smtp_host' => 'localhost',
-   'eme_mail_sender_name' => '',
-   'eme_rsvp_mail_send_method' => 'smtp',
-   'eme_rsvp_mail_SMTPAuth' => 0,
-   'eme_attendees_list_format' => DEFAULT_ATTENDEES_LIST_FORMAT,
-   'eme_bookings_list_format' => DEFAULT_BOOKINGS_LIST_FORMAT,
-   'eme_bookings_list_header_format' => DEFAULT_BOOKINGS_LIST_HEADER_FORMAT,
-   'eme_bookings_list_footer_format' => DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT,
-   'eme_image_max_width' => DEFAULT_IMAGE_MAX_WIDTH,
-   'eme_image_max_height' => DEFAULT_IMAGE_MAX_HEIGHT,
-   'eme_image_max_size' => DEFAULT_IMAGE_MAX_SIZE,
-   'eme_full_calendar_event_format' => DEFAULT_FULL_CALENDAR_EVENT_FORMAT,
-   'eme_small_calendar_event_title_format' => DEFAULT_SMALL_CALENDAR_EVENT_TITLE_FORMAT,
-   'eme_small_calendar_event_title_separator' => DEFAULT_SMALL_CALENDAR_EVENT_TITLE_SEPARATOR, 
-   'eme_hello_to_user' => 1,
-   'eme_shortcodes_in_widgets' => 0,
-   'eme_load_js_in_header' => 0,
-   'eme_use_client_clock' => 0,
-   'eme_donation_done' => 0,
-   'eme_events_admin_limit' => 20,
-   'eme_event_list_number_items'  => 10,
-   'eme_use_select_for_locations' => DEFAULT_USE_SELECT_FOR_LOCATIONS,
-   'eme_attributes_enabled' => DEFAULT_ATTRIBUTES_ENABLED,
-   'eme_recurrence_enabled' => DEFAULT_RECURRENCE_ENABLED,
-   'eme_rsvp_enabled' => DEFAULT_RSVP_ENABLED,
-   'eme_rsvp_addbooking_submit_string' => DEFAULT_RSVP_ADDBOOKINGFORM_SUBMIT_STRING,
-   'eme_rsvp_addbooking_min_spaces' => 1,
-   'eme_rsvp_addbooking_max_spaces' => 10,
-   'eme_rsvp_delbooking_submit_string' => DEFAULT_RSVP_DELBOOKINGFORM_SUBMIT_STRING,
-   'eme_categories_enabled' => DEFAULT_CATEGORIES_ENABLED,
-   'eme_cap_add_event' => DEFAULT_CAP_ADD_EVENT, 
-   'eme_cap_author_event' => DEFAULT_CAP_AUTHOR_EVENT, 
-   'eme_cap_publish_event' => DEFAULT_CAP_PUBLISH_EVENT,
-   'eme_cap_list_events' => DEFAULT_CAP_LIST_EVENTS,
-   'eme_cap_edit_events' => DEFAULT_CAP_EDIT_EVENTS,
-   'eme_cap_add_locations' => DEFAULT_CAP_ADD_LOCATION,
-   'eme_cap_author_locations' => DEFAULT_CAP_AUTHOR_LOCATION,
-   'eme_cap_edit_locations' => DEFAULT_CAP_EDIT_LOCATIONS,
-   'eme_cap_categories' => DEFAULT_CAP_CATEGORIES,
-   'eme_cap_people' => DEFAULT_CAP_PEOPLE,
-   'eme_cap_approve' => DEFAULT_CAP_APPROVE,
-   'eme_cap_registrations' => DEFAULT_CAP_REGISTRATIONS,
-   'eme_cap_forms' => DEFAULT_CAP_FORMS,
-   'eme_cap_cleanup' => DEFAULT_CAP_CLEANUP,
-   'eme_cap_settings' => DEFAULT_CAP_SETTINGS,
-   'eme_event_html_headers_format' => '',
-   'eme_location_html_headers_format' => '',
-   'eme_paypal_url' => PAYPAL_LIVE_URL,
-   'eme_paypal_business' => '',
-   'eme_google_checkout_type' => GOOGLE_LIVE,
-   'eme_google_merchant_id' => '',
-   'eme_google_merchant_key' => '',
-   'eme_2co_demo' => 0,
-   'eme_2co_business' => '',
-   'eme_2co_secret' => '',
-   'eme_event_initial_state' => STATUS_DRAFT,
-   );
-   
-   foreach($eme_options as $key => $value){
-      eme_add_option($key, $value, $reset);
-   }
-      
-}
-function eme_add_option($key, $value, $reset) {
-   $option_val = get_option($key,"non_existing");
-   if ($option_val=="non_existing" || $reset) {
-      update_option($key, $value);
-   }
-}
-
-////////////////////////////////////
-// WP options registration/deletion
-////////////////////////////////////
-function eme_options_delete() {
-   $options = array ('eme_version', 'eme_events_page', 'eme_display_calendar_in_events_page', 'eme_event_list_item_format_header', 'eme_event_list_item_format', 'eme_event_list_item_format_footer', 'eme_event_page_title_format', 'eme_event_html_title_format', 'eme_single_event_format', 'eme_list_events_page', 'eme_events_page_title', 'eme_no_events_message', 'eme_location_page_title_format','eme_location_html_title_format', 'eme_location_baloon_format', 'eme_single_location_format', 'eme_location_event_list_item_format', 'eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat', 'eme_location_no_events_message', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_seo_permalink', 'eme_rss_main_title', 'eme_rss_main_description', 'eme_rss_title_format', 'eme_rss_description_format', 'eme_rss_show_pubdate', 'eme_rsvp_mail_notify_is_active', 'eme_contactperson_email_body', 'eme_contactperson_cancelled_email_body', 'eme_contactperson_pending_email_body', 'eme_respondent_email_body', 'eme_registration_recorded_ok_html', 'eme_mail_sender_name', 'eme_smtp_username', 'eme_smtp_password', 'eme_default_contact_person','eme_captcha_for_booking', 'eme_mail_sender_address', 'eme_mail_receiver_address', 'eme_smtp_host', 'eme_rsvp_mail_send_method', 'eme_rsvp_mail_port', 'eme_rsvp_mail_SMTPAuth', 'eme_rsvp_registered_users_only', 'eme_rsvp_reg_for_new_events', 'eme_rsvp_default_number_spaces', 'eme_rsvp_addbooking_submit_string', 'eme_rsvp_delbooking_submit_string', 'eme_image_max_width', 'eme_image_max_height', 'eme_image_max_size', 'eme_full_calendar_event_format', 'eme_use_select_for_locations', 'eme_attributes_enabled', 'eme_recurrence_enabled','eme_rsvp_enabled','eme_categories_enabled','eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_registration_pending_email_body','eme_registration_denied_email_body','eme_registration_cancelled_email_body','eme_attendees_list_format','eme_bookings_list_format','eme_bookings_list_header_format','eme_bookings_list_footer_format','eme_uninstall_drop_tables','eme_uninstall_drop_data','eme_time_remove_leading_zeros','eme_rsvp_hide_full_events','eme_events_admin_limit','eme_donation_done','eme_hello_to_user','eme_filter_form_format','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_shortcodes_in_widgets','eme_load_js_in_header','eme_use_client_clock','eme_event_list_number_items', 'eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_edit_events', 'eme_cap_list_events', 'eme_cap_add_locations', 'eme_cap_edit_locations', 'eme_cap_author_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings', 'eme_event_html_headers_format', 'eme_location_html_headers_format','eme_permalink_events_prefix','eme_permalink_locations_prefix','eme_paypal_url','eme_paypal_business', 'eme_2co_business', 'eme_2co_secret', 'eme_2co_demo', 'eme_google_checkout_type', 'eme_google_merchant_id', 'eme_google_merchant_key', 'eme_location_list_format_header', 'eme_location_list_format_item', 'eme_location_list_format_footer','eme_event_initial_state', 'eme_registration_form_format');
-   foreach ( $options as $opt ) {
-      delete_option ( $opt );
-   }
-}
-
-function eme_options_register() {
-
-   // only the options you want changed in the Settings page, not eg. eme_hello_to_user, eme_donation_done
-
-   $options = array ('eme_events_page', 'eme_display_calendar_in_events_page', 'eme_event_list_item_format_header', 'eme_event_list_item_format', 'eme_event_list_item_format_footer', 'eme_event_page_title_format', 'eme_event_html_title_format', 'eme_single_event_format', 'eme_list_events_page', 'eme_events_page_title', 'eme_no_events_message', 'eme_location_page_title_format', 'eme_location_html_title_format', 'eme_location_baloon_format', 'eme_single_location_format', 'eme_location_event_list_item_format', 'eme_show_period_monthly_dateformat','eme_show_period_yearly_dateformat', 'eme_location_no_events_message', 'eme_gmap_is_active', 'eme_gmap_zooming', 'eme_seo_permalink', 'eme_rss_main_title', 'eme_rss_main_description', 'eme_rss_title_format', 'eme_rss_description_format', 'eme_rss_show_pubdate', 'eme_rsvp_mail_notify_is_active', 'eme_contactperson_email_body', 'eme_contactperson_cancelled_email_body', 'eme_contactperson_pending_email_body', 'eme_respondent_email_body', 'eme_registration_recorded_ok_html', 'eme_mail_sender_name', 'eme_smtp_username', 'eme_smtp_password', 'eme_default_contact_person','eme_captcha_for_booking', 'eme_mail_sender_address', 'eme_smtp_host', 'eme_rsvp_mail_send_method', 'eme_rsvp_mail_port', 'eme_rsvp_mail_SMTPAuth', 'eme_rsvp_registered_users_only', 'eme_rsvp_reg_for_new_events', 'eme_rsvp_default_number_spaces', 'eme_rsvp_addbooking_submit_string', 'eme_rsvp_delbooking_submit_string', 'eme_image_max_width', 'eme_image_max_height', 'eme_image_max_size', 'eme_full_calendar_event_format', 'eme_use_select_for_locations', 'eme_attributes_enabled', 'eme_recurrence_enabled','eme_rsvp_enabled','eme_categories_enabled','eme_small_calendar_event_title_format','eme_small_calendar_event_title_separator','eme_registration_pending_email_body','eme_registration_denied_email_body','eme_registration_cancelled_email_body','eme_attendees_list_format','eme_bookings_list_format','eme_bookings_list_header_format','eme_bookings_list_footer_format','eme_uninstall_drop_data','eme_time_remove_leading_zeros','eme_rsvp_hide_full_events','eme_events_admin_limit','eme_filter_form_format','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_shortcodes_in_widgets','eme_load_js_in_header','eme_use_client_clock','eme_event_list_number_items', 'eme_cap_add_event', 'eme_cap_author_event', 'eme_cap_publish_event', 'eme_cap_edit_events', 'eme_cap_list_events', 'eme_cap_add_locations', 'eme_cap_edit_locations', 'eme_cap_author_locations', 'eme_cap_categories', 'eme_cap_people', 'eme_cap_approve', 'eme_cap_registrations', 'eme_cap_forms', 'eme_cap_cleanup', 'eme_cap_settings', 'eme_event_html_headers_format', 'eme_location_html_headers_format','eme_permalink_events_prefix','eme_permalink_locations_prefix','eme_paypal_url','eme_paypal_business', 'eme_2co_business', 'eme_2co_secret', 'eme_2co_demo', 'eme_google_checkout_type', 'eme_google_merchant_id', 'eme_google_merchant_key', 'eme_location_list_item_header', 'eme_location_list_format_item', 'eme_location_list_format_footer','eme_event_initial_state', 'eme_registration_form_format');
-   foreach ( $options as $opt ) {
-      register_setting ( 'eme-options', $opt, '' );
-   }
-}
-add_action ( 'admin_init', 'eme_options_register' );
-
 function eme_create_events_page() {
    global $wpdb;
    $postarr = array(
@@ -1021,8 +884,10 @@ function eme_create_events_submenu () {
       // edit event also needs just "add" as capability, otherwise you will not be able to edit own created events
       $plugin_page = add_submenu_page('events-manager', __('Edit'),__('Edit'),get_option('eme_cap_list_events'),'events-manager','eme_events_page');
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
+      add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
       $plugin_page = add_submenu_page('events-manager', __('Add new', 'eme'), __('Add new','eme'), get_option('eme_cap_add_event'), 'eme-new_event', "eme_new_event_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
+      add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
       $plugin_page = add_submenu_page('events-manager', __('Locations', 'eme'), __('Locations', 'eme'), get_option('eme_cap_add_locations'), 'eme-locations', "eme_locations_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       if (get_option('eme_categories_enabled')) {
@@ -1035,6 +900,8 @@ function eme_create_events_submenu () {
          $plugin_page = add_submenu_page('events-manager', __('Pending Approvals', 'eme'), __('Pending Approvals', 'eme'), get_option('eme_cap_approve'), 'eme-registration-approval', "eme_registration_approval_page");
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
          $plugin_page = add_submenu_page('events-manager', __('Change Registration', 'eme'), __('Change Registration', 'eme'), get_option('eme_cap_registrations'), 'eme-registration-seats', "eme_registration_seats_page");
+         add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
+         $plugin_page = add_submenu_page('events-manager', __('Send Mails', 'eme'), __('Send Mails', 'eme'), get_option('eme_cap_send_mails'), 'eme-send-mails', "eme_send_mails_page");
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
          $plugin_page = add_submenu_page('events-manager', __('Form Fields','eme'),__('Form Fields','eme'), get_option('eme_cap_forms'), "eme-formfields", 'eme_formfields_page');
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
@@ -1345,7 +1212,7 @@ function eme_replace_placeholders($format, $event, $target="html") {
          $now = date("Y-m-d");
          $replacement = eme_daydifference($now,$event['event_end_date']);
 
-      } elseif (preg_match('/#_EVENTPRICE|#_PRICE$/', $result)) {
+      } elseif (preg_match('/#_EVENTPRICE$|#_PRICE$/', $result)) {
          $field = "price";
          if ($event[$field])
             $replacement = $event[$field];
@@ -1357,6 +1224,21 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
+      } elseif (preg_match('/#_(EVENT)?PRICE(\d+)$/', $result, $matches)) {
+         $field_id = intval($matches[2]);
+         if ($event["price"] && $field_id) {
+            $prices = preg_split("/\|\|/",$event["price"]);
+            if (is_array($prices)) {
+               $replacement = $prices[$field_id-1];
+               if ($target == "html") {
+                  $replacement = apply_filters('eme_general', $replacement); 
+               } elseif ($target == "rss")  {
+                  $replacement = apply_filters('eme_general_rss', $replacement);
+               } else {
+                  $replacement = apply_filters('eme_text', $replacement);
+               }
+            }
+         }
       } elseif (preg_match('/#_CURRENCY/', $result)) {
          $field = "currency";
          // currency is only important if the price is not empty as well
@@ -1536,6 +1418,21 @@ function eme_replace_placeholders($format, $event, $target="html") {
          else
             $replacement = 0;
 
+      } elseif (preg_match('/#_IS_REGISTERED/', $result)) {
+         if ($rsvp_is_active && $event['event_rsvp']
+                   && is_user_logged_in()
+                   && $event['registration_wp_users_only']
+                   && eme_get_booking_by_person_event_id($person_id,$event['event_id']))
+            $replacement = 1;
+         else
+            $replacement = 0;
+
+      } elseif (preg_match('/#_IS_MULTIPRICE/', $result)) {
+         if (eme_is_multiprice($event['price']))
+            $replacement = 1;
+         else
+            $replacement = 0;
+
       } else {
          $found = 0;
       }
@@ -1571,8 +1468,8 @@ function eme_replace_placeholders($format, $event, $target="html") {
       }
       $replacement = "";
       $field = "event_".ltrim(strtolower($result), "#_");
-      // DETAILS is an alternative for NOTES
-      if ($field == "event_details")
+      // to catch every alternative (we just need to know if it is an excerpt or not)
+      if ($field != "event_excerpt")
          $field = "event_notes";
 
       // when on the single event page, never show just the excerpt
@@ -1666,26 +1563,18 @@ function eme_replace_placeholders($format, $event, $target="html") {
 }
 
 function eme_sanitize_request( $value ) {
-#  if( get_magic_quotes_gpc() ) 
-#     $value = stripslashes( $value );
-
-   //check if this function exists
-   if( function_exists( "mysql_real_escape_string" ) ) {
-      //$value = mysql_real_escape_string( $value );
-      if (is_array($value)) {
-         array_walk_recursive($value, 'escapeMe');
-      } else {
-         $value = mysql_real_escape_string($value);
-      }
+   global $wpdb;
+   if (is_array($value)) {
+      array_walk_recursive($value, 'escapeMe');
    } else {
-      //for PHP version < 4.3.0 use addslashes
-      $value = addslashes( $value );
+      $value = $wpdb->escape($value);
    }
    return $value;
 }
 
 function escapeMe(&$val) {
-   $val = mysql_real_escape_string($val);
+   global $wpdb;
+   $val = $wpdb->escape($val);
 }
 
 function sort_stringlenth($a,$b){
@@ -1708,6 +1597,11 @@ function eme_translate ( $value) {
       return $value;
 }
 
+function eme_sanitize_rss( $value ) {
+   $value =  str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", $value ) );
+   return "<![CDATA[".$value."]]>";
+}
+
 function eme_sanitize_html( $value ) {
    //return htmlentities($value,ENT_QUOTES,get_option('blog_charset'));
    return htmlspecialchars($value,ENT_QUOTES);
@@ -1719,11 +1613,13 @@ function eme_strip_tags ( $value ) {
 
 function admin_show_warnings() {
    $db_version = get_option('eme_version');
+   global $plugin_page;
+
    if ($db_version && $db_version < EME_DB_VERSION) {
       // the warning is already given via admin_notice, we just want
       // to prevent people to do anything in EME without deactivation/activation first
       // But we allow access to the settings page ...
-      if ((isset($_GET['page']) && $_GET['page'] != 'eme-options'))
+      if ($plugin_page != 'eme-options')
          exit(1);
    } else {
       // the normal warnings
@@ -1760,7 +1656,7 @@ _e('If you find this plugin useful to you, please consider making a small donati
 ">
 <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
 <?php
-echo sprintf ( __ ( "<a href=\"%s\" title=\"I already donated\">I already donated.</a>", 'eme' ), admin_url("admin.php?page=events-manager&amp;disable_donate_message=true") );
+echo sprintf ( __ ( "<a href=\"%s\" title=\"I already donated\">I already donated.</a>", 'eme' ), add_query_arg (array("disable_donate_message"=>"true")));
 ?>
 <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
 </form>
@@ -1777,7 +1673,7 @@ function eme_hello_to_new_user() {
    $advice = sprintf ( __ ( "<p>Hey, <strong>%s</strong>, welcome to <strong>Events Made Easy</strong>! We hope you like it around here.</p> 
    <p>Now it's time to insert events lists through  <a href=\"%s\" title=\"Widgets page\">widgets</a>, <a href=\"%s\" title=\"Template tags documentation\">template tags</a> or <a href=\"%s\" title=\"Shortcodes documentation\">shortcodes</a>.</p>
    <p>By the way, have you taken a look at the <a href=\"%s\" title=\"Change settings\">Settings page</a>? That's where you customize the way events and locations are displayed.</p>
-   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), $current_user->display_name, admin_url("widgets.php"), 'http://www.e-dynamics.be/wordpress/#template-tags', 'http://www.e-dynamics.be/wordpress/#shortcodes', admin_url("admin.php?page=eme-options"), admin_url("admin.php?page=events-manager&amp;disable_hello_to_user=true") );
+   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), $current_user->display_name, admin_url("widgets.php"), 'http://www.e-dynamics.be/wordpress/#template-tags', 'http://www.e-dynamics.be/wordpress/#shortcodes', admin_url("admin.php?page=eme-options"), add_query_arg (array("disable_hello_to_user"=>"true")) );
    ?>
 <div id="message" class="updated">
       <?php

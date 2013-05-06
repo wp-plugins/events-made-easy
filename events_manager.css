@@ -241,3 +241,5 @@ table.fullcalendar td.eventless-today, table.fullcalendar td.eventful-today {
 }
 /* for the honeypot, render it invisible */
 #honeypot_check { display: none; }
+/* for the datepicker at the bottom of the edit/new event page, render it invisible */
+#ui-datepicker-div { display: none; }

@@ -18,15 +18,21 @@ function eme_attributes_form($event) {
       get_option('eme_respondent_email_body' ).
       get_option('eme_registration_pending_email_body' ).
       get_option('eme_registration_denied_email_body' ).
-      get_option('eme_registration_cancelled_email_body' );
+      get_option('eme_registration_cancelled_email_body' ).
+      get_option('eme_registration_form_format' ).
+      get_option('eme_attendees_list_format' ).
+      get_option('eme_bookings_list_format' );
       #get_option('eme_location_baloon_format' ).
       #get_option('eme_location_page_title_format' ).
 
    //We now have one long string of formats
-   preg_match_all("/#_ATT\{.+?\}(\{.+?\})?/", $formats, $placeholders);
+   preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $formats, $placeholders);
+
    $attributes = array();
    //Now grab all the unique attributes we can use in our event.
    foreach($placeholders[0] as $result) {
+      $result = str_replace("#ESC","#",$result);
+      $result = str_replace("#URL","#",$result);
       $attribute = substr( substr($result, 0, strpos($result, '}')), 6 );
       if( !in_array($attribute, $attributes) ){       
          $attributes[] = $attribute ;
