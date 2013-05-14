@@ -1598,7 +1598,7 @@ function eme_translate ( $value) {
 }
 
 function eme_sanitize_rss( $value ) {
-   $value =  str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", $value ) );
+   #$value =  str_replace ( ">", "&gt;", str_replace ( "<", "&lt;", $value ) );
    return "<![CDATA[".$value."]]>";
 }
 
