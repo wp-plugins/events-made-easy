@@ -1405,9 +1405,6 @@ function eme_registration_approval_page() {
          // update the db
          if ($action == 'approveRegistration') {
             eme_approve_booking($booking_id);
-            // 0 seats is not possible, then you should remove the booking
-            if ($bookings_seats[$key]==0)
-               $bookings_seats[$key]=1;
             if ($booking['booking_payed']!= intval($bookings_payed[$key]))
                eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
             if ($booking['booking_seats']!= $bookings_seats[$key]) {

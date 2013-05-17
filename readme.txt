@@ -114,6 +114,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.1.3 =
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
+* Bugfix: multiprice bookings were reset to "1" if the first booking was 0 upon approval
 
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events
