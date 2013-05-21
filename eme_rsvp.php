@@ -366,11 +366,12 @@ function eme_book_seats($event, $send_mail=1) {
    if (!is_admin()) {
       foreach ($all_required_fields as $required_field) {
          if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
-            // we already check these seperately
+            // we already check these seperately, and EMAIL regex also catches _HTML5_EMAIL
             next;
-         } elseif (strcmp($required_field,"PHONE")==0) {
+         } elseif (preg_match ("/PHONE/",$required_field)) {
+            // PHONE regex also catches _HTML5_PHONE
             if (empty($bookerPhone)) $all_required_fields_ok=0;
-         } elseif (strcmp($required_field,"COMMENT")==0) {
+         } elseif (preg_match ("/COMMENT/",$required_field)) {
             if (empty($bookerComment)) $all_required_fields_ok=0;
          } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
             $all_required_fields_ok=0;

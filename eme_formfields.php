@@ -261,20 +261,20 @@ function eme_get_formfield_html($field_id) {
    $value = eme_sanitize_html($formfield['field_info']);
    switch($formfield['field_type']) {
       case 1:
-	# for text field
-	$html = "<input type='text' name='FIELD$field_id' value='$value'>";
-	break;
+	      # for text field
+         $html = "<input type='text' name='FIELD$field_id' value='$value'>";
+         break;
       case 2:
-        $values = explode("||",$value);
-        $my_arr = array();
-        foreach ($values as $val) {
-		$my_arr[$val]=$val;
-	}
-	$html = eme_ui_select('',"FIELD$field_id",$my_arr);
-	break;
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_select('',"FIELD$field_id",$my_arr);
+         break;
       case 3:
-	$html = "<textarea name='FIELD$field_id'>$value</textarea>";
-	break;
+         $html = "<textarea name='FIELD$field_id'>$value</textarea>";
+         break;
    }
    return $html;
 }
@@ -346,6 +346,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       $orig_result = $result;
       $found=1;
       $required=0;
+      $html5_wanted=0;
       $replacement = "";
       if (strstr($result,'#REQ')) {
          $result = str_replace("#REQ","#",$result);
@@ -357,11 +358,16 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          $required_fields_count++;
          // #_NAME is always required
          $required=1;
+      } elseif (preg_match('/#_HTML5_EMAIL$/', $result)) {
+         $replacement = "<input type='email' name='bookerEmail' value='$bookerEmail' $readonly />";
+         $required_fields_count++;
       } elseif (preg_match('/#_EMAIL$/', $result)) {
          $replacement = "<input type='text' name='bookerEmail' value='$bookerEmail' $readonly />";
          $required_fields_count++;
          // #_EMAIL is always required
          $required=1;
+      } elseif (preg_match('/#_HTML5_PHONE$/', $result)) {
+         $replacement = "<input type='tel' name='bookerPhone' value='$bookerPhone' />";
       } elseif (preg_match('/#_PHONE$/', $result)) {
          $replacement = "<input type='text' name='bookerPhone' value='$bookerPhone' />";
       } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
