@@ -116,6 +116,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: added #_HTML5_PHONE and #__HTML5_EMAIL to indicate you want the html5 input type field for phone and/or email
   So you can use e.g. #_HTML5_PHONE or #REQ_HTML5_PHONE and the result will be: the html5 tel-type field for phone, and required if #REQ used.
   Other html5 input types will be added.
+* Feature: events_if4, events_if5 and events_if6 added
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
 * Bugfix: multiprice bookings were reset to "1" if the first booking was 0 upon approval
 

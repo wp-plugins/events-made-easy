@@ -23,6 +23,9 @@ function eme_if_shortcode($atts,$content) {
 add_shortcode ( 'events_if', 'eme_if_shortcode');
 add_shortcode ( 'events_if2', 'eme_if_shortcode');
 add_shortcode ( 'events_if3', 'eme_if_shortcode');
+add_shortcode ( 'events_if4', 'eme_if_shortcode');
+add_shortcode ( 'events_if5', 'eme_if_shortcode');
+add_shortcode ( 'events_if6', 'eme_if_shortcode');
 
 // Returns true if the page in question is the events page
 function eme_is_events_page() {
