@@ -901,8 +901,10 @@ function eme_create_events_submenu () {
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
          $plugin_page = add_submenu_page('events-manager', __('Change Registration', 'eme'), __('Change Registration', 'eme'), get_option('eme_cap_registrations'), 'eme-registration-seats', "eme_registration_seats_page");
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
-         $plugin_page = add_submenu_page('events-manager', __('Send Mails', 'eme'), __('Send Mails', 'eme'), get_option('eme_cap_send_mails'), 'eme-send-mails', "eme_send_mails_page");
-         add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
+         if (get_option('eme_rsvp_mail_notify_is_active')) {
+            $plugin_page = add_submenu_page('events-manager', __('Send Mails', 'eme'), __('Send Mails', 'eme'), get_option('eme_cap_send_mails'), 'eme-send-mails', "eme_send_mails_page");
+            add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
+         }
          $plugin_page = add_submenu_page('events-manager', __('Form Fields','eme'),__('Form Fields','eme'), get_option('eme_cap_forms'), "eme-formfields", 'eme_formfields_page');
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       }
