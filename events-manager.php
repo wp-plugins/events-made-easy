@@ -224,6 +224,8 @@ register_activation_hook(__FILE__,'eme_install');
 register_deactivation_hook(__FILE__,'eme_uninstall');
 // when a new blog is added for network installation and the plugin is network activated
 add_action( 'wpmu_new_blog', 'eme_new_blog', 10, 6);      
+// to execute a db update after auto-update of EME
+add_action( 'plugins_loaded', 'eme_install' );
 
 // filters for general events field (corresponding to those of  "the_title")
 add_filter('eme_general', 'wptexturize');

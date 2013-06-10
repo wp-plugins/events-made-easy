@@ -118,6 +118,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
   Other html5 input types will be added.
 * Feature: events_if4, events_if5 and events_if6 added
 * Improvement: mail sending is by default enabled for new installations
+* Improvement: upon auto-update, the DB version of EME is now also checked and a DB update is done if needed
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
 * Bugfix: multiprice bookings were reset to "1" if the first booking was 0 upon approval
 
