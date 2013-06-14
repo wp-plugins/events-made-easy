@@ -153,7 +153,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
                $town_list = array(0=>__('Select one or more towns','eme'))+$town_list;
                $replacement = eme_ui_multiselect($selected_town,$town_post_name,$town_list,$multisize);
             } else {
-               $town_list[0] = array(0=>__('Select a town','eme'))+$town_list;
+               $town_list = array(0=>__('Select a town','eme'))+$town_list;
                $replacement = eme_ui_select($selected_town,$town_post_name,$town_list);
             }
          }
