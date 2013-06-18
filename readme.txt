@@ -117,6 +117,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
   So you can use e.g. #_HTML5_PHONE or #REQ_HTML5_PHONE and the result will be: the html5 tel-type field for phone, and required if #REQ used.
   Other html5 input types will be added.
 * Feature: events_if4, events_if5 and events_if6 added
+* Feature: support wp_mail as a method of sending mail, allowing other plugins to work on the mail as well via the existing wp_mail hooks and filters
 * Improvement: mail sending is by default enabled for new installations
 * Improvement: upon auto-update, the DB version of EME is now also checked and a DB update is done if needed
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
