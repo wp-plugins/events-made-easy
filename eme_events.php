@@ -2635,22 +2635,16 @@ $j_eme_event(document).ready( function() {
    $j_eme_event("#end-date-to-submit").hide(); 
    $j_eme_event("#rec-start-date-to-submit").hide();
    $j_eme_event("#rec-end-date-to-submit").hide(); 
-   $j_eme_event("#localised-start-date").datepicker($j_eme_event.extend({},
-      ($j_eme_event.datepicker.regional["<?php echo $locale_code; ?>"], 
-      {altField: "#start-date-to-submit", 
-      altFormat: "yy-mm-dd"})));
-   $j_eme_event("#localised-end-date").datepicker($j_eme_event.extend({},
-      ($j_eme_event.datepicker.regional["<?php echo $locale_code; ?>"], 
-      {altField: "#end-date-to-submit", 
-      altFormat: "yy-mm-dd"})));
-   $j_eme_event("#localised-rec-start-date").datepicker($j_eme_event.extend({},
-      ($j_eme_event.datepicker.regional["<?php echo $locale_code; ?>"], 
-      {altField: "#rec-start-date-to-submit", 
-      altFormat: "yy-mm-dd"})));
-   $j_eme_event("#localised-rec-end-date").datepicker($j_eme_event.extend({},
-      ($j_eme_event.datepicker.regional["<?php echo $locale_code; ?>"], 
-      {altField: "#rec-end-date-to-submit", 
-      altFormat: "yy-mm-dd"})));
+
+   $j_eme_event.datepicker.setDefaults( $j_eme_event.datepicker.regional["<?php echo $locale_code; ?>"] );
+   $j_eme_event.datepicker.setDefaults({
+      changeMonth: true,
+      changeYear: true,
+   });
+   $j_eme_event("#localised-start-date").datepicker({ altField: "#start-date-to-submit", altFormat: "yy-mm-dd" });
+   $j_eme_event("#localised-end-date").datepicker({ altField: "#end-date-to-submit", altFormat: "yy-mm-dd" });
+   $j_eme_event("#localised-rec-start-date").datepicker({ altField: "#rec-start-date-to-submit", altFormat: "yy-mm-dd" });
+   $j_eme_event("#localised-rec-end-date").datepicker({ altField: "#rec-end-date-to-submit", altFormat: "yy-mm-dd" });
 
    $j_eme_event("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
    $j_eme_event("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
