@@ -30,7 +30,7 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
 
          $mail->PluginDir = dirname(__FILE__).'/';
          if ($eme_rsvp_mail_send_method == 'qmail')
-            $mail->IsQmail()
+            $mail->IsQmail();
          else
             $mail->Mailer = $eme_rsvp_mail_send_method;
          $mail->Host = get_option('eme_smtp_host');
