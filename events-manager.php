@@ -359,6 +359,13 @@ function _eme_install() {
    if ( !current_user_can( SETTING_CAPABILITY  ) ) {
       return;
    }
+   $db_version = get_option('eme_version');
+   if ($db_version == EME_DB_VERSION) {
+      return;
+   }
+   if ($db_version>0 && $db_version<20) {
+      eme_rename_tables();
+   }
 
    // Creates the events table if necessary
    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -369,10 +376,6 @@ function _eme_install() {
          $charset = "DEFAULT CHARACTER SET $wpdb->charset";
       if ( ! empty($wpdb->collate) )
          $collate = "COLLATE $wpdb->collate";
-   }
-   $db_version = get_option('eme_version');
-   if ($db_version>0 && $db_version<20) {
-      eme_rename_tables();
    }
    eme_create_events_table($charset,$collate);
    eme_create_recurrence_table($charset,$collate);
