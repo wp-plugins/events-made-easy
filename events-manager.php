@@ -225,7 +225,7 @@ register_deactivation_hook(__FILE__,'eme_uninstall');
 // when a new blog is added for network installation and the plugin is network activated
 add_action( 'wpmu_new_blog', 'eme_new_blog', 10, 6);      
 // to execute a db update after auto-update of EME
-add_action( 'plugins_loaded', 'eme_install' );
+//add_action( 'plugins_loaded', 'eme_install' );
 
 // filters for general events field (corresponding to those of  "the_title")
 add_filter('eme_general', 'wptexturize');
@@ -401,14 +401,15 @@ function _eme_install() {
    if ($events_page_id != "" ) {
       query_posts("page_id=$events_page_id");
       $count = 0;
-      while(have_posts()) { the_post();
+      while(have_posts()) {
+         the_post();
          $count++;
       }
       if ($count == 0)
          eme_create_events_page(); 
-     } else {
-        eme_create_events_page(); 
-     }
+   } else {
+      eme_create_events_page(); 
+   }
 
     // SEO rewrite rules
     eme_flushRules();
