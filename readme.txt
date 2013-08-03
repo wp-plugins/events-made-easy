@@ -123,6 +123,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
 * Bugfix: multiprice bookings were reset to "1" if the first booking was 0 upon approval
 * Bugfix: default selected town was always the first town when using [events_filterform]
+* Bugfix: make sure the correct scheme is used for admin_url
 
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events

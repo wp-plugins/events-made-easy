@@ -49,7 +49,12 @@ function eme_client_clock_enqueue_scripts() {
    wp_enqueue_script('client_clock_submit', plugin_dir_url( __FILE__ ) . 'js/client-clock.js', array('jquery'));  
    // Declare URL to the file that receives AJAXed client clock data (wp-admin/admin-ajax.php).
    // this really just replaces the string "ajaxurl" in the JS var eme_ajax with the value admin_url('admin-ajax.php')
-   wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+   // We check is_ssl: normally admin_url takes http/https into account, but some plugins force admin_urls to be https
+   // and in our case this would cause problems for the session id if the front is not using https
+   if (is_ssl())
+      wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php','https')));
+   else
+      wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php','http')));
 }
 
 function eme_client_clock_callback() {
