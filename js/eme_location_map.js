@@ -90,7 +90,7 @@ function loadGMap() {
 					letter = String.fromCharCode("A".charCodeAt(0) + index);
 				}
 
-				customIcon = location.protocol + "://chart.apis.google.com/chart?chst=d_map_pin_letter&chld="+letter+"|FF0000|000000";
+				customIcon = location.protocol + "//chart.apis.google.com/chart?chst=d_map_pin_letter&chld="+letter+"|FF0000|000000";
 				//shadow = "http://chart.apis.google.com/chart?chst=d_map_pin_shadow";
 				var point = new google.maps.LatLng(parseFloat(item.location_latitude), parseFloat(item.location_longitude));
 				var balloon_id = "eme-location-balloon-id";
@@ -215,6 +215,6 @@ function loadMapScript() {
 //	script.setAttribute("type", "text/javascript");
 //	document.documentElement.firstChild.appendChild(script);
 	script.type = "text/javascript";
-	script.src = location.protocol + "://maps.google.com/maps/api/js?v=3.1&sensor=false&callback=loadGMap";
+	script.src = location.protocol + "//maps.google.com/maps/api/js?v=3.1&sensor=false&callback=loadGMap";
 	document.body.appendChild(script);
 }
