@@ -466,7 +466,7 @@ function eme_ajaxize_calendar() {
          author_chosen = (typeof author_chosen == 'undefined')? '' : author_chosen;
          contact_person_chosen = (typeof contact_person_chosen == 'undefined')? '' : contact_person_chosen;
          location_chosen = (typeof location_chosen == 'undefined')? '' : location_chosen;
-         $j_eme_calendar.get("<?php echo site_url(); ?>", {
+         $j_eme_calendar.get(self.location.href, {
             eme_ajaxCalendar: 'true',
             calmonth: parseInt(month,10),
             calyear: parseInt(year,10),
