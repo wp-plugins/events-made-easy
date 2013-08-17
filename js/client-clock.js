@@ -1,8 +1,8 @@
 // Don't wait for DOM ready.
 var now = new Date();
 jQuery.post(
-	eme_ajax.ajaxurl, {
-	action: 'client_clock_submit',
+        self.location.href, {
+	eme_ajax_action: 'client_clock_submit',
 	client_unixtime: Math.round(now.getTime() / 1000), // make seconds
 	client_seconds: now.getSeconds(),
 	client_minutes: now.getMinutes(),

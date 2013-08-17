@@ -36,25 +36,11 @@ if (get_option('eme_use_client_clock')) {
    // If needed, add high priority action to enable session variables.
    if (!session_id()) add_action('init', 'session_start', 1);
    add_action('wp_enqueue_scripts', 'eme_client_clock_enqueue_scripts');
-
-   // the next 2 actions are executed by the ajax JS call "client_clock_submit"
-   // Add high priority action to receive clock data from users who are not logged-in.
-   add_action('wp_ajax_nopriv_client_clock_submit', 'eme_client_clock_callback', 1);
-   // Add high priority action to receive clock data from logged-in users.
-   add_action('wp_ajax_client_clock_submit', 'eme_client_clock_callback', 1);
 }
 
 function eme_client_clock_enqueue_scripts() {
    // Embed client-clock.js in webpage header.
    wp_enqueue_script('client_clock_submit', plugin_dir_url( __FILE__ ) . 'js/client-clock.js', array('jquery'));  
-   // Declare URL to the file that receives AJAXed client clock data (wp-admin/admin-ajax.php).
-   // this really just replaces the string "ajaxurl" in the JS var eme_ajax with the value admin_url('admin-ajax.php')
-   // We check is_ssl: normally admin_url takes http/https into account, but some plugins force admin_urls to be https
-   // and in our case this would cause problems for the session id if the front is not using https
-   if (is_ssl())
-      wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php','https')));
-   else
-      wp_localize_script('client_clock_submit', 'eme_ajax', array('ajaxurl' => admin_url('admin-ajax.php','http')));
 }
 
 function eme_client_clock_callback() {

@@ -208,6 +208,8 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: integrated Google Checkout, but no automatic payment handling since that requires client certificates. And for Google Checkout to work, the price must be in dollars or pounds (identical to your google wallet account, otherwise it will fail)
 * Feature/Bugfix: the paypal class didn't really support the business ID, should work now
 * Improvement: revamped the admin settings interface, it was getting too much for one page so I switched to tabs
+* Improvement: don't depend on wp-admin/ajax.php anymore, so as to better support https
+* Improvement: use google maps https if the page is https as well 
 
 = 1.0.12 =
 * Bugfix: the participant info was not correctly replaced in mails sent

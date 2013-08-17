@@ -51,6 +51,10 @@ function eme_ajax_actions() {
          echo "[ {bookedSeats:".eme_get_booked_seats(intval($_GET['event_id'])).", availableSeats:".eme_get_available_seats(intval($_GET['event_id']))."}]"; 
       die();
    }
+   if (isset($_POST['eme_ajax_action']) && $_POST['eme_ajax_action'] == 'client_clock_submit') {
+      eme_client_clock_callback();
+      exit();
+   }
    if (isset($_GET['action']) && $_GET['action'] == 'booking_printable') {
       if (is_admin() && isset($_GET['event_id']))
          eme_printable_booking_report(intval($_GET['event_id']));
