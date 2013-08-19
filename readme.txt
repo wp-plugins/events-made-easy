@@ -207,6 +207,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: integrated 2Checkout. Instant Notification is also possible, but you have to specify the url in your 2Checkout account. The value for this will be shown in the EME settings.
 * Feature: integrated Google Checkout, but no automatic payment handling since that requires client certificates. And for Google Checkout to work, the price must be in dollars or pounds (identical to your google wallet account, otherwise it will fail)
 * Feature/Bugfix: the paypal class didn't really support the business ID, should work now
+* Feature: added event scope "today--this_week_plus_one" so you can show the beginning of next week as well
 * Improvement: revamped the admin settings interface, it was getting too much for one page so I switched to tabs
 * Improvement: don't depend on wp-admin/ajax.php anymore, so as to better support https
 * Improvement: use google maps https if the page is https as well 

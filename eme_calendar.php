@@ -466,7 +466,7 @@ function eme_ajaxize_calendar() {
          author_chosen = (typeof author_chosen == 'undefined')? '' : author_chosen;
          contact_person_chosen = (typeof contact_person_chosen == 'undefined')? '' : contact_person_chosen;
          location_chosen = (typeof location_chosen == 'undefined')? '' : location_chosen;
-         $j_eme_calendar.get(self.location.href, {
+         $j_eme_calendar.post(self.location.href, {
             eme_ajaxCalendar: 'true',
             calmonth: parseInt(month,10),
             calyear: parseInt(year,10),
@@ -488,15 +488,15 @@ function eme_ajaxize_calendar() {
 add_action('wp_footer', 'eme_ajaxize_calendar');
 
 function eme_filter_calendar_ajax() {
-   if(isset($_GET['eme_ajaxCalendar']) && $_GET['eme_ajaxCalendar'] == true) {
-      (isset($_GET['full']) && $_GET['full']) ? $full = 1 : $full = 0;
-      (isset($_GET['long_events']) && $_GET['long_events']) ? $long_events = 1 : $long_events = 0;
-      (isset($_GET['category'])) ? $category = $_GET['category'] : $category = 0;
-      (isset($_GET['calmonth'])) ? $month = eme_sanitize_request($_GET['calmonth']) : $month = ''; 
-      (isset($_GET['calyear'])) ? $year = eme_sanitize_request($_GET['calyear']) : $year = ''; 
-      (isset($_GET['author'])) ? $author = eme_sanitize_request($_GET['author']) : $author = ''; 
-      (isset($_GET['contact_person'])) ? $contact_person = eme_sanitize_request($_GET['contact_person']) : $contact_person = ''; 
-      (isset($_GET['location_id'])) ? $location_id = eme_sanitize_request($_GET['location_id']) : $location_id = '';
+   if(isset($_POST['eme_ajaxCalendar']) && $_POST['eme_ajaxCalendar'] == true) {
+      (isset($_POST['full']) && $_POST['full']) ? $full = 1 : $full = 0;
+      (isset($_POST['long_events']) && $_POST['long_events']) ? $long_events = 1 : $long_events = 0;
+      (isset($_POST['category'])) ? $category = $_POST['category'] : $category = 0;
+      (isset($_POST['calmonth'])) ? $month = eme_sanitize_request($_POST['calmonth']) : $month = ''; 
+      (isset($_POST['calyear'])) ? $year = eme_sanitize_request($_POST['calyear']) : $year = ''; 
+      (isset($_POST['author'])) ? $author = eme_sanitize_request($_POST['author']) : $author = ''; 
+      (isset($_POST['contact_person'])) ? $contact_person = eme_sanitize_request($_POST['contact_person']) : $contact_person = ''; 
+      (isset($_POST['location_id'])) ? $location_id = eme_sanitize_request($_POST['location_id']) : $location_id = '';
 
       // make sure we use the correct charset in the return
       header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));

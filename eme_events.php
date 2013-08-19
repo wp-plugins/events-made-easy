@@ -1469,7 +1469,19 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
-   } elseif ($scope == "today--this_month") {
+   } elseif ($scope == "today--this_week_plus_one") {
+      $start_of_week = get_option('start_of_week');
+      $day_offset=date('w')-$start_of_week;
+      if ($day_offset<0) $day_offset+=7;
+      $start_day=time()-$day_offset*86400;
+      $end_day=$start_day+7*86400;
+      $limit_start = $today;
+      $limit_end   = date('Y-m-d',$end_day);
+      if ($show_ongoing)
+         $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
+      else
+         $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
+    } elseif ($scope == "today--this_month") {
       $year=date('Y');
       $month=date('m');
       $number_of_days_month=eme_days_in_month($month,$year);
