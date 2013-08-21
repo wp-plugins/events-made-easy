@@ -542,6 +542,21 @@ function eme_events_page_content() {
       $page_body = eme_replace_locations_placeholders ( $single_location_format, $location );
       return $page_body;
    }
+   if (isset ( $wp_query->query_vars['eme_event_cat'] ) && $wp_query->query_vars['eme_event_cat'] != '') {
+      $eme_event_cat=eme_sanitize_request($wp_query->query_vars['eme_event_cat']);
+      $cat_ids = join(',',eme_get_category_ids($eme_event_cat));
+      $stored_format = get_option('eme_event_list_item_format');
+      $event_list_format_header = get_option('eme_event_list_item_format_header' );
+      $event_list_format_header = ( $event_list_format_header != '' ) ?  $event_list_format_header : "<ul class='eme_events_list'>";
+      $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+      $event_list_format_footer = ( $event_list_format_footer != '' ) ?  $event_list_format_footer : "</ul>";
+      if ($cat_id>0) {
+         $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, $cat_ids) .  $event_list_format_footer;
+      } else {
+         $page_body = $event_list_format_header . get_option('eme_no_events_message') .  $event_list_format_footer;
+      }
+      return $page_body;
+   }
    //if (isset ( $_REQUEST['event_id'] ) && $_REQUEST['event_id'] != '') {
    if (eme_is_single_event_page()) {
       // single event page

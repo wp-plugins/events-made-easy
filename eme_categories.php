@@ -250,4 +250,20 @@ function eme_get_location_categories($location_id) {
    $category = $wpdb->get_col($sql);
    return $category;
 }
+
+function eme_get_category_ids($cat_name) {
+   global $wpdb;
+   $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
+   $cat_ids = array();
+   $conditions="";
+   if (!empty($cat_name)) {
+      $conditions = " category_name = '$cat_name'";
+   }
+   if (!empty($conditions)) {
+      $sql = "SELECT DISTINCT category_id FROM $categories_table WHERE ".$conditions;
+      $cat_ids = $wpdb->get_col($sql);
+   }
+   return $cat_ids;
+}
+
 ?>

@@ -281,6 +281,7 @@ function eme_insertMyRewriteRules($rules) {
    $newrules[$events_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&event_id=$matches[1]';
    $newrules[$events_prefix.'p(\d*)'] = 'index.php?page_id='.$page_id.'&eme_pmt_id=$matches[1]';
    $newrules[$events_prefix.'town/(.*)'] = 'index.php?page_id='.$page_id.'&eme_town=$matches[1]';
+   $newrules[$events_prefix.'cat/(.*)'] = 'index.php?page_id='.$page_id.'&eme_event_cat=$matches[1]';
    $newrules[$locations_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&location_id=$matches[1]';
    return $newrules + $rules;
 }
@@ -292,6 +293,7 @@ function eme_insertMyRewriteQueryVars($vars) {
     array_push($vars, 'location_id');
     array_push($vars, 'calendar_day');
     array_push($vars, 'eme_town');
+    array_push($vars, 'eme_event_cat');
     // a bit cryptic for the booking id
     array_push($vars, 'eme_pmt_id');
     return $vars;
@@ -1332,7 +1334,7 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement=ltrim($replacement,"0");
          }
 
-      } elseif (preg_match('/^#_CATEGORIES|#_EVENTCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
+      } elseif (preg_match('/^#_CATEGORIES$|#_EVENTCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_categories($event['event_id']);
          if ($target == "html") {
             $replacement = eme_trans_sanitize_html(join(", ",$categories));
@@ -1342,6 +1344,30 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
             $replacement = eme_translate(join(", ",$categories));
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
+      } elseif (preg_match('/#_LINKEDCATEGORIES$|#_LINKEDEVENTCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
+         $categories = eme_get_event_categories($event['event_id']);
+         $cat_links = array();
+         foreach ($categories as $category) {
+            $cat_ids = eme_get_category_ids($category);
+            foreach ($cat_ids as $cat_id) {
+               $cat_link=eme_event_category_url($cat_id);
+               if ($target == "html")
+                  array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category)."'>".eme_trans_sanitize_html($category)."</a>");
+               else
+                  array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category)."'>".eme_translate($category)."</a>");
+            }
+         }
+         $replacement = join(", ",$cat_links);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = eme_translate(join(", ",$cat_links));
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = eme_translate(join(", ",$cat_links));
             $replacement = apply_filters('eme_text', $replacement);
          }
 

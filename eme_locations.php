@@ -660,6 +660,7 @@ function eme_get_town_location_ids($towns) {
    global $wpdb;
    $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
    $location_ids = array();
+   $conditions="";
    if ( is_array($towns) ) {
       $town_conditions = array();
       foreach ($towns as $town) {
