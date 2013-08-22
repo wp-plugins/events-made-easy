@@ -550,7 +550,7 @@ function eme_events_page_content() {
       $event_list_format_header = ( $event_list_format_header != '' ) ?  $event_list_format_header : "<ul class='eme_events_list'>";
       $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
       $event_list_format_footer = ( $event_list_format_footer != '' ) ?  $event_list_format_footer : "</ul>";
-      if ($cat_id>0) {
+      if (!empty($cat_ids)) {
          $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, $cat_ids) .  $event_list_format_footer;
       } else {
          $page_body = $event_list_format_header . get_option('eme_no_events_message') .  $event_list_format_footer;

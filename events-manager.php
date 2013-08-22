@@ -1351,14 +1351,11 @@ function eme_replace_placeholders($format, $event, $target="html") {
          $categories = eme_get_event_categories($event['event_id']);
          $cat_links = array();
          foreach ($categories as $category) {
-            $cat_ids = eme_get_category_ids($category);
-            foreach ($cat_ids as $cat_id) {
-               $cat_link=eme_event_category_url($cat_id);
-               if ($target == "html")
-                  array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category)."'>".eme_trans_sanitize_html($category)."</a>");
-               else
-                  array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category)."'>".eme_translate($category)."</a>");
-            }
+            $cat_link=eme_event_category_url($category);
+            if ($target == "html")
+               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category)."'>".eme_trans_sanitize_html($category)."</a>");
+            else
+               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category)."'>".eme_translate($category)."</a>");
          }
          $replacement = join(", ",$cat_links);
          if ($target == "html") {

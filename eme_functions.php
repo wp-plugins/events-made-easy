@@ -259,7 +259,7 @@ function eme_payment_url($booking_id) {
    return $the_link;
 }
 
-function eme_event_category_url($cat_id) {
+function eme_event_category_url($cat_name) {
    global $wp_rewrite;
 
    $url_mode=1;
@@ -273,7 +273,7 @@ function eme_event_category_url($cat_id) {
    }
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
-      $name=$events_prefix."cat/".intval($cat_id);
+      $name=$events_prefix."cat/".eme_permalink_convert($cat_name);
       if (!empty($language)) {
          if ($url_mode==2) {
             $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
@@ -286,7 +286,7 @@ function eme_event_category_url($cat_id) {
       }
    } else {
       $the_link = eme_get_events_page(true, false);
-      $the_link = add_query_arg( array( 'cat' => $cat_id ), $the_link );
+      $the_link = add_query_arg( array( 'eme_event_cat' => $cat_name ), $the_link );
       if (!empty($language))
          $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
    }
