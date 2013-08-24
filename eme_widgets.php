@@ -266,7 +266,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
       ?>
    </select>
   </p>
-<<?php
+<?php
       }
 ?>
   <p>
