@@ -3476,10 +3476,10 @@ if ($gmap_is_active) {
 
 }
 
-function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5, $location_id='') {
+function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5, $location_id='',$title='') {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
-      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '' );
+      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '', 'title' => '' );
       
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
@@ -3489,7 +3489,7 @@ function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $
    $echo = ($echo==="false" || $echo==="O") ? false : $echo;
    if ($text == '')
       $text = "RSS";
-   $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit&location_id=$location_id");
+   $url = site_url ("/?eme_rss=main&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&limit=$limit&location_id=$location_id&title=".urlencode($title));
    $link = "<a href='$url'>$text</a>";
    
    if ($justurl)
@@ -3503,8 +3503,8 @@ function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $
 }
 
 function eme_rss_link_shortcode($atts) {
-   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '' ), $atts ) );
-   $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&location_id=$location_id" );
+   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'RSS', 'scope' => 'future', 'order' => 'ASC', 'category' => '', 'author' => '', 'contact_person' => '', 'limit' => 5, 'location_id' => '', 'title' => '' ), $atts ) );
+   $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&location_id=$location_id&title=".urlencode($title) );
    return $result;
 }
 add_shortcode ( 'events_rss_link', 'eme_rss_link_shortcode' );
@@ -3546,6 +3546,11 @@ function eme_rss() {
       } else {
          $scope="future";
       }
+      if (isset($_GET['title'])) {
+         $main_title=$_GET['title'];
+      } else {
+         $main_title=get_option('eme_rss_main_title' );
+      }
       header ( "Content-type: text/xml" );
       echo "<?xml version='1.0'?>\n";
       
@@ -3553,7 +3558,7 @@ function eme_rss() {
 <rss version="2.0">
 <channel>
 <title><?php
-      echo eme_sanitize_rss(get_option('eme_rss_main_title' ));
+      echo eme_sanitize_rss($main_title);
       ?></title>
 <link><?php
       $events_page_link = eme_get_events_page(true, false);

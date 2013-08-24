@@ -119,6 +119,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: events_if4, events_if5 and events_if6 added
 * Feature: support wp_mail as a method of sending mail, allowing other plugins to work on the mail as well via the existing wp_mail hooks and filters
 * Feature: added placeholder #_LINKEDCATEGORIES: creates a link per category for the corresponding event, linking to a list of future events for that category
+* Feature: new option 'title' for the shortcode events_rss_link, so the title can be given a specific name
 * Improvement: mail sending is by default enabled for new installations
 * Improvement: upon auto-update, the DB version of EME is now also checked and a DB update is done if needed
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
