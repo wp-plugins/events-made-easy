@@ -2,6 +2,7 @@
 function eme_get_calendar_shortcode($atts) { 
    extract(shortcode_atts(array(
          'category' => 0,
+         'notcategory' => 0,
          'full' => 0,
          'month' => '',
          'year' => '',
@@ -56,7 +57,7 @@ function eme_get_calendar_shortcode($atts) {
       }
    }
 
-   $result = eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}");
+   $result = eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}&notcategory={$notcategory}");
    return $result;
 }
 add_shortcode('events_calendar', 'eme_get_calendar_shortcode');
@@ -70,6 +71,7 @@ function eme_get_calendar($args="") {
 
    $defaults = array(
       'category' => 0,
+      'notcategory' => 0,
       'full' => 0,
       'month' => '',
       'year' => '',
@@ -311,12 +313,12 @@ function eme_get_calendar($args="") {
          \$j_eme_calendar('#eme-calendar-".$random." a.prev-month').click(function(e){
             e.preventDefault();
             tableDiv = \$j_eme_calendar('#eme-calendar-".$random."');
-            loadCalendar(tableDiv, '$full', '$long_events','$month_pre','$year_pre','$category','$author','$contact_person','$location_id');
+            loadCalendar(tableDiv, '$full', '$long_events','$month_pre','$year_pre','$category','$author','$contact_person','$location_id','$notcategory');
          } );
          \$j_eme_calendar('#eme-calendar-".$random." a.next-month').click(function(e){
             e.preventDefault();
             tableDiv = \$j_eme_calendar('#eme-calendar-".$random."');
-            loadCalendar(tableDiv, '$full', '$long_events','$month_post','$year_post','$category','$author','$contact_person','$location_id');
+            loadCalendar(tableDiv, '$full', '$long_events','$month_post','$year_post','$category','$author','$contact_person','$location_id','$notcategory');
          } );
          </script>";
    
@@ -324,7 +326,8 @@ function eme_get_calendar($args="") {
    $number_of_days_pre=eme_days_in_month($month_pre, $year_pre);
    $limit_pre=date("Y-m-d", mktime(0,0,0, (int) $month_pre, $number_of_days_pre-7 , (int) $year_pre));
    $limit_post=date("Y-m-d", mktime(0,0,0, (int) $month_post, 7 , (int) $year_post));
-   $events = eme_get_events(0, "$limit_pre--$limit_post", "ASC", 0, $location_id, $category , $author , $contact_person );
+   $events = eme_get_events(0, "$limit_pre--$limit_post", "ASC", 0, $location_id, $category , $author , $contact_person, 1, $notcategory );
+
 
 //----- DEBUG ------------
 //foreach($events as $event) { //DEBUG
@@ -451,7 +454,7 @@ function eme_ajaxize_calendar() {
    <script type='text/javascript'>
       $j_eme_calendar=jQuery.noConflict();
 
-      function loadCalendar(tableDiv, fullcalendar, showlong_events, month, year, cat_chosen, author_chosen, contact_person_chosen, location_chosen) {
+      function loadCalendar(tableDiv, fullcalendar, showlong_events, month, year, cat_chosen, author_chosen, contact_person_chosen, location_chosen, not_cat_chosen) {
          if (fullcalendar === undefined) {
              fullcalendar = 0;
          }
@@ -463,6 +466,7 @@ function eme_ajaxize_calendar() {
          month = (typeof month == 'undefined')? 0 : month;
          year = (typeof year == 'undefined')? 0 : year;
          cat_chosen = (typeof cat_chosen == 'undefined')? '' : cat_chosen;
+         not_cat_chosen = (typeof not_cat_chosen == 'undefined')? '' : not_cat_chosen;
          author_chosen = (typeof author_chosen == 'undefined')? '' : author_chosen;
          contact_person_chosen = (typeof contact_person_chosen == 'undefined')? '' : contact_person_chosen;
          location_chosen = (typeof location_chosen == 'undefined')? '' : location_chosen;
@@ -473,6 +477,7 @@ function eme_ajaxize_calendar() {
             full : fullcalendar,
             long_events: showlong_events,
             category: cat_chosen,
+            notcategory: not_cat_chosen,
             author: author_chosen,
             contact_person: contact_person_chosen,
             location_id: location_chosen <?php echo $jquery_override_lang; ?>
@@ -492,6 +497,7 @@ function eme_filter_calendar_ajax() {
       (isset($_POST['full']) && $_POST['full']) ? $full = 1 : $full = 0;
       (isset($_POST['long_events']) && $_POST['long_events']) ? $long_events = 1 : $long_events = 0;
       (isset($_POST['category'])) ? $category = $_POST['category'] : $category = 0;
+      (isset($_POST['notcategory'])) ? $notcategory = $_POST['notcategory'] : $notcategory = 0;
       (isset($_POST['calmonth'])) ? $month = eme_sanitize_request($_POST['calmonth']) : $month = ''; 
       (isset($_POST['calyear'])) ? $year = eme_sanitize_request($_POST['calyear']) : $year = ''; 
       (isset($_POST['author'])) ? $author = eme_sanitize_request($_POST['author']) : $author = ''; 
@@ -508,7 +514,7 @@ function eme_filter_calendar_ajax() {
       header("Cache-Control: post-check=0, pre-check=0", false);
       header("Pragma: no-cache");
 
-      eme_get_calendar('echo=1&full='.$full.'&long_events='.$long_events.'&category='.$category.'&month='.$month.'&year='.$year.'&author='.$author.'&contact_person='.$contact_person.'&location_id='.$location_id);
+      eme_get_calendar('echo=1&full='.$full.'&long_events='.$long_events.'&category='.$category.'&month='.$month.'&year='.$year.'&author='.$author.'&contact_person='.$contact_person.'&location_id='.$location_id.'&notcategory='.$notcategory);
       die();
    }
 }

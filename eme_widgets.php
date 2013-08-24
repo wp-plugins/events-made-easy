@@ -24,12 +24,13 @@ class WP_Widget_eme_list extends WP_Widget {
          $author=$authinfo->user_login;
       }
       $category = empty( $instance['category'] ) ? '' : $instance['category'];
+      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
       $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
       echo $before_widget;
       if ( $title)
          echo $before_title . $title . $after_title;
 
-      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing);
+      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,$notcategory);
       if ($events_list == get_option('eme_no_events_message' ))
          echo $events_list;
       else
@@ -53,6 +54,7 @@ class WP_Widget_eme_list extends WP_Widget {
       }
       $instance['show_ongoing'] = $new_instance['show_ongoing'];
       $instance['category'] = $new_instance['category'];
+      $instance['notcategory'] = $new_instance['notcategory'];
       $instance['format'] = $new_instance['format'];
       $instance['authorid'] = $new_instance['authorid'];
       $instance['header'] = $new_instance['header'];
@@ -74,6 +76,7 @@ class WP_Widget_eme_list extends WP_Widget {
       $header = empty( $instance['header'] ) ? '<ul>' : eme_sanitize_html($instance['header']);
       $footer = empty( $instance['footer'] ) ? '</ul>' : eme_sanitize_html($instance['footer']);
       $category = empty( $instance['category'] ) ? '' : eme_sanitize_html($instance['category']);
+      $notcategory = empty( $instance['notcategory'] ) ? '' : eme_sanitize_html($instance['notcategory']);
       $authorid = empty( $instance['authorid'] ) ? '' : eme_sanitize_html($instance['authorid']);
       $categories = eme_get_categories();
       $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
@@ -112,6 +115,19 @@ class WP_Widget_eme_list extends WP_Widget {
   <p>
     <label for="<?php echo $this->get_field_id('category'); ?>"><?php _e('Category','eme'); ?>:</label><br />
     <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>">
+      <option value=""><?php _e ( 'Select...', 'eme' ); ?></option>
+      <?php
+      foreach ( $categories as $my_category ){
+      ?>
+         <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
+      <?php
+      }
+      ?>
+    </select>
+  </p>
+  <p>
+    <label for="<?php echo $this->get_field_id('notcategory'); ?>"><?php _e('Exclude Category','eme'); ?>:</label><br />
+    <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>">
       <option value=""><?php _e ( 'Select...', 'eme' ); ?></option>
       <?php
       foreach ( $categories as $my_category ){
@@ -164,6 +180,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
       $long_events = isset( $instance['long_events'] ) ? $instance['long_events'] : false;
       $category = empty( $instance['category'] ) ? '' : $instance['category'];
+      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
       if ($instance['authorid']==-1 ) {
          $author='';
       } else {
@@ -178,6 +195,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $options['title'] = $title;
       $options['long_events'] = $long_events;
       $options['category'] = $category;
+      $options['notcategory'] = $notcategory;
       // the month shown depends on the calendar day clicked
       if (isset ( $wp_query->query_vars ['calendar_day'] ) && $wp_query->query_vars ['calendar_day'] != '') {
           $options['month'] = date("m", strtotime( $wp_query->query_vars ['calendar_day']) );
@@ -195,6 +213,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $instance = $old_instance;
       $instance['title'] = strip_tags($new_instance['title']);
       $instance['category'] = $new_instance['category'];
+      $instance['notcategory'] = $new_instance['notcategory'];
       $instance['long_events'] = $new_instance['long_events'];
       $instance['authorid'] = $new_instance['authorid'];
       return $instance;
@@ -205,6 +224,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $instance = wp_parse_args( (array) $instance, array( 'long_events' => 0 ) );
       $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
       $category = empty( $instance['category'] ) ? '' : eme_sanitize_html($instance['category']);
+      $notcategory = empty( $instance['notcategory'] ) ? '' : eme_sanitize_html($instance['notcategory']);
       $long_events = isset( $instance['long_events'] ) ? eme_sanitize_html($instance['long_events']) : false;
       $authorid = isset( $instance['authorid'] ) ? eme_sanitize_html($instance['authorid']) : '';
       $categories = eme_get_categories();
@@ -233,7 +253,20 @@ class WP_Widget_eme_calendar extends WP_Widget {
       ?>
    </select>
   </p>
-<?php
+  <p>
+    <label for="<?php echo $this->get_field_id('notcategory'); ?>"><?php _e('Exclude Category','eme'); ?>:</label><br />
+   <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>">
+      <option value=""><?php _e ( 'Select...', 'eme' ); ?>   </option>
+      <?php
+      foreach ( $categories as $my_category ){
+      ?>
+      <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
+      <?php
+      }
+      ?>
+   </select>
+  </p>
+<<?php
       }
 ?>
   <p>
