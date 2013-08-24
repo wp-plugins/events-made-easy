@@ -48,10 +48,10 @@ function eme_ical_single_event($event, $title_format, $description_format) {
 }
 
 #function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="") {
-function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="", $scope="future", $author='',$contact_person='') {
+function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", $location_id="", $scope="future", $author='',$contact_person='', $notcategory = "") {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
-      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'RSS', 'scope' => 'future', 'category' => '', 'author' => '', 'contact_person' => '', 'location_id' => '' );
+      $defaults = array ('justurl' => 0, 'echo' => 1, 'text' => 'ICAL', 'scope' => 'future', 'category' => '', 'author' => '', 'contact_person' => '', 'location_id' => '', 'notcategory' => '' );
 
       $r = wp_parse_args ( $justurl, $defaults );
       extract ( $r );
@@ -68,12 +68,14 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", 
       $url = add_query_arg( array( 'location_id' => $location_id ), $url );
    if (!empty($category))
       $url = add_query_arg( array( 'category' => $category ), $url );
+   if (!empty($notcategory))
+      $url = add_query_arg( array( 'notcategory' => $notcategory ), $url );
    if (!empty($scope))
       $url = add_query_arg( array( 'scope' => $scope ), $url );
    if (!empty($author))
-      $url = add_query_arg( array( 'scope' => $author ), $url );
+      $url = add_query_arg( array( 'author' => $author ), $url );
    if (!empty($contact_person))
-      $url = add_query_arg( array( 'scope' => $contact_person ), $url );
+      $url = add_query_arg( array( 'contact_person' => $contact_person ), $url );
 
    $link = "<a href='$url'>$text</a>";
 
@@ -88,10 +90,11 @@ function eme_ical_link($justurl = 0, $echo = 1, $text = "ICAL", $category = "", 
 }
 
 function eme_ical_link_shortcode($atts) {
-   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'ICAL', 'category' => '', 'location_id' =>'' ), $atts ) );
+   extract ( shortcode_atts ( array ('justurl' => 0, 'text' => 'ICAL', 'category' => '', 'location_id' =>'', 'scope' => 'future', 'author' => '', 'contact_person' => '', 'notcategory' => ''  ), $atts ) );
+
    $justurl = ($justurl==="true" || $justurl==="1") ? true : $justurl;
    $justurl = ($justurl==="false" || $justurl==="0") ? false : $justurl;
-   $result = eme_ical_link ( $justurl,0,$text,$category,$location_id );
+   $result = eme_ical_link ( $justurl,0,$text,$category,$location_id, $scope,$author,$contact_person,$notcategory );
    return $result;
 }
 add_shortcode ( 'events_ical_link', 'eme_ical_link_shortcode' );
@@ -126,10 +129,11 @@ function eme_ical() {
    } elseif (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public') {
       $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
       $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
+      $notcategory = isset( $_GET['notcategory'] ) ? urldecode($_GET['notcategory']) : '';
       $scope = isset( $_GET['scope'] ) ? urldecode($_GET['scope']) : '';
       $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
       $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
-      $events = eme_get_events ( 0,$scope,"ASC",0,$location_id,$category, $author, $contact_person);
+      $events = eme_get_events ( 0,$scope,"ASC",0,$location_id,$category, $author, $contact_person, 1, $notcategory);
       foreach ( $events as $event ) {
          echo eme_ical_single_event($event,$title_format,$description_format);
       }
