@@ -542,7 +542,7 @@ function eme_events_page_content() {
       $page_body = eme_replace_locations_placeholders ( $single_location_format, $location );
       return $page_body;
    }
-   if (isset ( $wp_query->query_vars['eme_event_cat'] ) && $wp_query->query_vars['eme_event_cat'] != '') {
+   if (!isset ( $wp_query->query_vars['calendar_day'] ) && isset ( $wp_query->query_vars['eme_event_cat'] ) && $wp_query->query_vars['eme_event_cat'] != '') {
       $eme_event_cat=eme_sanitize_request($wp_query->query_vars['eme_event_cat']);
       $cat_ids = join(',',eme_get_category_ids($eme_event_cat));
       $stored_format = get_option('eme_event_list_item_format');
@@ -570,6 +570,12 @@ function eme_events_page_content() {
    } elseif (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
       $scope = eme_sanitize_request($wp_query->query_vars['calendar_day']);
       $events_N = eme_events_count_for ( $scope );
+      $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
+      $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
+      $notcategory = isset( $_GET['notcategory'] ) ? urldecode($_GET['notcategory']) : '';
+      $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
+      $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
+
       if ($events_N > 1) {
          $event_list_item_format = get_option('eme_event_list_item_format' );
          //Add headers and footers to the events list
@@ -577,7 +583,7 @@ function eme_events_page_content() {
          $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
          $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
          $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
-         $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, 0 ) . $event_list_format_footer;
+         $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $event_list_format_footer;
       } else {
          # there's only one event for that day, so we show that event, but only if the event doesn't point to an external url
          $events = eme_get_events ( 0, $scope);
@@ -589,7 +595,7 @@ function eme_events_page_content() {
             $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
             $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
             $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
-            $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, 0 ) . $event_list_format_footer;
+            $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $event_list_format_footer;
          } else {
             $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
             $page_body = eme_replace_placeholders ( $single_event_format, $event );
@@ -1684,13 +1690,13 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 
    // now filter the author ID
    if ($author != '' && !preg_match('/,/', $author)){
-      $authinfo=get_userdatabylogin($author);
+      $authinfo=get_user_by('login', $author);
       $conditions[] = " event_author = ".$authinfo->ID;
    }elseif( preg_match('/,/', $author) ){
       $authors = explode(',', $author);
       $author_conditions = array();
       foreach($authors as $authname) {
-            $authinfo=get_userdatabylogin($authname);
+            $authinfo=get_user_by('login', $authname);
             $author_conditions[] = " event_author = ".$authinfo->ID;
       }
       $conditions[] = "(".implode(' OR ', $author_conditions).")";
@@ -1698,13 +1704,13 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 
    // now filter the contact ID
    if ($contact_person != '' && !preg_match('/,/', $contact_person)){
-      $authinfo=get_userdatabylogin($contact_person);
+      $authinfo=get_user_by('login', $contact_person);
       $conditions[] = " event_contactperson_id = ".$authinfo->ID;
    }elseif( preg_match('/,/', $contact_person) ){
       $contact_persons = explode(',', $contact_person);
       $contact_person_conditions = array();
       foreach($contact_persons as $authname) {
-            $authinfo=get_userdatabylogin($authname);
+            $authinfo=get_user_by('login', $authname);
             $contact_person_conditions[] = " event_contactperson_id = ".$authinfo->ID;
       }
       $conditions[] = "(".implode(' OR ', $contact_person_conditions).")";

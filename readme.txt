@@ -129,6 +129,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: default selected town was always the first town when using [events_filterform]
 * Bugfix: make sure the correct scheme is used for admin_url
 * Bugfix: the generated ical link didn't take the author or contact person into account
+* Bugfix: the calendar links now take into account all options for contact person, categories etc ...
 
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events

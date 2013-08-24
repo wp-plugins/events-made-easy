@@ -375,7 +375,7 @@ function eme_get_calendar($args="") {
    $event_title_separator_format = get_option('eme_small_calendar_event_title_separator');
    $cells = array() ;
    foreach($eventful_days as $day_key => $events) {
-      //Set the date into the key
+      // Set the date into the key
       $event_date = explode('-', $day_key);
       $cells[$day_key]['day'] = ltrim($event_date[2],'0');
       $cells[$day_key]['month'] = $event_date[1];
@@ -387,6 +387,18 @@ function eme_get_calendar($args="") {
       $link_title = implode($event_title_separator_format,$events_titles);
       
       $cal_day_link = eme_calendar_day_url($day_key);
+      // Let's add the possible options
+      if (!empty($location_id))
+         $cal_day_link = add_query_arg( array( 'location_id' => $location_id ), $cal_day_link );
+      if (!empty($category))
+         $cal_day_link = add_query_arg( array( 'category' => $category ), $cal_day_link );
+      if (!empty($notcategory))
+         $cal_day_link = add_query_arg( array( 'notcategory' => $scope ), $cal_day_link );
+      if (!empty($author))
+         $cal_day_link = add_query_arg( array( 'author' => $author ), $cal_day_link );
+      if (!empty($contact_person))
+         $cal_day_link = add_query_arg( array( 'contact_person' => $contact_person ), $cal_day_link );
+
       $cells[$day_key]['cell'] = "<a title='$link_title' href='$cal_day_link'>{$cells[$day_key]['day']}</a>";
       if ($full) {
          $cells[$day_key]['cell'] .= "<ul class='eme-calendar-day-event'>";
@@ -398,7 +410,7 @@ function eme_get_calendar($args="") {
          }
    }
 
-   // the calendar html is now generated, now replace the eventless days with eventfull when needed
+   // The calendar html is now generated, now replace the eventless days with eventfull when needed
    // preg_replace is needed, because the first class for each day is the weekday, and we want to keep that info
    if($events){
       foreach($cells as $cell) {
