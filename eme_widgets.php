@@ -30,7 +30,7 @@ class WP_Widget_eme_list extends WP_Widget {
       if ( $title)
          echo $before_title . $title . $after_title;
 
-      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,$notcategory);
+      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,0,$notcategory);
       if ($events_list == get_option('eme_no_events_message' ))
          echo $events_list;
       else
@@ -132,7 +132,7 @@ class WP_Widget_eme_list extends WP_Widget {
       <?php
       foreach ( $categories as $my_category ){
       ?>
-         <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
+         <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $notcategory,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
       <?php
       }
       ?>
@@ -260,7 +260,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
       <?php
       foreach ( $categories as $my_category ){
       ?>
-      <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
+      <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $notcategory,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
       <?php
       }
       ?>
