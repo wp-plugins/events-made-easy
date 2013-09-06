@@ -124,6 +124,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: events_ical_link shortcode now also supports the options scope (default: future), author, contact_person and notcategory
 * Improvement: mail sending is by default enabled for new installations
 * Improvement: upon auto-update, the DB version of EME is now also checked and a DB update is done if needed
+* Improvement: the 'No events' message now also has a div surrounding it, with div-id 'events-no-events'
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
 * Bugfix: multiprice bookings were reset to "1" if the first booking was 0 upon approval
 * Bugfix: default selected town was always the first town when using [events_filterform]

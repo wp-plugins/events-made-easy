@@ -532,7 +532,7 @@ function eme_events_page_content() {
       if (count($location_ids)>0) {
          $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, '','',0,'','',0,$location_ids) .  $event_list_format_footer;
       } else {
-         $page_body = $event_list_format_header . get_option('eme_no_events_message') .  $event_list_format_footer;
+         $page_body = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
       }
       return $page_body;
    }
@@ -553,7 +553,7 @@ function eme_events_page_content() {
       if (!empty($cat_ids)) {
          $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, $cat_ids) .  $event_list_format_footer;
       } else {
-         $page_body = $event_list_format_header . get_option('eme_no_events_message') .  $event_list_format_footer;
+         $page_body = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
       }
       return $page_body;
    }
@@ -860,12 +860,15 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $scope = "future";
    if ($order != "DESC")
       $order = "ASC";
+
    if ($format == '') {
-      $orig_format = true;
+      // if the format is empty, we use the configured list format and add the configured headers and footers
+      $add_header_footer = true;
       $format = get_option('eme_event_list_item_format' );
    } else {
-      $orig_format = false;
+      $add_header_footer = false;
    }
+
    if ($limit>0 && $paging==1 && isset($_GET['eme_offset'])) {
       $offset=intval($_GET['eme_offset']);
    } else {
@@ -1129,7 +1132,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       } // end if (! empty ( $showperiod )) {
 
       //Add headers and footers to output
-      if( $orig_format ){
+      if( $add_header_footer ){
          $eme_event_list_item_format_header = get_option('eme_event_list_item_format_header' );
          $eme_event_list_item_format_header = ( $eme_event_list_item_format_header != '' ) ? $eme_event_list_item_format_header : "<ul class='eme_events_list'>";
          $eme_event_list_item_format_footer = get_option('eme_event_list_item_format_footer' );
@@ -1137,7 +1140,11 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $output =  $eme_event_list_item_format_header .  $output . $eme_event_list_item_format_footer;
       }
    } else {
-      $output = get_option('eme_no_events_message' );
+      if( $add_header_footer ){
+         $output = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
+      } else {
+         $output = get_option('eme_no_events_message');
+      } else {
    }
 
    // add the pagination if needed
@@ -1968,7 +1975,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    </div>
    <?php
    if (empty ( $events )) {
-      echo get_option('eme_no_events_message' );
+      echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div>";
       return;
    }
    ?>
