@@ -3200,8 +3200,15 @@ function eme_meta_box_div_event_image($event) {
                         <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
                                  _e('Current image:', 'eme');
                                  echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' width='200' />";
+                                 echo "<input type='hidden' name='event_image_url' id='event_image_url' value='".$event['event_image_url']."' />";
                               } else {
                                  echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
+                                 echo "<input type='hidden' name='event_image_url' id='event_image_url' />";
+                              }
+                              if (isset($event['event_image_id']) && !empty($event['event_image_id'])) {
+                                 echo "<input type='hidden' name='event_image_id' id='event_image_id' value='".$event['event_image_id']."' />";
+                              } else {
+                                 echo "<input type='hidden' name='event_image_id' id='event_image_id' />";
                               }
                               // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
                         ?>
@@ -3209,16 +3216,6 @@ function eme_meta_box_div_event_image($event) {
                         <br />
 
                         <div class="uploader">
-                           <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) { ?>
-                           <input type="hidden" name="event_image_url" id="event_image_url" value="<?php echo $event['event_image_url']; ?>" />
-                           <?php } else { ?>
-                           <input type="hidden" name="event_image_url" id="event_image_url" />
-                           <?php } ?>
-                           <?php if (isset($event['event_image_id']) && !empty($event['event_image_id'])) { ?>
-                           <input type="hidden" name="event_image_id" id="event_image_id" value="<?php echo $event['event_image_id']; ?>" />
-                           <?php } else { ?>
-                           <input type="hidden" name="event_image_id" id="event_image_id" />
-                           <?php } ?>
                            <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
                            <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
                         </div>

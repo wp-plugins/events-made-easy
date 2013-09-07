@@ -244,12 +244,19 @@ function eme_locations_edit_layout($location, $message = "") {
             <div class="inside">
              <?php if (isset($location['location_image_url']) && !empty($location['location_image_url'])) {
                        echo "<img id='eme_location_image_example' src='".$location['location_image_url']."' width='200' />";
+                       echo "<input type='hidden' name='location_image_url' id='location_image_url' value='".$location['location_image_url']."' />";
                     } else {
                        echo "<img id='eme_location_image_example' src='' alt='' width='200' />";
+                       echo "<input type='hidden' name='location_image_url' id='location_image_url' />";
+                    }
+                    if (isset($location['location_image_id']) && !empty($location['location_image_id'])) {
+                       echo "<input type='hidden' name='location_image_id' id='location_image_id' value='".$location['location_image_id']."' />";
+                    } else {
+                       echo "<input type='hidden' name='location_image_id' id='location_image_id' />";
                     }
                     // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
               ?>
-                <input type="hidden" name="location_image_url" id="location_image_url" />
+
                 <input type="button" name="location_image_button" id="location_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
                 <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
             </div>

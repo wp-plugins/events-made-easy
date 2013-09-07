@@ -134,6 +134,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: the generated ical link didn't take the author or contact person into account
 * Bugfix: the calendar links now take into account all options for contact person, categories etc ...
 * Bugfix: fix class warnings in extra plugin events-made-easy-frontend-submit
+* Bugfix: the featured image for locations was not retained after you re-edit and save the location without changing the image
 
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events
