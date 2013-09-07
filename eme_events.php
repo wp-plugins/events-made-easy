@@ -47,6 +47,7 @@ function eme_new_event() {
       "event_registration_recorded_ok_html" => '',
       "event_slug" => '',
       "event_image_url" => '',
+      "event_image_id" => 0,
       "event_url" => '',
       "recurrence_id" => 0,
       "recurrence_freq" => '',
@@ -61,6 +62,7 @@ function eme_new_event() {
       "location_latitude" => '',
       "location_longitude" => '',
       "location_image_url" => '',
+      "location_image_id" => 0,
       "location_slug" => '',
       "location_url" => ''
    );
@@ -253,7 +255,6 @@ function eme_events_page() {
       }
 
       $event['currency'] = isset ($_POST['currency']) ? $_POST['currency']:"";
-      $event['event_image_url'] = isset ($_POST['event_image_url']) ? $_POST['event_image_url']:"";
 
       if (isset ( $_POST['event_contactperson_id'] ) && $_POST['event_contactperson_id'] != '') {
          $event['event_contactperson_id'] = $_POST['event_contactperson_id'];
@@ -283,6 +284,7 @@ function eme_events_page() {
       $event['event_registration_form_format'] = isset($_POST['event_registration_form_format']) ? stripslashes ( $_POST['event_registration_form_format'] ) : '';
       $event['event_url'] = isset($_POST['event_url']) ? eme_strip_tags ( $_POST['event_url'] ) : '';
       $event['event_image_url'] = isset($_POST['event_image_url']) ? eme_strip_tags ( $_POST['event_image_url'] ) : '';
+      $event['event_image_id'] = isset($_POST['event_image_id']) ? intval ( $_POST['event_image_id'] ) : 0;
       $event['event_slug'] = isset($_POST['event_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST['event_slug'] )) : eme_permalink_convert($event['event_name']);
       if (isset ($_POST['event_category_ids'])) {
          // the category id's need to begin and end with a comma
@@ -1778,7 +1780,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $this_event['event_attributes'] = @unserialize($this_event['event_attributes']);
          $this_event['event_attributes'] = (!is_array($this_event['event_attributes'])) ?  array() : $this_event['event_attributes'] ;
          // don't forget the images (for the older events that didn't use the wp gallery)
-         if (empty($this_event['event_image_url']))
+         if (empty($this_event['event_image_id']) && empty($this_event['event_image_url']))
             $this_event['event_image_url'] = eme_image_url_for_event($this_event);
          array_push ( $inflated_events, $this_event );
       }
@@ -1855,7 +1857,7 @@ function eme_get_event($event_id) {
    $event['event_attributes'] = (!is_array($event['event_attributes'])) ?  array() : $event['event_attributes'] ;
 
    // don't forget the images (for the older events that didn't use the wp gallery)
-   if (empty($event['event_image_url']))
+   if (empty($event['event_image_id']) && empty($event['event_image_url']))
       $event['event_image_url'] = eme_image_url_for_event($event);
    if (has_filter('eme_event_filter')) $event=apply_filters('eme_event_filter',$event);
    return $event;
@@ -3191,6 +3193,8 @@ function eme_meta_box_div_event_notes($event) {
 }
 
 function eme_meta_box_div_event_image($event) {
+    if (isset($event['event_image_id']) && !empty($event['event_image_id']))
+       $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
 ?>
                         <div id="event_current_image" class="postarea">
                         <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
@@ -3210,6 +3214,11 @@ function eme_meta_box_div_event_image($event) {
                            <?php } else { ?>
                            <input type="hidden" name="event_image_url" id="event_image_url" />
                            <?php } ?>
+                           <?php if (isset($event['event_image_id']) && !empty($event['event_image_id'])) { ?>
+                           <input type="hidden" name="event_image_id" id="event_image_id" value="<?php echo $event['event_image_id']; ?>" />
+                           <?php } else { ?>
+                           <input type="hidden" name="event_image_id" id="event_image_id" />
+                           <?php } ?>
                            <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
                            <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
                         </div>
@@ -3218,6 +3227,7 @@ jQuery(document).ready(function($){
 
   $('#eme_remove_old_image').click(function(e) {
         $('#event_image_url').val('');
+        $('#event_image_id').val('');
         $('#eme_event_image_example' ).attr("src",'');
   });
   $('#event_image_button').click(function(e) {
@@ -3228,6 +3238,7 @@ jQuery(document).ready(function($){
     wp.media.editor.send.attachment = function(props, attachment){
       if ( eme_custom_media ) {
         $('#event_image_url').val(attachment.url);
+        $('#event_image_id').val(attachment.id);
         $('#eme_event_image_example' ).attr("src",attachment.url);
       } else {
         return _orig_send_attachment.apply( this,[props, attachment] );
