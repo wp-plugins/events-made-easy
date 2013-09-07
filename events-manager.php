@@ -159,9 +159,6 @@ define('DEFAULT_LOCATION_HTML_TITLE_FORMAT', '#_LOCATIONNAME');
 define('DEFAULT_LOCATION_BALLOON_FORMAT', "<strong>#_LOCATIONNAME</strong><br />#_ADDRESS - #_TOWN<br /><a href='#_LOCATIONPAGEURL'>Details</a>");
 define('DEFAULT_LOCATION_EVENT_LIST_ITEM_FORMAT', "<li>#_EVENTNAME - #j #M #Y - #H:#i</li>");
 define('DEFAULT_LOCATION_NO_EVENTS_MESSAGE', __('<li>No events in this location</li>', 'eme'));
-define('DEFAULT_IMAGE_MAX_WIDTH', 700);
-define('DEFAULT_IMAGE_MAX_HEIGHT', 700);
-define('DEFAULT_IMAGE_MAX_SIZE', 204800); 
 define('DEFAULT_FULL_CALENDAR_EVENT_FORMAT', '<li>#_LINKEDNAME</li>');
 define('DEFAULT_SMALL_CALENDAR_EVENT_TITLE_FORMAT', "#_EVENTNAME" );
 define('DEFAULT_SMALL_CALENDAR_EVENT_TITLE_SEPARATOR', ", ");
@@ -1155,6 +1152,13 @@ function eme_replace_placeholders($format, $event, $target="html") {
       } elseif (preg_match('/#_EVENTIMAGEURL$/', $result)) {
          if($event['event_image_url'] != '')
             $replacement = $event['event_image_url'];
+
+      } elseif (preg_match('/#_EVENTIMAGETHUMB$/', $result)) { // Add custom thumbnail filter
+         if($event['event_image_url'] != '') {
+            $thumbnail_size=get_option('eme_thumbnail_size');
+            $pstv_thumb = preg_replace('/(\.gif|\.jpg|\.png)$/', '-'.$thumbnail_size.'$1', $event['event_image_url']);
+            $replacement = "<img src='".$pstv_thumb."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+         }
 
       } elseif (preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);

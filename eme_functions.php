@@ -405,4 +405,26 @@ function eme_currency_array() {
    $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
    return $currency_array;
 }
+
+function eme_thumbnail_sizes() {
+   global $_wp_additional_image_sizes;
+   $sizes = array();
+   $result = array();
+   foreach ( get_intermediate_image_sizes() as $s ) {
+      $sizes[ $s ] = array( 0, 0 );
+      if ( in_array( $s, array( 'thumbnail', 'medium', 'large' ) ) ) {
+         $sizes[ $s ][0] = get_option( $s . '_size_w' );
+         $sizes[ $s ][1] = get_option( $s . '_size_h' );
+      } else {
+         if ( isset( $_wp_additional_image_sizes ) && isset( $_wp_additional_image_sizes[ $s ] ) )
+            $sizes[ $s ] = array( $_wp_additional_image_sizes[ $s ]['width'], $_wp_additional_image_sizes[ $s ]['height'], );
+      }
+   }
+
+   foreach( $sizes as $size => $atts ) {
+      $size_text=implode( 'x', $atts );
+      $result[$size_text]=$size;
+   }
+   return $result;
+}
 ?>

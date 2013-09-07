@@ -2543,23 +2543,6 @@ function eme_validate_event($event) {
       $error_message = __ ( 'Missing fields: ','eme' ) . implode ( ", ", $errors ) . ". ";
    if (isset($_POST['repeated_event']) && $_POST['repeated_event'] == "1" && (!isset($_POST['recurrence_end_date']) || $_POST['recurrence_end_date'] == ""))
       $error_message .= __ ( 'Since the event is repeated, you must specify an event date for the recurrence.', 'eme' );
-   if (isset($_FILES['event_image']) && ($_FILES['event_image']['size'] > 0) ) {
-      if (is_uploaded_file($_FILES['event_image']['tmp_name'])) {
-         $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-         $maximum_size = get_option('eme_image_max_size');
-         if ($_FILES['event_image']['size'] > $maximum_size)
-               $error_message .= "<li>".__('The image file is too big! Maximum size:', 'eme')." $maximum_size</li>";
-         list($width, $height, $type, $attr) = getimagesize($_FILES['event_image']['tmp_name']);
-         $maximum_width = get_option('eme_image_max_width');
-         $maximum_height = get_option('eme_image_max_height');
-         if (($width > $maximum_width) || ($height > $maximum_height))
-               $error_message .= "<li>". __('The image is too big! Maximum size allowed:', 'eme')." $maximum_width x $maximum_height</li>";
-         if (($type!=1) && ($type!=2) && ($type!=3))
-                  $error_message .= "<li>".__('The image is in a wrong format!', 'eme')."</li>";
-      } else {
-	 $error_message .= "<li>".__('The image upload failed!', 'eme')."</li>";
-      }
-   }
 
    if ($error_message != "")
       return $error_message;

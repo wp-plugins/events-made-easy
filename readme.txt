@@ -122,15 +122,18 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: new option 'title' for the shortcode events_rss_link, so the title can be given a specific name
 * Feature: you can now exclude categories in the widget list and calendar as well, and in the regular shortcode events_calendar also with the new option 'notcategory'
 * Feature: events_ical_link shortcode now also supports the options scope (default: future), author, contact_person and notcategory
+* Feature: added placeholder #_EVENTIMAGETHUMB, to show a thumbnail of a featured image, so you can e.g. show a thumbnail of a featured image instead of the whole image. The size can be choosen in the EME settings (panel 'Other'), by default it is 'thumbnail' size.
 * Improvement: mail sending is by default enabled for new installations
 * Improvement: upon auto-update, the DB version of EME is now also checked and a DB update is done if needed
 * Improvement: the 'No events' message now also has a div surrounding it, with div-id 'events-no-events'
+* Improvement: extra plugin events-made-easy-frontend-submit now also uses AM/PM or 24 hours notation based on site preferences
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
 * Bugfix: multiprice bookings were reset to "1" if the first booking was 0 upon approval
 * Bugfix: default selected town was always the first town when using [events_filterform]
 * Bugfix: make sure the correct scheme is used for admin_url
 * Bugfix: the generated ical link didn't take the author or contact person into account
 * Bugfix: the calendar links now take into account all options for contact person, categories etc ...
+* Bugfix: fix class warnings in extra plugin events-made-easy-frontend-submit
 
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events
