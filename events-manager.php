@@ -626,7 +626,6 @@ function eme_create_events_table($charset,$collate) {
       if ($db_version<29) {
          $wpdb->query("ALTER TABLE $table_name MODIFY price text default NULL;");
       }
-         echo "UPDATE $table_name SET event_image_id = (select ID from $post_table_name where post_type = 'attachment' AND guid = $table_name.event_image_url);";
       if ($db_version<33) {
          $post_table_name = $wpdb->prefix."posts";
          $wpdb->query("UPDATE $table_name SET event_image_id = (select ID from $post_table_name where post_type = 'attachment' AND guid = $table_name.event_image_url);");
