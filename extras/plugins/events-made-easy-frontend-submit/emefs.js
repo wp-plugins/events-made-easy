@@ -20,7 +20,7 @@ function htmlDecode(value){
 	return jQuery('<div/>').html(value).text(); 
 }
 
-function emefs_deploy() {
+function emefs_deploy(show24Hours) {
 
 	jQuery("input#location_name").autocomplete(emefs_autocomplete_url, emefs_autocomplete_options);
 	
@@ -32,7 +32,7 @@ function emefs_deploy() {
 	});
 	
 	jQuery("#event_start_date, #event_end_date").datepicker({ dateFormat: 'yy-mm-dd' });
-	jQuery('#event_start_time, #event_end_time').timeEntry({ hourText: 'Hour', minuteText: 'Minute', show24Hours: true, spinnerImage: '' });
+	jQuery('#event_start_time, #event_end_time').timeEntry({ hourText: 'Hour', minuteText: 'Minute', show24Hours: show24Hours, spinnerImage: '' });
 	
 	if(emefs_gmap_hasSelectedLocation){
 		emefs_displayAddress();

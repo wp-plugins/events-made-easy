@@ -379,6 +379,12 @@ class EMEFS{
 		if(empty($filename)){
 			$filename = 'templates/form.php';
 		}
+      // check if the user wants AM/PM or 24 hour notation
+      $time_format = get_option('time_format');
+      $show24Hours = 'true';
+      if (preg_match ( "/a/i", $time_format ))
+         $show24Hours = 'false';
+
 		ob_start();
 		require($filename);
 		?>
@@ -387,7 +393,7 @@ class EMEFS{
 			emefs_autocomplete_url = "<?php bloginfo('url'); ?>/wp-content/plugins/events-made-easy/locations-search.php";
 			emefs_gmap_enabled = 1;
 			emefs_gmap_hasSelectedLocation = <?php echo ($emefs_event_data['location_id'])?'1':'0'; ?>;
-			emefs_deploy();
+			emefs_deploy(<?php echo $show24Hours; ?>);
 		});
 		</script>
 		<?php

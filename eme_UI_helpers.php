@@ -115,13 +115,13 @@ function eme_ui_select_binary ($option_value, $name) {
 function eme_ui_select($option_value, $name, $list) {
      $val = "<select id='$name' name='$name'>";
      foreach($list as $key => $value) {
-	if (is_array($value)) {
-		$t_key=$value[0];
-		$t_value=$value[1];
-	} else {
-		$t_key=$key;
-		$t_value=$value;
-	}
+        if (is_array($value)) {
+           $t_key=$value[0];
+           $t_value=$value[1];
+        } else {
+           $t_key=$key;
+           $t_value=$value;
+        }
         "$t_key" == $option_value ? $selected = "selected='selected' " : $selected = '';
         $val.= "<option value='$t_key' $selected>$t_value</option>";
      }
