@@ -37,4 +37,6 @@ Form and Style
 
 By copying form.php and style.css from ./wp-content/plugins/events-made-easy-frontend-submit/templates/ to any of the paths listed above, you will be able to override their contents and fit the form to your purposes.
 
+[Usage]
 
+Just put the shortcode [submit_event_form] on a page and the event submit form will show, if the config.php file is present.
