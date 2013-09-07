@@ -1129,6 +1129,20 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          if ($location['location_image_url'] != '')
             $replacement = $location['location_image_url'];
 
+      } elseif (preg_match('/#_LOCATIONIMAGETHUMB$/', $result)) {
+         if (!empty($location['location_image_id'])) {
+            $thumb_array = image_downsize( $location['location_image_id'], get_option('eme_thumbnail_size') );
+            $thumb_url = $thumb_array[0];
+            $replacement = "<img src='".$thumb_url."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+         }
+
+      } elseif (preg_match('/#_LOCATIONIMAGETHUMBURL$/', $result)) {
+         if (!empty($location['location_image_id'])) {
+            $thumb_array = image_downsize( $location['location_image_id'], get_option('eme_thumbnail_size') );
+            $thumb_url = $thumb_array[0];
+            $replacement = $thumb_url;
+         }
+
       } elseif (preg_match('/#_LOCATIONPAGEURL$/', $result)) {
          $replacement = eme_location_url($location);
 
