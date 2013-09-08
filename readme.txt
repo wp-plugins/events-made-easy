@@ -137,6 +137,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Bugfix: fix class warnings in extra plugin events-made-easy-frontend-submit
 * Bugfix: the featured image for locations was not retained after you re-edit and save the location without changing the image
 * Bugfix: url-encoded strings in the format argument of the [events_list] shortcode were not being interpreted
+* Bugfix: remove use of deprecated wordpress functions get_userdatabylogin and wpdb::escape
 
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events
