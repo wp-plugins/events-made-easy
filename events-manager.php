@@ -1160,20 +1160,43 @@ function eme_replace_placeholders($format, $event, $target="html") {
       } elseif (preg_match('/#_EVENTIMAGE$/', $result)) {
          if (!empty($event['event_image_id']))
             $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
-         if($event['event_image_url'] != '')
+         if($event['event_image_url'] != '') {
             $replacement = "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_EVENTIMAGEURL$/', $result)) {
          if (!empty($event['event_image_id']))
             $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
-         if($event['event_image_url'] != '')
+         if($event['event_image_url'] != '') {
             $replacement = $event['event_image_url'];
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_EVENTIMAGETHUMB$/', $result)) {
          if (!empty($event['event_image_id'])) {
             $thumb_array = image_downsize( $event['event_image_id'], get_option('eme_thumbnail_size') );
             $thumb_url = $thumb_array[0];
             $replacement = "<img src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
          }
 
       } elseif (preg_match('/#_EVENTIMAGETHUMBURL$/', $result)) {
@@ -1181,6 +1204,13 @@ function eme_replace_placeholders($format, $event, $target="html") {
             $thumb_array = image_downsize( $event['event_image_id'], get_option('eme_thumbnail_size') );
             $thumb_url = $thumb_array[0];
             $replacement = $thumb_url;
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
          }
 
       } elseif (preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
@@ -1527,40 +1557,24 @@ function eme_replace_placeholders($format, $event, $target="html") {
          $field = "event_notes";
       }
 
-      if ($target == "html") {
-         //If excerpt, we use more link text
-         if ($field == "event_excerpt") {
-            if (isset($event['event_notes'])) {
-               $matches = explode('<!--more-->', $event['event_notes']);
-               $replacement = $matches[0];
-            }
-         } else {
-            if (isset($event[$field])) $replacement = $event[$field];
+      //If excerpt, we use more link text
+      if ($field == "event_excerpt") {
+         if (isset($event['event_notes'])) {
+            $matches = explode('<!--more-->', $event['event_notes']);
+            $replacement = $matches[0];
          }
+      } elseif (isset($event[$field])) {
+         $replacement = $event[$field];
+      }
+      $replacement = eme_translate($replacement);
+      if ($target == "html") {
          $replacement = apply_filters('eme_notes', $replacement);
-         //$field_value = apply_filters('the_content', $field_value); - chucks a wobbly if we do this.
-         // we call the sanitize_html function so the qtranslate
-         // does it's thing anyway
-         $replacement = eme_translate($replacement);
       } else {
-         if ($target == "map") {
-            $replacement = apply_filters('eme_notes_map', $replacement);
+         if ($target == "rss") {
+            $replacement = apply_filters('eme_notes_rss', $replacement);
+            $replacement = apply_filters('the_content_rss', $replacement);
          } else {
-            if ($field == "event_excerpt") {
-               if (isset($event['event_notes'])) {
-                  $matches = explode('<!--more-->', $event['event_notes']);
-                  $replacement = $matches[0];
-               }
-            } else {
-               if (isset($event[$field])) $replacement = $event[$field];
-            }
-            $replacement = eme_translate($replacement);
-            if ($target == "rss") {
-               $replacement = apply_filters('eme_notes_rss', $replacement);
-               $replacement = apply_filters('the_content_rss', $replacement);
-            } else {
-               $replacement = apply_filters('eme_text', $replacement);
-            }
+            $replacement = apply_filters('eme_text', $replacement);
          }
       }
       if ($need_escape) {

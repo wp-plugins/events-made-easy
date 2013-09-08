@@ -1077,35 +1077,69 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
       // matches alla fields placeholder
       if (preg_match('/#_MAP$/', $result)) {
          $replacement = eme_single_location_map($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_PASTEVENTS$/', $result)) {
          $replacement = eme_events_in_location_list($location, "past");
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_NEXTEVENTS$/', $result)) {
          $replacement = eme_events_in_location_list($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_ALLEVENTS$/', $result)) {
          $replacement = eme_events_in_location_list($location, "all");
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_(ADDRESS|TOWN)$/', $result)) {
          $field = "location_".ltrim(strtolower($result), "#_");
          if (isset($location[$field]))
             $replacement = $location[$field];
          $replacement = eme_trans_sanitize_html($replacement);
-         if ($target == "html")
-            $replacement = apply_filters('eme_general', $replacement); 
-         else 
-            $replacement = apply_filters('eme_general_rss', $replacement); 
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_(NAME|LOCATIONNAME|LOCATION)$/', $result)) {
          $field = "location_name";
          if (isset($location[$field]))
             $replacement = $location[$field];
          $replacement = eme_trans_sanitize_html($replacement);
-         if ($target == "html")
-            $replacement = apply_filters('eme_general', $replacement); 
-         else 
-            $replacement = apply_filters('eme_general_rss', $replacement); 
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_LOCATIONID$/', $result)) {
          $field = "location_id";
@@ -1113,27 +1147,52 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = eme_trans_sanitize_html($replacement);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_(IMAGE|LOCATIONIMAGE)$/', $result)) {
          if (!empty($location['location_image_id']))
             $location['location_image_url'] = wp_get_attachment_url($location['location_image_id']);
-         if(!empty($location['location_image_url']))
+         if(!empty($location['location_image_url'])) {
             $replacement = "<img src='".$location['location_image_url']."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_(IMAGEURL|LOCATIONIMAGEURL)$/', $result)) {
          if (!empty($location['location_image_id']))
             $location['location_image_url'] = wp_get_attachment_url($location['location_image_id']);
-         if ($location['location_image_url'] != '')
+         if ($location['location_image_url'] != '') {
             $replacement = $location['location_image_url'];
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_LOCATIONIMAGETHUMB$/', $result)) {
          if (!empty($location['location_image_id'])) {
             $thumb_array = image_downsize( $location['location_image_id'], get_option('eme_thumbnail_size') );
             $thumb_url = $thumb_array[0];
             $replacement = "<img src='".$thumb_url."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
          }
 
       } elseif (preg_match('/#_LOCATIONIMAGETHUMBURL$/', $result)) {
@@ -1141,10 +1200,24 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
             $thumb_array = image_downsize( $location['location_image_id'], get_option('eme_thumbnail_size') );
             $thumb_url = $thumb_array[0];
             $replacement = $thumb_url;
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
          }
 
       } elseif (preg_match('/#_LOCATIONPAGEURL$/', $result)) {
          $replacement = eme_location_url($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_LATITUDE$/', $result)) {
          $field = "location_latitude";
@@ -1152,8 +1225,10 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = eme_trans_sanitize_html($replacement);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_LONGITUDE$/', $result)) {
@@ -1162,20 +1237,31 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = eme_trans_sanitize_html($replacement);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_DIRECTIONS/', $result)) {
          $replacement = eme_add_directions_form($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/^#_CATEGORIES|#_LOCATIONCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_location_categories($location['location_id']);
          $replacement = eme_trans_sanitize_html(join(", ",$categories));
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_IS_SINGLE_LOC/', $result)) {
@@ -1233,11 +1319,13 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
       $replacement = eme_translate($replacement);
       if ($target == "html")
          $replacement = apply_filters('eme_notes', $replacement);
-      else
-         if ($target == "map")
-            $replacement = apply_filters('eme_notes_map', $replacement);
-         else
-            $replacement = apply_filters('eme_notes_rss', $replacement);
+      elseif ($target == "rss") {
+         $replacement = apply_filters('eme_notes_rss', $replacement);
+         $replacement = apply_filters('the_content_rss', $replacement);
+      } else {
+         $replacement = apply_filters('eme_text', $replacement);
+      }
+
       if ($need_escape) {
          $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
       } elseif ($need_urlencode) {
