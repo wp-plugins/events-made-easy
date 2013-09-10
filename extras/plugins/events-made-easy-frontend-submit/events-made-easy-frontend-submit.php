@@ -198,9 +198,15 @@ class EMEFS {
 			}
 			
 			if ( isset($event_data['event_start_time']) && !empty($event_data['event_start_time']) ) { 
-				$event_data['event_start_time'] = esc_attr( $event_data['event_start_time'] );
+				$event_data['event_start_time'] = date ("H:i:00", strtotime ($event_data['event_start_time']));
 			} else {
 				$event_data['event_start_time'] = '00:00';
+			}
+			
+			if ( isset($event_data['event_end_time']) && !empty($event_data['event_end_time']) ) { 
+				$event_data['event_end_time'] = date ("H:i:00", strtotime ($event_data['event_end_time']));
+			} else {
+				$event_data['event_end_time'] = $event_data['event_start_time'];
 			}
 			
 			if ( isset($event_data['event_end_date']) && !empty($event_data['event_end_date']) ) { 
@@ -222,12 +228,6 @@ class EMEFS {
 			
 			if($time_start && $time_end && $time_start > $time_end){
 				$emefs_event_errors['event_time'] =  __('The event\'s end must be <strong>after</strong> the event\'s start');
-			}
-			
-			if ( isset($event_data['event_end_time']) && !empty($event_data['event_end_time']) ) { 
-				$event_data['event_end_time'] = esc_attr( $event_data['event_end_time'] );
-			} else {
-				$event_data['event_end_time'] = $event_data['event_start_time'];
 			}
 			
 			if ( isset($event_data['event_notes']) && !empty($event_data['event_notes']) ) { 
@@ -258,8 +258,6 @@ class EMEFS {
 			if ( !$emefs_has_errors ) {
 			
 				$emefs_event_data_compiled = array_merge($emefs_event_data, $event_data);
-				$emefs_event_data_compiled['event_start_time'] .= ':00';
-				$emefs_event_data_compiled['event_end_time'] .= ':00';
 				unset($emefs_event_data_compiled['action']);
 				
 				foreach ($emefs_event_data_compiled as $key => $value) {
