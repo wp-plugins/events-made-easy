@@ -405,4 +405,14 @@ function eme_currency_array() {
    $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
    return $currency_array;
 }
+
+function eme_thumbnail_sizes() {
+   global $_wp_additional_image_sizes;
+   $sizes = array();
+   foreach ( get_intermediate_image_sizes() as $s ) {
+      $sizes[ $s ] = $s;
+   }
+   return $sizes;
+}
+
 ?>

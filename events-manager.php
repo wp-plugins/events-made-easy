@@ -109,7 +109,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 31);
+define('EME_DB_VERSION', 33);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -159,9 +159,6 @@ define('DEFAULT_LOCATION_HTML_TITLE_FORMAT', '#_LOCATIONNAME');
 define('DEFAULT_LOCATION_BALLOON_FORMAT', "<strong>#_LOCATIONNAME</strong><br />#_ADDRESS - #_TOWN<br /><a href='#_LOCATIONPAGEURL'>Details</a>");
 define('DEFAULT_LOCATION_EVENT_LIST_ITEM_FORMAT', "<li>#_EVENTNAME - #j #M #Y - #H:#i</li>");
 define('DEFAULT_LOCATION_NO_EVENTS_MESSAGE', __('<li>No events in this location</li>', 'eme'));
-define('DEFAULT_IMAGE_MAX_WIDTH', 700);
-define('DEFAULT_IMAGE_MAX_HEIGHT', 700);
-define('DEFAULT_IMAGE_MAX_SIZE', 204800); 
 define('DEFAULT_FULL_CALENDAR_EVENT_FORMAT', '<li>#_LINKEDNAME</li>');
 define('DEFAULT_SMALL_CALENDAR_EVENT_TITLE_FORMAT', "#_EVENTNAME" );
 define('DEFAULT_SMALL_CALENDAR_EVENT_TITLE_SEPARATOR', ", ");
@@ -536,6 +533,7 @@ function eme_create_events_table($charset,$collate) {
          registration_requires_approval bool DEFAULT 0,
          registration_wp_users_only bool DEFAULT 0,
          event_image_url text NULL,
+         event_image_id mediumint(9) DEFAULT 0 NOT NULL,
          UNIQUE KEY (event_id)
          ) $charset $collate;";
       
@@ -604,6 +602,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'modif_date_gmt', "alter table $table_name add modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'event_registration_form_format', "alter table $table_name add event_registration_form_format text NULL;"); 
       maybe_add_column($table_name, 'event_image_url', "alter table $table_name add event_image_url text NULL;"); 
+      maybe_add_column($table_name, 'event_image_id', "alter table $table_name add event_image_id mediumint(9) DEFAULT 0 NOT NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_name text;");
          $wpdb->query("ALTER TABLE $table_name MODIFY event_notes longtext;");
@@ -626,6 +625,10 @@ function eme_create_events_table($charset,$collate) {
       }
       if ($db_version<29) {
          $wpdb->query("ALTER TABLE $table_name MODIFY price text default NULL;");
+      }
+      if ($db_version<33) {
+         $post_table_name = $wpdb->prefix."posts";
+         $wpdb->query("UPDATE $table_name SET event_image_id = (select ID from $post_table_name where post_type = 'attachment' AND guid = $table_name.event_image_url);");
       }
    }
 }
@@ -693,6 +696,7 @@ function eme_create_locations_table($charset,$collate) {
          location_modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          location_modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          location_image_url text NULL,
+         location_image_id mediumint(9) DEFAULT 0 NOT NULL,
          UNIQUE KEY (location_id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -713,8 +717,13 @@ function eme_create_locations_table($charset,$collate) {
       maybe_add_column($table_name, 'location_url', "alter table $table_name add location_url text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'location_slug', "alter table $table_name add location_slug text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'location_image_url', "alter table $table_name add location_image_url text NULL;"); 
+      maybe_add_column($table_name, 'location_image_id', "alter table $table_name add location_image_id mediumint(9) DEFAULT 0 NOT NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY location_name text NOT NULL ;");
+      }
+      if ($db_version<33) {
+         $post_table_name = $wpdb->prefix."posts";
+         $wpdb->query("UPDATE $table_name SET location_image_id = (select ID from $post_table_name where post_type = 'attachment' AND guid = $table_name.location_image_url);");
       }
    }
 }
@@ -1149,12 +1158,60 @@ function eme_replace_placeholders($format, $event, $target="html") {
          }
 
       } elseif (preg_match('/#_EVENTIMAGE$/', $result)) {
-         if($event['event_image_url'] != '')
+         if (!empty($event['event_image_id']))
+            $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
+         if($event['event_image_url'] != '') {
             $replacement = "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_EVENTIMAGEURL$/', $result)) {
-         if($event['event_image_url'] != '')
+         if (!empty($event['event_image_id']))
+            $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
+         if($event['event_image_url'] != '') {
             $replacement = $event['event_image_url'];
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif (preg_match('/#_EVENTIMAGETHUMB$/', $result)) {
+         if (!empty($event['event_image_id'])) {
+            $thumb_array = image_downsize( $event['event_image_id'], get_option('eme_thumbnail_size') );
+            $thumb_url = $thumb_array[0];
+            $replacement = "<img src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif (preg_match('/#_EVENTIMAGETHUMBURL$/', $result)) {
+         if (!empty($event['event_image_id'])) {
+            $thumb_array = image_downsize( $event['event_image_id'], get_option('eme_thumbnail_size') );
+            $thumb_url = $thumb_array[0];
+            $replacement = $thumb_url;
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
@@ -1500,40 +1557,24 @@ function eme_replace_placeholders($format, $event, $target="html") {
          $field = "event_notes";
       }
 
-      if ($target == "html") {
-         //If excerpt, we use more link text
-         if ($field == "event_excerpt") {
-            if (isset($event['event_notes'])) {
-               $matches = explode('<!--more-->', $event['event_notes']);
-               $replacement = $matches[0];
-            }
-         } else {
-            if (isset($event[$field])) $replacement = $event[$field];
+      //If excerpt, we use more link text
+      if ($field == "event_excerpt") {
+         if (isset($event['event_notes'])) {
+            $matches = explode('<!--more-->', $event['event_notes']);
+            $replacement = $matches[0];
          }
+      } elseif (isset($event[$field])) {
+         $replacement = $event[$field];
+      }
+      $replacement = eme_translate($replacement);
+      if ($target == "html") {
          $replacement = apply_filters('eme_notes', $replacement);
-         //$field_value = apply_filters('the_content', $field_value); - chucks a wobbly if we do this.
-         // we call the sanitize_html function so the qtranslate
-         // does it's thing anyway
-         $replacement = eme_translate($replacement);
       } else {
-         if ($target == "map") {
-            $replacement = apply_filters('eme_notes_map', $replacement);
+         if ($target == "rss") {
+            $replacement = apply_filters('eme_notes_rss', $replacement);
+            $replacement = apply_filters('the_content_rss', $replacement);
          } else {
-            if ($field == "event_excerpt") {
-               if (isset($event['event_notes'])) {
-                  $matches = explode('<!--more-->', $event['event_notes']);
-                  $replacement = $matches[0];
-               }
-            } else {
-               if (isset($event[$field])) $replacement = $event[$field];
-            }
-            $replacement = eme_translate($replacement);
-            if ($target == "rss") {
-               $replacement = apply_filters('eme_notes_rss', $replacement);
-               $replacement = apply_filters('the_content_rss', $replacement);
-            } else {
-               $replacement = apply_filters('eme_text', $replacement);
-            }
+            $replacement = apply_filters('eme_text', $replacement);
          }
       }
       if ($need_escape) {
