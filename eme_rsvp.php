@@ -40,6 +40,7 @@ function eme_payment_form($event,$booking_id) {
 function eme_add_booking_form($event_id) {
    global $form_add_message, $form_error_message, $current_user;
    global $booking_id_done;
+   $rsvp_is_active = get_option('eme_rsvp_enabled');
 
    $bookerName="";
    $bookerEmail="";
@@ -62,6 +63,10 @@ function eme_add_booking_form($event_id) {
    if (isset($_POST['bookedSeats'])) $bookedSeats = eme_sanitize_html(eme_sanitize_request($_POST['bookedSeats']));
 
    $event = eme_get_event($event_id);
+   // rsvp not active or no rsvp for this event, then return
+   if (!($rsvp_is_active && $event['event_rsvp'])) {
+      return;
+   }
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only) {
       // we require a user to be WP registered to be able to book
@@ -145,12 +150,13 @@ function eme_add_booking_form($event_id) {
 
 function eme_add_booking_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('id' => 0), $atts));
-   echo eme_add_booking_form($id);
+   return eme_add_booking_form($id);
 }
 add_shortcode ('events_add_booking_form','eme_add_booking_form_shortcode');
 
 function eme_delete_booking_form($event_id) {
    global $form_delete_message, $current_user;
+   $rsvp_is_active = get_option('eme_rsvp_enabled');
    
    if (is_user_logged_in()) {
       get_currentuserinfo();
@@ -162,6 +168,10 @@ function eme_delete_booking_form($event_id) {
    }
    $form_html = "";
    $event = eme_get_event($event_id);
+   // rsvp not active or no rsvp for this event, then return
+   if (!($rsvp_is_active && $event['event_rsvp'])) {
+      return;
+   }
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only) {
       // we require a user to be WP registered to be able to book
@@ -205,7 +215,7 @@ function eme_delete_booking_form($event_id) {
 
 function eme_delete_booking_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('id' => 0), $atts));
-   echo eme_delete_booking_form($id);
+   return eme_delete_booking_form($id);
 }
 add_shortcode ('events_delete_booking_form','eme_delete_booking_form_shortcode');
 

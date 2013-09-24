@@ -112,6 +112,9 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 == Changelog ==
 
+= 1.1.4 =
+* Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
+
 = 1.1.3 =
 * Feature: added #_HTML5_PHONE and #_HTML5_EMAIL to indicate you want the html5 input type field for phone and/or email
   So you can use e.g. #_HTML5_PHONE or #REQ_HTML5_PHONE and the result will be: the html5 tel-type field for phone, and required if #REQ used.
