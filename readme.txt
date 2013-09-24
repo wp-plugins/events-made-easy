@@ -114,6 +114,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.1.4 =
 * Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
+* Improvement: events_list header/footer can now also contain shortcodes, usefull for conditional tags. Idem for locations.
 
 = 1.1.3 =
 * Feature: added #_HTML5_PHONE and #_HTML5_EMAIL to indicate you want the html5 input type field for phone and/or email

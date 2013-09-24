@@ -1015,7 +1015,7 @@ function get_locations_shortcode($atts) {
    $locations_format_footer = get_option('eme_location_list_format_footer' );
    $locations_format_footer = ( $locations_format_footer != '' ) ? $locations_format_footer : "</ul>";
 
-   $out = $locations_format_header;
+   $out = eme_replace_locations_placeholders($locations_format_header);
    foreach ($locations as $location) {
       if ($locations_format_item == '') {
          $out .= "<li class=\"location-{$location['location_id']}\">{$location_name}</li>";
@@ -1023,7 +1023,7 @@ function get_locations_shortcode($atts) {
          $out .= eme_replace_locations_placeholders($locations_format_item,$location);
       }
    }
-   $out .= $locations_format_footer;
+   $out .= eme_replace_locations_placeholders($locations_format_footer);
    $out .= <<<EOD
       <script type="text/javascript">
       //<![CDATA[
