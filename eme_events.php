@@ -527,9 +527,9 @@ function eme_events_page_content() {
       $eme_town=eme_sanitize_request($wp_query->query_vars['eme_town']);
       $location_ids = join(',',eme_get_town_location_ids($eme_town));
       $stored_format = get_option('eme_event_list_item_format');
-      $event_list_format_header = get_option('eme_event_list_item_format_header' );
+      $event_list_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
       $event_list_format_header = ( $event_list_format_header != '' ) ?  $event_list_format_header : "<ul class='eme_events_list'>";
-      $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+      $event_list_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
       $event_list_format_footer = ( $event_list_format_footer != '' ) ?  $event_list_format_footer : "</ul>";
       if (count($location_ids)>0) {
          $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, '','',0,'','',0,$location_ids) .  $event_list_format_footer;
@@ -548,9 +548,9 @@ function eme_events_page_content() {
       $eme_event_cat=eme_sanitize_request($wp_query->query_vars['eme_event_cat']);
       $cat_ids = join(',',eme_get_category_ids($eme_event_cat));
       $stored_format = get_option('eme_event_list_item_format');
-      $event_list_format_header = get_option('eme_event_list_item_format_header' );
+      $event_list_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
       $event_list_format_header = ( $event_list_format_header != '' ) ?  $event_list_format_header : "<ul class='eme_events_list'>";
-      $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+      $event_list_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
       $event_list_format_footer = ( $event_list_format_footer != '' ) ?  $event_list_format_footer : "</ul>";
       if (!empty($cat_ids)) {
          $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, $cat_ids) .  $event_list_format_footer;
@@ -581,9 +581,9 @@ function eme_events_page_content() {
       if ($events_N > 1) {
          $event_list_item_format = get_option('eme_event_list_item_format' );
          //Add headers and footers to the events list
-         $event_list_format_header = get_option('eme_event_list_item_format_header' );
+         $event_list_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
          $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
-         $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+         $event_list_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
          $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
          $page_body = eme_replace_placeholders($event_list_format_header) . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . eme_replace_placeholders($event_list_format_footer);
       } else {
@@ -593,11 +593,11 @@ function eme_events_page_content() {
          if ($event['event_url'] != '') {
             $event_list_item_format = get_option('eme_event_list_item_format' );
             //Add headers and footers to the events list
-            $event_list_format_header = get_option('eme_event_list_item_format_header' );
+            $event_list_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
             $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
-            $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
+            $event_list_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
             $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
-            $page_body = eme_replace_placeholders($event_list_format_header) . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . eme_replace_placeholders($event_list_format_footer);
+            $page_body = $event_list_format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $event_list_format_footer;
          } else {
             $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
             $page_body = eme_replace_placeholders ( $single_event_format, $event );
@@ -1135,9 +1135,9 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
 
       //Add headers and footers to output
       if( $add_header_footer ){
-         $eme_event_list_item_format_header = get_option('eme_event_list_item_format_header' );
+         $eme_event_list_item_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
          $eme_event_list_item_format_header = ( $eme_event_list_item_format_header != '' ) ? $eme_event_list_item_format_header : "<ul class='eme_events_list'>";
-         $eme_event_list_item_format_footer = get_option('eme_event_list_item_format_footer' );
+         $eme_event_list_item_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
          $eme_event_list_item_format_footer = ( $eme_event_list_item_format_footer != '' ) ? $eme_event_list_item_format_footer : "</ul>";
          $output =  $eme_event_list_item_format_header .  $output . $eme_event_list_item_format_footer;
       }
