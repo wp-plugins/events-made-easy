@@ -1062,7 +1062,7 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       $found=1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1292,7 +1292,7 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = rawurlencode($replacement);
       }
       if ($found)
-         $format = str_replace($orig_result, $replacement ,$format );
+         $format = preg_replace("/$orig_result\b/", $replacement ,$format );
    }
 
    # we handle DESCRIPTION the last, so no placeholder replacement happens accidentaly in the text of #_DESCRIPTION
@@ -1300,7 +1300,7 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
       $result=$placeholders[0];
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -1331,7 +1331,7 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = str_replace($orig_result, $replacement ,$format );
+      $format = preg_replace("/$orig_result\b/", $replacement ,$format );
    }
 
    if ($do_shortcode)

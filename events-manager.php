@@ -942,7 +942,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($results[0] as $resultKey => $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -968,7 +968,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = str_replace($orig_result, $replacement ,$format );
+      $format = preg_replace("/$orig_result\b/", $replacement ,$format );
    }
 
    // and now all the other placeholders
@@ -980,7 +980,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       $found = 1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1523,7 +1523,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          $replacement = rawurlencode($replacement);
       }
       if ($found)
-         $format = str_replace($orig_result, $replacement ,$format );
+         $format = preg_replace("/$orig_result\b/", $replacement ,$format );
    }
 
    # now handle all possible location placeholders
@@ -1537,7 +1537,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       $result=$placeholders[0];
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       $found = 1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1583,7 +1583,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          $replacement = rawurlencode($replacement);
       }
       if ($found)
-         $format = str_replace($orig_result, $replacement ,$format );
+         $format = preg_replace("/$orig_result\b/", $replacement ,$format );
    }
 
    // for extra date formatting, eg. #_{d/m/Y}
@@ -1594,7 +1594,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($results[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -1620,7 +1620,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = str_replace($orig_result, $replacement ,$format );
+      $format = preg_replace("/$orig_result\b/", $replacement ,$format );
    }
 
    return do_shortcode($format);   
