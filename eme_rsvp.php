@@ -27,8 +27,10 @@ function eme_payment_form($event,$booking_id) {
          $ret_string .= eme_webmoney_form($event,$booking_id);
       if ($event['use_google'])
          $ret_string .= eme_google_form($event,$booking_id);
+      if ($event['use_fdgg'])
+         $ret_string .= eme_fdgg_form($event,$booking_id);
 
-      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'])
+      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'])
          return $ret_string;
       else
          return "";
@@ -235,6 +237,9 @@ function eme_catch_rsvp() {
    }
    if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="webmoney_notification") {
       return eme_webmoney_notification();
+   }
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction']=="fdgg_ipn") {
+      return eme_fdgg_notification();
    }
    // make sure we don't get too far without proper info
    if (!(isset($_POST['eme_eventAction']) && isset($_POST['event_id']))) {
@@ -1789,6 +1794,46 @@ function eme_2co_form($event,$booking_id) {
    return $form_html;
 }
 
+function eme_fdgg_form($event,$booking_id) {
+   $booking = eme_get_booking($booking_id);
+   $events_page_link = eme_get_events_page(true, false);
+   $store_name = get_option('eme_fdgg_store_name');
+   $shared_secret = get_option('eme_fdgg_shared_secret');
+   // the live or sandbox url
+   $url = get_option('eme_fdgg_url');
+   $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
+   $price=eme_get_total_booking_price($event,$booking);
+   $quantity=1;
+   //$cur=$event['currency'];
+   // First Data only allows USD
+   $cur="USD";
+   $datetime=date("Y:m:d-H:i:s",strtotime($booking['creation_date_gmt']));
+   $timezone_short="GMT";
+
+   require_once('fdgg/fdgg-util_sha2.php');
+   $form_html = "<br>".__("You can pay for this event via First Data. If you wish to do so, click the button below.",'eme');
+   $form_html.="<form action='$url' method='post'>";
+   $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
+   $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
+   $form_html.="<input type='hidden' name='txntype' value='sale'/>";
+   $form_html.="<input type='hidden' name='mode' value='payonly' />";
+   $form_html.="<input type='hidden' name='trxOrigin' value='ECI' />";
+   $form_html.="<input type='hidden' name='txndatetime' value='$datetime />";
+   $form_html.="<input type='hidden' name='hash' value='".fdgg_createHash($store_name . $datetime . $price . $shared_secret)."' />";
+   $form_html.="<input type='hidden' name='storename' value='$store_name'/>";
+   $form_html.="<input type='hidden' name='chargetotal' value='$price'/>";
+   $form_html.="<input type='hidden' name='subtotal' value='$price'/>";
+   $form_html.="<input type='hidden' name='invoicenumber' value='$booking_id' />";
+   $form_html.="<input type='hidden' name='oid' value='$booking_id' />";
+   $form_html.="<input type='hidden' name='responseSuccessURL' value='".eme_event_url($event)."' >";
+   $form_html.="<input type='hidden' name='responseFailURL' value='".eme_event_url($event)."' >";
+   $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_ipn' />";
+   $form_html.="<input name='submit' type='submit' value='Pay via First Data' >";
+   $form_html.="</form>";
+   return $form_html;
+}
+
+
 function eme_google_form($event,$booking_id) {
    $booking = eme_get_booking($booking_id);
    $price=eme_get_total_booking_price($event,$booking);
@@ -2096,18 +2141,52 @@ function eme_webmoney_notification() {
    $wm_notif = new WM_Notification(); 
    if ($wm_notif->GetForm() != WM_RES_NOPARAM) {
       $booking_id=$wm_notif->payment_no;
-      $booking=eme_get_booking($booking_id);
-      $event = eme_get_event($booking['event_id']);
+      // TODO: do some extra checks, like the price payed and such
+      #$booking=eme_get_booking($booking_id);
+      #$event = eme_get_event($booking['event_id']);
+      #$price=eme_get_total_booking_price($event,$booking)
       $amount=$wm_notif->payment_amount;
       if ($webmoney_purse != $wm_notif->payee_purse) {
          die ('Not the webmoney purse it should be ...');
       }
-      #if ($booking['event_seats']*$event['price'] != $amount) {
+      #if ($price != $amount) {
       #   die ('Not the webmoney amount I expected ...');
       #}
       if ($wm_notif->CheckMD5($webmoney_purse, $amount, $booking_id, $webmoney_secret) == WM_RES_OK) {
           eme_update_booking_payed($booking_id,1);
       }
+   }
+}
+
+function eme_fdgg_notification() {
+   $store_name = get_option('eme_fdgg_store_name');
+   $shared_secret = get_option('eme_fdgg_shared_secret');
+   require_once('fdgg/fdgg-util_sha2.php');
+
+   $booking_id      = $_POST['invoicenumber'];
+   $charge_total    = $_POST['charge_total'];
+   $approval_code   = $_POST['approval_code'];
+   $response_hash   = $_POST['response_hash'];
+   $response_status = $_POST['status'];
+
+   //$cur=$event['currency'];
+   // First Data only allows USD
+   $cur="USD";
+   $booking=eme_get_booking($booking_id);
+   $datetime=date("Y:m:d-H:i:s",strtotime($booking['creation_date_gmt']));
+   $timezone_short="GMT";
+   $calc_hash=fdgg_createHash($shared_secret.$approval_code.$charge_total.$cur.$datetime.$store_name);
+
+   if ($response_hash != $calc_hash) {
+      die('Hash Incorrect');
+   }
+
+   // TODO: do some extra checks, like the price payed and such
+   #$event=eme_get_event($booking['event_id']);
+   #$price=eme_get_total_booking_price($event,$booking);
+
+   if (strtolower($response_status) == 'approved') {
+      eme_update_booking_payed($booking_id,1);
    }
 }
 

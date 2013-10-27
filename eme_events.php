@@ -2191,6 +2191,7 @@ function eme_event_form($event, $title, $element) {
       $use_google_checked = (get_option('eme_google_merchant_id')) ? "checked='checked'" : '';
       $use_2co_checked = (get_option('eme_2co_business')) ? "checked='checked'" : '';
       $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : '';
+      $use_fdgg_checked = (get_option('eme_fdgg_store_name')) ? "checked='checked'" : '';
 
    } else {
       $event['event_rsvp'] ? $event_RSVP_checked = "checked='checked'" : $event_RSVP_checked = '';
@@ -2202,6 +2203,7 @@ function eme_event_form($event, $title, $element) {
       $use_google_checked = ($event['use_google']) ? "checked='checked'" : '';
       $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : '';
       $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : '';
+      $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : '';
    }
    
    ob_start();
@@ -2442,6 +2444,7 @@ function eme_event_form($event, $title, $element) {
                               <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout','eme' ); ?><br />
                               <input id="webmoney-checkbox" name='use_webmoney' value='1' type='checkbox' <?php echo $use_webmoney_checked; ?> /><?php _e ( 'Webmoney','eme' ); ?><br />
                               <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout','eme' ); ?><br />
+                              <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'Firs Data','eme' ); ?><br />
                            </p>
                            <?php if ($event['event_rsvp']) {
                                  eme_bookings_compact_table ( $event['event_id'] );
