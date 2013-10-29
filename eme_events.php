@@ -38,6 +38,7 @@ function eme_new_event() {
       "event_contactperson_id" => get_option('eme_default_contact_person'),
       "event_category_ids" => '',
       "event_attributes" => '',
+      "event_properties" => '',
       "event_page_title_format" => '',
       "event_single_event_format" => '',
       "event_contactperson_email_body" => '',
@@ -311,6 +312,15 @@ function eme_events_page() {
          }
       }
       $event['event_attributes'] = serialize($event_attributes);
+
+      $event_properties = array();
+      foreach($_POST as $key=>$value) {
+         if (preg_match('/eme_prop_(.+)/', $key, $matches)) {
+            $event_properties[$matches[1]] = stripslashes($value);
+         }
+      }
+      $event['event_properties'] = serialize($event_properties);
+      
       
       $validation_result = eme_validate_event ( $event );
       if ($validation_result != "OK") {
@@ -1781,6 +1791,8 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 
          $this_event['event_attributes'] = @unserialize($this_event['event_attributes']);
          $this_event['event_attributes'] = (!is_array($this_event['event_attributes'])) ?  array() : $this_event['event_attributes'] ;
+         $this_event['event_properties'] = @unserialize($this_event['event_properties']);
+         $this_event['event_properties'] = (!is_array($this_event['event_properties'])) ?  array() : $this_event['event_properties'] ;
          // don't forget the images (for the older events that didn't use the wp gallery)
          if (empty($this_event['event_image_id']) && empty($this_event['event_image_url']))
             $this_event['event_image_url'] = eme_image_url_for_event($this_event);
@@ -1857,6 +1869,9 @@ function eme_get_event($event_id) {
 
    $event['event_attributes'] = @unserialize($event['event_attributes']);
    $event['event_attributes'] = (!is_array($event['event_attributes'])) ?  array() : $event['event_attributes'] ;
+
+   $event['event_properties'] = @unserialize($event['event_properties']);
+   $event['event_properties'] = (!is_array($event['event_properties'])) ?  array() : $event['event_properties'] ;
 
    // don't forget the images (for the older events that didn't use the wp gallery)
    if (empty($event['event_image_id']) && empty($event['event_image_url']))

@@ -526,6 +526,7 @@ function eme_create_events_table($charset,$collate) {
          recurrence_id mediumint(9) DEFAULT 0,
          event_category_ids text default NULL,
          event_attributes text NULL, 
+         event_properties text NULL, 
          event_page_title_format text NULL, 
          event_single_event_format text NULL, 
          event_contactperson_email_body text NULL, 
@@ -587,6 +588,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'recurrence_id', "alter table $table_name add recurrence_id mediumint(9) DEFAULT 0;"); 
       maybe_add_column($table_name, 'event_contactperson_id', "alter table $table_name add event_contactperson_id mediumint(9) DEFAULT 0;");
       maybe_add_column($table_name, 'event_attributes', "alter table $table_name add event_attributes text NULL;"); 
+      maybe_add_column($table_name, 'event_properties', "alter table $table_name add event_properties text NULL;"); 
       maybe_add_column($table_name, 'event_url', "alter table $table_name add event_url text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'event_slug', "alter table $table_name add event_slug text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'event_category_ids', "alter table $table_name add event_category_ids text DEFAULT NULL;"); 
