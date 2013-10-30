@@ -2202,23 +2202,33 @@ function eme_event_form($event, $title, $element) {
       $registration_wp_users_only = (get_option('eme_rsvp_registered_users_only')) ? "checked='checked'" : "";
       $registration_requires_approval = (get_option('eme_rsvp_require_approval')) ? "checked='checked'" : "";
 
-      $use_paypal_checked = (get_option('eme_paypal_business')) ? "checked='checked'" : '';
-      $use_google_checked = (get_option('eme_google_merchant_id')) ? "checked='checked'" : '';
-      $use_2co_checked = (get_option('eme_2co_business')) ? "checked='checked'" : '';
-      $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : '';
-      $use_fdgg_checked = (get_option('eme_fdgg_store_name')) ? "checked='checked'" : '';
+      $use_paypal_checked = (get_option('eme_paypal_business')) ? "checked='checked'" : "";
+      $use_google_checked = (get_option('eme_google_merchant_id')) ? "checked='checked'" : "";
+      $use_2co_checked = (get_option('eme_2co_business')) ? "checked='checked'" : "";
+      $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : "";
+      $use_fdgg_checked = (get_option('eme_fdgg_store_name')) ? "checked='checked'" : "";
+
+      // all properties that also have a global definition
+      // $eme_prop_auto_approve_checked = (get_option('eme_prop_auto_approve')) ? "checked='checked'" : "";
+      $eme_prop_auto_approve_checked = "";
 
    } else {
-      $event['event_rsvp'] ? $event_RSVP_checked = "checked='checked'" : $event_RSVP_checked = '';
+      $event_RSVP_checked = ($event['event_rsvp']) ? "checked='checked'" : "";
       $event_number_spaces=$event['event_seats'];
-      $event['registration_wp_users_only'] ? $registration_wp_users_only = "checked='checked'" : $registration_wp_users_only = '';
-      $event['registration_requires_approval'] ? $registration_requires_approval = "checked='checked'" : $registration_requires_approval = '';
+      $registration_wp_users_only = ($event['registration_wp_users_only']) ? "checked='checked'" : "";
+      $registration_requires_approval = ($event['registration_requires_approval']) ? "checked='checked'" : "";
 
-      $use_paypal_checked = ($event['use_paypal']) ? "checked='checked'" : '';
-      $use_google_checked = ($event['use_google']) ? "checked='checked'" : '';
-      $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : '';
-      $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : '';
-      $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : '';
+      $use_paypal_checked = ($event['use_paypal']) ? "checked='checked'" : "";
+      $use_google_checked = ($event['use_google']) ? "checked='checked'" : "";
+      $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : "";
+      $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : "";
+      $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : "";
+
+      // all properties
+      if (isset($event['event_properties']['auto_approve']) && $event['event_properties']['auto_approve'])
+         $eme_prop_auto_approve_checked = "checked='checked'";
+      else
+         $eme_prop_auto_approve_checked = "";
    }
    
    ob_start();
@@ -2415,6 +2425,9 @@ function eme_event_form($event, $title, $element) {
                            <p>
                               <input id="approval_required-checkbox" name='registration_requires_approval' value='1' type='checkbox' <?php echo $registration_requires_approval; ?> />
                               <?php _e ( 'Require approval for registration','eme' ); ?>
+                           <br />
+                              <input id="eme_prop_auto_approve" name='eme_prop_auto_approve' value='1' type='checkbox' <?php echo $eme_prop_auto_approve_checked; ?> />
+                              <?php _e ( 'Auto-approve registration upon payment','eme' ); ?>
                            <br />
                               <input id="wp_member_required-checkbox" name='registration_wp_users_only' value='1' type='checkbox' <?php echo $registration_wp_users_only; ?> />
                               <?php _e ( 'Require WP membership for registration','eme' ); ?>

@@ -655,26 +655,40 @@ function eme_delete_booking($booking_id) {
    $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE booking_id = %d",$booking_id);
    return $wpdb->query($sql);
 }
-function eme_update_booking_payed($booking_id,$value) {
+
+function eme_update_booking_payed($booking_id,$booking_payed) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   $sql = $wpdb->prepare("UPDATE $bookings_table set booking_payed=%d  WHERE booking_id = %d",$value,$booking_id);
-   return $wpdb->query($sql);
+   
+   $where = array();
+   $fields = array();
+   $where['booking_id'] = intval($booking_id);
+   $fields['booking_payed'] = intval($booking_payed) ;
+   $fields['modif_date']=current_time('mysql', false);
+   $fields['modif_date_gmt']=current_time('mysql', true);
+   if ($booking_payed==1) {
+      $event_id = eme_get_event_id_by_booking_id($booking_id);
+      $event = eme_get_event($event_id);
+      if (isset($event['event_properties']['auto_approve']) && $event['event_properties']['auto_approve'])
+         $fields['booking_approved'] = 1;
+   }
+   return $wpdb->update($bookings_table, $fields, $where);
 }
+
 function eme_approve_booking($booking_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
 
    $where = array();
    $fields = array();
-   $where['booking_id'] =$booking_id;
+   $where['booking_id'] = $booking_id;
    $fields['booking_approved'] = 1;
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
-   $wpdb->update($bookings_table, $fields, $where);
+   return $wpdb->update($bookings_table, $fields, $where);
    //$sql = "UPDATE $bookings_table SET booking_approved='1' WHERE booking_id = $booking_id";
    //$wpdb->query($sql);
-   return __('Booking approved', 'eme');
+   //return __('Booking approved', 'eme');
 }
 function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
    global $wpdb;
@@ -700,10 +714,10 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
    }
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
-   $wpdb->update($bookings_table, $fields, $where);
+   return $wpdb->update($bookings_table, $fields, $where);
    //$sql = "UPDATE $bookings_table SET booking_seats='$seats' WHERE booking_id = $booking_id";
    //$wpdb->query($sql);
-   return __('Booking approved', 'eme');
+   //return __('Booking approved', 'eme');
 }
 
 function eme_get_available_seats($event_id) {
