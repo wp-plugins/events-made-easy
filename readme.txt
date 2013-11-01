@@ -114,6 +114,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 
 = 1.1.4 =
 * Feature: added 'First Data Global Gateway Connect 2.0' payment gateway implementation
+* Feature: new option: consider pending registrations as available seats for new bookings (meaning: ignore pending registrations for new rsvp's)
 * Feature: implemented feature request "Automatic Approval after Payment is received", optional per event
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore

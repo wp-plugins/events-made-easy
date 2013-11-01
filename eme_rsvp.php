@@ -669,7 +669,7 @@ function eme_update_booking_payed($booking_id,$booking_payed) {
    if ($booking_payed==1) {
       $event_id = eme_get_event_id_by_booking_id($booking_id);
       $event = eme_get_event($event_id);
-      if (isset($event['event_properties']['auto_approve']) && $event['event_properties']['auto_approve'])
+      if ($event['event_properties']['auto_approve'] == 1)
          $fields['booking_approved'] = 1;
    }
    return $wpdb->update($bookings_table, $fields, $where);
@@ -722,7 +722,10 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
 
 function eme_get_available_seats($event_id) {
    $event = eme_get_event($event_id);
-   $available_seats = $event['event_seats'] - eme_get_booked_seats($event_id);
+   if ($event['event_properties']['ignore_pending'] == 1)
+      $available_seats = $event['event_seats'] - eme_get_approved_seats($event_id);
+   else
+      $available_seats = $event['event_seats'] - eme_get_booked_seats($event_id);
    // the number of seats left can be <0 if more than one booking happened at the same time and people fill in things slowly
    if ($available_seats<0) $available_seats=0;
    return $available_seats;
@@ -757,7 +760,6 @@ function eme_get_pending_bookings($event_id) {
 }
 
 function eme_are_seats_available_for($event_id, $seats) {
-   #$event = eme_get_event($event_id);
    $available_seats = eme_get_available_seats($event_id);
    $remaning_seats = $available_seats - $seats;
    return ($remaning_seats >= 0);

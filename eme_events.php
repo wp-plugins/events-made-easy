@@ -38,7 +38,7 @@ function eme_new_event() {
       "event_contactperson_id" => get_option('eme_default_contact_person'),
       "event_category_ids" => '',
       "event_attributes" => '',
-      "event_properties" => '',
+      "event_properties" => array(),
       "event_page_title_format" => '',
       "event_single_event_format" => '',
       "event_contactperson_email_body" => '',
@@ -67,7 +67,16 @@ function eme_new_event() {
       "location_slug" => '',
       "location_url" => ''
    );
+   $event['event_properties'] = eme_init_event_props($event['event_properties']);
    return $event;
+}
+
+function eme_init_event_props($props) {
+   if (!isset($props['auto_approve']))
+      $props['auto_approve']=0;
+   if (!isset($props['ignore_pending']))
+      $props['ignore_pending']=0;
+   return $props;
 }
 
 function eme_new_event_page() {
@@ -1872,6 +1881,7 @@ function eme_get_event($event_id) {
 
    $event['event_properties'] = @unserialize($event['event_properties']);
    $event['event_properties'] = (!is_array($event['event_properties'])) ?  array() : $event['event_properties'] ;
+   $event['event_properties'] = eme_init_event_props($event['event_properties']);
 
    // don't forget the images (for the older events that didn't use the wp gallery)
    if (empty($event['event_image_id']) && empty($event['event_image_url']))
@@ -2211,6 +2221,7 @@ function eme_event_form($event, $title, $element) {
       // all properties that also have a global definition
       // $eme_prop_auto_approve_checked = (get_option('eme_prop_auto_approve')) ? "checked='checked'" : "";
       $eme_prop_auto_approve_checked = "";
+      $eme_prop_ignore_pending_checked = "";
 
    } else {
       $event_RSVP_checked = ($event['event_rsvp']) ? "checked='checked'" : "";
@@ -2225,10 +2236,8 @@ function eme_event_form($event, $title, $element) {
       $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : "";
 
       // all properties
-      if (isset($event['event_properties']['auto_approve']) && $event['event_properties']['auto_approve'])
-         $eme_prop_auto_approve_checked = "checked='checked'";
-      else
-         $eme_prop_auto_approve_checked = "";
+      $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
+      $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
    }
    
    ob_start();
@@ -2428,6 +2437,9 @@ function eme_event_form($event, $title, $element) {
                            <br />
                               <input id="eme_prop_auto_approve" name='eme_prop_auto_approve' value='1' type='checkbox' <?php echo $eme_prop_auto_approve_checked; ?> />
                               <?php _e ( 'Auto-approve registration upon payment','eme' ); ?>
+                           <br />
+                              <input id="eme_prop_ignore_pending" name='eme_prop_ignore_pending' value='1' type='checkbox' <?php echo $eme_prop_ignore_pending_checked; ?> />
+                              <?php _e ( 'Consider pending registrations as available seats for new bookings','eme' ); ?>
                            <br />
                               <input id="wp_member_required-checkbox" name='registration_wp_users_only' value='1' type='checkbox' <?php echo $registration_wp_users_only; ?> />
                               <?php _e ( 'Require WP membership for registration','eme' ); ?>
