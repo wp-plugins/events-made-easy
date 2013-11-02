@@ -1322,6 +1322,7 @@ function eme_registration_seats_form_table($event_id=0) {
          <th><?php _e ('Name','eme'); ?></th>
          <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
+         <th><?php _e ('Booking date','eme'); ?></th>
          <th><?php _e ('Seats','eme'); ?></th>
          <th><?php _e ('Event price','eme'); ?></th>
          <th><?php _e ('Total price','eme'); ?></th>
@@ -1343,6 +1344,8 @@ function eme_registration_seats_form_table($event_id=0) {
          $class = ($i % 2) ? ' class="alternate"' : '';
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
+         $localised_booking_date = eme_localised_date($event_booking['creation_date']);
+         $localised_booking_time = eme_localised_time($event_booking['creation_date']);
          $style = "";
          $today = date ( "Y-m-d" );
          
@@ -1375,6 +1378,9 @@ function eme_registration_seats_form_table($event_id=0) {
          </td>
          <td>
             <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
+         </td>
+         <td>
+            <?php echo $localised_booking_date ." ". $localised_booking_time;?>
          </td>
          <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
@@ -1498,10 +1504,11 @@ function eme_registration_approval_form_table($event_id=0) {
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
-         <th><?php _e ( 'ID', 'eme' ); ?></th>
-         <th><?php _e ( 'Name', 'eme' ); ?></th>
-         <th><?php _e ( 'Date and time', 'eme' ); ?></th>
+         <th><?php _e ('ID','eme'); ?></th>
+         <th><?php _e ('Name','eme'); ?></th>
+         <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
+         <th><?php _e ('Booking date','eme'); ?></th>
          <th><?php _e ('Seats','eme'); ?></th>
          <th><?php _e ('Event price','eme'); ?></th>
          <th><?php _e ('Total price','eme'); ?></th>
@@ -1523,6 +1530,8 @@ function eme_registration_approval_form_table($event_id=0) {
          $class = ($i % 2) ? ' class="alternate"' : '';
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
+         $localised_booking_date = eme_localised_date($event_booking['creation_date']);
+         $localised_booking_time = eme_localised_time($event_booking['creation_date']);
          $style = "";
          $today = date ( "Y-m-d" );
          
@@ -1549,6 +1558,12 @@ function eme_registration_approval_form_table($event_id=0) {
          </td>
          <td>
             <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
+         </td>
+         <td>
+            <?php echo $localised_booking_date ." ". $localised_booking_time;?>
+         </td>
+         <td>
+            <?php echo $localised_booking_date . $localised_booking_time;?>
          </td>
          <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
          <td>

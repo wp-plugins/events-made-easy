@@ -121,6 +121,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
 * Improvement: events_list header/footer can now also contain shortcodes, usefull for conditional tags. Idem for locations.
 * Improvement: json is limited in size we only return what's needed in the javascript
+* Improvement: booking date/time info is now visible in the backend registration pages
 * Code improvement: added event_properties to stop needing to change the event database table all the time. Ideal for new event properties.
 
 = 1.1.3 =
