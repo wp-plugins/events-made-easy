@@ -1343,7 +1343,9 @@ function eme_registration_seats_form_table($event_id=0) {
          $event = eme_get_event($event_booking['event_id']);
          $class = ($i % 2) ? ' class="alternate"' : '';
          $localised_start_date = eme_localised_date($event['event_start_date']);
+         $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
+         $localised_end_time = eme_localised_time($event['event_end_time']);
          $localised_booking_date = eme_localised_date($event_booking['creation_date']);
          $localised_booking_time = eme_localised_time($event_booking['creation_date']);
          $style = "";
@@ -1374,7 +1376,7 @@ function eme_registration_seats_form_table($event_id=0) {
          </td>
          <td>
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
-            <?php echo substr ( $event['event_start_time'], 0, 5 ) . " - " . substr ( $event['event_end_time'], 0, 5 ); ?>
+            <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
          <td>
             <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
@@ -1388,7 +1390,7 @@ function eme_registration_seats_form_table($event_id=0) {
          </td>
          <?php } else { ?>
          <td>
-            <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats'];?>" />
+            <input type="text" name="bookings_seats[]" size=10 value="<?php echo $event_booking['booking_seats'];?>" />
          </td>
          <?php } ?>
          <td>
@@ -1529,7 +1531,9 @@ function eme_registration_approval_form_table($event_id=0) {
          $event = eme_get_event($event_booking['event_id']);
          $class = ($i % 2) ? ' class="alternate"' : '';
          $localised_start_date = eme_localised_date($event['event_start_date']);
+         $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
+         $localised_end_time = eme_localised_time($event['event_end_time']);
          $localised_booking_date = eme_localised_date($event_booking['creation_date']);
          $localised_booking_time = eme_localised_time($event_booking['creation_date']);
          $style = "";
@@ -1554,7 +1558,7 @@ function eme_registration_approval_form_table($event_id=0) {
          </td>
          <td>
             <?php echo $localised_start_date; if ($localised_end_date !='') echo " - " . $localised_end_date; ?><br />
-            <?php echo substr ( $event['event_start_time'], 0, 5 ) . " - " . substr ( $event['event_end_time'], 0, 5 ); ?>
+            <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
          <td>
             <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
@@ -1571,7 +1575,7 @@ function eme_registration_approval_form_table($event_id=0) {
          </td>
          <?php } else { ?>
          <td>
-            <input type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats'];?>" />
+            <input type="text" name="bookings_seats[]" size=10 value="<?php echo $event_booking['booking_seats'];?>" />
          </td>
          <?php } ?>
          <td>
