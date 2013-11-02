@@ -76,6 +76,8 @@ function eme_init_event_props($props) {
       $props['auto_approve']=0;
    if (!isset($props['ignore_pending']))
       $props['ignore_pending']=0;
+   if (!isset($props['all_day']))
+      $props['all_day']=0;
    return $props;
 }
 
@@ -1790,21 +1792,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
             continue;
          }
          
-         if ($this_event['location_id'] ) {
-            $this_location = eme_get_location ( $this_event['location_id'] );
-            // add all location info to the event
-            foreach ($this_location as $key => $value) {
-               $this_event[$key] = $value;
-            }
-         }
-
-         $this_event['event_attributes'] = @unserialize($this_event['event_attributes']);
-         $this_event['event_attributes'] = (!is_array($this_event['event_attributes'])) ?  array() : $this_event['event_attributes'] ;
-         $this_event['event_properties'] = @unserialize($this_event['event_properties']);
-         $this_event['event_properties'] = (!is_array($this_event['event_properties'])) ?  array() : $this_event['event_properties'] ;
-         // don't forget the images (for the older events that didn't use the wp gallery)
-         if (empty($this_event['event_image_id']) && empty($this_event['event_image_url']))
-            $this_event['event_image_url'] = eme_image_url_for_event($this_event);
+         $this_event = eme_get_event_data($this_event);
          array_push ( $inflated_events, $this_event );
       }
       if (has_filter('eme_event_list_filter')) $inflated_events=apply_filters('eme_event_list_filter',$inflated_events);
@@ -1863,6 +1851,11 @@ function eme_get_event($event_id) {
       return eme_new_event();
    }
 
+   $event = eme_get_event_data($event);
+   return $event;
+}
+
+function eme_get_event_data($event) {
    if ($event['event_end_date'] == "") {
       $event['event_end_date'] = $event['event_start_date'];
       $event['event_end_day'] = $event['event_start_day'];
@@ -2031,7 +2024,9 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          $class = ($i % 2) ? ' class="alternate"' : '';
 
          $localised_start_date = eme_localised_date($event['event_start_date']);
+         $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
+         $localised_end_time = eme_localised_time($event['event_end_time']);
 
          $today = date ( "Y-m-d" );
          
@@ -2096,7 +2091,10 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          </td>
          <td>
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date!=$localised_start_date) echo " - " . $localised_end_date; ?><br />
-            <?php echo substr ( $event['event_start_time'], 0, 5 ) . " - " . substr ( $event['event_end_time'], 0, 5 ); ?>
+            <?php if ($event['event_properties']['all_day']==1)
+                     _e('All day','eme');
+                  else
+                     echo "$localised_start_time - $localised_end_time"; ?>
          </td>
          <td>
              <?php
@@ -2218,10 +2216,10 @@ function eme_event_form($event, $title, $element) {
       $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : "";
       $use_fdgg_checked = (get_option('eme_fdgg_store_name')) ? "checked='checked'" : "";
 
-      // all properties that also have a global definition
-      // $eme_prop_auto_approve_checked = (get_option('eme_prop_auto_approve')) ? "checked='checked'" : "";
-      $eme_prop_auto_approve_checked = "";
-      $eme_prop_ignore_pending_checked = "";
+      // all properties
+      $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
+      $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
+      $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 
    } else {
       $event_RSVP_checked = ($event['event_rsvp']) ? "checked='checked'" : "";
@@ -2238,6 +2236,7 @@ function eme_event_form($event, $title, $element) {
       // all properties
       $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
       $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
+      $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
    }
    
    ob_start();
@@ -2694,6 +2693,14 @@ function updateShowHideRsvp () {
    }
 }
 
+function updateShowHideTime () {
+   if($j_eme_event('input#eme_prop_all_day').attr("checked")) {
+      $j_eme_event("div#div_event_time").hide();
+   } else {
+      $j_eme_event("div#div_event_time").show();
+   }
+}
+
 $j_eme_event(document).ready( function() {
    locale_format = "ciao";
  
@@ -2871,8 +2878,10 @@ $j_eme_event(document).ready( function() {
    updateIntervalSelectors();
    updateShowHideRecurrence();
    updateShowHideRsvp();
+   updateShowHideTime();
    $j_eme_event('input#event-recurrence').change(updateShowHideRecurrence);
    $j_eme_event('input#rsvp-checkbox').change(updateShowHideRsvp);
+   $j_eme_event('input#eme_prop_all_day').change(updateShowHideTime);
    // recurrency elements
    $j_eme_event('input#recurrence-interval').keyup(updateIntervalDescriptor);
    $j_eme_event('select#recurrence-frequency').change(updateIntervalDescriptor);
@@ -2997,15 +3006,19 @@ function eme_meta_box_div_event_name($event){
 }
 
 function eme_meta_box_div_event_date($event){
+      $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 ?>
                         <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
                         <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
                         <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
                         <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
-                        <br />
                         <span id='event-date-explanation'>
                         <?php _e ( 'The event date.', 'eme' ); ?>
                         </span>
+                        <br />
+                        <br />
+                        <input id="eme_prop_all_day" name='eme_prop_all_day' value='1' type='checkbox' <?php echo $eme_prop_all_day_checked; ?> />
+                        <?php _e ( 'This event lasts all day', 'eme' ); ?>
 <?php
 }
 
@@ -3757,6 +3770,13 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
    }
+   $event_properties = @unserialize($event['event_properties']);
+   if ($event_properties['all_day']) {
+      $event['event_start_time']="00:00:00";
+      $event['event_end_time']="00:00:00";
+      if ($event['event_end_date']==$event['event_start_date'])
+         $event['event_end_date']=date("Y-m-d",strtotime($event['event_start_date'])+86400);
+   }
    // if the end day/time is lower than the start day/time, then put
    // the end day one day (86400 secs) ahead, but only if
    // the end time has been filled in, if it is empty then we keep
@@ -3799,6 +3819,13 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    // some sanity checks
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
+   }
+   $event_properties = @unserialize($event['event_properties']);
+   if ($event_properties['all_day']) {
+      $event['event_start_time']="00:00:00";
+      $event['event_end_time']="00:00:00";
+      if ($event['event_end_date']==$event['event_start_date'])
+         $event['event_end_date']=date("Y-m-d",strtotime($event['event_start_date'])+86400);
    }
    // if the end day/time is lower than the start day/time, then put
    // the end day one day (86400 secs) ahead, but only if
