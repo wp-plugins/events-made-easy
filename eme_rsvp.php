@@ -1128,10 +1128,16 @@ function eme_email_rsvp_booking($booking_id,$action="") {
 
    // total price to pay
    $total_price=eme_get_total_booking_price($event,$booking);
+   // total price to pay per price if multiprice
+   $total_prices=eme_get_total_booking_multiprice($event,$booking);
    
    // rsvp specific placeholders
    #$placeholders = array('#_RESPNAME' => $person['person_name'], '#_RESPEMAIL' => $person['person_email'], '#_RESPPHONE' => $person['person_phone'], '#_SPACES' => $booking['booking_seats'],'#_COMMENT' => $booking['booking_comment'], '#_TRANSFER_NBR_BE97' => $booking['transfer_nbr_be97'], '#_TOTALPRICE' => $total_price, '#_FIELDS' => $field_replace );
    $placeholders = array('#_TOTALPRICE' => $total_price );
+   for ( $i = 0; $i < count($total_prices); $i++) {
+       $j=$i+1;
+       $placeholders['#_TOTALPRICE'.$j] = $total_prices[$i];
+   }
 
    foreach($placeholders as $key => $value) {
       $contact_body = str_replace($key, $value, $contact_body);
@@ -2262,6 +2268,20 @@ function eme_get_total_booking_price($event,$booking) {
       }
    } else {
       $price = $basic_price*$booking['booking_seats'];
+   }
+   return $price;
+}
+
+function eme_get_total_booking_multiprice($event,$booking) {
+   $price=array();
+   $basic_price= eme_get_booking_price($event,$booking);
+
+   if (eme_is_multiprice($basic_price)) {
+      $prices=preg_split("/\|\|/",$basic_price);
+      $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
+      foreach ($prices as $key=>$val) {
+         $price[] = $val*$seats[$key];
+      }
    }
    return $price;
 }
