@@ -325,6 +325,7 @@ function eme_events_page() {
       $event['event_attributes'] = serialize($event_attributes);
 
       $event_properties = array();
+      $event_properties = eme_init_event_props($event_properties);
       foreach($_POST as $key=>$value) {
          if (preg_match('/eme_prop_(.+)/', $key, $matches)) {
             $event_properties[$matches[1]] = stripslashes($value);

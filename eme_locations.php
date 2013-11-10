@@ -1052,7 +1052,7 @@ EOD;
 }
 add_shortcode('events_locations','get_locations_shortcode');
 
-function eme_replace_locations_placeholders($format, $location, $target="html", $do_shortcode=1) {
+function eme_replace_locations_placeholders($format, $location="", $target="html", $do_shortcode=1) {
 
    preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_\[\]]+/", $format, $placeholders);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
