@@ -2146,7 +2146,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
 function eme_event_form($event, $title, $element) {
    
    admin_show_warnings();
-
+   global $plugin_page;
    $event_status_array = eme_status_array ();
    $saved_bydays = array();
    $currency_array = eme_currency_array();
@@ -2511,7 +2511,7 @@ function eme_event_form($event, $title, $element) {
                            $selected = "";
                         }
                      ?>
-<input type="checkbox" name="event_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo $category['category_name']; ?><br />
+            <input type="checkbox" name="event_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo $category['category_name']; ?><br />
                      <?php
                      }
                      ?>
@@ -2523,6 +2523,56 @@ function eme_event_form($event, $title, $element) {
             <!-- END OF SIDEBAR -->
             <div id="post-body">
                <div id="post-body-content" class="meta-box-sortables">
+               <?php  if($plugin_page === 'eme-new_event' && get_option("eme_fb_app_id")) { ?>
+                  <div id="fb-root"></div>
+                  <script>
+                    window.fbAsyncInit = function() {
+                      // init the FB JS SDK
+                      FB.init({
+                        appId      : '<?php echo get_option("eme_fb_app_id");?>',// App ID from the app dashboard
+                        channelUrl : '<?php echo plugins_url( "eme_fb_channel.php", __FILE__ )?>', // Channel file for x-domain comms
+                        status     : true,  // Check Facebook Login status
+                        xfbml      : true   // Look for social plugins on the page
+                      });
+
+                      // Additional initialization code such as adding Event Listeners goes here
+                     FB.Event.subscribe('auth.authResponseChange', function(response) {
+                        if (response.status === 'connected') {
+                           jQuery('#fb-import-box').show();
+                         } else if (response.status === 'not_authorized') {
+                           jQuery('#fb-import-box').hide();
+                         } else {
+                           jQuery('#fb-import-box').hide();
+                         }
+                        });
+                     };
+
+
+                     // Load the SDK asynchronously
+                     (function(d, s, id){
+                       var js, fjs = d.getElementsByTagName(s)[0];
+                       if (d.getElementById(id)) {return;}
+                       js = d.createElement(s); js.id = id;
+                       js.src = "//connect.facebook.net/en_US/all.js";
+                       fjs.parentNode.insertBefore(js, fjs);
+                     }(document, 'script', 'facebook-jssdk'));
+
+                  </script>
+                  <fb:login-button id="fb-login-button" width="200" autologoutlink="true" scope="user_events" max-rows="1"></fb:login-button>
+                  <br>
+                  <br>
+                  <div id='fb-import-box' style='display:none'>
+                     Facebook event url : <input type='text' id='fb-event-url' class='widefat' /> 
+                     <br>
+                     <br>
+
+                     <input type='button' class='button' value='Import' id='import-fb-event-btn' />
+
+                     <br>
+                     <br>
+                  </div>
+               <?php } ?>
+
                <?php 
                $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
                foreach ($screens as $screen) {
@@ -2965,6 +3015,7 @@ function eme_admin_event_boxes() {
    $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
    foreach ($screens as $screen) {
         if (preg_match("/$plugin_page/",$screen)) {
+
            // we need titlediv for qtranslate as ID
            add_meta_box("titlediv", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
            add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
