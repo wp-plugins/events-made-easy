@@ -118,7 +118,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: implemented feature request "Automatic Approval after Payment is received", optional per event
 * Feature: all day events can now be indicated as such
 * Feature: placeholder #_TOTALPRICEx added for mail formats (with x being a number: gives the total price to pay per price for multiprice events: the amount of spaces booked times the specific price of the multiprice event)
-* Feature: added a facebook import function when creating a new event
+* Feature: added a facebook import function when creating a new event. Thanks to Tom Chubb and Jashwant Singh Chaudhary.
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore
 * Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
