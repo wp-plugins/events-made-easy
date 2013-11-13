@@ -675,10 +675,21 @@ function eme_filter_events_page($data) {
    // in the $wp_current_filter array), we can then skip it
    //print_r($wp_current_filter);
    $eme_count_arr=array_count_values($wp_current_filter);
-   if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content' && $eme_count_arr['the_content']>1) {
-      $eme_event_parsed=1;
-   } else {
-      $eme_event_parsed=0;
+   $eme_event_parsed=0;
+   $eme_loop_protection=get_option('eme_loop_protection');
+   switch ($eme_loop_protection) {
+      case "default":
+         if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content')
+            $eme_event_parsed=1;
+         break;
+      case "older":
+         if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content' && $eme_count_arr['the_content']>1)
+            $eme_event_parsed=1;
+         break;
+      case "desperate":
+         if ((count($wp_current_filter)>1 && end($wp_current_filter)=='the_content') || $eme_count_arr['the_content']>1)
+            $eme_event_parsed=1;
+         break;
    }
    // we change the content of the page only if we're "in the loop",
    // otherwise this filter also gets applied if e.g. a widget calls
