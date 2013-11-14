@@ -3716,8 +3716,14 @@ Weblog Editor 2.0
              echo "<item>\n";
              echo "<title>$title</title>\n";
              echo "<link>$event_link</link>\n";
-             if (get_option('eme_rss_show_pubdate' ))
-                echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
+             if (get_option('eme_rss_show_pubdate' )) {
+                if (get_option('eme_rss_pubdate_startdate' )) {
+                   $timezoneoffset=date('O');
+                   echo "<pubDate>".date_i18n ('D, d M Y H:i:s $timezoneoffset', strtotime($event['event_start_date']." ".$event['event_start_time']))."</pubDate>\n";
+                } else {
+                   echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
+                }
+             }
              echo "<description>$description</description>\n";
              if (get_option('eme_categories_enabled')) {
                 $categories = eme_sanitize_rss(eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" ));

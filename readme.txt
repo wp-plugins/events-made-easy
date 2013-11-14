@@ -120,6 +120,7 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: placeholder #_TOTALPRICEx added for mail formats (with x being a number: gives the total price to pay per price for multiprice events: the amount of spaces booked times the specific price of the multiprice event)
 * Feature: added a facebook import function when creating a new event. Thanks to Tom Chubb and Jashwant Singh Chaudhary.
 * Feature: some themes result in weird behaviour because they use the_content filters, resulting in loops or unwanted content replacement. Added a setting against possible loop protection.
+* Feature: RSS pubdate can now also be the event start time
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore
 * Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
