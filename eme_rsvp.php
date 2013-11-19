@@ -575,6 +575,8 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment = ""
 // } else {
       //$sql = "INSERT INTO $bookings_table (event_id, person_id, booking_seats,booking_comment) VALUES ($event_id, $person_id, $seats,'$comment')";
       //$wpdb->query($sql);
+
+      // we insert the booking in the DB, then calc the transfer_nbr for it based on the new booking id
       if ($wpdb->insert($bookings_table,$booking)) {
          $booking['booking_id'] = $wpdb->insert_id;
          $booking['transfer_nbr_be97'] = eme_transfer_nbr_be97($booking['booking_id']);
@@ -583,6 +585,7 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment = ""
          $where['booking_id'] = $booking['booking_id'];
          $fields['transfer_nbr_be97'] = $booking['transfer_nbr_be97'];
          $wpdb->update($bookings_table, $fields, $where);
+         // now that everything is (or should be) correctly entered in the db, execute possible actions for the new booking
          if (has_action('eme_insert_rsvp_action')) do_action('eme_insert_rsvp_action',$booking);
          return $booking['booking_id'];
       } else {
