@@ -577,15 +577,7 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment = ""
       //$wpdb->query($sql);
       if ($wpdb->insert($bookings_table,$booking)) {
          $booking['booking_id'] = $wpdb->insert_id;
-         $transfer_nbr_be97_main=sprintf("%010d",$booking['booking_id']);
-         // the control number is the %97 result, or 97 in case %97=0
-         $transfer_nbr_be97_check=$transfer_nbr_be97_main % 97;
-	if ($transfer_nbr_be97_check==0)
-		$transfer_nbr_be97_check = 97 ;
-         $transfer_nbr_be97_check=sprintf("%02d",$transfer_nbr_be97_check);
-         $transfer_nbr_be97 = $transfer_nbr_be97_main.$transfer_nbr_be97_check;
-         $transfer_nbr_be97 = substr($transfer_nbr_be97,0,3)."/".substr($transfer_nbr_be97,3,4)."/".substr($transfer_nbr_be97,7,5);
-         $booking['transfer_nbr_be97'] = $transfer_nbr_be97_main.$transfer_nbr_be97_check;
+         $booking['transfer_nbr_be97'] = eme_transfer_nbr_be97($booking['booking_id']);
          $where = array();
          $fields = array();
          $where['booking_id'] = $booking['booking_id'];

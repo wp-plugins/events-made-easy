@@ -415,4 +415,16 @@ function eme_thumbnail_sizes() {
    return $sizes;
 }
 
+function eme_transfer_nbr_be97($my_nbr) {
+   $transfer_nbr_be97_main=sprintf("%010d",$my_nbr);
+   // the control number is the %97 result, or 97 in case %97=0
+   $transfer_nbr_be97_check=$transfer_nbr_be97_main % 97;
+   if ($transfer_nbr_be97_check==0)
+      $transfer_nbr_be97_check = 97 ;
+   $transfer_nbr_be97_check=sprintf("%02d",$transfer_nbr_be97_check);
+   $transfer_nbr_be97 = $transfer_nbr_be97_main.$transfer_nbr_be97_check;
+   $transfer_nbr_be97 = substr($transfer_nbr_be97,0,3)."/".substr($transfer_nbr_be97,3,4)."/".substr($transfer_nbr_be97,7,5);
+   return $transfer_nbr_be97_main.$transfer_nbr_be97_check;
+}
+
 ?>
