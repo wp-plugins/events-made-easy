@@ -204,10 +204,6 @@ function eme_load_textdomain() {
    load_plugin_textdomain('eme', false, $thisDir.'/langs'); 
 }
 
-//required fields
-$required_fields = array('event_name'); 
-$location_required_fields = array("location_name" => __('The location name', 'eme'), "location_address" => __('The location address', 'eme'), "location_town" => __('The location town', 'eme'));
-
 // To enable activation through the activate function
 register_activation_hook(__FILE__,'eme_install');
 // when deactivation is needed

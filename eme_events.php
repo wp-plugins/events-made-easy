@@ -2639,24 +2639,20 @@ function eme_event_form($event, $title, $element) {
 }
 
 function eme_validate_event($event) {
-   global $required_fields;
-   $errors = array ();
-   foreach ( $required_fields as $field ) {
-      if ($event[$field] == "") {
-         $errors[] = $field;
-      }
-   }
-   $error_message = "";
-   if (count ( $errors ) > 0)
-      $error_message = __ ( 'Missing fields: ','eme' ) . implode ( ", ", $errors ) . ". ";
+   $required_fields = array("event_name" => __('The event name', 'eme'));
+   $troubles = "";
+   if (empty($event['event_name'])) {
+      $troubles .= "<li>".$required_fields['event_name'].__(" is missing!", "eme")."</li>";
+   }  
    if (isset($_POST['repeated_event']) && $_POST['repeated_event'] == "1" && (!isset($_POST['recurrence_end_date']) || $_POST['recurrence_end_date'] == ""))
-      $error_message .= __ ( 'Since the event is repeated, you must specify an event date for the recurrence.', 'eme' );
+      $troubles .= "<li>".__ ( 'Since the event is repeated, you must specify an event date for the recurrence.', 'eme' )."</li>";
 
-   if ($error_message != "")
-      return $error_message;
-   else
+   if (empty($troubles)) {
       return "OK";
-
+   } else {
+      $message = __('Ach, some problems here:', 'eme')."<ul>\n$troubles</ul>";
+      return $message; 
+   }
 }
 
 function eme_closed($data) {
