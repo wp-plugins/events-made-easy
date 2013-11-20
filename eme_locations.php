@@ -716,15 +716,21 @@ function eme_get_identical_location($location) {
 }
 
 function eme_validate_location($location) {
-   global $location_required_fields;
+   $location_required_fields = array("location_name" => __('The location name', 'eme'), "location_address" => __('The location address', 'eme'), "location_town" => __('The location town', 'eme'));
    $troubles = "";
-   foreach ($location_required_fields as $field => $description) {
-      if ($location[$field] == "" ) {
-         $troubles .= "<li>".$description.__(" is missing!", "eme")."</li>";
+   if (empty($location['location_name'])) {
+      $troubles .= "<li>".$location_required_fields['location_name'].__(" is missing!", "eme")."</li>";
+   }
+   if (empty($location['location_longitude']) && empty($location['location_longitude'])) {
+      if (empty($location['location_address'])) {
+         $troubles .= "<li>".$location_required_fields['location_address'].__(" is missing!", "eme")."</li>";
+      }
+      if (empty($location['location_town'])) {
+         $troubles .= "<li>".$location_required_fields['location_town'].__(" is missing!", "eme")."</li>";
       }
    }
 
-   if ($troubles == "") {
+   if (empty($troubles)) {
       return "OK";
    } else {
       $message = __('Ach, some problems here:', 'eme')."<ul>\n$troubles</ul>";
