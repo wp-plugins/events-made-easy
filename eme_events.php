@@ -2675,6 +2675,12 @@ function eme_admin_general_script() {
 <script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.js" type="text/javascript"></script>
 <?php
    
+   // all the rest below is needed on 3 pages only (for now), so we return if not there
+   global $plugin_page;
+   if ( !in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
+      return;
+   }
+
    // check if the user wants AM/PM or 24 hour notation
    $time_format = get_option('time_format');
    $show24Hours = 'true';
@@ -2699,9 +2705,7 @@ function eme_admin_general_script() {
    }
 ?>
 <style type='text/css' media='all'>
-@import
-   "<?php echo EME_PLUGIN_URL; ?>js/jquery-ui-datepicker/ui.datepicker.css"
-   ;
+   @import "<?php echo EME_PLUGIN_URL; ?>js/jquery-ui-datepicker/ui.datepicker.css";
 </style>
 <script type="text/javascript">
    //<![CDATA[
@@ -2783,13 +2787,6 @@ $j_eme_event(document).ready( function() {
 
    $j_eme_event("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
    $j_eme_event("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
-
-   $j_eme_event('input.select-all').change(function(){
-      if($j_eme_event(this).is(':checked'))
-         $j_eme_event('input.row-selector').attr('checked', true);
-      else
-         $j_eme_event('input.row-selector').attr('checked', false);
-   });
 
    // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_email_body, event_registration_form_format
    // is empty: display default value on focus, and if the value hasn't changed from the default: empty it on blur
@@ -2994,21 +2991,6 @@ $j_eme_event(document).ready( function() {
    }
 
    $j_eme_event('#eventForm').bind("submit", validateEventForm);
-
-   function areyousuretodeny() {
-      if ($j_eme_event("select[name=action]").val() == "denyRegistration") {
-        if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
-           return false;
-        } else {
-           return true;
-        }
-      }
-      return true;
-   }
-
-   $j_eme_event('#eme-admin-pendingform').bind("submit", areyousuretodeny);
-   $j_eme_event('#eme-admin-changeregform').bind("submit", areyousuretodeny);
-      
 });
 
 //]]>

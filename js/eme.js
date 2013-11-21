@@ -1,4 +1,4 @@
-$j_eme_booking=jQuery.noConflict();
+$j_eme=jQuery.noConflict();
 
 function isoStringToDate(s) {
   var b = s.split(/[-t:+]/ig);
@@ -12,31 +12,52 @@ function isoStringToDate(s) {
 }
 
 function remove_booking() {
-	eventId = ($j_eme_booking(this).parents('table:first').attr('id').split("-"))[3]; 
-	idToRemove = ($j_eme_booking(this).parents('tr:first').attr('id').split("-"))[1];
+	eventId = ($j_eme(this).parents('table:first').attr('id').split("-"))[3]; 
+	idToRemove = ($j_eme(this).parents('tr:first').attr('id').split("-"))[1];
 	$j_eme_booking.ajax({
   	  type: "POST",
 	    url: "admin.php?page=eme-people&action=remove_booking",
 	    data: "booking_id="+ idToRemove,
 	    success: function(){
-				$j_eme_booking('tr#booking-' + idToRemove).fadeOut('slow');
+				$j_eme('tr#booking-' + idToRemove).fadeOut('slow');
 				update_booking_data();
 	   		}
 	});
 }
  
 function update_booking_data () {
-  	$j_eme_booking.getJSON("admin.php?page=eme-people&eme_ajax_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
+  	$j_eme.getJSON("admin.php?page=eme-people&eme_ajax_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
   	  	booked = data[0].bookedSeats;
 		available = data[0].availableSeats; 
-		$j_eme_booking('td#booked-seats').text(booked);
-		$j_eme_booking('td#available-seats').text(available);
+		$j_eme('td#booked-seats').text(booked);
+		$j_eme('td#available-seats').text(available);
  	});
 }
 
-$j_eme_booking(document).ready( function() {
+function areyousuretodeny() {
+   if ($j_eme("select[name=action]").val() == "denyRegistration") {
+      if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
+         return false;
+      } else {
+         return true;
+      }
+   }
+   return true;
+}
+
+$j_eme(document).ready( function() {
     // Managing bookings delete operations 
-	$j_eme_booking('a.bookingdelbutton').click(remove_booking);
+      $j_eme('a.bookingdelbutton').click(remove_booking);
+      $j_eme('#eme-admin-pendingform').bind("submit", areyousuretodeny);
+      $j_eme('#eme-admin-changeregform').bind("submit", areyousuretodeny);
+
+      $j_eme('input.select-all').change(function() {
+         if ($j_eme(this).is(':checked')) {
+            $j_eme('input.row-selector').attr('checked', true);
+         } else {
+            $j_eme('input.row-selector').attr('checked', false);
+         }
+      });
 });
 
 jQuery(document).ready( function($) {
