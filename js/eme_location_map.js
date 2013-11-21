@@ -39,7 +39,7 @@ function loadGMap() {
 				disableDoubleClickZoom: true,
 				scrollwheel: enable_zooming,
 				mapTypeControlOptions: {
-					mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]
+					mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID]
 				},
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
@@ -176,7 +176,7 @@ function loadGMap() {
                            disableDoubleClickZoom: true,
                            scrollwheel: enable_zooming,
                            mapTypeControlOptions: {
-                                 mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]
+                                 mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID]
                            },
                            mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
