@@ -148,8 +148,10 @@ define('DEFAULT_SINGLE_EVENT_FORMAT', '<p>#j #M #Y - #H:#i</p><p>#_TOWN</p><p>#_
 define('DEFAULT_EVENTS_PAGE_TITLE',__('Events','eme') ) ;
 define('DEFAULT_EVENT_PAGE_TITLE_FORMAT', '#_EVENTNAME'); 
 define('DEFAULT_EVENT_HTML_TITLE_FORMAT', '#_EVENTNAME'); 
-define('DEFAULT_RSS_DESCRIPTION_FORMAT',"#j #M #y - #H:#i <br />#_LOCATIONNAME <br />#_ADDRESS <br />#_TOWN");
+define('DEFAULT_ICAL_DESCRIPTION_FORMAT',"#_NOTES");
+define('DEFAULT_RSS_DESCRIPTION_FORMAT',"#j #M #y - #H:#i <br /> #_NOTES <br />#_LOCATIONNAME <br />#_ADDRESS <br />#_TOWN");
 define('DEFAULT_RSS_TITLE_FORMAT',"#_EVENTNAME");
+define('DEFAULT_ICAL_TITLE_FORMAT',"#_EVENTNAME");
 define('DEFAULT_MAP_TEXT_FORMAT', '<strong>#_LOCATIONNAME</strong><p>#_ADDRESS</p><p>#_TOWN</p>');
 define('DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT','<li>#_LINKEDNAME<ul><li>#j #M #y</li><li>#_TOWN</li></ul></li>');
 define('DEFAULT_NO_EVENTS_MESSAGE', __('No events', 'eme'));

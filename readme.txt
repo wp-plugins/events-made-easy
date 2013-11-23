@@ -70,6 +70,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added a facebook import function when creating a new event. Thanks to Tom Chubb and Jashwant Singh Chaudhary.
 * Feature: some themes result in weird behaviour because they use the_content filters, resulting in loops or unwanted content replacement. Added a setting against possible loop protection.
 * Feature: RSS pubdate can now also be the event start time
+* Feature: seperate format for ICAL entries
+* Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore
 * Bugfix: when specifying a location by latitude and longitude, town and address are not needed
