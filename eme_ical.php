@@ -48,6 +48,11 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    $res .= "X-ALT-DESC;FMTTYPE=text/html:$html_description\r\n";
    $res .= "URL:$event_link\r\n";
    $res .= "ATTACH:$event_link\r\n";
+   if ($event['event_image_id']) {
+      $thumb_array = image_downsize( $event['event_image_id'], get_option('eme_thumbnail_size') );
+      $thumb_url = $thumb_array[0];
+      $res .= "ATTACH:$thumb_url\r\n";
+   }
    $res .= "LOCATION:$location\r\n";
    $res .= "END:VEVENT\r\n";
    return $res;
