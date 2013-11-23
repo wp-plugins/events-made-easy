@@ -57,58 +57,7 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
  
 == Frequently Asked Questions ==
 
-= I enabled the Google Maps integration, but instead of the map there is a green background. What should I do? =
-
-I call that "the green screen of death", but it's quite easy to fix your issue. If you see that green background, your theme has a little problem that should be fixed. Open the `header.php` page of your theme; if your theme hasn't any `header.php` page, just open the `index.php page` and/or any page containing the `<head>` section of the html code. Make sure that the page contains a line like this:              
-
-    <?php wp_head(); ?>              
-
-If your page(s) doesn't contain such line, add it just before the line containing `</head>`. Now everything should work allright.    
-For curiosity's sake, `<?php wp_head(); ?>` is an action hook, that is a function call allowing plugins to insert their stuff in Wordpress pages; if you're a theme maker, you should make sure to include `<?php wp_head(); ?> ` and all the necessary hooks in your theme.
-
-= How do I resize the single events map? Or change the font color or any style of the balloon? = 
-
-Create a file called 'myown.css' in the plugin directory and put in there eg.:  
-  
-.eme-location-map {  
-width: 600px;  
-height: 400px;  
-}  
-.eme-location-balloon {  
-        color: #FF7146;  
-}  
-
-You can start from events_manager.css as a base and just change the parts you want.  
-Warning: when wordpress updates a plugin automatically, it removes the plugin directory completely. So be sure to have a backup of myown.css somewhere to put back in place afterwards.
-  
-For the multiple locations map, see the shortcode [locations_map] with its possible parameters on the documentation site.
-
-= Can I customise the event page? =
-
-Sure, you can do that by editing the page and changing its [template](http://codex.wordpress.org/Pages#Page_Templates). For heavy customisation, you can use the some of the plugin's own conditional tags, described in the *Template Tags* section.
-
-= How does Events Made Easy work? =   
-
-When installed, Events Made Easy creates a special "Events" page. This page is used for the dynamic content of the events. All the events link actually link to this page, which gets rendered differently for each event.
-
-= Are events posts? =
-
-Events aren't posts. They are stored in a different table and have no relationship whatsoever with posts.
-
-= Why aren't events posts? =
-
-I decided to treat events as a separate class because my priority was the usability of the user interface in the administration; I wanted my users to have a simple, straightforward way of inserting the events, without confusing them with posts. I wanted to make my own simple event form.  
-If you need to treat events like posts, you should use one of the other excellent events plugin.
-
-= Is Events Made Easy available in my language? = 
-
-At this stage, Events Made Easy is only available in English and Italian. Yet, the plugin is fully localisable; I will welcome any translator willing to add to this package a translation of Events Made Easy into his mother tongue.
-
-== Screenshots ==
-
-1. A default event page with a map automatically pulled from Google Maps through the #_MAP placeholder.
-2. The events management page.
-3. The Events Made Easy Menu.
+See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
 
