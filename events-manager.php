@@ -109,7 +109,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 34);
+define('EME_DB_VERSION', 35);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -177,6 +177,8 @@ define('DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT','</ul>');
 define('DEFAULT_CATEGORIES_ENABLED', true);
 define('DEFAULT_GMAP_ENABLED', true);
 define('DEFAULT_GMAP_ZOOMING', true);
+define('DEFAULT_GLOBAL_ZOOM_FACTOR', 3);
+define('DEFAULT_INDIV_ZOOM_FACTOR', 14);
 define('DEFAULT_SEO_PERMALINK', true);
 define('DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT', "F, Y");
 define('DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT', "Y");
@@ -350,6 +352,8 @@ function _eme_install() {
    if ( !current_user_can( SETTING_CAPABILITY  ) ) {
       return;
    }
+   eme_add_options();
+
    $db_version = get_option('eme_version');
    if ($db_version == EME_DB_VERSION) {
       return;
@@ -376,7 +380,6 @@ function _eme_install() {
    eme_create_categories_table($charset,$collate);
    eme_create_formfields_table($charset,$collate);
    eme_create_answers_table($charset,$collate);
-   eme_add_options();
    
    update_option('eme_version', EME_DB_VERSION); 
 

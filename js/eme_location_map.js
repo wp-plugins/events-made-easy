@@ -26,6 +26,7 @@ function loadGMap() {
 			var max_longitude = -500.1;
 			var min_longitude = 500.1;
 
+			var zoom_factor=parseInt(data.zoom_factor);
 			var enable_zooming=false;
 			if (data.enable_zooming === 'true') {
 				enable_zooming = true;
@@ -34,7 +35,7 @@ function loadGMap() {
 			var mapCenter = new google.maps.LatLng(45.4213477,10.952397);
                         
 			var myOptions = {
-				zoom: 3,
+				zoom: zoom_factor,
 				center: mapCenter,
 				disableDoubleClickZoom: true,
 				scrollwheel: enable_zooming,
@@ -164,6 +165,7 @@ function loadGMap() {
 			var map_text_id = window['map_text_'+map_id]; 
 			var point = new google.maps.LatLng(lat_id, lon_id);
 
+         var zoom_factor=window['zoom_factor_'+map_id];;
          var enable_zooming=false;
          if (window['enable_zooming_'+map_id] === 'true') {
             enable_zooming = true;
@@ -171,7 +173,7 @@ function loadGMap() {
 
 			var mapCenter= new google.maps.LatLng(point.lat()+0.005, point.lng()-0.003);
 			var myOptions = {
-                           zoom: 14,
+                           zoom: zoom_factor,
                            center: mapCenter,
                            disableDoubleClickZoom: true,
                            scrollwheel: enable_zooming,

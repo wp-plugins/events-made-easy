@@ -99,10 +99,16 @@ function eme_global_map_json($eventful = false, $scope = "all", $category = '', 
       }
       $json_locations[] = "{".implode(",",$json_location)."}";
    }
+
+   $zoom_factor=get_option('eme_global_zoom_factor');
+   if ($zoom_factor >14) $zoom_factor=14;
+
    $json = '{"locations":[';
    $json .= implode(",", $json_locations); 
    $json .= '],"enable_zooming":"';
    $json .= get_option('eme_gmap_zooming') ? 'true' : 'false';
+   $json .= '","zoom_factor":"' ;
+   $json .= $zoom_factor;
    $json .= '"}' ;
    echo $json;
 }

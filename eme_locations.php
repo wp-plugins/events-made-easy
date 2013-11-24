@@ -946,7 +946,7 @@ function eme_global_map($atts) {
       scope = '$scope';
       category = '$category';
       events_page_link = '$events_page_link';
-      joiner = '$joiner'
+      joiner = '$joiner';
          //-->
          </script>";
       //$result .= "<script src='".EME_PLUGIN_URL."eme_global_map.js' type='text/javascript'></script>";
@@ -1388,8 +1388,11 @@ function eme_single_location_map($location) {
       $latitude_string="latitude_".$id_base;
       $longitude_string="longitude_".$id_base;
       $map_text_string="map_text_".$id_base;
+      $zoom_factor_string="zoom_factor_".$id_base;
       $enable_zooming_string="enable_zooming_".$id_base;
       $enable_zooming=get_option('eme_gmap_zooming') ? 'true' : 'false';
+      $zoom_factor=get_option('eme_indiv_zoom_factor');
+      if ($zoom_factor >14) $zoom_factor=14;
       #$latitude_string="latitude";
       #$longitude_string="longitude";
          //$map_div = "<div id='$id' style=' background: green; width: 400px; height: 300px'></div>" ;
@@ -1400,6 +1403,7 @@ function eme_single_location_map($location) {
       $longitude_string = parseFloat('".$location['location_longitude']."');
       $map_text_string = '$map_text';
       $enable_zooming_string = '$enable_zooming';
+      $zoom_factor_string = $zoom_factor;
       //-->
       </script>";
       // $map_div .= "<script src='".EME_PLUGIN_URL."eme_single_location_map.js' type='text/javascript'></script>";
