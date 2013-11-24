@@ -136,6 +136,11 @@ function eme_events_page() {
       $selectedEvents=array($recurrence['event_id']);
       $action = "deleteRecurrence";
    }
+
+   // in case some generic actions were taken (like disable hello or disable donate), ignore all other actions
+   if (isset ( $_GET ['disable_hello_to_user'] ) || isset ( $_GET ['disable_donate_message'] )) {
+      $action ="";
+   }
    
    // DELETE action
    if ($action == 'deleteEvents') {
