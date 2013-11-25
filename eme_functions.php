@@ -403,6 +403,7 @@ function eme_currency_array() {
    $currency_array ['CHF'] = __ ( 'Swiss Franc', 'eme' );
    $currency_array ['THB'] = __ ( 'Thai Baht', 'eme' );
    $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
+   $currency_array ['CNY'] = __ ( 'Chinese Yuan Renminbi', 'eme' );
    return $currency_array;
 }
 
