@@ -72,6 +72,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: RSS pubdate can now also be the event start time
 * Feature: separate format for ICAL entries
 * Feature: zoom factor can be changed for the global or individual maps
+* Feature: added new filter eme_event_preinsert_filter, taking place just before the event is inserted in the DB
 * Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore

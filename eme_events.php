@@ -3841,6 +3841,8 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
       }
    }
 
+   if (has_filter('eme_event_preinsert_filter')) $event=apply_filters('eme_event_preinsert_filter',$event);
+
    $wpdb->show_errors(true);
    if (!$wpdb->insert ( $table_name, $event )) {
       $wpdb->print_error();
