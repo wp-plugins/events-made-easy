@@ -352,7 +352,7 @@ function eme_daydifference($date1,$date2) {
    $ConvertToTimeStamp_Date1 = strtotime($date1);
    $ConvertToTimeStamp_Date2 = strtotime($date2);
    $DateDifference = intval($ConvertToTimeStamp_Date2) - intval($ConvertToTimeStamp_Date1);
-   return abs(round($DateDifference/86400));
+   return round($DateDifference/86400);
 }
 
 function eme_delete_image_files($image_basename) {

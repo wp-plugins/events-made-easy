@@ -83,6 +83,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: json is limited in size we only return what's needed in the javascript
 * Improvement: booking date/time info is now visible in the backend registration pages
 * Improvement: add image thumb url to the ical feed if present
+* Improvement: the day difference function now returns a negative value as well, the countdown and DAYS_TILL* placeholders can take advantage of this
 * Code improvement: added event_properties to stop needing to change the event database table all the time. Ideal for new event properties.
 
 = 1.1.3 =
