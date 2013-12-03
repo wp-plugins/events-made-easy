@@ -73,6 +73,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: separate format for ICAL entries
 * Feature: zoom factor can be changed for the global or individual maps
 * Feature: added new filter eme_event_preinsert_filter, taking place just before the event is inserted in the DB
+* Feature: added 2 placeholder options to #_CATEGORIES and #_LINKEDCATEGORIES to include/exclude categories. To be used like this:
+     #_CATEGORIES[1,3][] ==> this will get all categories for the event, but only show cat 1 or 3
+     #_CATEGORIES[][1,3] ==> this will get all categories for the event, but not show cat 1 or 3
 * Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore

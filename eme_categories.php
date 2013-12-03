@@ -233,11 +233,13 @@ function eme_get_category($category_id) {
    return $category;
 }
 
-function eme_get_event_categories($event_id) { 
+function eme_get_event_categories($event_id,$extra_conditions="") { 
    global $wpdb;
    $event_table = $wpdb->prefix.EVENTS_TBNAME; 
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
-   $sql = "SELECT category_name FROM $categories_table, $event_table where event_id ='$event_id' AND FIND_IN_SET(category_id,event_category_ids)";
+   if ($extra_conditions !="")
+      $extra_conditions = " AND ($extra_conditions)";
+   $sql = "SELECT category_name FROM $categories_table, $event_table where event_id ='$event_id' AND FIND_IN_SET(category_id,event_category_ids) $extra_conditions";
    $category = $wpdb->get_col($sql);
    return $category;
 }
