@@ -76,6 +76,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added 2 placeholder options to #_CATEGORIES and #_LINKEDCATEGORIES to include/exclude categories. To be used like this:
      #_CATEGORIES[1,3][] ==> this will get all categories for the event, but only show cat 1 or 3
      #_CATEGORIES[][1,3] ==> this will get all categories for the event, but not show cat 1 or 3
+* Feature: added option to define image size for placeholders #_EVENTIMAGETHUMB and #_EVENTIMAGETHUMBURL, to be used as:
+  #_EVENTIMAGETHUMB[MyCustomSize] or #_EVENTIMAGETHUMBURL[MyCustomSize], where "MyCustomSize" is a custom size either known to wordpress or defined in your
+  functions.php via the function add_image_size()
 * Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore

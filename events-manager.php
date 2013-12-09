@@ -1199,6 +1199,27 @@ function eme_replace_placeholders($format, $event="", $target="html") {
             $replacement = $thumb_url;
          }
 
+      } elseif ($event && preg_match('/#_EVENTIMAGETHUMB\[(.+)\]$/', $result, $matches)) {
+         if (!empty($event['event_image_id'])) {
+            $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
+            $thumb_url = $thumb_array[0];
+            $replacement = "<img src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif ($event && preg_match('/#_EVENTIMAGETHUMBURL\[(.+)\]$/', $result, $matches)) {
+         if (!empty($event['event_image_id'])) {
+            $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
+            $thumb_url = $thumb_array[0];
+            $replacement = $thumb_url;
+         }
+
       } elseif ($event && preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
          if (stristr($events_page_link, "?"))
