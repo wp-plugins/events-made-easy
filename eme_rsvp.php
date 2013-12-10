@@ -330,20 +330,25 @@ function eme_book_seats($event, $send_mail=1) {
    // for multiple prices, we have multiple booked Seats as well
    // the next foreach is only valid when called from the frontend
    $bookedSeats_mp = array();
-   if (!is_admin()) {
-	   foreach($_POST as $key=>$value) {
-		   if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
-			   $field_id = intval($matches[1]);
-			   $bookedSeats += $value;
-			   $bookedSeats_mp[$field_id]=$value;
-		   }
-	   }
-   } else {
-      if (eme_is_multiprice($event['price'])) {
+   if (eme_is_multiprice($event['price'])) {
+      // make sure the array contains the correct keys already, since
+      // later on in the function eme_record_booking we do a join
+      $booking_prices_mp=preg_split("/\|\|/",$event['price']);
+      foreach ($booking_prices_mp as $key=>$value) {
+         $bookedSeats_mp[$key] = 0;
+      }
+      if (!is_admin()) {
+         foreach($_POST as $key=>$value) {
+            if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
+               $field_id = intval($matches[1]);
+               $bookedSeats += $value;
+               $bookedSeats_mp[$field_id]=$value;
+            }
+         }
+      } else {
          if (isset($_POST['bookedSeats_mp'])) {
             $bookedSeats_mp = preg_split("/\|\|/",$_POST['bookedSeats_mp']);
-            $booking_prices = preg_split("/\|\|/",$event['price']);
-            $count1=count($booking_prices);
+            $count1=count($booking_prices_mp);
             $count2=count($bookedSeats_mp);
             if ($count1 != $count2) {
                $result = sprintf(__("'%s' is a multiprice event, please fill in %d sets of spaces to reserve in the '%s' field.",'eme'),$event['event_name'],$count1,__('Seats (Multiprice)', 'eme'));
