@@ -422,6 +422,12 @@ function eme_book_seats($event, $send_mail=1) {
    } else {
       $captcha_err = "";
    }
+
+   if (has_filter('eme_eval_booking_form_filter'))
+      $eval_filter_return=apply_filters('eme_eval_booking_form_filter',$event,$booker);
+   else
+      $eval_filter_return=array(0=>1,1=>'');
+
    if(!empty($captcha_err)) {
       $result = __('You entered an incorrect code','eme');
    } elseif ($honeypot_check != "") {
@@ -440,6 +446,9 @@ function eme_book_seats($event, $send_mail=1) {
    } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
       // spammers might get here, but we catch them
       $result = __('WP membership is required for registration','eme');
+   } elseif (is_array($eval_filter_return) && !$eval_filter_return[0]) {
+      // the result of own eval rules
+      $result = $eval_filter_return[1];
    } else {
       if (eme_are_seats_available_for($event_id, $bookedSeats)) {
          if (!$booker) {

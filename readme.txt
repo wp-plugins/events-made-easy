@@ -80,6 +80,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   #_EVENTIMAGETHUMB[MyCustomSize] or #_EVENTIMAGETHUMBURL[MyCustomSize], where "MyCustomSize" is a custom size either known to wordpress or defined in your
   functions.php via the function add_image_size()
 * Feature: the events_if shortcode now also supports "le" (lower than or equal to) and "ge" (greater than or equal to) comparisons
+* Feature: new filter eme_eval_booking_form_filter, so you can create your own eval rules for a booking
 * Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore
