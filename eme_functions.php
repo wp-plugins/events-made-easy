@@ -1,7 +1,7 @@
 <?php
 
 function eme_if_shortcode($atts,$content) {
-   extract ( shortcode_atts ( array ('tag' => '', 'value' => '', 'notvalue' => '', 'lt' => '', 'gt' => '', 'contains'=>'', 'notcontains'=>'', 'is_empty'=>0 ), $atts ) );
+   extract ( shortcode_atts ( array ('tag' => '', 'value' => '', 'notvalue' => '', 'lt' => '', 'le' => '',  'gt' => '', 'ge' => '', 'contains'=>'', 'notcontains'=>'', 'is_empty'=>0 ), $atts ) );
    if ($is_empty) {
       if (empty($tag)) return do_shortcode($content);
    } elseif (is_numeric($value) || !empty($value)) {
@@ -10,8 +10,12 @@ function eme_if_shortcode($atts,$content) {
       if ($tag!=$notvalue) return do_shortcode($content);
    } elseif (is_numeric($lt) || !empty($lt)) {
       if ($tag<$lt) return do_shortcode($content);
+   } elseif (is_numeric($le) || !empty($le)) {
+      if ($tag<=$le) return do_shortcode($content);
    } elseif (is_numeric($gt) || !empty($gt)) {
       if ($tag>$gt) return do_shortcode($content);
+   } elseif (is_numeric($ge) || !empty($ge)) {
+      if ($tag>=$ge) return do_shortcode($content);
    } elseif (is_numeric($contains) || !empty($contains)) {
       if (strpos($tag,"$contains")!== false) return do_shortcode($content);
    } elseif (is_numeric($notcontains) || !empty($notcontains)) {

@@ -79,6 +79,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added option to define image size for placeholders #_EVENTIMAGETHUMB and #_EVENTIMAGETHUMBURL, to be used as:
   #_EVENTIMAGETHUMB[MyCustomSize] or #_EVENTIMAGETHUMBURL[MyCustomSize], where "MyCustomSize" is a custom size either known to wordpress or defined in your
   functions.php via the function add_image_size()
+* Feature: the events_if shortcode now also supports "le" (lower than or equal to) and "ge" (greater than or equal to) comparisons
 * Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore
