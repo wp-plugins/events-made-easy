@@ -340,7 +340,7 @@ function eme_book_seats($event, $send_mail=1) {
       if (!is_admin()) {
          foreach($_POST as $key=>$value) {
             if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
-               $field_id = intval($matches[1]);
+               $field_id = intval($matches[1])-1;
                $bookedSeats += $value;
                $bookedSeats_mp[$field_id]=$value;
             }
