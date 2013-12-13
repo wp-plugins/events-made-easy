@@ -1142,20 +1142,36 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    
    // rsvp specific placeholders
    #$placeholders = array('#_RESPNAME' => $person['person_name'], '#_RESPEMAIL' => $person['person_email'], '#_RESPPHONE' => $person['person_phone'], '#_SPACES' => $booking['booking_seats'],'#_COMMENT' => $booking['booking_comment'], '#_TRANSFER_NBR_BE97' => $booking['transfer_nbr_be97'], '#_TOTALPRICE' => $total_price, '#_FIELDS' => $field_replace );
-   $placeholders = array('#_TOTALPRICE' => $total_price );
+   $prices = array('#_TOTALPRICE' => $total_price );
    for ( $i = 0; $i < count($total_prices); $i++) {
        $j=$i+1;
-       $placeholders['#_TOTALPRICE'.$j] = $total_prices[$i];
+       $prices['#_TOTALPRICE'.$j] = $total_prices[$i];
    }
 
-   foreach($placeholders as $key => $value) {
-      $contact_body = str_replace($key, $value, $contact_body);
-      $contact_cancelled_body = str_replace($key, $value, $contact_cancelled_body);
-      $contact_pending_body = str_replace($key, $value, $contact_pending_body);
-      $confirmed_body = str_replace($key, $value, $confirmed_body);
-      $pending_body = str_replace($key, $value, $pending_body);
-      $denied_body = str_replace($key, $value, $denied_body);
-      $cancelled_body = str_replace($key, $value, $cancelled_body);
+   preg_match_all("/#_[A-Za-z0-9_\[\]]+/", $format, $placeholders);
+   // make sure we set the largest matched placeholders first, otherwise if you found e.g.
+   // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
+   usort($placeholders[0],'sort_stringlenth');
+
+   foreach($placeholders[0] as $result) {
+      $orig_result = preg_quote($result);
+      // matches all fields placeholder
+      if (preg_match('/#_TOTALPRICE/', $result)) {
+         $found=1;
+      } else {
+         $found=0;
+      }
+
+      if ($found) {
+            $contact_body = preg_replace("/$orig_result\b/", $prices[$result] ,$contact_body );
+            $contact_cancelled_body = preg_replace("/$orig_result\b/", $prices[$result] ,$contact_cancelled_body );
+            $contact_pending_body = preg_replace("/$orig_result\b/", $prices[$result] ,$contact_pending_body );
+            $confirmed_body = preg_replace("/$orig_result\b/", $prices[$result] ,$confirmed_body );
+            $pending_body = preg_replace("/$orig_result\b/", $prices[$result] ,$pending_body );
+            $denied_body = preg_replace("/$orig_result\b/", $prices[$result] ,$denied_body );
+            $cancelled_body = preg_replace("/$orig_result\b/", $prices[$result] ,$cancelled_body );
+      }
+
    }
 
   // possible translations are handled last 

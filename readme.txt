@@ -87,6 +87,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: when specifying a location by latitude and longitude, town and address are not needed
 * Bugfix: fix a JS error on some admin pages
 * Bugfix: the multiprice array was not correctly initialized, causing troubles if you used #_SEATSx form fields that were out of order
+* Bugfix: better replacement for #_TOTALPRICExx in RSVP info
 * Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
 * Improvement: events_list header/footer can now also contain shortcodes, usefull for conditional tags. Idem for locations.
 * Improvement: json is limited in size we only return what's needed in the javascript
