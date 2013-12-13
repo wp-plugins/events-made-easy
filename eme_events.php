@@ -3093,11 +3093,11 @@ function eme_meta_box_div_event_page_title_format($event) {
 }
 
 function eme_meta_box_div_event_time($event) {
-   $hours_locale = "24";
-   // Setting 12 hours format for those countries using it
-   $locale_code = get_locale();
-   if (preg_match ( "/en_US|sk|zh|us|uk/i", $locale_code ))
-      $hours_locale = "12";
+   // check if the user wants AM/PM or 24 hour notation
+   $time_format = get_option('time_format');
+   $hours_locale = '24';
+   if (preg_match ( "/a/i", $time_format ))
+      $hours_locale = '12';
 
 ?>
                         <input id="start-time" type="text" size="8" maxlength="8" name="event_start_time" value="<?php echo $event['event_start_' . $hours_locale . "h_time"]; ?>" />
