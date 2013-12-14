@@ -81,13 +81,13 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   functions.php via the function add_image_size()
 * Feature: the events_if shortcode now also supports "le" (lower than or equal to) and "ge" (greater than or equal to) comparisons
 * Feature: new filter eme_eval_booking_form_filter, so you can create your own eval rules for a booking
+* Feature: make #_SPACESxx also work in RSVP info, next to #_RESPSPACES
 * Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore
 * Bugfix: when specifying a location by latitude and longitude, town and address are not needed
 * Bugfix: fix a JS error on some admin pages
 * Bugfix: the multiprice array was not correctly initialized, causing troubles if you used #_SEATSx form fields that were out of order
-* Bugfix: better replacement for #_TOTALPRICExx in RSVP info
 * Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
 * Improvement: events_list header/footer can now also contain shortcodes, usefull for conditional tags. Idem for locations.
 * Improvement: json is limited in size we only return what's needed in the javascript
