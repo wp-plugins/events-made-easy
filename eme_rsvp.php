@@ -725,7 +725,10 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
    $fields['modif_date_gmt']=current_time('mysql', true);
    $returncode=$wpdb->update($bookings_table, $fields, $where);
    // now that everything is (or should be) correctly entered in the db, execute possible actions for the booking
-   if (has_action('eme_update_rsvp_action')) do_action('eme_update_rsvp_action',$booking);
+   if (has_action('eme_update_rsvp_action')) {
+      $booking=eme_get_booking($booking_id);
+      do_action('eme_update_rsvp_action',$booking);
+   }
    return $returncode;
 }
 
