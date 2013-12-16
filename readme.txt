@@ -82,6 +82,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: the events_if shortcode now also supports "le" (lower than or equal to) and "ge" (greater than or equal to) comparisons
 * Feature: new filter eme_eval_booking_form_filter, so you can create your own eval rules for a booking
 * Feature: make #_SPACESxx also work in RSVP info, next to #_RESPSPACES
+* Feature: new hook eme_update_rsvp_action, executed when updating booking info
 * Bugfix: correct escaping of characters for ical format
 * Bugfix: better regex replacement for replacing placeholders
 * Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore

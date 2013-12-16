@@ -723,10 +723,10 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
    }
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
-   return $wpdb->update($bookings_table, $fields, $where);
-   //$sql = "UPDATE $bookings_table SET booking_seats='$seats' WHERE booking_id = $booking_id";
-   //$wpdb->query($sql);
-   //return __('Booking approved', 'eme');
+   $returncode=$wpdb->update($bookings_table, $fields, $where);
+   // now that everything is (or should be) correctly entered in the db, execute possible actions for the booking
+   if (has_action('eme_update_rsvp_action')) do_action('eme_update_rsvp_action',$booking);
+   return $returncode;
 }
 
 function eme_get_available_seats($event_id) {
