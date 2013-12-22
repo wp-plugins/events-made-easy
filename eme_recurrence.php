@@ -133,7 +133,7 @@ function eme_insert_events_for_recurrence($event,$recurrence) {
    if ($event['event_end_date']=='') {
       $duration_days_event = 0;
    } else {
-      $duration_days_event = eme_daydifference($event['event_start_date'],$event['event_end_date']);
+      $duration_days_event = abs(eme_daydifference($event['event_start_date'],$event['event_end_date']));
    }
    foreach($matching_days as $day) {
       $event['event_start_date'] = date("Y-m-d", $day); 
@@ -180,7 +180,7 @@ function eme_update_events_for_recurrence($event,$recurrence) {
    if ($event['event_end_date']=='') {
       $duration_days_event = 0;
    } else {
-      $duration_days_event = eme_daydifference($event['event_start_date'],$event['event_end_date']);
+      $duration_days_event = abs(eme_daydifference($event['event_start_date'],$event['event_end_date']));
    }
 
    // 2 steps for updating events for a recurrence:

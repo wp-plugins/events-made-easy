@@ -1,35 +1,67 @@
-$j_eme_booking=jQuery.noConflict();
+$j_eme=jQuery.noConflict();
+
+function isoStringToDate(s) {
+  var b = s.split(/[-t:+]/ig);
+    // FB sends date in two formats, sometimes it avoids time
+  if(b.length === 3) {
+     return new Date(b[0], --b[1], b[2]);
+  } else {
+     return new Date(b[0], --b[1], b[2], b[3], b[4], b[5]);
+  }
+  //return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5]));
+}
 
 function remove_booking() {
-	eventId = ($j_eme_booking(this).parents('table:first').attr('id').split("-"))[3]; 
-	idToRemove = ($j_eme_booking(this).parents('tr:first').attr('id').split("-"))[1];
+	eventId = ($j_eme(this).parents('table:first').attr('id').split("-"))[3]; 
+	idToRemove = ($j_eme(this).parents('tr:first').attr('id').split("-"))[1];
 	$j_eme_booking.ajax({
   	  type: "POST",
 	    url: "admin.php?page=eme-people&action=remove_booking",
 	    data: "booking_id="+ idToRemove,
 	    success: function(){
-				$j_eme_booking('tr#booking-' + idToRemove).fadeOut('slow');
+				$j_eme('tr#booking-' + idToRemove).fadeOut('slow');
 				update_booking_data();
 	   		}
 	});
 }
  
 function update_booking_data () {
-  	$j_eme_booking.getJSON("admin.php?page=eme-people&eme_ajax_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
+  	$j_eme.getJSON("admin.php?page=eme-people&eme_ajax_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
   	  	booked = data[0].bookedSeats;
 		available = data[0].availableSeats; 
-		$j_eme_booking('td#booked-seats').text(booked);
-		$j_eme_booking('td#available-seats').text(available);
+		$j_eme('td#booked-seats').text(booked);
+		$j_eme('td#available-seats').text(available);
  	});
 }
 
-$j_eme_booking(document).ready( function() {
+function areyousuretodeny() {
+   if ($j_eme("select[name=action]").val() == "denyRegistration") {
+      if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
+         return false;
+      } else {
+         return true;
+      }
+   }
+   return true;
+}
+
+$j_eme(document).ready( function() {
     // Managing bookings delete operations 
-	$j_eme_booking('a.bookingdelbutton').click(remove_booking);
+      $j_eme('a.bookingdelbutton').click(remove_booking);
+      $j_eme('#eme-admin-pendingform').bind("submit", areyousuretodeny);
+      $j_eme('#eme-admin-changeregform').bind("submit", areyousuretodeny);
+
+      $j_eme('input.select-all').change(function() {
+         if ($j_eme(this).is(':checked')) {
+            $j_eme('input.row-selector').attr('checked', true);
+         } else {
+            $j_eme('input.row-selector').attr('checked', false);
+         }
+      });
 });
 
 jQuery(document).ready( function($) {
-	jQuery('#mtm_add_tag').click( function(event){
+	jQuery('#mtm_add_tag').click( function(event) {
 		event.preventDefault();
 		//Get All meta rows
 			var metas = jQuery('#mtm_body').children();
@@ -55,7 +87,26 @@ jQuery(document).ready( function($) {
 		//Duplicate the last entry, remove values and rename id
 	});
 	
-	jQuery('#mtm_body a').click( function(event){
+	jQuery('#import-fb-event-btn').click(function (e) {
+		e.preventDefault();
+		var url = jQuery('#fb-event-url').val();
+		var eventID = url.split('facebook.com/events/')[1].split('/')[0];
+		FB.api('/' + eventID,function (data) {
+			jQuery('#title').val(data.name);
+			tinyMCE.get('content').setContent(data.description.replace(/\n/ig,"<br>"));
+
+			var startTime = isoStringToDate(data.start_time);
+			var endTime = isoStringToDate(data.end_time);
+
+			jQuery('#localised-start-date').datepicker('setDate', startTime);
+			jQuery('#localised-end-date').datepicker('setDate', endTime);
+			jQuery('#start-time').timeEntry('setTime', startTime);
+			jQuery('#end-time').timeEntry('setTime', endTime);
+			// not needed, jQuery('#location_address').val(data.location);
+		});
+	});
+
+	jQuery('#mtm_body a').click( function(event) {
 		event.preventDefault();
 		//Only remove if there's more than 1 meta tag
 		if(jQuery('#mtm_body').children().length > 1){
@@ -72,7 +123,7 @@ jQuery(document).ready( function($) {
 				metaCopy.find('[name=mtm_'+ oldId +'_content]').attr('name', 'mtm_'+newId+'_content');
 				metaCopy.find('[name=mtm_'+ oldId +'_name]').attr( 'name', 'mtm_'+newId+'_name');
 			});
-		}else{
+		} else {
 			metaCopy = jQuery(jQuery(this).parent().parent().get(0));
 			metaCopy.find('[name=mtm_1_ref]').attr('value', '');
 			metaCopy.find('[name=mtm_1_content]').attr('value', '');
