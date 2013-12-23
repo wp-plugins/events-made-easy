@@ -13,6 +13,7 @@ function eme_new_location() {
    $location['location_url'] = '';
    $location['location_slug'] = '';
    $location['location_image_url'] = '';
+   $location['location_image_id'] = 0;
    return $location;
 }
  
@@ -56,6 +57,7 @@ function eme_locations_page() {
          $location['location_description'] = stripslashes($_POST['content']);
          $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
          $location['location_image_url'] = isset($_POST ['location_image_url']) ? eme_strip_tags ( $_POST ['location_image_url'] ) : '';
+         $location['location_image_id'] = isset($_POST ['location_image_id']) ? intval ( $_POST ['location_image_id'] ) : 0;
          $location['location_slug'] = isset($_POST ['location_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['location_slug'] )) : eme_permalink_convert($location['location_name']);
          // we don't change the author
          //$location['location_author'] = $current_userid;
@@ -112,6 +114,7 @@ function eme_locations_page() {
          $location['location_author'] = $current_userid;
          $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
          $location['location_image_url'] = isset($_POST ['location_image_url']) ? eme_strip_tags ( $_POST ['location_image_url'] ) : '';
+         $location['location_image_id'] = isset($_POST ['location_image_id']) ? intval ( $_POST ['location_image_id'] ) : 0;
          $location['location_slug'] = isset($_POST ['location_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['location_slug'] )) : eme_permalink_convert($location['location_name']);
          if (isset ($_POST['location_category_ids'])) {
             // the category id's need to begin and end with a comma
@@ -241,12 +244,19 @@ function eme_locations_edit_layout($location, $message = "") {
             <div class="inside">
              <?php if (isset($location['location_image_url']) && !empty($location['location_image_url'])) {
                        echo "<img id='eme_location_image_example' src='".$location['location_image_url']."' width='200' />";
+                       echo "<input type='hidden' name='location_image_url' id='location_image_url' value='".$location['location_image_url']."' />";
                     } else {
                        echo "<img id='eme_location_image_example' src='' alt='' width='200' />";
+                       echo "<input type='hidden' name='location_image_url' id='location_image_url' />";
+                    }
+                    if (isset($location['location_image_id']) && !empty($location['location_image_id'])) {
+                       echo "<input type='hidden' name='location_image_id' id='location_image_id' value='".$location['location_image_id']."' />";
+                    } else {
+                       echo "<input type='hidden' name='location_image_id' id='location_image_id' />";
                     }
                     // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
               ?>
-                <input type="hidden" name="location_image_url" id="location_image_url" />
+
                 <input type="button" name="location_image_button" id="location_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
                 <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
             </div>
@@ -255,6 +265,7 @@ jQuery(document).ready(function($){
 
   $('#eme_remove_old_image').click(function(e) {
         $('#location_image_url').val('');
+        $('#location_image_id').val('');
         $('#eme_location_image_example' ).attr("src",'');
   });
   $('#location_image_button').click(function(e) {
@@ -265,6 +276,7 @@ jQuery(document).ready(function($){
     wp.media.editor.send.attachment = function(props, attachment){
       if ( eme_custom_media ) {
         $('#location_image_url').val(attachment.url);
+        $('#location_image_id').val(attachment.id);
         $('#eme_location_image_example' ).attr("src",attachment.url);
       } else {
         return _orig_send_attachment.apply( this, [props, attachment] );
@@ -459,6 +471,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                         </div>
                         <div class="uploader">
                           <input type="hidden" name="location_image_url" id="location_image_url" />
+                          <input type="hidden" name="location_image_id" id="location_image_id" />
                           <input type="button" name="location_image_button" id="location_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
                           <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
                         </div>
@@ -467,6 +480,7 @@ jQuery(document).ready(function($){
 
   $('#eme_remove_old_image').click(function(e) {
         $('#location_image_url').val('');
+        $('#location_image_id').val('');
         $('#eme_location_image_example' ).attr("src",'');
   });
   $('#location_image_button').click(function(e) {
@@ -477,6 +491,7 @@ jQuery(document).ready(function($){
     wp.media.editor.send.attachment = function(props, attachment){
       if ( eme_custom_media ) {
         $('#location_image_url').val(attachment.url);
+        $('#location_image_id').val(attachment.id);
         $('#eme_location_image_example' ).attr("src",attachment.url);
       } else {
         return _orig_send_attachment.apply( this, [props, attachment] );
@@ -626,7 +641,7 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
       $locations = $wpdb->get_results($sql, ARRAY_A); 
       // don't forget the images (for the older locations that didn't use the wp gallery)
       foreach ($locations as $key=>$location) {
-         if (empty($locations[$key]['location_image_url']))
+         if (empty($locations[$key]['location_image_id']) && empty($locations[$key]['location_image_url']))
             $locations[$key]['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
       }
    }
@@ -647,7 +662,7 @@ function eme_get_location($location_id=0) {
          return eme_new_location();
 
       // don't forget the images (for the older locations that didn't use the wp gallery)
-      if (empty($location['location_image_url']))
+      if (empty($location['location_image_id']) && empty($location['location_image_url']))
          $location['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
 
       if (has_filter('eme_location_filter')) $location=apply_filters('eme_location_filter',$location);
@@ -701,15 +716,21 @@ function eme_get_identical_location($location) {
 }
 
 function eme_validate_location($location) {
-   global $location_required_fields;
+   $location_required_fields = array("location_name" => __('The location name', 'eme'), "location_address" => __('The location address', 'eme'), "location_town" => __('The location town', 'eme'));
    $troubles = "";
-   foreach ($location_required_fields as $field => $description) {
-      if ($location[$field] == "" ) {
-         $troubles .= "<li>".$description.__(" is missing!", "eme")."</li>";
+   if (empty($location['location_name'])) {
+      $troubles .= "<li>".$location_required_fields['location_name'].__(" is missing!", "eme")."</li>";
+   }
+   if (empty($location['location_longitude']) && empty($location['location_longitude'])) {
+      if (empty($location['location_address'])) {
+         $troubles .= "<li>".$location_required_fields['location_address'].__(" is missing!", "eme")."</li>";
+      }
+      if (empty($location['location_town'])) {
+         $troubles .= "<li>".$location_required_fields['location_town'].__(" is missing!", "eme")."</li>";
       }
    }
 
-   if ($troubles == "") {
+   if (empty($troubles)) {
       return "OK";
    } else {
       $message = __('Ach, some problems here:', 'eme')."<ul>\n$troubles</ul>";
@@ -925,7 +946,7 @@ function eme_global_map($atts) {
       scope = '$scope';
       category = '$category';
       events_page_link = '$events_page_link';
-      joiner = '$joiner'
+      joiner = '$joiner';
          //-->
          </script>";
       //$result .= "<script src='".EME_PLUGIN_URL."eme_global_map.js' type='text/javascript'></script>";
@@ -1000,7 +1021,7 @@ function get_locations_shortcode($atts) {
    $locations_format_footer = get_option('eme_location_list_format_footer' );
    $locations_format_footer = ( $locations_format_footer != '' ) ? $locations_format_footer : "</ul>";
 
-   $out = $locations_format_header;
+   $out = eme_replace_locations_placeholders($locations_format_header);
    foreach ($locations as $location) {
       if ($locations_format_item == '') {
          $out .= "<li class=\"location-{$location['location_id']}\">{$location_name}</li>";
@@ -1008,7 +1029,7 @@ function get_locations_shortcode($atts) {
          $out .= eme_replace_locations_placeholders($locations_format_item,$location);
       }
    }
-   $out .= $locations_format_footer;
+   $out .= eme_replace_locations_placeholders($locations_format_footer);
    $out .= <<<EOD
       <script type="text/javascript">
       //<![CDATA[
@@ -1037,7 +1058,7 @@ EOD;
 }
 add_shortcode('events_locations','get_locations_shortcode');
 
-function eme_replace_locations_placeholders($format, $location, $target="html", $do_shortcode=1) {
+function eme_replace_locations_placeholders($format, $location="", $target="html", $do_shortcode=1) {
 
    preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_\[\]]+/", $format, $placeholders);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
@@ -1047,7 +1068,7 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       $found=1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1062,35 +1083,69 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
       // matches alla fields placeholder
       if (preg_match('/#_MAP$/', $result)) {
          $replacement = eme_single_location_map($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_PASTEVENTS$/', $result)) {
          $replacement = eme_events_in_location_list($location, "past");
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_NEXTEVENTS$/', $result)) {
          $replacement = eme_events_in_location_list($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_ALLEVENTS$/', $result)) {
          $replacement = eme_events_in_location_list($location, "all");
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_(ADDRESS|TOWN)$/', $result)) {
          $field = "location_".ltrim(strtolower($result), "#_");
          if (isset($location[$field]))
             $replacement = $location[$field];
          $replacement = eme_trans_sanitize_html($replacement);
-         if ($target == "html")
-            $replacement = apply_filters('eme_general', $replacement); 
-         else 
-            $replacement = apply_filters('eme_general_rss', $replacement); 
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_(NAME|LOCATIONNAME|LOCATION)$/', $result)) {
          $field = "location_name";
          if (isset($location[$field]))
             $replacement = $location[$field];
          $replacement = eme_trans_sanitize_html($replacement);
-         if ($target == "html")
-            $replacement = apply_filters('eme_general', $replacement); 
-         else 
-            $replacement = apply_filters('eme_general_rss', $replacement); 
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_LOCATIONID$/', $result)) {
          $field = "location_id";
@@ -1098,20 +1153,77 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = eme_trans_sanitize_html($replacement);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_(IMAGE|LOCATIONIMAGE)$/', $result)) {
-         if($location['location_image_url'] != '')
+         if (!empty($location['location_image_id']))
+            $location['location_image_url'] = wp_get_attachment_url($location['location_image_id']);
+         if(!empty($location['location_image_url'])) {
             $replacement = "<img src='".$location['location_image_url']."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_(IMAGEURL|LOCATIONIMAGEURL)$/', $result)) {
-         if($location['location_image_url'] != '')
+         if (!empty($location['location_image_id']))
+            $location['location_image_url'] = wp_get_attachment_url($location['location_image_id']);
+         if ($location['location_image_url'] != '') {
             $replacement = $location['location_image_url'];
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif (preg_match('/#_LOCATIONIMAGETHUMB$/', $result)) {
+         if (!empty($location['location_image_id'])) {
+            $thumb_array = image_downsize( $location['location_image_id'], get_option('eme_thumbnail_size') );
+            $thumb_url = $thumb_array[0];
+            $replacement = "<img src='".$thumb_url."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif (preg_match('/#_LOCATIONIMAGETHUMBURL$/', $result)) {
+         if (!empty($location['location_image_id'])) {
+            $thumb_array = image_downsize( $location['location_image_id'], get_option('eme_thumbnail_size') );
+            $thumb_url = $thumb_array[0];
+            $replacement = $thumb_url;
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement);
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
 
       } elseif (preg_match('/#_LOCATIONPAGEURL$/', $result)) {
          $replacement = eme_location_url($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/#_LATITUDE$/', $result)) {
          $field = "location_latitude";
@@ -1119,8 +1231,10 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = eme_trans_sanitize_html($replacement);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_LONGITUDE$/', $result)) {
@@ -1129,20 +1243,31 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = eme_trans_sanitize_html($replacement);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_DIRECTIONS/', $result)) {
          $replacement = eme_add_directions_form($location);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif (preg_match('/^#_CATEGORIES|#_LOCATIONCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_location_categories($location['location_id']);
          $replacement = eme_trans_sanitize_html(join(", ",$categories));
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
-         } else {
+         } elseif ($target == "rss")  {
             $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_IS_SINGLE_LOC/', $result)) {
@@ -1173,7 +1298,7 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
          $replacement = rawurlencode($replacement);
       }
       if ($found)
-         $format = str_replace($orig_result, $replacement ,$format );
+         $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
 
    # we handle DESCRIPTION the last, so no placeholder replacement happens accidentaly in the text of #_DESCRIPTION
@@ -1181,7 +1306,7 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
       $result=$placeholders[0];
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result);
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -1200,17 +1325,19 @@ function eme_replace_locations_placeholders($format, $location, $target="html", 
       $replacement = eme_translate($replacement);
       if ($target == "html")
          $replacement = apply_filters('eme_notes', $replacement);
-      else
-         if ($target == "map")
-            $replacement = apply_filters('eme_notes_map', $replacement);
-         else
-            $replacement = apply_filters('eme_notes_rss', $replacement);
+      elseif ($target == "rss") {
+         $replacement = apply_filters('eme_notes_rss', $replacement);
+         $replacement = apply_filters('the_content_rss', $replacement);
+      } else {
+         $replacement = apply_filters('eme_text', $replacement);
+      }
+
       if ($need_escape) {
          $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = str_replace($orig_result, $replacement ,$format );
+      $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
 
    if ($do_shortcode)
@@ -1245,8 +1372,8 @@ function eme_single_location_map($location) {
    $map_text = addslashes(eme_replace_locations_placeholders(get_option('eme_location_baloon_format'), $location));
    $map_text = preg_replace("/\r\n|\n\r|\n/","<br />",$map_text);
    // if gmap is not active: we don't show the map
-   // if the location name is empty: we don't show the map
-   if ($gmap_is_active && !empty($location['location_name']) && !empty($location['location_address']) && !empty($location['location_town'])) {
+   // if the location name is empty: we don't show the map. But that can never happen since it's checked when creating the location
+   if ($gmap_is_active) {
       $eme_need_gmap_js=1;
       //$id_base = $location['location_id'];
       // we can't create a unique <div>-id based on location id alone, because you can have multiple maps on the sampe page for
@@ -1261,8 +1388,11 @@ function eme_single_location_map($location) {
       $latitude_string="latitude_".$id_base;
       $longitude_string="longitude_".$id_base;
       $map_text_string="map_text_".$id_base;
+      $zoom_factor_string="zoom_factor_".$id_base;
       $enable_zooming_string="enable_zooming_".$id_base;
       $enable_zooming=get_option('eme_gmap_zooming') ? 'true' : 'false';
+      $zoom_factor=get_option('eme_indiv_zoom_factor');
+      if ($zoom_factor >14) $zoom_factor=14;
       #$latitude_string="latitude";
       #$longitude_string="longitude";
          //$map_div = "<div id='$id' style=' background: green; width: 400px; height: 300px'></div>" ;
@@ -1273,6 +1403,7 @@ function eme_single_location_map($location) {
       $longitude_string = parseFloat('".$location['location_longitude']."');
       $map_text_string = '$map_text';
       $enable_zooming_string = '$enable_zooming';
+      $zoom_factor_string = $zoom_factor;
       //-->
       </script>";
       // $map_div .= "<script src='".EME_PLUGIN_URL."eme_single_location_map.js' type='text/javascript'></script>";

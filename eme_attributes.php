@@ -7,6 +7,8 @@ function eme_attributes_form($event) {
       get_option('eme_event_page_title_format' ).
       get_option('eme_full_calendar_event_format' ).
       get_option('eme_location_event_list_item_format' ).
+      get_option('eme_ical_title_format' ).
+      get_option('eme_ical_description_format' ).
       get_option('eme_rss_description_format' ).
       get_option('eme_rss_title_format' ).
       get_option('eme_single_event_format' ).
