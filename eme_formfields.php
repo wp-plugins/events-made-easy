@@ -318,7 +318,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = preg_replace("/$orig_result\b/", $replacement ,$format );
+      $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
 
    // the 2 placeholders that can contain extra text are treated seperately first
@@ -400,7 +400,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
 
       if ($found) {
          $replacement = eme_translate($replacement);
-         $format = preg_replace("/$orig_result\b/", $replacement ,$format );
+         $format = preg_replace("/$orig_result/", $replacement ,$format );
       }
    }
 

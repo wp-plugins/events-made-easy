@@ -1298,7 +1298,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          $replacement = rawurlencode($replacement);
       }
       if ($found)
-         $format = preg_replace("/$orig_result\b/", $replacement ,$format );
+         $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
 
    # we handle DESCRIPTION the last, so no placeholder replacement happens accidentaly in the text of #_DESCRIPTION
@@ -1337,7 +1337,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = preg_replace("/$orig_result\b/", $replacement ,$format );
+      $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
 
    if ($do_shortcode)

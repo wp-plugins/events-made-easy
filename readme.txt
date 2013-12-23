@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.1.5 =
+* Bugfix: better regex replacement for replacing placeholders
+
 = 1.1.4 =
 * Feature: added 'First Data Global Gateway Connect 2.0' payment gateway implementation
 * Feature: new option: consider pending registrations as available seats for new bookings (meaning: ignore pending registrations for new rsvp's)

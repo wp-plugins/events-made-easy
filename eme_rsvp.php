@@ -1059,7 +1059,7 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
          $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
 
       if ($found)
-         $format = preg_replace("/$orig_result\b/", $replacement ,$format );
+         $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
    return do_shortcode($format);   
 }
@@ -1088,7 +1088,7 @@ function eme_replace_attendees_placeholders($format, $attendee, $event_id, $targ
          $found = 0;
       }
       if ($found)
-         $format = preg_replace("/$orig_result\b/", $replacement ,$format );
+         $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
    return do_shortcode($format);   
 }
