@@ -1057,15 +1057,15 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($event && preg_match('/#_MAP$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
-         } else {
-            $replacement = eme_single_location_map($event);
+         } elseif (isset($event['location_id']) && $event['location_id']) {
+               $replacement = eme_single_location_map($event);
          }
 
       } elseif ($event && preg_match('/#_DIRECTIONS$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
-         } else {
-            $replacement = eme_add_directions_form($event);
+         } elseif (isset($event['location_id']) && $event['location_id']) {
+               $replacement = eme_add_directions_form($event);
          }
 
       } elseif ($event && preg_match('/#_EVENTS_FILTERFORM$/', $result)) {
