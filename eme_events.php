@@ -2256,7 +2256,6 @@ function eme_event_form($event, $title, $element) {
       $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
    }
    
-   ob_start();
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepicker will fill in also to "to_submit" form fields
    ?>
 
@@ -2640,7 +2639,6 @@ function eme_event_form($event, $title, $element) {
       <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
    </form>
 <?php
-   echo ob_get_clean();
 }
 
 function eme_validate_event($event) {

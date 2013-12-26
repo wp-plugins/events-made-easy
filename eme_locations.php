@@ -361,7 +361,6 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
       $new_location = eme_new_location();
    }
 
-   ob_start();
    ?>
       <div class="wrap nosubsub">
        <div id="poststuff">
@@ -558,7 +557,6 @@ jQuery(document).ready(function($){
       </div> 
    </div>
    <?php
-   echo ob_get_clean();
 }
 
 function eme_get_locations($eventful = false, $scope="all", $category = '', $offset = 0) { 

@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.1.7 =
+* Improvement: remove some unneeded caching in the EME admin section.
+
 = 1.1.6 =
 * Improvement: #_MAP and #_DIRECTIONS for an event are only replaced/shown if the event is linked to a location
 * Bugfix: forgot to escape the forward slash, so some placeholders might have resulted in errors
