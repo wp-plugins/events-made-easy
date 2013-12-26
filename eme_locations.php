@@ -1068,7 +1068,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result);
+      $orig_result = preg_quote($result,'/');
       $found=1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1306,7 +1306,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       $result=$placeholders[0];
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result);
+      $orig_result = preg_quote($result,'/');
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;

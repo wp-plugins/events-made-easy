@@ -94,7 +94,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
       $replacement = "";
       $eventful=0;
       $found = 1;
-      $orig_result = preg_quote($result);
+      $orig_result = preg_quote($result,'/');
 
       if (preg_match('/^#_(EVENTFUL_)?FILTER_CATS$/', $result) && get_option('eme_categories_enabled')) {
          if (strstr($result,'#_EVENTFUL')) {

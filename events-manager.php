@@ -949,7 +949,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($results[0] as $resultKey => $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result);
+      $orig_result = preg_quote($result,'/');
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -987,7 +987,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result);
+      $orig_result = preg_quote($result,'/');
       $found = 1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1058,14 +1058,14 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif (isset($event['location_id']) && $event['location_id']) {
-               $replacement = eme_single_location_map($event);
+            $replacement = eme_single_location_map($event);
          }
 
       } elseif ($event && preg_match('/#_DIRECTIONS$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif (isset($event['location_id']) && $event['location_id']) {
-               $replacement = eme_add_directions_form($event);
+            $replacement = eme_add_directions_form($event);
          }
 
       } elseif ($event && preg_match('/#_EVENTS_FILTERFORM$/', $result)) {
@@ -1580,7 +1580,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       $result=$placeholders[0];
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result);
+      $orig_result = preg_quote($result,'/');
       $found = 1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1637,7 +1637,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($results[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result);
+      $orig_result = preg_quote($result,'/');
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
