@@ -88,21 +88,27 @@ function eme_global_map_json($eventful = false, $scope = "all", $category = '', 
       $tmp_loc=preg_replace("/\r\n|\n\r|\n/","<br />",$tmp_loc);
       $json_location[] = '"location_balloon":"'.eme_trans_sanitize_html($tmp_loc).'"';
 
-      # second, we unset the description, it might interfere with the json result
-      unset($location['location_description']);
-
-      # third, we fill in the rest of the info
+      # second, we fill in the rest of the info
       foreach($location as $key => $value) {
-         # no newlines allowed, otherwise no map is shown
-         $value=preg_replace("/\r\n|\n\r|\n/","<br />",$value);
-         $json_location[] = '"'.$key.'":"'.eme_trans_sanitize_html($value).'"';
+         # we skip some keys, since json is limited in size we only return what's needed in the javascript
+         if (preg_match('/location_balloon|location_id|location_latitude|location_longitude/', $key)) {
+            # no newlines allowed, otherwise no map is shown
+            $value=preg_replace("/\r\n|\n\r|\n/","<br />",$value);
+            $json_location[] = '"'.$key.'":"'.eme_trans_sanitize_html($value).'"';
+         }
       }
       $json_locations[] = "{".implode(",",$json_location)."}";
    }
+
+   $zoom_factor=get_option('eme_global_zoom_factor');
+   if ($zoom_factor >14) $zoom_factor=14;
+
    $json = '{"locations":[';
    $json .= implode(",", $json_locations); 
    $json .= '],"enable_zooming":"';
    $json .= get_option('eme_gmap_zooming') ? 'true' : 'false';
+   $json .= '","zoom_factor":"' ;
+   $json .= $zoom_factor;
    $json .= '"}' ;
    echo $json;
 }

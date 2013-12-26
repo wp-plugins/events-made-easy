@@ -292,7 +292,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    foreach($results[0] as $resultKey => $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result,'/');
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -318,7 +318,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = str_replace($orig_result, $replacement ,$format );
+      $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
 
    // the 2 placeholders that can contain extra text are treated seperately first
@@ -343,7 +343,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    # we need 3 required fields: #_NAME, #_EMAIL and #_SEATS
    # if these are not present: we don't replace anything and the form is worthless
    foreach($placeholders[0] as $result) {
-      $orig_result = $result;
+      $orig_result = preg_quote($result,'/');
       $found=1;
       $required=0;
       $html5_wanted=0;
@@ -400,7 +400,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
 
       if ($found) {
          $replacement = eme_translate($replacement);
-         $format = str_replace($orig_result, $replacement ,$format );
+         $format = preg_replace("/$orig_result/", $replacement ,$format );
       }
    }
 
