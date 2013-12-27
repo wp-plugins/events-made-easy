@@ -63,8 +63,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.1.7 =
 * Improvement: remove some unneeded caching in the EME admin section.
-* Improvement: make #_TOTALPRICE and #_TOTALPRICExx also work for "Booking mails" reminders
 * Bugfix: better all-day indication in ical
+* Bugfix: make #_TOTALPRICE and #_TOTALPRICExx also work for "Booking mails" reminders
 
 = 1.1.6 =
 * Improvement: #_MAP and #_DIRECTIONS for an event are only replaced/shown if the event is linked to a location

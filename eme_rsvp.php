@@ -946,12 +946,12 @@ function eme_get_attendees_for($event_id,$pending_approved=0,$only_unpayed=0) {
    return $attendees;
 }
 
-function eme_get_attendees_list_for($event_id) {
-   $attendees = eme_get_attendees_for($event_id);
+function eme_get_attendees_list_for($event) {
+   $attendees = eme_get_attendees_for($event['event_id']);
    if ($attendees) {
       $res="<ul class='eme_bookings_list_ul'>";
       foreach ($attendees as $attendee) {
-         $res.=eme_replace_attendees_placeholders(get_option('eme_attendees_list_format'),$attendee,$event_id);
+         $res.=eme_replace_attendees_placeholders(get_option('eme_attendees_list_format'),$event,$attendee);
       }
       $res.="</ul>";
    } else {
@@ -1073,7 +1073,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
    return do_shortcode($format);   
 }
 
-function eme_replace_attendees_placeholders($format, $attendee, $event_id, $target="html") {
+function eme_replace_attendees_placeholders($format, $event, $attendee, $target="html") {
    preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
    foreach($placeholders[0] as $result) {
       $replacement='';
@@ -1090,9 +1090,9 @@ function eme_replace_attendees_placeholders($format, $attendee, $event_id, $targ
             $replacement = apply_filters('eme_general_rss', $replacement); 
 
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
-         $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event_id);
+         $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event['event_id']);
       } elseif (preg_match('/#_ATTENDSPACES$/', $result)) {
-         $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event_id);
+         $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event['event_id']);
       } else {
          $found = 0;
       }
@@ -1647,10 +1647,10 @@ function eme_send_mails_page() {
             if ($target == 'attendees') {
                $attendees = eme_get_attendees_for($event_id,$pending_approved,$only_unpayed);
                foreach ( $attendees as $attendee ) {
-                  $tmp_message = eme_replace_attendees_placeholders($message, $attendee, $event_id, "text");
+                  $tmp_message = eme_replace_attendees_placeholders($message, $event, $attendee, "text");
                   $tmp_message = eme_translate($tmp_message);
                   $tmp_message = eme_strip_tags($tmp_message);
-                  $tmp_subject = eme_replace_attendees_placeholders($subject, $attendee, $event_id, "text");
+                  $tmp_subject = eme_replace_attendees_placeholders($subject, $event, $attendee, "text");
                   $tmp_subject = eme_translate($tmp_subject);
                   $tmp_subject = eme_strip_tags($tmp_subject);
                   eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
