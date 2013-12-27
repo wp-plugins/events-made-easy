@@ -40,8 +40,13 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    $res .= "BEGIN:VEVENT\r\n";
    //DTSTAMP must be in UTC format, so adding "Z" as well
    $res .= "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z\r\n";
-   $res .= "DTSTART;TZID=$tzstring:$dtstart\r\n";
-   $res .= "DTEND;TZID=$tzstring:$dtend\r\n";
+   if ($event['event_properties']['all_day']) {
+      $res .= "DTSTART;VALUE=DATE:$dtstartdate\r\n";
+      $res .= "DTEND;VALUE=DATE:$dtenddate\r\n";
+   } else {
+      $res .= "DTSTART;TZID=$tzstring:$dtstart\r\n";
+      $res .= "DTEND;TZID=$tzstring:$dtend\r\n";
+   }
    $res .= "UID:$dtstart-$dtend-".$event['event_id']."@".$_SERVER['SERVER_NAME']."\r\n";
    $res .= "SUMMARY:$title\r\n";
    $res .= "DESCRIPTION:$description\r\n";
