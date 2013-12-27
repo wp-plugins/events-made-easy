@@ -63,6 +63,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.1.7 =
 * Improvement: remove some unneeded caching in the EME admin section.
+* Improvement: make #_TOTALPRICE and #_TOTALPRICExx also work for "Booking mails" reminders
 * Bugfix: better all-day indication in ical
 
 = 1.1.6 =

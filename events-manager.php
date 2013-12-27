@@ -1318,7 +1318,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
 
       } elseif ($event && preg_match('/#_BOOKINGS$/', $result)) {
          if ($rsvp_is_active && $event['event_rsvp']) {
-            $replacement=eme_get_bookings_list_for($event['event_id']);
+            $replacement=eme_get_bookings_list_for($event);
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement); 
             } elseif ($target == "rss")  {

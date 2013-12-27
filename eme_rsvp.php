@@ -960,13 +960,13 @@ function eme_get_attendees_list_for($event_id) {
    return $res;
 }
 
-function eme_get_bookings_list_for($event_id) {
+function eme_get_bookings_list_for($event) {
    global $wpdb; 
-   $bookings=eme_get_bookings_for($event_id);
+   $bookings=eme_get_bookings_for($event['event_id']);
    if ($bookings) {
       $res=get_option('eme_bookings_list_header_format');
       foreach ($bookings as $booking) {
-         $res.= eme_replace_booking_placeholders(get_option('eme_bookings_list_format'),$booking);
+         $res.= eme_replace_booking_placeholders(get_option('eme_bookings_list_format'),$event,$booking);
       }
       $res.=get_option('eme_bookings_list_footer_format');
    } else {
@@ -975,10 +975,11 @@ function eme_get_bookings_list_for($event_id) {
    return $res;
 }
 
-function eme_replace_booking_placeholders($format, $booking, $target="html") {
+function eme_replace_booking_placeholders($format, $event, $booking, $target="html") {
    preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+/", $format, $placeholders);
    $person  = eme_get_person ($booking['person_id']);
    $answers = eme_get_answers($booking['booking_id']);
+   
    foreach($placeholders[0] as $result) {
       $replacement='';
       $found = 1;
@@ -1012,6 +1013,14 @@ function eme_replace_booking_placeholders($format, $booking, $target="html") {
              if (array_key_exists($field_id,$seats))
                 $replacement = $seats[$field_id];
          }
+      } elseif (preg_match('/#_TOTALPRICE$/', $result)) {
+         $replacement = eme_get_total_booking_price($event,$booking);
+      } elseif (preg_match('/#_TOTALPRICE(\d+)$/', $result, $matches)) {
+         // total price to pay per price if multiprice
+         $total_prices=eme_get_total_booking_multiprice($event,$booking);
+         $price_id = intval($matches[1]);
+         if ($price_id >0 && $price_id <=count($total_prices))
+            $replacement = $total_prices[$price_id-1];
       } elseif (preg_match('/#_RESPSPACES$|#_SPACES$|#_BOOKEDSEATS$/', $result)) {
          $replacement = $booking['booking_seats'];
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
@@ -1116,53 +1125,27 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    
    $contact_body = ( $event['event_contactperson_email_body'] != '' ) ? $event['event_contactperson_email_body'] : get_option('eme_contactperson_email_body' );
    $contact_body = eme_replace_placeholders($contact_body, $event, "text");
-   $contact_body = eme_replace_booking_placeholders($contact_body, $booking, "text");
+   $contact_body = eme_replace_booking_placeholders($contact_body, $event, $booking, "text");
    $confirmed_body = ( $event['event_respondent_email_body'] != '' ) ? $event['event_respondent_email_body'] : get_option('eme_respondent_email_body' );
    $confirmed_body = eme_replace_placeholders($confirmed_body, $event, "text");
-   $confirmed_body = eme_replace_booking_placeholders($confirmed_body, $booking, "text");
+   $confirmed_body = eme_replace_booking_placeholders($confirmed_body, $event, $booking, "text");
    $pending_body = ( $event['event_registration_pending_email_body'] != '' ) ? $event['event_registration_pending_email_body'] : get_option('eme_registration_pending_email_body' );
    $pending_body = eme_replace_placeholders($pending_body, $event, "text");
-   $pending_body = eme_replace_booking_placeholders($pending_body, $booking, "text");
+   $pending_body = eme_replace_booking_placeholders($pending_body, $event, $booking, "text");
    $denied_body = get_option('eme_registration_denied_email_body' );
    $denied_body = eme_replace_placeholders($denied_body, $event, "text");
-   $denied_body = eme_replace_booking_placeholders($denied_body, $booking, "text");
+   $denied_body = eme_replace_booking_placeholders($denied_body, $event, $booking, "text");
    $cancelled_body = get_option('eme_registration_cancelled_email_body' );
    $cancelled_body = eme_replace_placeholders($cancelled_body, $event, "text");
-   $cancelled_body = eme_replace_booking_placeholders($cancelled_body, $booking, "text");
+   $cancelled_body = eme_replace_booking_placeholders($cancelled_body, $event, $booking, "text");
    $contact_cancelled_body = get_option('eme_contactperson_cancelled_email_body' );
    $contact_cancelled_body = eme_replace_placeholders($contact_cancelled_body, $event, "text");
-   $contact_cancelled_body = eme_replace_booking_placeholders($contact_cancelled_body, $booking, "text");
+   $contact_cancelled_body = eme_replace_booking_placeholders($contact_cancelled_body, $event, $booking, "text");
    $contact_pending_body = get_option('eme_contactperson_pending_email_body' );
    $contact_pending_body = eme_replace_placeholders($contact_pending_body, $event, "text");
-   $contact_pending_body = eme_replace_booking_placeholders($contact_pending_body, $booking, "text");
+   $contact_pending_body = eme_replace_booking_placeholders($contact_pending_body, $event, $booking, "text");
 
-   // total price to pay
-   $total_price=eme_get_total_booking_price($event,$booking);
-   // total price to pay per price if multiprice
-   $total_prices=eme_get_total_booking_multiprice($event,$booking);
-   
-   // rsvp specific placeholders
-   #$placeholders = array('#_RESPNAME' => $person['person_name'], '#_RESPEMAIL' => $person['person_email'], '#_RESPPHONE' => $person['person_phone'], '#_SPACES' => $booking['booking_seats'],'#_COMMENT' => $booking['booking_comment'], '#_TRANSFER_NBR_BE97' => $booking['transfer_nbr_be97'], '#_TOTALPRICE' => $total_price, '#_FIELDS' => $field_replace );
-   $placeholders = array('#_TOTALPRICE' => $total_price );
-   for ( $i = 0; $i < count($total_prices); $i++) {
-       $j=$i+1;
-       $placeholders['#_TOTALPRICE'.$j] = $total_prices[$i];
-   }
-
-   // make sure we set the largest matched placeholders first, otherwise if you found e.g.
-   // #_TOTALPRICE, #_TOTALPRICE1 would get replaced as well ...
-   uksort($placeholders,'sort_stringlenth');
-   foreach($placeholders as $key => $value) {
-      $contact_body = str_replace($key, $value, $contact_body);
-      $contact_cancelled_body = str_replace($key, $value, $contact_cancelled_body);
-      $contact_pending_body = str_replace($key, $value, $contact_pending_body);
-      $confirmed_body = str_replace($key, $value, $confirmed_body);
-      $pending_body = str_replace($key, $value, $pending_body);
-      $denied_body = str_replace($key, $value, $denied_body);
-      $cancelled_body = str_replace($key, $value, $cancelled_body);
-   }
-
-  // possible translations are handled last 
+   // possible translations are handled last 
    $contact_body = eme_translate($contact_body); 
    $contact_cancelled_body = eme_translate($contact_cancelled_body); 
    $contact_pending_body = eme_translate($contact_pending_body); 
@@ -1172,7 +1155,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $cancelled_body = eme_translate($cancelled_body);  
    $event_name = eme_translate($event_name);  
 
-   if($action!="") {
+   if ($action!="") {
       if ($action == 'approveRegistration') {
          eme_send_mail(sprintf(__("Reservation for '%s' confirmed",'eme'),$event_name),$confirmed_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
       } elseif ($action == 'denyRegistration') {
@@ -1677,10 +1660,10 @@ function eme_send_mails_page() {
                foreach ( $bookings as $booking ) {
                   $attendee = eme_get_person($booking['person_id']);
                   if ($attendee && is_array($attendee)) {
-                     $tmp_message = eme_replace_booking_placeholders($message, $booking, "text");
+                     $tmp_message = eme_replace_booking_placeholders($message, $event, $booking, "text");
                      $tmp_message = eme_translate($tmp_message);
                      $tmp_message = eme_strip_tags($tmp_message);
-                     $tmp_subject = eme_replace_booking_placeholders($subject, $booking, "text");
+                     $tmp_subject = eme_replace_booking_placeholders($subject, $event, $booking, "text");
                      $tmp_subject = eme_translate($tmp_subject);
                      $tmp_subject = eme_strip_tags($tmp_subject);
                      eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
