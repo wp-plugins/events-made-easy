@@ -94,7 +94,7 @@ function eme_add_booking_form($event_id) {
 
    # you did a successfull registration, so now we decide wether to show the form again, or the paypal form
    if(!empty($form_add_message) && empty($form_error_message)) {
-      $ret_string = "<div class='eme-rsvp-message'>$form_add_message</div>";
+      $ret_string = "<div id='eme-rsvp-message'><div class='eme-rsvp-message'>$form_add_message</div></div>";
       $ret_string .= eme_payment_form($event,$booking_id_done);
       return $ret_string;
    }
