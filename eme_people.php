@@ -101,6 +101,7 @@ function eme_global_map_json($eventful = false, $scope = "all", $category = '', 
    }
 
    $zoom_factor=get_option('eme_global_zoom_factor');
+   $maptype=get_option('eme_global_maptype');
    if ($zoom_factor >14) $zoom_factor=14;
 
    $json = '{"locations":[';
@@ -109,6 +110,8 @@ function eme_global_map_json($eventful = false, $scope = "all", $category = '', 
    $json .= get_option('eme_gmap_zooming') ? 'true' : 'false';
    $json .= '","zoom_factor":"' ;
    $json .= $zoom_factor;
+   $json .= '","maptype":"' ;
+   $json .= $maptype;
    $json .= '"}' ;
    echo $json;
 }

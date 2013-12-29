@@ -27,6 +27,7 @@ function loadGMap() {
 			var min_longitude = 500.1;
 
 			var zoom_factor=parseInt(data.zoom_factor);
+			var maptype=data.maptype;
 			var enable_zooming=false;
 			if (data.enable_zooming === 'true') {
 				enable_zooming = true;
@@ -40,9 +41,9 @@ function loadGMap() {
 				disableDoubleClickZoom: true,
 				scrollwheel: enable_zooming,
 				mapTypeControlOptions: {
-					mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID]
+					mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN]
 				},
-				mapTypeId: google.maps.MapTypeId.ROADMAP
+				mapTypeId: google.maps.MapTypeId[maptype]
 			};
 			var map = new google.maps.Map(document.getElementById("eme_global_map"), myOptions);
 			var infowindow = new google.maps.InfoWindow();
@@ -165,7 +166,8 @@ function loadGMap() {
 			var map_text_id = window['map_text_'+map_id]; 
 			var point = new google.maps.LatLng(lat_id, lon_id);
 
-         var zoom_factor=window['zoom_factor_'+map_id];;
+         var zoom_factor=window['zoom_factor_'+map_id];
+         var maptype=window['maptype_'+map_id];
          var enable_zooming=false;
          if (window['enable_zooming_'+map_id] === 'true') {
             enable_zooming = true;
@@ -178,9 +180,9 @@ function loadGMap() {
                            disableDoubleClickZoom: true,
                            scrollwheel: enable_zooming,
                            mapTypeControlOptions: {
-                                 mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID]
+                                 mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN]
                            },
-                           mapTypeId: google.maps.MapTypeId.ROADMAP
+                           mapTypeId: google.maps.MapTypeId[maptype]
 			};
 			var s_map = new google.maps.Map(divs[i], myOptions);
 			var s_balloon_id= "eme-location-balloon-"+map_id;

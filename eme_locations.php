@@ -1387,9 +1387,11 @@ function eme_single_location_map($location) {
       $longitude_string="longitude_".$id_base;
       $map_text_string="map_text_".$id_base;
       $zoom_factor_string="zoom_factor_".$id_base;
+      $maptype_string="maptype_".$id_base;
       $enable_zooming_string="enable_zooming_".$id_base;
       $enable_zooming=get_option('eme_gmap_zooming') ? 'true' : 'false';
       $zoom_factor=get_option('eme_indiv_zoom_factor');
+      $maptype=get_option('eme_indiv_maptype');
       if ($zoom_factor >14) $zoom_factor=14;
       #$latitude_string="latitude";
       #$longitude_string="longitude";
@@ -1402,6 +1404,7 @@ function eme_single_location_map($location) {
       $map_text_string = '$map_text';
       $enable_zooming_string = '$enable_zooming';
       $zoom_factor_string = $zoom_factor;
+      $maptype_string = '$maptype';
       //-->
       </script>";
       // $map_div .= "<script src='".EME_PLUGIN_URL."eme_single_location_map.js' type='text/javascript'></script>";
