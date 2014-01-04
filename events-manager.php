@@ -109,7 +109,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 35);
+define('EME_DB_VERSION', 37);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events'); //TABLE NAME
@@ -661,6 +661,7 @@ function eme_create_recurrence_table($charset,$collate) {
          recurrence_freq tinytext NOT NULL,
          recurrence_byday tinytext NOT NULL,
          recurrence_byweekno tinyint NOT NULL,
+         recurrence_specific_days text NULL,
          UNIQUE KEY (recurrence_id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -669,6 +670,7 @@ function eme_create_recurrence_table($charset,$collate) {
       maybe_add_column($table_name, 'creation_date_gmt', "alter table $table_name add creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'modif_date', "alter table $table_name add modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'modif_date_gmt', "alter table $table_name add modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
+      maybe_add_column($table_name, 'recurrence_specific_days', "alter table $table_name add recurrence_specific_days text NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY recurrence_byday tinytext NOT NULL ;");
       }

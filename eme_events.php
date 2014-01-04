@@ -57,6 +57,7 @@ function eme_new_event() {
       "recurrence_interval" => '',
       "recurrence_byweekno" => '',
       "recurrence_byday" => '',
+      "recurrence_specific_days" => '',
       "location_name" => '',
       "location_address" => '',
       "location_town" => '',
@@ -224,13 +225,22 @@ function eme_events_page() {
       } else {
          $event['event_end_time'] = "00:00:00";
       }
-      $recurrence['recurrence_start_date'] = isset($_POST['recurrence_start_date']) ? $_POST['recurrence_start_date'] : $event['event_start_date'];
-      $recurrence['recurrence_end_date'] = isset($_POST['recurrence_end_date']) ? $_POST['recurrence_end_date'] : $event['event_end_date'];
+      $recurrence['recurrence_freq'] = isset($_POST['recurrence_freq']) ? $_POST['recurrence_freq'] : '';
+      if ($recurrence['recurrence_freq'] == 'specific') {
+         $recurrence['recurrence_specific_days'] = isset($_POST['recurrence_start_date']) ? $_POST['recurrence_start_date'] : $event['event_start_date'];
+         $recurrence['recurrence_start_date'] = "";
+         $recurrence['recurrence_end_date'] = "";
+      } else {
+         $recurrence['recurrence_specific_days'] = "";
+         $recurrence['recurrence_start_date'] = isset($_POST['recurrence_start_date']) ? $_POST['recurrence_start_date'] : $event['event_start_date'];
+         $recurrence['recurrence_end_date'] = isset($_POST['recurrence_end_date']) ? $_POST['recurrence_end_date'] : $event['event_end_date'];
+      }
       if (!_eme_is_date_valid($recurrence['recurrence_start_date']))
           $recurrence['recurrence_start_date'] = "";
       if (!_eme_is_date_valid($recurrence['recurrence_end_date']))
-          $recurrence['recurrence_end_date'] = $recurrence['recurrence_end_date'];
-      $recurrence['recurrence_freq'] = isset($_POST['recurrence_freq']) ? $_POST['recurrence_freq'] : '';
+          $recurrence['recurrence_end_date'] = $recurrence['recurrence_start_date'];
+      if (!_eme_are_dates_valid($recurrence['recurrence_specific_days']))
+          $recurrence['recurrence_specific_days'] = "";
       if ($recurrence['recurrence_freq'] == 'weekly') {
          if (isset($_POST['recurrence_bydays'])) {
             $recurrence['recurrence_byday'] = implode ( ",", $_POST['recurrence_bydays']);
@@ -2201,6 +2211,7 @@ function eme_event_form($event, $title, $element) {
          $event["recurrence_interval"] = '';
          $event["recurrence_byweekno"] = '';
          $event["recurrence_byday"] = '';
+         $event["recurrence_specific_days"] = '';
       }
    }
    
@@ -2216,7 +2227,7 @@ function eme_event_form($event, $title, $element) {
    if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
 
-   $freq_options = array ("daily" => __ ( 'Daily', 'eme' ), "weekly" => __ ( 'Weekly', 'eme' ), "monthly" => __ ( 'Monthly', 'eme' ) );
+   $freq_options = array ("daily" => __ ( 'Daily', 'eme' ), "weekly" => __ ( 'Weekly', 'eme' ), "monthly" => __ ( 'Monthly', 'eme' ), "specific" => __('Specific days', 'eme' ) );
    $days_names = array (1 => __ ( 'Mon' ), 2 => __ ( 'Tue' ), 3 => __ ( 'Wed' ), 4 => __ ( 'Thu' ), 5 => __ ( 'Fri' ), 6 => __ ( 'Sat' ), 7 => __ ( 'Sun' ) );
    $weekno_options = array ("1" => __ ( 'first', 'eme' ), '2' => __ ( 'second', 'eme' ), '3' => __ ( 'third', 'eme' ), '4' => __ ( 'fourth', 'eme' ), '5' => __ ( 'fifth', 'eme' ), '-1' => __ ( 'last', 'eme' ), "none" => __('Start day') );
    
@@ -2256,24 +2267,30 @@ function eme_event_form($event, $title, $element) {
       $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
    }
    
-// the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepicker will fill in also to "to_submit" form fields
+// the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
    ?>
 
 <script type="text/javascript">
- $j_eme_event(document).ready( function() {
-   var dateFormat = $j_eme_event("#localised-start-date").datepicker( "option", "dateFormat" );
-   $j_eme_event("#localised-start-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-end-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-rec-start-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-rec-end-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-start-date").datepicker("setDate", "<?php echo $event['event_start_date']; ?>");
-   $j_eme_event("#localised-end-date").datepicker("setDate", "<?php echo $event['event_end_date']; ?>");
-   $j_eme_event("#localised-rec-start-date").datepicker("setDate", "<?php echo $event['recurrence_start_date']; ?>");
-   $j_eme_event("#localised-rec-end-date").datepicker("setDate", "<?php echo $event['recurrence_end_date']; ?>");
-   $j_eme_event("#localised-start-date").datepicker("option", "dateFormat", dateFormat );
-   $j_eme_event("#localised-end-date").datepicker("option", "dateFormat", dateFormat );
-   $j_eme_event("#localised-rec-start-date").datepicker("option", "dateFormat",dateFormat );
-   $j_eme_event("#localised-rec-end-date").datepicker("option", "dateFormat", dateFormat );
+   $j_eme_event(document).ready( function() {
+   var dateFormat = $j_eme_event("#localised-start-date").datepick( "option", "dateFormat" );
+
+   var loc_start_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_start_date']); ?>);
+   $j_eme_event("#localised-start-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, loc_start_date));
+
+   var loc_end_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_end_date']); ?>);
+   $j_eme_event("#localised-end-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, loc_end_date));
+   <?php if ($pref == "recurrence" && $event['recurrence_freq'] == 'specific') { ?>
+      var mydates = new Array();
+      <?php foreach (explode(',',$event['recurrence_specific_days']) as $specific_day) { ?>
+	      mydates.push($j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$specific_day); ?>));
+      <?php } ?>
+      $j_eme_event("#localised-rec-start-date").datepick("setDate", mydates);
+   <?php } else { ?>
+      var rec_start_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_start_date']); ?>);
+      $j_eme_event("#localised-rec-start-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, rec_start_date));
+   <?php } ?>
+   var rec_end_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_end_date']); ?>);
+   $j_eme_event("#localised-rec-end-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, rec_end_date));
  });
 </script>
 
@@ -2358,6 +2375,7 @@ function eme_event_form($event, $title, $element) {
                                  <?php eme_option_items ( $freq_options, $event['recurrence_freq'] ); ?>
                               </select>
                            </p>
+			   <div id="recurrence-intervals">
                            <p>
                               <?php _e ( 'Every', 'eme' )?>
                               <input id="recurrence-interval" name='recurrence_interval'
@@ -2391,10 +2409,12 @@ function eme_event_form($event, $title, $element) {
                               <?php _e ( 'Day of month', 'eme' )?>
                               <br />
                               <?php _e ( 'If you use "Start day" as day of the month, the event start date will be used as a reference.', 'eme' )?>
-                              &nbsp;</p>
+                              &nbsp;
+                           </p>
+                           </div>
                         </div>
                         <p id="recurrence-tip">
-                           <?php _e ( 'Check if your event happens more than once according to a regular pattern', 'eme' )?>
+                           <?php _e ( 'Check if your event happens more than once.', 'eme' )?>
                         </p>
                         <p id="recurrence-tip-2">
                            <?php _e ( 'The event start and end date only define the duration of an event in case of a recurrence.', 'eme' )?>
@@ -2693,13 +2713,13 @@ function eme_admin_general_script() {
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
    $locale_code = preg_replace( "/_/","-", $locale_code );
-   $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
-   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
+   $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
    // for english, no translation code is needed
    if (!file_exists($locale_file)) {
       $locale_code = substr ( $locale_code, 0, 2 );
-      $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
-      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
+      $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
    }
    if ($locale_code != "en_US" && file_exists($locale_file)) {
 ?>
@@ -2708,7 +2728,7 @@ function eme_admin_general_script() {
    }
 ?>
 <style type='text/css' media='all'>
-   @import "<?php echo EME_PLUGIN_URL; ?>js/jquery-ui-datepicker/ui.datepicker.css";
+   @import "<?php echo EME_PLUGIN_URL; ?>js/jquery-datepick/jquery.datepick.css";
 </style>
 <script type="text/javascript">
    //<![CDATA[
@@ -2750,6 +2770,22 @@ function updateShowHideRecurrence () {
    }
 }
 
+function updateShowHideRecurrenceSpecificDays () {
+   if ($j_eme_event('select#recurrence-frequency').val() == "specific") {
+      $j_eme_event("div#recurrence-intervals").hide();
+      $j_eme_event("input#localised-rec-end-date").hide();
+      $j_eme_event("span#recurrence-dates-explanation").hide();
+      $j_eme_event("span#recurrence-dates-explanation-specificdates").show();
+      $j_eme_event("#localised-rec-start-date").datepick('option','multiSelect',999);
+   } else {
+      $j_eme_event("div#recurrence-intervals").show();
+      $j_eme_event("input#localised-rec-end-date").show();
+      $j_eme_event("span#recurrence-dates-explanation").show();
+      $j_eme_event("span#recurrence-dates-explanation-specificdates").hide();
+      $j_eme_event("#localised-rec-start-date").datepick('option','multiSelect',0);
+   }
+}
+
 function updateShowHideRsvp () {
    if($j_eme_event('input#rsvp-checkbox').attr("checked")) {
       $j_eme_event("div#rsvp-data").fadeIn();
@@ -2778,15 +2814,15 @@ $j_eme_event(document).ready( function() {
    $j_eme_event("#rec-start-date-to-submit").hide();
    $j_eme_event("#rec-end-date-to-submit").hide(); 
 
-   $j_eme_event.datepicker.setDefaults( $j_eme_event.datepicker.regional["<?php echo $locale_code; ?>"] );
-   $j_eme_event.datepicker.setDefaults({
+   $j_eme_event.datepick.setDefaults( $j_eme_event.datepick.regional["<?php echo $locale_code; ?>"] );
+   $j_eme_event.datepick.setDefaults({
       changeMonth: true,
       changeYear: true,
    });
-   $j_eme_event("#localised-start-date").datepicker({ altField: "#start-date-to-submit", altFormat: "yy-mm-dd" });
-   $j_eme_event("#localised-end-date").datepicker({ altField: "#end-date-to-submit", altFormat: "yy-mm-dd" });
-   $j_eme_event("#localised-rec-start-date").datepicker({ altField: "#rec-start-date-to-submit", altFormat: "yy-mm-dd" });
-   $j_eme_event("#localised-rec-end-date").datepicker({ altField: "#rec-end-date-to-submit", altFormat: "yy-mm-dd" });
+   $j_eme_event("#localised-start-date").datepick({ altField: "#start-date-to-submit", altFormat: "yyyy-mm-dd" });
+   $j_eme_event("#localised-end-date").datepick({ altField: "#end-date-to-submit", altFormat: "yyyy-mm-dd" });
+   $j_eme_event("#localised-rec-start-date").datepick({ altField: "#rec-start-date-to-submit", altFormat: "yyyy-mm-dd" });
+   $j_eme_event("#localised-rec-end-date").datepick({ altField: "#rec-end-date-to-submit", altFormat: "yyyy-mm-dd" });
 
    $j_eme_event("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
    $j_eme_event("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
@@ -2936,6 +2972,7 @@ $j_eme_event(document).ready( function() {
    updateIntervalSelectors();
    updateShowHideRecurrence();
    updateShowHideRsvp();
+   updateShowHideRecurrenceSpecificDays();
    updateShowHideTime();
    $j_eme_event('input#event-recurrence').change(updateShowHideRecurrence);
    $j_eme_event('input#rsvp-checkbox').change(updateShowHideRsvp);
@@ -2944,6 +2981,7 @@ $j_eme_event(document).ready( function() {
    $j_eme_event('input#recurrence-interval').keyup(updateIntervalDescriptor);
    $j_eme_event('select#recurrence-frequency').change(updateIntervalDescriptor);
    $j_eme_event('select#recurrence-frequency').change(updateIntervalSelectors);
+   $j_eme_event('select#recurrence-frequency').change(updateShowHideRecurrenceSpecificDays);
 
    // Add a "+" to the collapsable postboxes
    //jQuery('.postbox h3').prepend('<a class="togbox">+</a> ');
@@ -2976,15 +3014,14 @@ $j_eme_event(document).ready( function() {
          }
       }
    
-      //    alert('ciao ' + recurring+ " end: " + $j_eme_event("input[@name=localised_event_end_date]").val());
       if (missingFields.length > 0) {
          errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
       }
-      if(recurring && $j_eme_event("input[name=localised_recurrence_end_date]").val() == "") {
+      if(recurring && $j_eme_event("input#localised-rec-end-date").val() == "" && $j_eme_event("select#recurrence-frequency").val() != "specific") {
          errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
-         $j_eme_event("input[name=localised_recurrence_end_date]").css('border','2px solid red');
+         $j_eme_event("input#localised-rec-end-date").css('border','2px solid red');
       } else {
-         $j_eme_event("input[name=localised_recurrence_end_date]").css('border','1px solid #DFDFDF');
+         $j_eme_event("input#localised-rec-end-date").css('border','1px solid #DFDFDF');
       }
       if(errors != "") {
          alert(errors);
@@ -3075,6 +3112,9 @@ function eme_meta_box_div_recurrence_date($event){
                         <br />
                         <span id='recurrence-dates-explanation'>
                         <?php _e ( 'The recurrence beginning and end date.', 'eme' ); ?>
+                        </span>
+                        <span id='recurrence-dates-explanation-specificdates'>
+                        <?php _e ( 'Select all the dates you want the event to begin on.', 'eme' ); ?>
                         </span>
 <?php
 }
@@ -3944,7 +3984,7 @@ function eme_handlepostbox(){
       wp_enqueue_script('post');
    }
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
-      wp_enqueue_script('jquery-ui-datepicker');
+      wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
    }
 }
 add_action ( 'admin_init', 'eme_handlepostbox' );
@@ -3960,8 +4000,8 @@ function eme_countdown($atts) {
       $newest_event_array=eme_get_events(1);
       $event=$newest_event_array[0];
    }
-   $end_date=$event['event_start_date'];
-   return eme_daydifference($now,$end_date);
+   $start_date=$event['event_start_date'];
+   return eme_daydifference($now,$start_date);
 }
 add_shortcode('events_countdown', 'eme_countdown');
 

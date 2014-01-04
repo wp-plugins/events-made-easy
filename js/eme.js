@@ -98,8 +98,8 @@ jQuery(document).ready( function($) {
 			var startTime = isoStringToDate(data.start_time);
 			var endTime = isoStringToDate(data.end_time);
 
-			jQuery('#localised-start-date').datepicker('setDate', startTime);
-			jQuery('#localised-end-date').datepicker('setDate', endTime);
+			jQuery('#localised-start-date').datepick('setDate', startTime);
+			jQuery('#localised-end-date').datepick('setDate', endTime);
 			jQuery('#start-time').timeEntry('setTime', startTime);
 			jQuery('#end-time').timeEntry('setTime', endTime);
 			// not needed, jQuery('#location_address').val(data.location);

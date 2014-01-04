@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.1.7 =
+* Feature: recurrence is now also possible on specific days, not just a pattern
 * Feature: maptype for google maps can be defined in the settings for global and individual maps (Roadmap, Satellite, Hybrid or Terrain)
 * Improvement: remove some unneeded caching in the EME admin section.
 * Improvement: Dutch language update, thanks to Guido

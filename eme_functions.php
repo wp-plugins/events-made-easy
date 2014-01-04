@@ -311,6 +311,17 @@ function eme_check_location_exists($location_id) {
    return $wpdb->get_var($sql);
 }
 
+function _eme_are_dates_valid($date) {
+   // if it is a series of dates
+   if (strstr($date, ',')) {
+	$dates=explode(',',$date);
+   	foreach ( $dates as $date ) {
+		if (!_eme_is_date_valid($date)) return false;
+	}
+   }
+   return true;
+}
+	
 function _eme_is_date_valid($date) {
    if (strlen($date) != 10)
       return false;
@@ -319,6 +330,7 @@ function _eme_is_date_valid($date) {
    $day = intval(substr ( $date, 8 ));
    return (checkdate ( $month, $day, $year ));
 }
+
 function eme_is_time_valid($time) {
    $result = preg_match ( "/([01]\d|2[0-3])(:[0-5]\d)/", $time );
    return ($result);
@@ -432,4 +444,10 @@ function eme_transfer_nbr_be97($my_nbr) {
    return $transfer_nbr_be97_main.$transfer_nbr_be97_check;
 }
 
+function eme_convert_date_format($format,$datestring) {
+   if (empty($datestring))
+      return date($format);
+   else
+      return date($format, strtotime($datestring));
+}
 ?>
