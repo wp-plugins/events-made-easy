@@ -981,7 +981,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    }
 
    // and now all the other placeholders
-   preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_\[\]]+/", $format, $placeholders);
+   preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_]+(\[.*\])?(\[.*\])?/", $format, $placeholders);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
    usort($placeholders[0],'sort_stringlenth');
@@ -1387,7 +1387,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
             $replacement=ltrim($replacement,"0");
          }
 
-      } elseif ($event && preg_match('/^#_CATEGORIES$|#_EVENTCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
+      } elseif ($event && preg_match('/^#_(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_categories($event['event_id']);
          if ($target == "html") {
             $replacement = eme_trans_sanitize_html(join(", ",$categories));
@@ -1400,7 +1400,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_LINKEDCATEGORIES$|#_LINKEDEVENTCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
+      } elseif ($event && preg_match('/#_LINKED(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_categories($event['event_id']);
          $cat_links = array();
          foreach ($categories as $category) {
@@ -1421,9 +1421,9 @@ function eme_replace_placeholders($format, $event="", $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/^#_CATEGORIES\[(.*)\]\[(.*)\]$|#_EVENTCATEGORIES\[(.*)\]\[(.*)\]$/', $result, $matches) && get_option('eme_categories_enabled')) {
-         $include_cats=$matches[1];
-         $exclude_cats=$matches[2];
+      } elseif ($event && preg_match('/^#_(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]$/', $result, $matches) && get_option('eme_categories_enabled')) {
+         $include_cats=$matches[2];
+         $exclude_cats=$matches[3];
          $extra_conditions_arr = array();
          if (!empty($include_cats))
             array_push($extra_conditions_arr, "category_id IN ($include_cats)");
@@ -1442,9 +1442,9 @@ function eme_replace_placeholders($format, $event="", $target="html") {
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_LINKEDCATEGORIES\[(.*)\]\[(.*)\]$|#_LINKEDEVENTCATEGORIES\[(.*)\]\[(.*)\]$/', $result, $matches) && get_option('eme_categories_enabled')) {
-         $include_cats=$matches[1];
-         $exclude_cats=$matches[2];
+      } elseif ($event && preg_match('/#_LINKED(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]$/', $result, $matches) && get_option('eme_categories_enabled')) {
+         $include_cats=$matches[2];
+         $exclude_cats=$matches[3];
          $extra_conditions_arr = array();
          if (!empty($include_cats))
             array_push($extra_conditions_arr, "category_id IN ($include_cats)");

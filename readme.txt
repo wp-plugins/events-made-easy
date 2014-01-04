@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: better all-day indication in ical
 * Bugfix: make #_TOTALPRICE and #_TOTALPRICExx also work for "Booking mails" reminders
 * Bugfix: jump to RSVP confirmation message upon successfull registration
+* Bugfix: better matching rules for #_CATEGORIES with include/exclude categories
 
 = 1.1.6 =
 * Improvement: #_MAP and #_DIRECTIONS for an event are only replaced/shown if the event is linked to a location
