@@ -109,7 +109,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 38);
+define('EME_DB_VERSION', 39);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -836,6 +836,7 @@ function eme_create_format_templates_table($charset,$collate) {
    if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
       $sql = "CREATE TABLE ".$table_name." (
          id int(11) NOT NULL auto_increment,
+         format_description text DEFAULT NULL,
          format_template tinytext NOT NULL,
          UNIQUE KEY  (id)
          ) $charset $collate;";

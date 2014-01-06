@@ -1005,21 +1005,24 @@ function get_locations_shortcode($atts) {
       'eventful'  => false,
       'category'  => '',
       'scope'     => 'all',
-      'offset'    => 0
+      'scope'     => 'all',
+      'offset'    => 0,
+      'format_template_id' => 0
    ), $atts));
    $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
    $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
 
    $locations = eme_get_locations((bool)$eventful, $scope, $category, $offset);
 
-   $locations_format_header = get_option('eme_location_list_format_header' );
-   $locations_format_header = ( $locations_format_header != '' ) ? $locations_format_header : "<ul class='eme_locations_list'>";
-   $locations_format_item = get_option('eme_location_list_format_item' );
-   $locations_format_item = ( $locations_format_item != '' ) ? $locations_format_item : "<li class=\"location-#_LOCATIONID\">#_LOCATIONNAME</li>";
-   $locations_format_footer = get_option('eme_location_list_format_footer' );
-   $locations_format_footer = ( $locations_format_footer != '' ) ? $locations_format_footer : "</ul>";
+   if ($format_template_id) {
+      $locations_format_item = eme_get_format_template($format_template_id);
+      $add_header_footer = false;
+   } else {
+      $locations_format_item = get_option('eme_location_list_format_item' );
+      $locations_format_item = ( $locations_format_item != '' ) ? $locations_format_item : "<li class=\"location-#_LOCATIONID\">#_LOCATIONNAME</li>";
+      $add_header_footer = true;
+   }
 
-   $out = eme_replace_locations_placeholders($locations_format_header);
    foreach ($locations as $location) {
       if ($locations_format_item == '') {
          $out .= "<li class=\"location-{$location['location_id']}\">{$location_name}</li>";
@@ -1027,7 +1030,13 @@ function get_locations_shortcode($atts) {
          $out .= eme_replace_locations_placeholders($locations_format_item,$location);
       }
    }
-   $out .= eme_replace_locations_placeholders($locations_format_footer);
+   if ($add_header_footer) {
+      $locations_format_header = get_option('eme_location_list_format_header' );
+      $locations_format_header = ( $locations_format_header != '' ) ? $locations_format_header : "<ul class='eme_locations_list'>";
+      $locations_format_footer = get_option('eme_location_list_format_footer' );
+      $locations_format_footer = ( $locations_format_footer != '' ) ? $locations_format_footer : "</ul>";
+      $out = eme_replace_locations_placeholders($locations_format_header) . $out . eme_replace_locations_placeholders($locations_format_footer);
+   }
    $out .= <<<EOD
       <script type="text/javascript">
       //<![CDATA[

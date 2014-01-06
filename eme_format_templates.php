@@ -17,11 +17,13 @@ function eme_format_templates_page() {
          // format template update required  
          $template = array();
          $template['format_template'] = trim(stripslashes($_POST['format_template']));
+         $template['format_description'] = trim(stripslashes($_POST['format_description']));
          $validation_result = $wpdb->update( $format_templates_table, $template, array('id' => intval($_POST['template_ID'])) );
       } elseif ( isset($_POST['action']) && $_POST['action'] == "add" ) {
          // Add a new template
          $template = array();
          $template['format_template'] = trim(stripslashes($_POST['format_template']));
+         $template['format_description'] = trim(stripslashes($_POST['format_description']));
          $validation_result = $wpdb->insert($format_templates_table, $template);
       } elseif ( isset($_POST['action']) && $_POST['action'] == "delete" ) {
          // Delete template or multiple
@@ -87,14 +89,14 @@ function eme_format_templates_table_layout($message = "") {
                            <tr>
                               <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1'/></th>
                               <th>".__('ID', 'eme')."</th>
-                              <th>".__('Value', 'eme')."</th>
+                              <th>".__('Format description', 'eme')."</th>
                            </tr>
                         </thead>
                         <tfoot>
                            <tr>
                               <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1'/></th>
                               <th>".__('ID', 'eme')."</th>
-                              <th>".__('Value', 'eme')."</th>
+                              <th>".__('Format description', 'eme')."</th>
                            </tr>
                         </tfoot>
                         <tbody>";
@@ -103,7 +105,7 @@ function eme_format_templates_table_layout($message = "") {
                            <tr>
                            <td><input type='checkbox' class ='row-selector' value='".$this_format_template['id']."' name='format_templates[]'/></td>
                            <td><a href='".admin_url("admin.php?page=eme-format-templates&amp;action=editformattemplate&amp;template_ID=".$this_format_template['id'])."'>".$this_format_template['id']."</a></td>
-                           <td><a href='".admin_url("admin.php?page=eme-format-templates&amp;action=editformattemplate&amp;template_ID=".$this_format_template['id'])."'>".$this_format_template['format_template']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-format-templates&amp;action=editformattemplate&amp;template_ID=".$this_format_template['id'])."'>".$this_format_template['format_description']."</a></td>
                            </tr>
                         ";
                      }
@@ -136,8 +138,10 @@ function eme_format_templates_table_layout($message = "") {
                       <form name='add' id='add' method='post' action='".$destination."' class='add:the-list: validate'>
                         <input type='hidden' name='action' value='add' />
                          <div class='form-field form-required'>
+                           <label for='format_description'>".__('Description', 'eme')."</label>
+                           <input type='text' name='format_description' id='format_description' value='' size='40' />
                            <label for='format_template'>".__('Format', 'eme')."</label>
-                           <input name='format_template' id='format_template' type='text' value='' size='40' />
+                           <textarea name='format_template' id='format_template' value='' rows='5' ></textarea>
                             <p>".__('The format of the new template', 'eme').".</p>
                          </div>
                          <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add format template', 'eme')."' /></p>
@@ -153,7 +157,7 @@ function eme_format_templates_table_layout($message = "") {
 
 function eme_format_templates_edit_layout($message = "") {
    $template_id = intval($_GET['template_ID']);
-   $format_template = eme_get_format_template($template_id);
+   $template = eme_get_format_template($template_id);
    $layout = "
    <div class='wrap'>
       <div id='icon-edit' class='icon32'>
@@ -173,13 +177,18 @@ function eme_format_templates_edit_layout($message = "") {
 
       <form name='editformattemplate' id='editformattemplate' method='post' action='".admin_url("admin.php?page=eme-format-templates")."' class='validate'>
       <input type='hidden' name='action' value='edit' />
-      <input type='hidden' name='template_ID' value='".$template_id."'/>";
+      <input type='hidden' name='template_ID' value='".$template['id']."'/>";
       
       $layout .= "
          <table class='form-table'>
             <tr class='form-field form-required'>
+               <th scope='row' valign='top'><label for='format_description'>".__('Format description', 'eme')."</label></th>
+               <td><input type='text' name='format_description' id='format_description' value='".eme_sanitize_html($template['format_description'])."' size='40'  /><br />
+                 ".__('The description of the template', 'eme')."</td>
+            </tr>
+            <tr class='form-field form-required'>
                <th scope='row' valign='top'><label for='format_template'>".__('Format', 'eme')."</label></th>
-               <td><input name='format_template' id='format_template' type='text' value='".eme_sanitize_html($format_template)."' size='40'  /><br />
+               <td><textarea name='format_template' id='format_template' rows='5' />".eme_sanitize_html($template['format_template'])."</textarea><br />
                  ".__('The format of the template', 'eme')."</td>
             </tr>
          </table>
@@ -201,8 +210,8 @@ function eme_get_format_template($template_id) {
    global $wpdb;
    $template_id = intval($template_id);
    $format_templates_table = $wpdb->prefix.FORMAT_TEMPLATES_TBNAME;
-   $sql = "SELECT format_template FROM $format_templates_table WHERE id ='$template_id'";   
-   $format_template = $wpdb->get_var($sql);
+   $sql = "SELECT * FROM $format_templates_table WHERE id ='$template_id'";   
+   $format_template = $wpdb->get_row($sql, ARRAY_A);
    return $format_template;
 }
 
