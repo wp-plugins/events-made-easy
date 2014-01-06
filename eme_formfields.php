@@ -410,7 +410,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
    # for multiprice: 3 + number of possible prices
    # if these are not present: we don't replace anything and the form is worthless
-   if (eme_is_multiprice($event['price'])) {
+   if (eme_is_multi($event['price'])) {
       $matches=preg_split('/\|\|/', $event['price']);
       $count=count($matches);
       // the count can be >3+$count if conditional tags are used to combine a form for single and multiple prices

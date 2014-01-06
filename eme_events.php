@@ -883,7 +883,7 @@ function exclude_this_page( $query ) {
 
 // exposed function, for theme  makers
    //Added a category option to the get events list method and shortcode
-function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format = '', $echo = 1, $category = '',$showperiod = '', $long_events = 0, $author = '', $contact_person='', $paging=0, $location_id = "", $user_registered_only = 0, $show_ongoing=1, $link_showperiod=0, $notcategory = '') {
+function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format = '', $echo = 1, $category = '',$showperiod = '', $long_events = 0, $author = '', $contact_person='', $paging=0, $location_id = "", $user_registered_only = 0, $show_ongoing=1, $link_showperiod=0, $notcategory = '', $format_template_id = 0) {
    global $post;
    if ($limit === "") {
       $limit = get_option('eme_event_list_number_items' );
@@ -891,7 +891,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    if (strpos ( $limit, "=" )) {
       // allows the use of arguments without breaking the legacy code
       $eme_event_list_number_events=get_option('eme_event_list_number_items' );
-      $defaults = array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'echo' => 1 , 'category' => '', 'showperiod' => '', $author => '', $contact_person => '', 'paging'=>0, 'long_events' => 0, 'location_id' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '');
+      $defaults = array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'echo' => 1 , 'category' => '', 'showperiod' => '', $author => '', $contact_person => '', 'paging'=>0, 'long_events' => 0, 'location_id' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '', 'format_template_id' => 0);
       $r = wp_parse_args ( $limit, $defaults );
       extract ( $r );
       // for AND categories: the user enters "+" and this gets translated to " " by wp_parse_args
@@ -911,12 +911,14 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    if ($order != "DESC")
       $order = "ASC";
 
+   $add_header_footer = false;
+   if ($format_template_id) {
+      $format = eme_get_format_template($format_template_id);
+   }
    if ($format == '') {
       // if the format is empty, we use the configured list format and add the configured headers and footers
       $add_header_footer = true;
       $format = get_option('eme_event_list_item_format' );
-   } else {
-      $add_header_footer = false;
    }
 
    if ($limit>0 && $paging==1 && isset($_GET['eme_offset'])) {
@@ -1210,7 +1212,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
 
 function eme_get_events_list_shortcode($atts) {
    $eme_event_list_number_events=get_option('eme_event_list_number_items' );
-   extract ( shortcode_atts ( array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'category' => '', 'showperiod' => '', 'author' => '', 'contact_person' => '', 'paging' => 0, 'long_events' => 0, 'location_id' => 0, 'user_registered_only' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '' ), $atts ) );
+   extract ( shortcode_atts ( array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'category' => '', 'showperiod' => '', 'author' => '', 'contact_person' => '', 'paging' => 0, 'long_events' => 0, 'location_id' => 0, 'user_registered_only' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '', 'format_template_id' => 0 ), $atts ) );
 
    // the filter list overrides the settings
    if (isset($_REQUEST['eme_eventAction']) && $_REQUEST['eme_eventAction'] == 'filter') {
@@ -1247,7 +1249,7 @@ function eme_get_events_list_shortcode($atts) {
    // shortcode is interpreted). So we add the option that people can use "#OTHER_", and we replace this with
    // "#_" here
    $format = preg_replace('/#OTHER/', "#", $format);
-   $result = eme_get_events_list ( $limit,$scope,$order,$format,0,$category,$showperiod,$long_events,$author,$contact_person,$paging,$location_id,$user_registered_only,$show_ongoing,$link_showperiod,$notcategory );
+   $result = eme_get_events_list ( $limit,$scope,$order,$format,0,$category,$showperiod,$long_events,$author,$contact_person,$paging,$location_id,$user_registered_only,$show_ongoing,$link_showperiod,$notcategory,$format_template_id);
    return $result;
 }
 add_shortcode ( 'events_list', 'eme_get_events_list_shortcode' );

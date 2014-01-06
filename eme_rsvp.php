@@ -100,7 +100,7 @@ function eme_add_booking_form($event_id) {
    }
 
    // you can book the available number of seats, with a max of x per time
-   if (eme_is_multiprice($event['price']))
+   if (eme_is_multi($event['price']))
       $min_allowed = 0;
    else
       $min_allowed = intval(get_option('eme_rsvp_addbooking_min_spaces'));
@@ -330,7 +330,7 @@ function eme_book_seats($event, $send_mail=1) {
    // for multiple prices, we have multiple booked Seats as well
    // the next foreach is only valid when called from the frontend
    $bookedSeats_mp = array();
-   if (eme_is_multiprice($event['price'])) {
+   if (eme_is_multi($event['price'])) {
       // make sure the array contains the correct keys already, since
       // later on in the function eme_record_booking we do a join
       $booking_prices_mp=preg_split("/\|\|/",$event['price']);
@@ -707,7 +707,7 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
    $where['booking_id'] =$booking_id;
 
    # if it is a multi-price event, the total number of seats is the sum of the other ones
-   if (eme_is_multiprice($booking_price)) {
+   if (eme_is_multi($booking_price)) {
       $fields['booking_seats']=0;
       # make sure the correct amount of seats is defined for multiprice
       $booking_prices_mp=preg_split("/\|\|/",$booking_price);
@@ -798,7 +798,7 @@ function eme_bookings_table($event_id) {
                               <td>".eme_sanitize_html($person['person_email'])."</td>
                               <td>".eme_sanitize_html($person['person_phone'])."</td>
                  ";
-      if (eme_is_multiprice(eme_get_booking_price($event,$booking))) {
+      if (eme_is_multi(eme_get_booking_price($event,$booking))) {
          $result .= "<td>".$booking['booking_seats_mp']."</td>";
       } else {
          $result .= "<td>".$booking['booking_seats']."</td>";
@@ -1008,7 +1008,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)(.+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if ($field_id<0) $field_id=0;
-         if (eme_is_multiprice($booking['booking_price'])) {
+         if (eme_is_multi($booking['booking_price'])) {
              $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
              if (array_key_exists($field_id,$seats))
                 $replacement = $seats[$field_id];
@@ -1386,7 +1386,7 @@ function eme_registration_seats_form_table($event_id=0) {
          <td>
             <?php echo $localised_booking_date ." ". $localised_booking_time;?>
          </td>
-         <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
+         <?php if (eme_is_multi(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
             <input title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
          </td>
@@ -1571,7 +1571,7 @@ function eme_registration_approval_form_table($event_id=0) {
          <td>
             <?php echo $localised_booking_date . $localised_booking_time;?>
          </td>
-         <?php if (eme_is_multiprice(eme_get_booking_price($event,$event_booking))) { ?>
+         <?php if (eme_is_multi(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
             <input title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
          </td>
@@ -2256,7 +2256,7 @@ function eme_get_total_booking_price($event,$booking) {
    $price=0;
    $basic_price= eme_get_booking_price($event,$booking);
 
-   if (eme_is_multiprice($basic_price)) {
+   if (eme_is_multi($basic_price)) {
       $prices=preg_split("/\|\|/",$basic_price);
       $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
       foreach ($prices as $key=>$val) {
@@ -2272,7 +2272,7 @@ function eme_get_total_booking_multiprice($event,$booking) {
    $price=array();
    $basic_price= eme_get_booking_price($event,$booking);
 
-   if (eme_is_multiprice($basic_price)) {
+   if (eme_is_multi($basic_price)) {
       $prices=preg_split("/\|\|/",$basic_price);
       $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
       foreach ($prices as $key=>$val) {
@@ -2287,16 +2287,22 @@ function eme_is_event_multiprice($event_id) {
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $sql = $wpdb->prepare("SELECT price from $events_table where event_id=%d",$event_id);
    $price = $wpdb->get_var( $sql );
-   return eme_is_multiprice($price);
+   return eme_is_multi($price);
 }
 
-function eme_is_multiprice($price) {
-   global $wpdb;
+function eme_is_multi($price) {
    if (preg_match("/\|\|/",$price))
       return 1;
    else
       return 0;
 }
 
+function eme_is_event_multiseats($event_id) {
+   global $wpdb;
+   $events_table = $wpdb->prefix . EVENTS_TBNAME;
+   $sql = $wpdb->prepare("SELECT seats from $events_table where event_id=%d",$event_id);
+   $seats = $wpdb->get_var( $sql );
+   return eme_is_multi($seats);
+}
 
 ?>

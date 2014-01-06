@@ -109,15 +109,16 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 37);
-define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
+define('EME_DB_VERSION', 38);
+define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
-define('EVENTS_TBNAME','eme_events'); //TABLE NAME
-define('RECURRENCE_TBNAME','eme_recurrence'); //TABLE NAME
-define('LOCATIONS_TBNAME','eme_locations'); //TABLE NAME
-define('BOOKINGS_TBNAME','eme_bookings'); //TABLE NAME
-define('PEOPLE_TBNAME','eme_people'); //TABLE NAME
+define('EVENTS_TBNAME','eme_events');
+define('RECURRENCE_TBNAME','eme_recurrence');
+define('LOCATIONS_TBNAME','eme_locations');
+define('BOOKINGS_TBNAME','eme_bookings');
+define('PEOPLE_TBNAME','eme_people');
 define('CATEGORIES_TBNAME', 'eme_categories');
+define('FORMAT_TEMPLATES_TBNAME', 'eme_format_tpl');
 define('FORMFIELDS_TBNAME', 'eme_formfields');
 define('FIELDTYPES_TBNAME', 'eme_fieldtypes');
 define('ANSWERS_TBNAME', 'eme_answers');
@@ -135,6 +136,7 @@ define('DEFAULT_CAP_ADD_LOCATION','edit_others_posts');
 define('DEFAULT_CAP_AUTHOR_LOCATION','edit_others_posts');
 define('DEFAULT_CAP_EDIT_LOCATIONS','edit_others_posts');
 define('DEFAULT_CAP_CATEGORIES','activate_plugins');
+define('DEFAULT_CAP_FORMAT_TEMPLATES','activate_plugins');
 define('DEFAULT_CAP_PEOPLE','edit_posts');
 define('DEFAULT_CAP_APPROVE','edit_others_posts');
 define('DEFAULT_CAP_REGISTRATIONS','edit_others_posts');
@@ -319,6 +321,7 @@ include("eme_people.php");
 include("eme_recurrence.php");
 include("eme_UI_helpers.php");
 include("eme_categories.php");
+include("eme_format_templates.php");
 include("eme_attributes.php");
 include("eme_ical.php");
 include("eme_cleanup.php");
@@ -380,6 +383,7 @@ function _eme_install() {
    eme_create_bookings_table($charset,$collate);
    eme_create_people_table($charset,$collate);
    eme_create_categories_table($charset,$collate);
+   eme_create_format_templates_table($charset,$collate);
    eme_create_formfields_table($charset,$collate);
    eme_create_answers_table($charset,$collate);
    
@@ -441,6 +445,7 @@ function _eme_uninstall() {
       eme_drop_table(BOOKINGS_TBNAME);
       eme_drop_table(PEOPLE_TBNAME);
       eme_drop_table(CATEGORIES_TBNAME);
+      eme_drop_table(FORMAT_TEMPLATES_TBNAME);
       eme_drop_table(FORMFIELDS_TBNAME);
       eme_drop_table(FIELDTYPES_TBNAME);
       eme_drop_table(ANSWERS_TBNAME);
@@ -523,7 +528,7 @@ function eme_create_events_table($charset,$collate) {
          currency text DEFAULT NULL,
          rsvp_number_days tinyint unsigned DEFAULT 0,
          rsvp_number_hours tinyint unsigned DEFAULT 0,
-         event_seats mediumint(9) DEFAULT 0,
+         event_seats text DEFAULT NULL,
          event_contactperson_id mediumint(9) DEFAULT 0,
          location_id mediumint(9) DEFAULT 0,
          recurrence_id mediumint(9) DEFAULT 0,
@@ -586,7 +591,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'rsvp_number_hours', "alter table $table_name add rsvp_number_hours tinyint unsigned DEFAULT 0;");
       maybe_add_column($table_name, 'price', "alter table $table_name add price text DEFAULT NULL;");
       maybe_add_column($table_name, 'currency', "alter table $table_name add currency text DEFAULT NULL;");
-      maybe_add_column($table_name, 'event_seats', "alter table $table_name add event_seats mediumint(9) DEFAULT 0;");
+      maybe_add_column($table_name, 'event_seats', "alter table $table_name add event_seats text DEFAULT NULL;");
       maybe_add_column($table_name, 'location_id', "alter table $table_name add location_id mediumint(9) DEFAULT 0;");
       maybe_add_column($table_name, 'recurrence_id', "alter table $table_name add recurrence_id mediumint(9) DEFAULT 0;"); 
       maybe_add_column($table_name, 'event_contactperson_id', "alter table $table_name add event_contactperson_id mediumint(9) DEFAULT 0;");
@@ -638,6 +643,9 @@ function eme_create_events_table($charset,$collate) {
       if ($db_version<33) {
          $post_table_name = $wpdb->prefix."posts";
          $wpdb->query("UPDATE $table_name SET event_image_id = (select ID from $post_table_name where post_type = 'attachment' AND guid = $table_name.event_image_url);");
+      }
+      if ($db_version<38) {
+         $wpdb->query("ALTER TABLE $table_name MODIFY event_seats text default NULL;");
       }
    }
 }
@@ -820,6 +828,21 @@ function eme_create_categories_table($charset,$collate) {
    }
 }
 
+function eme_create_format_templates_table($charset,$collate) {
+   global $wpdb;
+   $db_version = get_option('eme_version');
+   $table_name = $wpdb->prefix.FORMAT_TEMPLATES_TBNAME;
+
+   if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+      $sql = "CREATE TABLE ".$table_name." (
+         id int(11) NOT NULL auto_increment,
+         format_template tinytext NOT NULL,
+         UNIQUE KEY  (id)
+         ) $charset $collate;";
+      dbDelta($sql);
+   }
+}
+
 function eme_create_formfields_table($charset,$collate) {
    global $wpdb;
    $db_version = get_option('eme_version');
@@ -914,6 +937,8 @@ function eme_create_events_submenu () {
          $plugin_page = add_submenu_page('events-manager', __('Event Categories','eme'),__('Categories','eme'), get_option('eme_cap_categories'), "eme-categories", 'eme_categories_page');
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       }
+      $plugin_page = add_submenu_page('events-manager', __('Format templates','eme'),__('Format templates','eme'), get_option('eme_cap_format_templates'), "eme-format-templates", 'eme_format_templates_page');
+      add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       if (get_option('eme_rsvp_enabled')) {
          $plugin_page = add_submenu_page('events-manager', __('People', 'eme'), __('People', 'eme'), get_option('eme_cap_people'), 'eme-people', "eme_people_page");
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
@@ -1555,7 +1580,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
             $replacement = 0;
 
       } elseif ($event && preg_match('/#_IS_MULTIPRICE/', $result)) {
-         if (eme_is_multiprice($event['price']))
+         if (eme_is_multi($event['price']))
             $replacement = 1;
          else
             $replacement = 0;

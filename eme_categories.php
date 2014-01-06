@@ -47,11 +47,11 @@ function eme_categories_page() {
          $message = (isset($message)) ? $message : __("Successfully {$_POST['action']}ed category", "eme");
          eme_categories_table_layout($message);
       } elseif ( $validation_result === false ) {
-         $message = (isset($message)) ? $message : __("There was a problem {$_POST['action']}ing your category, please try again.");                     
+         $message = (isset($message)) ? $message : __("There was a problem {$_POST['action']}ing your category, please try again.");
          eme_categories_table_layout($message);
       } else {
          // no action, just a categories list
-         eme_categories_table_layout();   
+         eme_categories_table_layout();
       }
    }
 } 
@@ -137,7 +137,7 @@ function eme_categories_table_layout($message = "") {
                         <input type='hidden' name='action' value='add' />
                          <div class='form-field form-required'>
                            <label for='category_name'>".__('Category name', 'eme')."</label>
-                           <input id='category-name' name='category_name' id='category_name' type='text' value='' size='40' />
+                           <input name='category_name' id='category_name' type='text' value='' size='40' />
                             <p>".__('The name of the category', 'eme').".</p>
                          </div>
                          <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add category', 'eme')."' /></p>
@@ -179,7 +179,7 @@ function eme_categories_edit_layout($message = "") {
          <table class='form-table'>
             <tr class='form-field form-required'>
                <th scope='row' valign='top'><label for='category_name'>".__('Category name', 'eme')."</label></th>
-               <td><input name='category_name' id='category-name' type='text' value='".eme_sanitize_html($category['category_name'])."' size='40'  /><br />
+               <td><input name='category_name' id='category_name' type='text' value='".eme_sanitize_html($category['category_name'])."' size='40'  /><br />
                  ".__('The name of the category', 'eme')."</td>
             </tr>
          </table>

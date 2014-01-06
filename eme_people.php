@@ -136,7 +136,7 @@ function fputcsv2 ($fh, $fields, $delimiter = ',', $enclosure = '"', $mysql_null
 }
 function eme_csv_booking_report($event_id) {
    $event = eme_get_event($event_id);
-   $is_multiprice = eme_is_multiprice($event['price']);
+   $is_multiprice = eme_is_multi($event['price']);
    $current_userid=get_current_user_id();
    if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
         (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)))) {
@@ -217,7 +217,7 @@ function eme_printable_booking_report($event_id) {
    $available_seats = eme_get_available_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
-   $is_multiprice = eme_is_multiprice($event['price']);
+   $is_multiprice = eme_is_multi($event['price']);
 
    $stylesheet = EME_PLUGIN_URL."events_manager.css";
    foreach($answer_columns as $col) {
