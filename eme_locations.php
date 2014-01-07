@@ -1026,9 +1026,9 @@ function get_locations_shortcode($atts) {
 
    foreach ($locations as $location) {
       if ($locations_format_item == '') {
-         $out .= "<li class=\"location-{$location['location_id']}\">{$location_name}</li>";
+         $out = "<li class=\"location-{$location['location_id']}\">{$location_name}</li>";
       } else {
-         $out .= eme_replace_locations_placeholders($locations_format_item,$location);
+         $out = eme_replace_locations_placeholders($locations_format_item,$location);
       }
    }
    if ($add_header_footer) {
