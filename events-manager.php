@@ -109,7 +109,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 39);
+define('EME_DB_VERSION', 40);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -118,7 +118,7 @@ define('LOCATIONS_TBNAME','eme_locations');
 define('BOOKINGS_TBNAME','eme_bookings');
 define('PEOPLE_TBNAME','eme_people');
 define('CATEGORIES_TBNAME', 'eme_categories');
-define('FORMAT_TEMPLATES_TBNAME', 'eme_format_tpl');
+define('TEMPLATES_TBNAME', 'eme_templates');
 define('FORMFIELDS_TBNAME', 'eme_formfields');
 define('FIELDTYPES_TBNAME', 'eme_fieldtypes');
 define('ANSWERS_TBNAME', 'eme_answers');
@@ -136,7 +136,7 @@ define('DEFAULT_CAP_ADD_LOCATION','edit_others_posts');
 define('DEFAULT_CAP_AUTHOR_LOCATION','edit_others_posts');
 define('DEFAULT_CAP_EDIT_LOCATIONS','edit_others_posts');
 define('DEFAULT_CAP_CATEGORIES','activate_plugins');
-define('DEFAULT_CAP_FORMAT_TEMPLATES','activate_plugins');
+define('DEFAULT_CAP_TEMPLATES','activate_plugins');
 define('DEFAULT_CAP_PEOPLE','edit_posts');
 define('DEFAULT_CAP_APPROVE','edit_others_posts');
 define('DEFAULT_CAP_REGISTRATIONS','edit_others_posts');
@@ -321,7 +321,7 @@ include("eme_people.php");
 include("eme_recurrence.php");
 include("eme_UI_helpers.php");
 include("eme_categories.php");
-include("eme_format_templates.php");
+include("eme_templates.php");
 include("eme_attributes.php");
 include("eme_ical.php");
 include("eme_cleanup.php");
@@ -383,7 +383,7 @@ function _eme_install() {
    eme_create_bookings_table($charset,$collate);
    eme_create_people_table($charset,$collate);
    eme_create_categories_table($charset,$collate);
-   eme_create_format_templates_table($charset,$collate);
+   eme_create_templates_table($charset,$collate);
    eme_create_formfields_table($charset,$collate);
    eme_create_answers_table($charset,$collate);
    
@@ -445,7 +445,7 @@ function _eme_uninstall() {
       eme_drop_table(BOOKINGS_TBNAME);
       eme_drop_table(PEOPLE_TBNAME);
       eme_drop_table(CATEGORIES_TBNAME);
-      eme_drop_table(FORMAT_TEMPLATES_TBNAME);
+      eme_drop_table(TEMPLATES_TBNAME);
       eme_drop_table(FORMFIELDS_TBNAME);
       eme_drop_table(FIELDTYPES_TBNAME);
       eme_drop_table(ANSWERS_TBNAME);
@@ -828,16 +828,16 @@ function eme_create_categories_table($charset,$collate) {
    }
 }
 
-function eme_create_format_templates_table($charset,$collate) {
+function eme_create_templates_table($charset,$collate) {
    global $wpdb;
    $db_version = get_option('eme_version');
-   $table_name = $wpdb->prefix.FORMAT_TEMPLATES_TBNAME;
+   $table_name = $wpdb->prefix.TEMPLATES_TBNAME;
 
    if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
       $sql = "CREATE TABLE ".$table_name." (
          id int(11) NOT NULL auto_increment,
-         format_description text DEFAULT NULL,
-         format_template tinytext NOT NULL,
+         description text DEFAULT NULL,
+         format tinytext NOT NULL,
          UNIQUE KEY  (id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -938,7 +938,7 @@ function eme_create_events_submenu () {
          $plugin_page = add_submenu_page('events-manager', __('Event Categories','eme'),__('Categories','eme'), get_option('eme_cap_categories'), "eme-categories", 'eme_categories_page');
          add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       }
-      $plugin_page = add_submenu_page('events-manager', __('Format templates','eme'),__('Format templates','eme'), get_option('eme_cap_format_templates'), "eme-format-templates", 'eme_format_templates_page');
+      $plugin_page = add_submenu_page('events-manager', __('Templates','eme'),__('Templates','eme'), get_option('eme_cap_templates'), "eme-templates", 'eme_templates_page');
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       if (get_option('eme_rsvp_enabled')) {
          $plugin_page = add_submenu_page('events-manager', __('People', 'eme'), __('People', 'eme'), get_option('eme_cap_people'), 'eme-people', "eme_people_page");

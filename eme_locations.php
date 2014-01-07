@@ -1007,16 +1007,16 @@ function get_locations_shortcode($atts) {
       'scope'     => 'all',
       'scope'     => 'all',
       'offset'    => 0,
-      'format_template_id' => 0
+      'template_id' => 0
    ), $atts));
    $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
    $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
 
    $locations = eme_get_locations((bool)$eventful, $scope, $category, $offset);
 
-   if ($format_template_id) {
-      $locations_format_arr = eme_get_format_template($format_template_id);
-      $locations_format_item = $locations_format_arr['format_template'];
+   if ($template_id) {
+      $locations_format_arr = eme_get_template($template_id);
+      $locations_format_item = $locations_format_arr['format'];
       $add_header_footer = false;
    } else {
       $locations_format_item = get_option('eme_location_list_format_item' );
