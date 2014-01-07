@@ -913,7 +913,8 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
 
    $add_header_footer = false;
    if ($format_template_id) {
-      $format = eme_get_format_template($format_template_id);
+      $format_arr = eme_get_format_template($format_template_id);
+      $format=$format_arr['format_template'];
    }
    if ($format == '') {
       // if the format is empty, we use the configured list format and add the configured headers and footers

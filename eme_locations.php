@@ -1015,7 +1015,8 @@ function get_locations_shortcode($atts) {
    $locations = eme_get_locations((bool)$eventful, $scope, $category, $offset);
 
    if ($format_template_id) {
-      $locations_format_item = eme_get_format_template($format_template_id);
+      $locations_format_arr = eme_get_format_template($format_template_id);
+      $locations_format_item = $locations_format_arr['format_template'];
       $add_header_footer = false;
    } else {
       $locations_format_item = get_option('eme_location_list_format_item' );
