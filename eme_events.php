@@ -3866,9 +3866,7 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    $event_properties = @unserialize($event['event_properties']);
    if ($event_properties['all_day']) {
       $event['event_start_time']="00:00:00";
-      $event['event_end_time']="00:00:00";
-      if ($event['event_end_date']==$event['event_start_date'])
-         $event['event_end_date']=date("Y-m-d",strtotime($event['event_start_date'])+86400);
+      $event['event_end_time']="23:59:59";
    }
    // if the end day/time is lower than the start day/time, then put
    // the end day one day (86400 secs) ahead, but only if
@@ -3918,9 +3916,7 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    $event_properties = @unserialize($event['event_properties']);
    if ($event_properties['all_day']) {
       $event['event_start_time']="00:00:00";
-      $event['event_end_time']="00:00:00";
-      if ($event['event_end_date']==$event['event_start_date'])
-         $event['event_end_date']=date("Y-m-d",strtotime($event['event_start_date'])+86400);
+      $event['event_end_time']="23:59:59";
    }
    // if the end day/time is lower than the start day/time, then put
    // the end day one day (86400 secs) ahead, but only if
