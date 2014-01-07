@@ -38,10 +38,15 @@ function eme_templates_page() {
             //Run the query if we have an array of template ids
             if (count($templates > 0)) {
                $validation_result = $wpdb->query( "DELETE FROM $templates_table WHERE ". implode(" OR ", $templates) );
+               if (is_numeric($validation_result) )
+                  $message = __("Successfully deleted the template(s).","eme");
             } else {
                $validation_result = false;
                $message = __("Couldn't delete the templates. Incorrect template IDs supplied. Please try again.","eme");
             }
+         } else {
+            $validation_result = false;
+            $message = __("Couldn't delete the templates. Incorrect template IDs supplied. Please try again.","eme");
          }
       }
       //die(print_r($_POST));

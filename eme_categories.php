@@ -36,10 +36,15 @@ function eme_categories_page() {
             //Run the query if we have an array of category ids
             if (count($cats > 0)) {
                $validation_result = $wpdb->query( "DELETE FROM $categories_table WHERE ". implode(" OR ", $cats) );
+               if (is_numeric($validation_result))
+                  $message = __("Successfully deleted the selected categories.","eme");
             } else {
                $validation_result = false;
                $message = __("Couldn't delete the categories. Incorrect category IDs supplied. Please try again.","eme");
             }
+         } else {
+            $validation_result = false;
+            $message = __("Couldn't delete the categories. Incorrect category IDs supplied. Please try again.","eme");
          }
       }
       //die(print_r($_POST));
