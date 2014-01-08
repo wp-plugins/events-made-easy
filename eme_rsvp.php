@@ -317,7 +317,6 @@ function eme_cancel_seats($event) {
 function eme_book_seats($event, $send_mail=1) {
    global $current_user;
    $booking_id = 0;
-   $all_required_fields_ok=1;
    $all_required_fields=eme_find_required_formfields($event['event_registration_form_format']);
    $min_allowed = intval(get_option('eme_rsvp_addbooking_min_spaces'));
    $max_allowed = intval(get_option('eme_rsvp_addbooking_max_spaces'));
@@ -382,6 +381,7 @@ function eme_book_seats($event, $send_mail=1) {
    else
       $honeypot_check = "";
 
+   $missing_required_fields=array();
    // check all required fields
    if (!is_admin()) {
       foreach ($all_required_fields as $required_field) {
@@ -390,11 +390,11 @@ function eme_book_seats($event, $send_mail=1) {
             next;
          } elseif (preg_match ("/PHONE/",$required_field)) {
             // PHONE regex also catches _HTML5_PHONE
-            if (empty($bookerPhone)) $all_required_fields_ok=0;
+            if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
          } elseif (preg_match ("/COMMENT/",$required_field)) {
-            if (empty($bookerComment)) $all_required_fields_ok=0;
+            if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
          } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
-            $all_required_fields_ok=0;
+            array_push($missing_required_fields, $required_field);
          }
       }
    }
@@ -434,15 +434,22 @@ function eme_book_seats($event, $send_mail=1) {
       // a bot fills this in, but a human never will, since it's
       // a hidden field
       $result = __('You are a bad boy','eme');
-   } elseif (!$bookerName || !$bookerEmail || !$all_required_fields_ok) {
+   } elseif (!$bookerName) {
       // if any required field is empty: return an error
-      $result = __('Please fill in all the required fields','eme');
+      $result = __('Please fill out your name','eme');
+   } elseif (!$bookerEmail) {
+      // if any required field is empty: return an error
+      $result = __('Please fill out your e-mail','eme');
+   } elseif (count($missing_required_fields)>0) {
+      // if any required field is empty: return an error
+      $missing_required_fields_string=join(", ",$missing_required_fields);
+      $result = sprintf(__('Please make sure all of the following required fields are filled out correctly: %s','eme'),$missing_required_fields_string);
    } elseif (!filter_var($bookerEmail,FILTER_VALIDATE_EMAIL)) {
       $result = __('Please enter a valid mail address','eme');
    } elseif ($bookedSeats < $min_allowed) {
-      $result = __('Please fill in a correct number of spaces to reserve','eme');
+      $result = __('Please enter a correct number of spaces to reserve','eme');
    } elseif ($max_allowed>0 && $bookedSeats>$max_allowed) {
-      $result = __('Please fill in a correct number of spaces to reserve','eme');
+      $result = __('Please enter a correct number of spaces to reserve','eme');
    } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
       // spammers might get here, but we catch them
       $result = __('WP membership is required for registration','eme');
