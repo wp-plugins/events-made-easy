@@ -129,7 +129,7 @@ function loadGMap() {
 			});
 
 			// fitbounds plays with the zoomlevel, and zooms in too much if only 1 marker, or zooms out too much if no markers
-			// solution taken from http://efreedom.com/Question/1-2989858/Google-Maps-V3-Enforcing-Min-Zoom-Level-Using-FitBounds
+			// solution taken from http://stackoverflow.com/questions/2989858/google-maps-v3-enforcing-min-zoom-level-when-using-fitbounds
 			// Content:
 			// At this discussion (http://groups.google.com/group/google-maps-js-api-v3/browse_thread/thread/48a49b1481aeb64c?pli=1)
 			//   I discovered that basically when you do a fitBounds, the zoom happens "asynchronously" so you need to capture the
@@ -138,7 +138,7 @@ function loadGMap() {
 			//   it the first time.
 			map.initialZoom = true;
 			google.maps.event.addListener(map, 'zoom_changed', function() {
-				zoomChangeBoundsListener = google.maps.event.addListener(map, 'bounds_changed', function(event) {
+				zoomChangeBoundsListener = google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
 					if (this.getZoom() > 14 && this.initialZoom === true) {
 					// Change max/min zoom here
 						this.setZoom(14);
@@ -149,7 +149,8 @@ function loadGMap() {
 						this.setZoom(1);
 						this.initialZoom = false;
 					}
-			        	google.maps.event.removeListener(zoomChangeBoundsListener);
+               // we use addListenerOnce, so we don't need to remove the listener anymore
+			      //	google.maps.event.removeListener(zoomChangeBoundsListener);
 				});
 			});
 		});
