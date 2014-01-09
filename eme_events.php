@@ -2792,8 +2792,18 @@ function updateShowHideRecurrenceSpecificDays () {
 function updateShowHideRsvp () {
    if($j_eme_event('input#rsvp-checkbox').attr("checked")) {
       $j_eme_event("div#rsvp-data").fadeIn();
+      $j_eme_event("div#div_event_contactperson_email_body").fadeIn();
+      $j_eme_event("div#div_event_registration_recorded_ok_html").fadeIn();
+      $j_eme_event("div#div_event_respondent_email_body").fadeIn();
+      $j_eme_event("div#div_event_registration_pending_email_body").fadeIn();
+      $j_eme_event("div#div_event_registration_form_format").fadeIn();
    } else {
-      $j_eme_event("div#rsvp-data").hide();
+      $j_eme_event("div#rsvp-data").fadeOut();
+      $j_eme_event("div#div_event_contactperson_email_body").fadeOut();
+      $j_eme_event("div#div_event_registration_recorded_ok_html").fadeOut();
+      $j_eme_event("div#div_event_respondent_email_body").fadeOut();
+      $j_eme_event("div#div_event_registration_pending_email_body").fadeOut();
+      $j_eme_event("div#div_event_registration_form_format").fadeOut();
    }
 }
 
