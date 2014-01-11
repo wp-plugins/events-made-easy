@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Events Made Easy v1.1.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
-"POT-Creation-Date: 2014-01-02 23:09:56+00:00\n"
-"PO-Revision-Date: 2014-01-03 00:16+0100\n"
+"POT-Creation-Date: 2014-01-11 22:16:25+00:00\n"
+"PO-Revision-Date: 2014-01-11 23:27+0100\n"
 "Last-Translator: Franky Van Liedekerke <liedekef@telenet.be>\n"
 "Language-Team: Nederlandse Vertaling\n"
 "MIME-Version: 1.0\n"
@@ -23,19 +23,19 @@ msgid "You entered an incorrect code. Please fill in the correct code."
 msgstr "Je hebt een verkeerde code ingevuld. Vul de juiste code in aub."
 
 # @ default
-#: eme_UI_helpers.php:73 eme_UI_helpers.php:110 eme_people.php:184
-#: eme_people.php:289 eme_rsvp.php:1047
+#: eme_UI_helpers.php:73 eme_UI_helpers.php:110 eme_people.php:185
+#: eme_people.php:296 eme_rsvp.php:1167
 msgid "Yes"
 msgstr "Ja"
 
 # @ default
-#: eme_UI_helpers.php:74 eme_UI_helpers.php:109 eme_people.php:184
-#: eme_people.php:289 eme_rsvp.php:1047
+#: eme_UI_helpers.php:74 eme_UI_helpers.php:109 eme_people.php:185
+#: eme_people.php:296 eme_rsvp.php:1167
 msgid "No"
 msgstr "Nee"
 
 # @ eme
-#: eme_attributes.php:45 eme_events.php:3027
+#: eme_attributes.php:45 eme_events.php:3081
 msgid "Attributes"
 msgstr "Attributen"
 
@@ -92,37 +92,37 @@ msgstr ""
 "attributes\" in de documentatie op de website van de plugin."
 
 # @ default
-#: eme_calendar.php:225 eme_recurrence.php:277
+#: eme_calendar.php:225 eme_recurrence.php:287
 msgid "Sunday"
 msgstr "Zondag"
 
 # @ default
-#: eme_calendar.php:225 eme_recurrence.php:277
+#: eme_calendar.php:225 eme_recurrence.php:287
 msgid "Monday"
 msgstr "Maandag"
 
 # @ default
-#: eme_calendar.php:225 eme_recurrence.php:277
+#: eme_calendar.php:225 eme_recurrence.php:287
 msgid "Tuesday"
 msgstr "Dinsdag"
 
 # @ default
-#: eme_calendar.php:225 eme_recurrence.php:277
+#: eme_calendar.php:225 eme_recurrence.php:287
 msgid "Wednesday"
 msgstr "Woensdag"
 
 # @ default
-#: eme_calendar.php:225 eme_recurrence.php:277
+#: eme_calendar.php:225 eme_recurrence.php:287
 msgid "Thursday"
 msgstr "Donderdag"
 
 # @ default
-#: eme_calendar.php:225 eme_recurrence.php:277
+#: eme_calendar.php:225 eme_recurrence.php:287
 msgid "Friday"
 msgstr "Vrijdag"
 
 # @ default
-#: eme_calendar.php:225 eme_recurrence.php:277
+#: eme_calendar.php:225 eme_recurrence.php:287
 msgid "Saturday"
 msgstr "Zaterdag"
 
@@ -131,8 +131,12 @@ msgstr "Zaterdag"
 msgid "You have no right to update categories!"
 msgstr "Je hebt geen rechten om categorieën aan te passen!"
 
+#: eme_categories.php:40
+msgid "Successfully deleted the selected categories."
+msgstr "Gekozen categorieën zijn succesvol verwijderd."
+
 # @ eme
-#: eme_categories.php:41
+#: eme_categories.php:43 eme_categories.php:47
 msgid ""
 "Couldn't delete the categories. Incorrect category IDs supplied. Please try "
 "again."
@@ -141,55 +145,56 @@ msgstr ""
 "Probeer het nogmaals."
 
 # @ eme
-#: eme_categories.php:67 events-manager.php:912
+#: eme_categories.php:72 events-manager.php:938
 msgid "Categories"
 msgstr "Categorieën"
 
 # @ eme
-#: eme_categories.php:89 eme_categories.php:96 eme_events.php:2027
+#: eme_categories.php:94 eme_categories.php:101 eme_events.php:2051
 #: eme_formfields.php:94 eme_formfields.php:102 eme_locations.php:388
-#: eme_locations.php:397 eme_rsvp.php:1323 eme_rsvp.php:1511
+#: eme_locations.php:397 eme_rsvp.php:1443 eme_rsvp.php:1631
+#: eme_templates.php:96 eme_templates.php:103
 msgid "ID"
 msgstr "ID"
 
 # @ eme
 # @ default
-#: eme_categories.php:90 eme_categories.php:97 eme_events.php:2028
-#: eme_events.php:2965 eme_events.php:3012 eme_events.php:3216
-#: eme_locations.php:389 eme_locations.php:398 eme_people.php:153
-#: eme_people.php:253 eme_rsvp.php:206 eme_rsvp.php:1256 eme_rsvp.php:1324
-#: eme_rsvp.php:1512 eme_settings.php:13
+#: eme_categories.php:95 eme_categories.php:102 eme_events.php:2052
+#: eme_events.php:3020 eme_events.php:3066 eme_events.php:3273
+#: eme_locations.php:389 eme_locations.php:398 eme_people.php:154
+#: eme_people.php:260 eme_rsvp.php:216 eme_rsvp.php:1376 eme_rsvp.php:1444
+#: eme_rsvp.php:1632 eme_settings.php:13
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:76
 msgid "Name"
 msgstr "Naam"
 
 # @ eme
-#: eme_categories.php:122
+#: eme_categories.php:127
 msgid "No categories have been inserted yet!"
 msgstr "Er zijn nog geen categorieën ingevoegd!"
 
 # @ eme
-#: eme_categories.php:135 eme_categories.php:143
+#: eme_categories.php:140 eme_categories.php:148
 msgid "Add category"
 msgstr "Voeg categorie toe"
 
 # @ eme
-#: eme_categories.php:139 eme_categories.php:181
+#: eme_categories.php:144 eme_categories.php:186
 msgid "Category name"
 msgstr "Categorie naam"
 
 # @ eme
-#: eme_categories.php:141 eme_categories.php:183
+#: eme_categories.php:146 eme_categories.php:188
 msgid "The name of the category"
 msgstr "De naam van de categorie"
 
 # @ eme
-#: eme_categories.php:163
+#: eme_categories.php:168
 msgid "Edit category"
 msgstr "Wijzig categorie"
 
 # @ eme
-#: eme_categories.php:186
+#: eme_categories.php:191
 msgid "Update category"
 msgstr "Werk categorie bij"
 
@@ -228,44 +233,44 @@ msgid "Month(s)"
 msgstr "Maand(en)"
 
 # @ default
-#: eme_cleanup.php:55 eme_events.php:1980 eme_rsvp.php:1296 eme_rsvp.php:1484
+#: eme_cleanup.php:55 eme_events.php:2004 eme_rsvp.php:1416 eme_rsvp.php:1604
 msgid "Apply"
 msgstr "Toepassen"
 
 # @ eme
-#: eme_events.php:90 eme_events.php:449
+#: eme_events.php:92 eme_events.php:470
 msgid "Insert New Event"
 msgstr "Maak een nieuw evenement aan"
 
 # @ eme
-#: eme_events.php:164
+#: eme_events.php:166
 msgid "Event(s) deleted!"
 msgstr "Event(s) verwijderd!"
 
 # @ eme
-#: eme_events.php:166
+#: eme_events.php:168
 msgid "You have no right to delete events!"
 msgstr "Je hebt geen rechten om evenementen te verwijderen!"
 
 # @ eme
-#: eme_events.php:171 eme_events.php:187 eme_events.php:197 eme_events.php:442
-#: eme_events.php:455 eme_events.php:468 eme_events.php:484 eme_events.php:499
-#: eme_events.php:1960
+#: eme_events.php:173 eme_events.php:189 eme_events.php:199 eme_events.php:463
+#: eme_events.php:476 eme_events.php:489 eme_events.php:505 eme_events.php:520
+#: eme_events.php:1984
 msgid "Future events"
 msgstr "Komende evenementen"
 
 # @ eme
-#: eme_events.php:194
+#: eme_events.php:196
 msgid "You have no right to insert or update events"
 msgstr "Je hebt geen rechten om evenementen toe te voegen of te updaten"
 
 # @ eme
-#: eme_events.php:346
+#: eme_events.php:363
 msgid "Ach, there's a problem here:"
 msgstr "Ach, er is iets mis:"
 
 # @ eme
-#: eme_events.php:367
+#: eme_events.php:388
 msgid ""
 "Could not create the new location for this event: either you don't have the "
 "right to insert locations or there's a DB problem."
@@ -274,359 +279,363 @@ msgstr ""
 "om locaties toe te voegen of er is een DB probleem."
 
 # @ eme
-#: eme_events.php:381 eme_events.php:389
+#: eme_events.php:402 eme_events.php:410
 msgid "Database insert failed!"
 msgstr "Database insert is mislukt!"
 
 # @ eme
-#: eme_events.php:383 eme_events.php:420
+#: eme_events.php:404 eme_events.php:441
 msgid "New recurrent event inserted!"
 msgstr "Nieuw terugkerend evenement aangemaakt!"
 
 # @ eme
-#: eme_events.php:391
+#: eme_events.php:412
 msgid "New event successfully inserted!"
 msgstr "Nieuw evenement met succes aangemaakt!"
 
 # @ eme
-#: eme_events.php:404
+#: eme_events.php:425
 msgid "Recurrence updated!"
 msgstr "Terugkeerpatroon aangepast!"
 
 # @ eme
-#: eme_events.php:407
+#: eme_events.php:428
 msgid "Something went wrong with the recurrence update..."
 msgstr "Er ging iets mis met het bijwerken van het terugkeerpatroon..."
 
 # @ eme
-#: eme_events.php:410 eme_events.php:434 eme_events.php:465 eme_events.php:481
-#: eme_events.php:496
+#: eme_events.php:431 eme_events.php:455 eme_events.php:486 eme_events.php:502
+#: eme_events.php:517
 msgid "You have no right to update"
 msgstr "Je hebt geen rechten om te updaten."
 
 # @ eme
-#: eme_events.php:427
+#: eme_events.php:448
 msgid "updated"
 msgstr "Aangepast!"
 
 # @ eme
-#: eme_events.php:429
+#: eme_events.php:450
 msgid "Failed to update"
 msgstr "Update mislukt"
 
 # @ eme
-#: eme_events.php:452
+#: eme_events.php:473
 msgid "You have no right to add events!"
 msgstr "Je hebt geen rechten om evenementen toe te voegen!"
 
 # @ eme
-#: eme_events.php:462 eme_events.php:1922
+#: eme_events.php:483 eme_events.php:1946
 msgid "Edit Event"
 msgstr "Pas evenement aan"
 
 # @ eme
-#: eme_events.php:493 eme_events.php:2123
+#: eme_events.php:514 eme_events.php:2147
 msgid "Reschedule"
 msgstr "Pas het schema aan."
 
 # @ eme
-#: eme_events.php:508
+#: eme_events.php:529
 msgid "Past Events"
 msgstr "Voorbije evenementen"
 
 # @ eme
-#: eme_events.php:511
+#: eme_events.php:532
 msgid "All Events"
-msgstr "Alle Events"
+msgstr "Alle Evenementen"
 
 # @ eme
-#: eme_events.php:514
+#: eme_events.php:535
 msgid "Future Events"
-msgstr "Toekomstige Events"
+msgstr "Toekomstige Evenementen"
 
 # @ eme
-#: eme_events.php:538
+#: eme_events.php:559
 msgid "Please select a page"
-msgstr "Selecteer een pagina a.j.b."
+msgstr "Selecteer een pagina aub"
 
 # @ eme
-#: eme_events.php:953 eme_locations.php:860
+#: eme_events.php:977 eme_locations.php:860
 msgid "Previous week"
 msgstr "Vorige week"
 
 # @ eme
-#: eme_events.php:954 eme_locations.php:861
+#: eme_events.php:978 eme_locations.php:861
 msgid "Next week"
 msgstr "Volgende week"
 
 # @ eme
-#: eme_events.php:971 eme_locations.php:878
+#: eme_events.php:995 eme_locations.php:878
 msgid "Previous month"
 msgstr "Vorige maand"
 
 # @ eme
-#: eme_events.php:972 eme_locations.php:879
+#: eme_events.php:996 eme_locations.php:879
 msgid "Next month"
 msgstr "Volgende maand"
 
 # @ eme
-#: eme_events.php:980 eme_locations.php:887
+#: eme_events.php:1004 eme_locations.php:887
 msgid "Previous year"
 msgstr "Vorig jaar"
 
 # @ eme
-#: eme_events.php:981 eme_locations.php:888
+#: eme_events.php:1005 eme_locations.php:888
 msgid "Next year"
 msgstr "Volgend jaar"
 
 # @ eme
-#: eme_events.php:990 eme_events.php:999 eme_locations.php:897
+#: eme_events.php:1014 eme_events.php:1023 eme_locations.php:897
 #: eme_locations.php:906
 msgid "Previous day"
 msgstr "Vorige dag"
 
 # @ eme
-#: eme_events.php:991 eme_events.php:1000 eme_locations.php:898
+#: eme_events.php:1015 eme_events.php:1024 eme_locations.php:898
 #: eme_locations.php:907
 msgid "Next day"
 msgstr "Volgende dag"
 
 # @ eme
-#: eme_events.php:1027
+#: eme_events.php:1051
 msgid "Previous page"
 msgstr "Vorige pagina"
 
 # @ eme
-#: eme_events.php:1028
+#: eme_events.php:1052
 msgid "Next page"
 msgstr "Volgende  pagina"
 
 # @ eme
-#: eme_events.php:1065 eme_events.php:1075
+#: eme_events.php:1089 eme_events.php:1099
 msgid "Page "
 msgstr "Pagina "
 
 # @ eme
-#: eme_events.php:1953
+#: eme_events.php:1977
 msgid "New Event ..."
 msgstr "Nieuw Event ..."
 
 # @ eme
-#: eme_events.php:1958
+#: eme_events.php:1982
 msgid "Past events"
-msgstr "Voorbije Events"
+msgstr "Voorbije evenementen"
 
 # @ eme
 # @ default
-#: eme_events.php:1959 eme_rsvp.php:1298 eme_rsvp.php:1486
+#: eme_events.php:1983 eme_rsvp.php:1418 eme_rsvp.php:1606
 msgid "All events"
-msgstr "Alle Events"
+msgstr "Alle evenementen"
 
 # @ eme
-#: eme_events.php:1969
+#: eme_events.php:1993
 msgid "Total"
 msgstr "Totaal"
 
 # @ eme
 # @ default
-#: eme_events.php:1969 eme_settings.php:42 eme_settings.php:43
-#: events-manager.php:148 events-manager.php:900
+#: eme_events.php:1993 eme_settings.php:42 eme_settings.php:43
+#: events-manager.php:150 events-manager.php:926
 msgid "Events"
-msgstr "Events"
+msgstr "Evenementen"
 
 # @ default
-#: eme_events.php:1976 eme_rsvp.php:1292 eme_rsvp.php:1480
+#: eme_events.php:2000 eme_rsvp.php:1412 eme_rsvp.php:1600
 msgid "Bulk Actions"
 msgstr "Bulk Acties"
 
 # @ eme
-#: eme_events.php:1977
+#: eme_events.php:2001
 msgid "Delete selected events"
 msgstr "Verwijder geselecteerde evenementen"
 
 # @ eme
-#: eme_events.php:1978
+#: eme_events.php:2002
 msgid "Delete selected recurrent events"
 msgstr "Verwijder geselecteerde terugkerende evenementen"
 
 # @ eme
-#: eme_events.php:1992 eme_events.php:2314
+#: eme_events.php:2016 eme_events.php:2329
 msgid "Event Status"
 msgstr "Status evenement"
 
 # @ eme
-#: eme_events.php:1998
+#: eme_events.php:2022
 msgid "All categories"
 msgstr "Alle categorieën "
 
 # @ default
-#: eme_events.php:2010 eme_rsvp.php:1313 eme_rsvp.php:1501
+#: eme_events.php:2034 eme_rsvp.php:1433 eme_rsvp.php:1621
 msgid "Filter"
 msgstr "Filter"
 
 # @ eme
-#: eme_events.php:2029 eme_events.php:2317
+#: eme_events.php:2053 eme_events.php:2332
 msgid "Status"
 msgstr "Status"
 
 # @ eme
-#: eme_events.php:2031 eme_events.php:3023 eme_events.php:3190
+#: eme_events.php:2055 eme_events.php:3077 eme_events.php:3247
 msgid "Location"
 msgstr "Locatie"
 
 # @ eme
-#: eme_events.php:2032 eme_rsvp.php:1325 eme_rsvp.php:1513
+#: eme_events.php:2056 eme_rsvp.php:1445 eme_rsvp.php:1633
 msgid "Date and time"
 msgstr "Datum en tijd"
 
 # @ eme
-#: eme_events.php:2071 eme_events.php:2517 eme_locations.php:297
+#: eme_events.php:2095 eme_events.php:2535 eme_locations.php:297
 #: eme_locations.php:510 eme_widgets.php:116 eme_widgets.php:244
 msgid "Category"
 msgstr "Categorie"
 
 # @ eme
-#: eme_events.php:2080 eme_events.php:2082
+#: eme_events.php:2104 eme_events.php:2106
 msgid "RSVP Info: "
 msgstr "RSVP info: "
 
 # @ eme
-#: eme_events.php:2080 eme_events.php:2082
+#: eme_events.php:2104 eme_events.php:2106
 msgid "Free: "
 msgstr "Vrij: "
 
 # @ eme
-#: eme_events.php:2080 eme_rsvp.php:1372 eme_rsvp.php:1558
+#: eme_events.php:2104 eme_rsvp.php:1492 eme_rsvp.php:1678
 msgid "Pending: "
 msgstr "Goed te keuren: "
 
 # @ eme
-#: eme_events.php:2080 eme_events.php:2082 eme_rsvp.php:1372 eme_rsvp.php:1558
+#: eme_events.php:2104 eme_events.php:2106 eme_rsvp.php:1492 eme_rsvp.php:1678
 msgid "Max: "
 msgstr "Max: "
 
 # @ eme
-#: eme_events.php:2084 eme_rsvp.php:880 eme_rsvp.php:1374
+#: eme_events.php:2108 eme_rsvp.php:1000 eme_rsvp.php:1494
 msgid "Printable view"
 msgstr "Afdrukvoorbeeld"
 
 # @ eme
-#: eme_events.php:2085 eme_rsvp.php:884 eme_rsvp.php:1375 eme_rsvp.php:1771
+#: eme_events.php:2109 eme_rsvp.php:1004 eme_rsvp.php:1495 eme_rsvp.php:1891
 msgid "CSV export"
 msgstr "CSV export"
 
 # @ eme
-#: eme_events.php:2097
+#: eme_events.php:2121
 msgid "Preview event"
 msgstr "Event bekijken"
 
 # @ eme
-#: eme_events.php:2099
+#: eme_events.php:2123
 msgid "View event"
 msgstr "Bekijk evenement"
 
 # @ eme
-#: eme_events.php:2104
+#: eme_events.php:2128
 msgid "Duplicate this event"
 msgstr "Dupliceer dit evenement"
 
 # @ eme
-#: eme_events.php:2112
+#: eme_events.php:2136
 msgid "All day"
 msgstr "Hele dag"
 
 # @ eme
-#: eme_events.php:2219 eme_widgets.php:100
+#: eme_events.php:2248 eme_widgets.php:100
 msgid "Daily"
 msgstr "Dagelijks"
 
 # @ eme
-#: eme_events.php:2219
+#: eme_events.php:2248
 msgid "Weekly"
 msgstr "Wekelijks"
 
 # @ eme
-#: eme_events.php:2219 eme_widgets.php:101
+#: eme_events.php:2248 eme_widgets.php:101
 msgid "Monthly"
 msgstr "Maandelijks"
 
+#: eme_events.php:2248 eme_recurrence.php:335
+msgid "Specific days"
+msgstr "Specifieke dagen"
+
 # @ default
-#: eme_events.php:2220
+#: eme_events.php:2249
 msgid "Mon"
 msgstr "Maa"
 
 # @ default
-#: eme_events.php:2220
+#: eme_events.php:2249
 msgid "Tue"
 msgstr "Din"
 
 # @ default
-#: eme_events.php:2220
+#: eme_events.php:2249
 msgid "Wed"
 msgstr "Woe"
 
 # @ default
-#: eme_events.php:2220
+#: eme_events.php:2249
 msgid "Thu"
 msgstr "Don"
 
 # @ default
-#: eme_events.php:2220
+#: eme_events.php:2249
 msgid "Fri"
 msgstr "Vrij"
 
 # @ default
-#: eme_events.php:2220
+#: eme_events.php:2249
 msgid "Sat"
 msgstr "Zat"
 
 # @ default
-#: eme_events.php:2220
+#: eme_events.php:2249
 msgid "Sun"
 msgstr "Zon"
 
 # @ eme
-#: eme_events.php:2221
+#: eme_events.php:2250
 msgid "first"
 msgstr "eerste"
 
 # @ eme
-#: eme_events.php:2221
+#: eme_events.php:2250
 msgid "second"
 msgstr "tweede"
 
 # @ eme
-#: eme_events.php:2221
+#: eme_events.php:2250
 msgid "third"
 msgstr "derde"
 
 # @ eme
-#: eme_events.php:2221
+#: eme_events.php:2250
 msgid "fourth"
 msgstr "vierde"
 
 # @ eme
-#: eme_events.php:2221
+#: eme_events.php:2250
 msgid "fifth"
 msgstr "vijfde"
 
 # @ eme
-#: eme_events.php:2221
+#: eme_events.php:2250
 msgid "last"
 msgstr "laatste"
 
 # @ default
-#: eme_events.php:2221
+#: eme_events.php:2250
 msgid "Start day"
 msgstr "Start dag"
 
 # @ eme
-#: eme_events.php:2290
+#: eme_events.php:2305
 msgid "WARNING: This is a recurrence."
 msgstr "LET OP: dit is een terugkeer patroon."
 
 # @ eme
-#: eme_events.php:2293
+#: eme_events.php:2308
 msgid ""
 "Modifying these data all the events linked to this recurrence will be "
 "rescheduled"
@@ -635,12 +644,12 @@ msgstr ""
 "gekoppelde evenementen worden aangepast"
 
 # @ eme
-#: eme_events.php:2296
+#: eme_events.php:2311
 msgid "WARNING: This is a recurring event."
 msgstr "LET OP: Dit is een terugkerend evenement."
 
 # @ eme
-#: eme_events.php:2297
+#: eme_events.php:2312
 msgid ""
 "If you change these data and save, this will become an independent event."
 msgstr ""
@@ -648,7 +657,7 @@ msgstr ""
 "gebeurtenis."
 
 # @ eme
-#: eme_events.php:2331
+#: eme_events.php:2346
 msgid ""
 "Private events are only visible for logged in users, draft events are not "
 "visible from the front end."
@@ -657,47 +666,47 @@ msgstr ""
 "concept-evenementen zijn niet zichtbaar op het front-end"
 
 # @ eme
-#: eme_events.php:2343
+#: eme_events.php:2358
 msgid "Recurrence"
 msgstr "Terugkeerschema"
 
 # @ eme
-#: eme_events.php:2362 eme_events.php:2384
+#: eme_events.php:2378 eme_events.php:2400
 msgid "Every"
 msgstr "Iedere"
 
 # @ eme
-#: eme_events.php:2366
+#: eme_events.php:2382
 msgid "day"
 msgstr "dag"
 
 # @ eme
-#: eme_events.php:2368
+#: eme_events.php:2384
 msgid "days"
 msgstr "dagen"
 
 # @ eme
-#: eme_events.php:2370
+#: eme_events.php:2386
 msgid "week"
 msgstr "week"
 
 # @ eme
-#: eme_events.php:2372
+#: eme_events.php:2388
 msgid "weeks"
 msgstr "weken"
 
 # @ eme
-#: eme_events.php:2374
+#: eme_events.php:2390
 msgid "month"
 msgstr "maand"
 
 # @ eme
-#: eme_events.php:2376
+#: eme_events.php:2392
 msgid "months"
 msgstr "maanden"
 
 # @ eme
-#: eme_events.php:2381
+#: eme_events.php:2397
 msgid ""
 "If you leave this empty, the recurrence start date will be used as a "
 "reference."
@@ -706,12 +715,12 @@ msgstr ""
 "referentie."
 
 # @ eme
-#: eme_events.php:2391
+#: eme_events.php:2407
 msgid "Day of month"
 msgstr "Dag van de maand"
 
 # @ eme
-#: eme_events.php:2393
+#: eme_events.php:2409
 msgid ""
 "If you use \"Start day\" as day of the month, the event start date will be "
 "used as a reference."
@@ -720,14 +729,12 @@ msgstr ""
 "het evenement gebruikt worden als referentie."
 
 # @ eme
-#: eme_events.php:2397
-msgid ""
-"Check if your event happens more than once according to a regular pattern"
-msgstr ""
-"Controleer of je evenement meer dan eens plaatsvindt volgens een vast patroon"
+#: eme_events.php:2415
+msgid "Check if your event happens more than once."
+msgstr "Vink aan als je evenement meer dan eens plaatsvindt"
 
 # @ eme
-#: eme_events.php:2400
+#: eme_events.php:2418
 msgid ""
 "The event start and end date only define the duration of an event in case of "
 "a recurrence."
@@ -736,317 +743,344 @@ msgstr ""
 "herhaling de duur van een evenement."
 
 # @ eme
-#: eme_events.php:2412 eme_widgets.php:149 eme_widgets.php:273
+#: eme_events.php:2430 eme_widgets.php:149 eme_widgets.php:273
 msgid "Author"
 msgstr "Auteur:"
 
 # @ eme
-#: eme_events.php:2415
+#: eme_events.php:2433
 msgid "Author of this event: "
 msgstr "Auteur van dit evenement: "
 
 # @ eme
-#: eme_events.php:2428
+#: eme_events.php:2446
 msgid "Contact Person"
 msgstr "Contactpersoon"
 
 # @ eme
-#: eme_events.php:2431
+#: eme_events.php:2449
 msgid "Contact"
 msgstr "Contact"
 
 # @ eme
-#: eme_events.php:2433 eme_settings.php:484
+#: eme_events.php:2451 eme_settings.php:486
 msgid "Event author"
 msgstr "Event auteur"
 
 # @ eme
-#: eme_events.php:2442
+#: eme_events.php:2460
 msgid "RSVP"
 msgstr "RSVP"
 
 # @ eme
-#: eme_events.php:2446
+#: eme_events.php:2464
 msgid "Enable registration for this event"
 msgstr "Maak registreren voor dit evenement mogelijk."
 
 # @ eme
-#: eme_events.php:2451
+#: eme_events.php:2469
 msgid "Require approval for registration"
 msgstr "Goedkeuring voor registratie benodigd"
 
 # @ eme
-#: eme_events.php:2454
+#: eme_events.php:2472
 msgid "Auto-approve registration upon payment"
 msgstr "Keur registratie bij de betaling automatisch goed"
 
 # @ eme
-#: eme_events.php:2457
+#: eme_events.php:2475
 msgid "Consider pending registrations as available seats for new bookings"
 msgstr ""
 "Beschouw registraties die in de wacht staan als beschikbare plaatsen voor "
 "nieuwe boekingen."
 
 # @ eme
-#: eme_events.php:2460
+#: eme_events.php:2478
 msgid "Require WP membership for registration"
 msgstr "Lidmaatschap van WP Blog vereist om te kunnen registreren?"
 
 # @ eme
-#: eme_events.php:2463 eme_rsvp.php:849
+#: eme_events.php:2481 eme_rsvp.php:969
 msgid "Spaces"
 msgstr "Plaatsen"
 
 # @ eme
-#: eme_events.php:2467 eme_people.php:249
+#: eme_events.php:2482
+msgid "For multiseat events, seperate the values by '||'"
+msgstr ""
+"Bij evenementen met meerder zitplaats-categories, scheidt de waardes met '||'"
+
+# @ eme
+#: eme_events.php:2485 eme_people.php:256
 msgid "Price: "
 msgstr "Prijs: "
 
 # @ eme
-#: eme_events.php:2468 eme_rsvp.php:1275 eme_rsvp.php:1391 eme_rsvp.php:1576
+#: eme_events.php:2486 eme_rsvp.php:1395 eme_rsvp.php:1511 eme_rsvp.php:1696
 msgid "For multiprice events, seperate the values by '||'"
 msgstr "Bij evenementen met meerder prijzen, deel de waardes met '||'"
 
 # @ eme
-#: eme_events.php:2471
+#: eme_events.php:2489
 msgid "Currency: "
 msgstr "Munteenheid: "
 
 # @ eme
-#: eme_events.php:2488
+#: eme_events.php:2506
 msgid "Allow RSVP until "
 msgstr "Sta RSVP toe tot "
 
 # @ eme
-#: eme_events.php:2491
+#: eme_events.php:2509
 msgid " days before the event starts."
 msgstr " dagen voordat het evenement plaatsvindt."
 
 # @ eme
-#: eme_events.php:2494
+#: eme_events.php:2512
 msgid " hours before the event starts."
 msgstr "uren voordat evenement start."
 
 # @ eme
-#: eme_events.php:2497
+#: eme_events.php:2515
 msgid "Payment methods"
 msgstr "Betaalmethodes"
 
 # @ eme
-#: eme_events.php:2498
+#: eme_events.php:2516
 msgid "Paypal"
 msgstr "PayPal"
 
 # @ eme
-#: eme_events.php:2499
+#: eme_events.php:2517
 msgid "2Checkout"
 msgstr "2Checkout"
 
 # @ eme
-#: eme_events.php:2500
+#: eme_events.php:2518
 msgid "Webmoney"
 msgstr "Webmoney"
 
 # @ eme
-#: eme_events.php:2501
+#: eme_events.php:2519
 msgid "Google Checkout"
 msgstr "Google Checkout"
 
 # @ eme
-#: eme_events.php:2502
-msgid "Firs Data"
-msgstr "Spar Data"
+#: eme_events.php:2520
+msgid "First Data"
+msgstr "First Data"
 
 # @ default
-#: eme_events.php:2619
+#: eme_events.php:2637
 msgid "Save"
 msgstr "Opslaan"
 
 # @ eme
-#: eme_events.php:2621
+#: eme_events.php:2639
 msgid "Are you sure you want to delete this event?"
 msgstr "Weet je zeker dat je dit evenement wilt verwijderen?"
 
 # @ eme
-#: eme_events.php:2622
+#: eme_events.php:2640
 msgid "Are you sure you want to delete this recurrence?"
 msgstr "Weet je zeker dat je deze herhaling wilt verwijderen?"
 
 # @ default
-#: eme_events.php:2625 eme_events.php:2627
+#: eme_events.php:2643 eme_events.php:2645
 msgid "Update"
 msgstr "Update"
 
 # @ eme
-#: eme_events.php:2629
+#: eme_events.php:2647
 msgid "Delete Event"
 msgstr "Verwijder evenement"
 
 # @ eme
-#: eme_events.php:2631
+#: eme_events.php:2649
 msgid "Delete Recurrence"
 msgstr "Verwijder herhaling"
 
 # @ eme
-#: eme_events.php:2645
+#: eme_events.php:2663
 msgid "The event name"
 msgstr "Naam van evenement"
 
 # @ eme
-#: eme_events.php:2648 eme_locations.php:720 eme_locations.php:724
+#: eme_events.php:2666 eme_locations.php:720 eme_locations.php:724
 #: eme_locations.php:727
 msgid " is missing!"
 msgstr " ontbreekt!"
 
 # @ eme
-#: eme_events.php:2651
+#: eme_events.php:2669
 msgid ""
 "Since the event is repeated, you must specify an event date for the "
 "recurrence."
 msgstr "Omdat het evenement wordt herhaald, dien je een datum in te vullen"
 
+#: eme_events.php:2672
+msgid ""
+"Since the event contains multiple seat categories (multiseat), you must "
+"specify the price per category (multiprice) as well."
+msgstr ""
+"Aangezien het evenement verschillende zitplaats-categorieën bevat "
+"(multiseat), moet u de prijs per categorie (multiprice) vermelden."
+
+#: eme_events.php:2677
+msgid ""
+"Since the event contains multiple seat categories (multiseat), you must "
+"specify the exact same amount of prices (multiprice) as well."
+msgstr ""
+"Aangezien het evenement verschillende zitplaats-categorieën bevat "
+"(multiseat), moet u exact dezelfde hoeveelheid prijzen (multiprice) "
+"vermelden."
+
 # @ eme
-#: eme_events.php:2656 eme_locations.php:734
+#: eme_events.php:2683 eme_locations.php:734
 msgid "Ach, some problems here:"
 msgstr "Helaas, er zijn hier wat problemen:"
 
 # @ eme
 # @ default
-#: eme_events.php:2966
+#: eme_events.php:3021
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:26
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:40
 msgid "Date"
 msgstr "Datum"
 
 # @ eme
-#: eme_events.php:2981
+#: eme_events.php:3035
 msgid "Some required fields are missing:"
 msgstr "Enkele vereiste velden ontbreken:"
 
 # @ eme
-#: eme_events.php:2984
+#: eme_events.php:3038
 msgid "Since the event is repeated, you must specify an end date"
 msgstr "Omdat het evenement wordt herhaald, dien je een einddatum in te vullen"
 
 # @ eme
-#: eme_events.php:3013
+#: eme_events.php:3067
 msgid "Event date"
 msgstr "Datum van het evenement"
 
 # @ eme
-#: eme_events.php:3014
+#: eme_events.php:3068
 msgid "Recurrence dates"
 msgstr "Terugkerende datums"
 
 # @ eme
-#: eme_events.php:3015
+#: eme_events.php:3069
 msgid "Event time"
 msgstr "Tijdstip van het evenement"
 
 # @ eme
-#: eme_events.php:3016
+#: eme_events.php:3070
 msgid "Single Event Title Format"
 msgstr "Formaat titel van los evenement"
 
 # @ eme
-#: eme_events.php:3017
+#: eme_events.php:3071
 msgid "Single Event Format"
 msgstr "Formaat los evenement"
 
 # @ eme
-#: eme_events.php:3018
+#: eme_events.php:3072
 msgid "Contact Person Email Format"
 msgstr "Formaat e-mail contactpersoon"
 
 # @ eme
-#: eme_events.php:3019
+#: eme_events.php:3073
 msgid "Booking recorded html Format"
 msgstr "Formaat html opgenomen boeking"
 
 # @ eme
-#: eme_events.php:3020
+#: eme_events.php:3074
 msgid "Respondent Email Format"
 msgstr "Formaat e-mail ondervraagde"
 
 # @ eme
-#: eme_events.php:3021
+#: eme_events.php:3075
 msgid "Registration Pending Email Format"
 msgstr "Formaat e-mail afwachtende registraties"
 
 # @ eme
-#: eme_events.php:3022
+#: eme_events.php:3076
 msgid "Registration Form Format"
 msgstr "Formaat registratieformulier"
 
 # @ eme
-#: eme_events.php:3024
+#: eme_events.php:3078
 msgid "Details"
 msgstr "Details"
 
 # @ eme
-#: eme_events.php:3025
+#: eme_events.php:3079
 msgid "Event image"
 msgstr "Afbeelding evenement"
 
 # @ eme
-#: eme_events.php:3028 eme_locations.php:345 eme_locations.php:546
+#: eme_events.php:3082 eme_locations.php:345 eme_locations.php:546
 msgid "External link"
 msgstr "Externe link"
 
 # @ eme
-#: eme_events.php:3038
+#: eme_events.php:3092
 msgid "The event name. Example: Birthday party"
 msgstr "De naam van het evenement. Voorbeeld: Verjaardagsfeest"
 
 # @ eme
-#: eme_events.php:3042 eme_locations.php:195
+#: eme_events.php:3096 eme_locations.php:195
 msgid "Permalink: "
 msgstr "Permalink: "
 
 # @ eme
-#: eme_events.php:3060
+#: eme_events.php:3114
 msgid "The event date."
 msgstr "Datum van het evenement"
 
 # @ eme
-#: eme_events.php:3065
+#: eme_events.php:3119
 msgid "This event lasts all day"
 msgstr "Dit evenement duurt de hele dag"
 
 # @ eme
-#: eme_events.php:3077
+#: eme_events.php:3131
 msgid "The recurrence beginning and end date."
 msgstr "De begin-en einddatum van het terugkerend evenement."
 
+#: eme_events.php:3134
+msgid "Select all the dates you want the event to begin on."
+msgstr "Kies alle dagen waarop u wenst dat het evenement begint."
+
 # @ eme
-#: eme_events.php:3086
+#: eme_events.php:3143
 msgid "The format of the single event title."
 msgstr "Formaat titel van los evenement."
 
 # @ eme
-#: eme_events.php:3088 eme_events.php:3116 eme_events.php:3127
-#: eme_events.php:3138 eme_events.php:3149 eme_events.php:3160
-#: eme_events.php:3171
+#: eme_events.php:3145 eme_events.php:3173 eme_events.php:3184
+#: eme_events.php:3195 eme_events.php:3206 eme_events.php:3217
+#: eme_events.php:3228
 msgid "Only fill this in if you want to override the default settings."
 msgstr "Vul dit alleen in als je standaard instellingen wilt overschrijven."
 
 # @ eme
-#: eme_events.php:3105
+#: eme_events.php:3162
 msgid "The time of the event beginning and end"
 msgstr "De begin- en eindtijd van het evenement"
 
 # @ eme
-#: eme_events.php:3114
+#: eme_events.php:3171
 msgid "The format of the single event page."
 msgstr "Formaat van de losse evenement pagina."
 
 # @ eme
-#: eme_events.php:3125 eme_settings.php:524
+#: eme_events.php:3182 eme_settings.php:526
 msgid "The format of the email which will be sent to the contact person."
 msgstr "Formaat van bericht die naar contactpersoon gestuurd wordt."
 
 # @ eme
-#: eme_events.php:3136 eme_settings.php:503
+#: eme_events.php:3193 eme_settings.php:505
 msgid ""
 "The text (html allowed) shown to the user when the booking has been made "
 "successfully."
@@ -1055,12 +1089,12 @@ msgstr ""
 "gelukt is."
 
 # @ eme
-#: eme_events.php:3147 eme_settings.php:527
+#: eme_events.php:3204 eme_settings.php:529
 msgid "The format of the email which will be sent to the respondent."
 msgstr "Formaat van bericht die naar ondervraagde gestuurd wordt."
 
 # @ eme
-#: eme_events.php:3158
+#: eme_events.php:3215
 msgid ""
 "The format of the email which will be sent to the respondent if the "
 "registration is pending."
@@ -1069,17 +1103,17 @@ msgstr ""
 "de wacht staat."
 
 # @ eme
-#: eme_events.php:3169
+#: eme_events.php:3226
 msgid "The registration form format."
 msgstr "Formaat registratieformulier."
 
 # @ eme
-#: eme_events.php:3226 eme_locations.php:327 eme_locations.php:531
+#: eme_events.php:3283 eme_locations.php:327 eme_locations.php:531
 msgid "Map not found"
 msgstr "Kaart niet gevonden"
 
 # @ eme
-#: eme_events.php:3237
+#: eme_events.php:3294
 msgid ""
 "The name of the location where the event takes place. You can use the name "
 "of a venue, a square, etc"
@@ -1088,22 +1122,22 @@ msgstr ""
 "van de naam van een locatie, een plein, enz"
 
 # @ eme
-#: eme_events.php:3239
+#: eme_events.php:3296
 msgid "If you leave this empty, the map will NOT be shown for this event"
 msgstr "Als je dit blanco laat, wordt de kaart voor dit evenement NIET getoond"
 
 # @ eme
-#: eme_events.php:3245
+#: eme_events.php:3302
 msgid "Select a location for your event"
 msgstr "Selecteer een locatie voor het evenement"
 
 # @ eme
-#: eme_events.php:3251
+#: eme_events.php:3308
 msgid "Address:"
 msgstr "Adres:"
 
 # @ eme
-#: eme_events.php:3256
+#: eme_events.php:3313
 msgid ""
 "The address of the location where the event takes place. Example: 21, "
 "Dominick Street"
@@ -1112,12 +1146,12 @@ msgstr ""
 "Pieterpad 35"
 
 # @ eme
-#: eme_events.php:3260
+#: eme_events.php:3317
 msgid "Town:"
 msgstr "Plaats:"
 
 # @ eme
-#: eme_events.php:3265
+#: eme_events.php:3322
 msgid ""
 "The town where the location is located. If you're using the Google Map "
 "integration and want to avoid geotagging ambiguities include the country in "
@@ -1128,17 +1162,17 @@ msgstr ""
 "en land. Voorbeeld: Verona, Italië."
 
 # @ eme
-#: eme_events.php:3269
+#: eme_events.php:3326
 msgid "Latitude:"
 msgstr "Breedtegraad:"
 
 # @ eme
-#: eme_events.php:3273
+#: eme_events.php:3330
 msgid "Longitude:"
 msgstr "Hoogtegraad:"
 
 # @ eme
-#: eme_events.php:3278
+#: eme_events.php:3335
 msgid ""
 "If you're using the Google Map integration and are really serious about the "
 "correct place, use these."
@@ -1147,27 +1181,27 @@ msgstr ""
 "locatie, gebruik deze."
 
 # @ eme
-#: eme_events.php:3293
+#: eme_events.php:3350
 msgid "Details about the event"
 msgstr "Details van het evenement"
 
 # @ eme
-#: eme_events.php:3303
+#: eme_events.php:3360
 msgid "Current image:"
 msgstr "Huidige afbeelding:"
 
 # @ eme
-#: eme_events.php:3321 eme_locations.php:260 eme_locations.php:474
+#: eme_events.php:3378 eme_locations.php:260 eme_locations.php:474
 msgid "Set a featured image"
 msgstr "Stel uitgelichte afbeelding in"
 
 # @ eme
-#: eme_events.php:3322 eme_locations.php:261 eme_locations.php:475
+#: eme_events.php:3379 eme_locations.php:261 eme_locations.php:475
 msgid "Unset featured image"
 msgstr "Zet uitgelichte afbeelding uit"
 
 # @ eme
-#: eme_events.php:3365 eme_locations.php:548
+#: eme_events.php:3422 eme_locations.php:548
 msgid ""
 "If this is filled in, the single event URL will point to this url instead of "
 "the standard event page."
@@ -1176,12 +1210,12 @@ msgstr ""
 "plaats van de standaard evenement pagina."
 
 # @ eme
-#: eme_events.php:3925
+#: eme_events.php:3978
 msgid "Add an event"
 msgstr "Voeg een evenement toe"
 
 # @ eme
-#: eme_events.php:3933
+#: eme_events.php:3986
 msgid ""
 "This page corresponds to <strong>Events Made Easy</strong> events page. Its "
 "content will be overriden by <strong>Events Made Easy</strong>. If you want "
@@ -1303,18 +1337,18 @@ msgstr ""
 "verschillende waarden te scheiden (b.v.: a1||a2||a3)"
 
 # @ eme
-#: eme_formfields.php:159 eme_formfields.php:216 eme_settings.php:501
-#: eme_settings.php:510
+#: eme_formfields.php:159 eme_formfields.php:216 eme_settings.php:503
+#: eme_settings.php:512
 msgid "For more information about form fields, see "
 msgstr "Voor meer informatie over formulier velden, zie "
 
 # @ eme
-#: eme_formfields.php:159 eme_formfields.php:216 eme_settings.php:403
-#: eme_settings.php:408 eme_settings.php:418 eme_settings.php:445
-#: eme_settings.php:450 eme_settings.php:501 eme_settings.php:510
-#: eme_settings.php:524 eme_settings.php:525 eme_settings.php:526
-#: eme_settings.php:527 eme_settings.php:528 eme_settings.php:529
-#: eme_settings.php:530
+#: eme_formfields.php:159 eme_formfields.php:216 eme_settings.php:405
+#: eme_settings.php:410 eme_settings.php:420 eme_settings.php:447
+#: eme_settings.php:452 eme_settings.php:503 eme_settings.php:512
+#: eme_settings.php:526 eme_settings.php:527 eme_settings.php:528
+#: eme_settings.php:529 eme_settings.php:530 eme_settings.php:531
+#: eme_settings.php:532
 msgid "the documentation"
 msgstr "de documentatie"
 
@@ -1366,122 +1400,122 @@ msgid "See the documentation about multiprice events."
 msgstr "Zie de documentatie over evenement met meerdere prijzen."
 
 # @ eme
-#: eme_functions.php:372
+#: eme_functions.php:384
 msgid "Public"
 msgstr "Publiek"
 
 # @ eme
-#: eme_functions.php:373
+#: eme_functions.php:385
 msgid "Private"
 msgstr "Privé"
 
 # @ eme
-#: eme_functions.php:374
+#: eme_functions.php:386
 msgid "Draft"
 msgstr "Concept"
 
 # @ eme
-#: eme_functions.php:390
+#: eme_functions.php:402
 msgid "Australian Dollar"
 msgstr "Australische Dollar"
 
 # @ eme
-#: eme_functions.php:391
+#: eme_functions.php:403
 msgid "Canadian Dollar"
 msgstr "Canadese Dollar"
 
 # @ eme
-#: eme_functions.php:392
+#: eme_functions.php:404
 msgid "Czech Koruna"
 msgstr "Tsjechische Koruna"
 
 # @ eme
-#: eme_functions.php:393
+#: eme_functions.php:405
 msgid "Danish Krone"
 msgstr "Deense Krone"
 
 # @ eme
-#: eme_functions.php:394
+#: eme_functions.php:406
 msgid "Euro"
 msgstr "Euro"
 
 # @ eme
-#: eme_functions.php:395
+#: eme_functions.php:407
 msgid "Hong Kong Dollar"
 msgstr "Hong Kong Dollar"
 
 # @ eme
-#: eme_functions.php:396
+#: eme_functions.php:408
 msgid "Hungarian Forint"
 msgstr "Hungaarse Forint"
 
 # @ eme
-#: eme_functions.php:397
+#: eme_functions.php:409
 msgid "Israeli New Sheqel"
 msgstr "Israelische New Sheqel"
 
 # @ eme
-#: eme_functions.php:398
+#: eme_functions.php:410
 msgid "Japanese Yen"
 msgstr "Japanse Yen"
 
 # @ eme
-#: eme_functions.php:399
+#: eme_functions.php:411
 msgid "Mexican Peso"
 msgstr "Mexicaanse Peso"
 
 # @ eme
-#: eme_functions.php:400
+#: eme_functions.php:412
 msgid "Norwegian Krone"
 msgstr "Noorse Krone"
 
 # @ eme
-#: eme_functions.php:401
+#: eme_functions.php:413
 msgid "New Zealand Dollar"
 msgstr "Niew Zeelandse Dollar"
 
 # @ eme
-#: eme_functions.php:402
+#: eme_functions.php:414
 msgid "Philippine Peso"
 msgstr "Filippijnse Peso"
 
 # @ eme
-#: eme_functions.php:403
+#: eme_functions.php:415
 msgid "Polish Zloty"
 msgstr "Poolse Zloty"
 
 # @ eme
-#: eme_functions.php:404
+#: eme_functions.php:416
 msgid "Pound Sterling"
 msgstr "Pond Sterling"
 
 # @ eme
-#: eme_functions.php:405
+#: eme_functions.php:417
 msgid "Singapore Dollar"
 msgstr "Singapore Dollar"
 
 # @ eme
-#: eme_functions.php:406
+#: eme_functions.php:418
 msgid "Swedish Krona"
 msgstr "Zweedse Krona"
 
 # @ eme
-#: eme_functions.php:407
+#: eme_functions.php:419
 msgid "Swiss Franc"
 msgstr "Zwitserse Franc"
 
 # @ eme
-#: eme_functions.php:408
+#: eme_functions.php:420
 msgid "Thai Baht"
 msgstr "Thaise Baht"
 
 # @ eme
-#: eme_functions.php:409
+#: eme_functions.php:421
 msgid "U.S. Dollar"
 msgstr "V.S. Dollar"
 
 # @ eme
-#: eme_functions.php:410
+#: eme_functions.php:422
 msgid "Chinese Yuan Renminbi"
 msgstr "Chinese Yuan Renminbi"
 
@@ -1516,7 +1550,7 @@ msgid "You have no right to add a location!"
 msgstr "Je hebt geen rechten om locaties toe te voegen."
 
 # @ eme
-#: eme_locations.php:172 eme_settings.php:369
+#: eme_locations.php:172 eme_settings.php:370
 msgid "Edit location"
 msgstr "Wijzig locatie"
 
@@ -1590,7 +1624,7 @@ msgid "Update location"
 msgstr "Werk locatie bij"
 
 # @ eme
-#: eme_locations.php:370 events-manager.php:909
+#: eme_locations.php:370 events-manager.php:935
 msgid "Locations"
 msgstr "Locaties"
 
@@ -1612,7 +1646,7 @@ msgid "No venues have been inserted yet!"
 msgstr "Er zijn nog geen locaties toegevoegd!"
 
 # @ eme
-#: eme_locations.php:435 eme_locations.php:550 eme_settings.php:367
+#: eme_locations.php:435 eme_locations.php:550 eme_settings.php:368
 msgid "Add location"
 msgstr "Voeg een locatie toe"
 
@@ -1656,12 +1690,12 @@ msgid "The location town"
 msgstr "Locatie vestigingsplaats"
 
 # @ eme
-#: eme_locations.php:1352
+#: eme_locations.php:1362
 msgid "Your Street Address"
 msgstr "Je adres (straat)"
 
 # @ eme
-#: eme_locations.php:1356
+#: eme_locations.php:1366
 msgid "Get Directions"
 msgstr "Geef route-aanwijzingen"
 
@@ -1676,87 +1710,87 @@ msgid "Couldn't delete the people. Please try again."
 msgstr "Kon personen niet verwijderen. Probeer het nogmaals."
 
 # @ eme
-#: eme_people.php:154 eme_people.php:254 eme_rsvp.php:792
+#: eme_people.php:155 eme_people.php:261 eme_rsvp.php:912
 msgid "E-mail"
 msgstr "E-mail"
 
 # @ eme
-#: eme_people.php:155 eme_people.php:255 eme_people.php:497 eme_rsvp.php:792
-#: eme_rsvp.php:1258 eme_settings.php:15
+#: eme_people.php:156 eme_people.php:262 eme_people.php:509 eme_rsvp.php:403
+#: eme_rsvp.php:912 eme_rsvp.php:1378 eme_settings.php:15
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
 # @ eme
-#: eme_people.php:157 eme_people.php:256 eme_rsvp.php:354 eme_rsvp.php:363
-#: eme_rsvp.php:1275
+#: eme_people.php:158 eme_people.php:263 eme_rsvp.php:363 eme_rsvp.php:372
+#: eme_rsvp.php:1395
 msgid "Seats (Multiprice)"
 msgstr "Plaatsen (meerdere prijzen)"
 
 # @ eme
-#: eme_people.php:159 eme_people.php:256 eme_rsvp.php:792 eme_rsvp.php:1274
-#: eme_rsvp.php:1328 eme_rsvp.php:1516 eme_settings.php:16
+#: eme_people.php:160 eme_people.php:263 eme_rsvp.php:912 eme_rsvp.php:1394
+#: eme_rsvp.php:1448 eme_rsvp.php:1636 eme_settings.php:16
 msgid "Seats"
 msgstr "Plaatsen"
 
 # @ eme
-#: eme_people.php:160 eme_people.php:257 eme_rsvp.php:1276 eme_rsvp.php:1332
-#: eme_rsvp.php:1520
+#: eme_people.php:161 eme_people.php:264 eme_rsvp.php:1396 eme_rsvp.php:1452
+#: eme_rsvp.php:1640
 msgid "Paid"
 msgstr "Betaald"
 
 # @ eme
-#: eme_people.php:161 eme_people.php:258 eme_settings.php:17
+#: eme_people.php:162 eme_people.php:265 eme_rsvp.php:405 eme_settings.php:17
 msgid "Comment"
 msgstr "Opmerkingen"
 
 # @ eme
-#: eme_people.php:171 eme_people.php:271 eme_rsvp.php:864
+#: eme_people.php:172 eme_people.php:278 eme_rsvp.php:984
 msgid "(pending)"
 msgstr "(goed te keuren)"
 
 # @ eme
-#: eme_people.php:250
+#: eme_people.php:257
 msgid "Bookings data"
 msgstr "Boekingen gegevens"
 
 # @ eme
-#: eme_people.php:312
+#: eme_people.php:319
 msgid "Booked"
 msgstr "Gereserveerd"
 
 # @ eme
-#: eme_people.php:316
+#: eme_people.php:325 eme_people.php:327
 msgid "(%s pending)"
 msgstr "(goed te keuren)"
 
 # @ eme
-#: eme_people.php:322
+#: eme_people.php:334
 msgid "Available"
 msgstr "Beschikbaar"
 
 # @ eme
-#: eme_people.php:337
+#: eme_people.php:349
 msgid "No people have responded to your events yet!"
 msgstr "Er zijn nog geen aanmeldingen voor je evenementen!"
 
 # @ eme
-#: eme_people.php:339
+#: eme_people.php:351
 msgid "This table shows the data about the people who responded to your events"
 msgstr ""
 "Deze tabel toont de gegevens over de mensen die reageerden op je evenementen"
 
 # @ eme
-#: eme_people.php:377
+#: eme_people.php:389
 msgid "Also delete associated bookings"
 msgstr "Verwijder ook de aan personen gerelateerde reserveringen."
 
 # @ eme
-#: eme_people.php:494
+#: eme_people.php:506
 msgid "Events Made Easy settings"
 msgstr "Events Made Easy Instellingen"
 
 # @ eme
-#: eme_people.php:499
+#: eme_people.php:511
 msgid ""
 "The phone number used by Events Made Easy when the user is indicated as the "
 "contact person for an event."
@@ -1766,12 +1800,12 @@ msgstr ""
 "evenement."
 
 # @ eme
-#: eme_people.php:502
+#: eme_people.php:514
 msgid "Date format"
 msgstr "Datum opmaak"
 
 # @ eme
-#: eme_people.php:504
+#: eme_people.php:516
 msgid ""
 "The date format used by Events Made Easy in the admin section. If empty the "
 "general WP date format setting will be used."
@@ -1780,7 +1814,7 @@ msgstr ""
 "leeggelaten wordt de algemene WP datum opmaak instelling gebruikt."
 
 # @ default
-#: eme_people.php:505
+#: eme_people.php:517
 msgid ""
 "<a href=\"http://codex.wordpress.org/Formatting_Date_and_Time"
 "\">Documentation on date and time formatting</a>."
@@ -1789,72 +1823,72 @@ msgstr ""
 "over datum en tijd opmaak</a>."
 
 # @ eme
-#: eme_recurrence.php:278
+#: eme_recurrence.php:288
 msgid "the first %s of the month"
 msgstr "de eerste %s van de maand"
 
 # @ eme
-#: eme_recurrence.php:278
+#: eme_recurrence.php:288
 msgid "the second %s of the month"
 msgstr "de tweede %s van de maand"
 
 # @ eme
-#: eme_recurrence.php:278
+#: eme_recurrence.php:288
 msgid "the third %s of the month"
 msgstr "de derde %s van de maand"
 
 # @ eme
-#: eme_recurrence.php:278
+#: eme_recurrence.php:288
 msgid "the fourth %s of the month"
 msgstr "de vierde %s van de maand"
 
 # @ eme
-#: eme_recurrence.php:278
+#: eme_recurrence.php:288
 msgid "the fifth %s of the month"
 msgstr "de vijfde %s van de maand"
 
 # @ eme
-#: eme_recurrence.php:278
+#: eme_recurrence.php:288
 msgid "the last %s of the month"
 msgstr "de laatste %s van de maand"
 
 # @ eme
-#: eme_recurrence.php:279
+#: eme_recurrence.php:289
 msgid "From %1$s to %2$s"
 msgstr "Van %1$s tot %2$s"
 
 # @ eme
-#: eme_recurrence.php:281
+#: eme_recurrence.php:291
 msgid "everyday"
 msgstr "elke dag"
 
 # @ eme
-#: eme_recurrence.php:283
+#: eme_recurrence.php:293
 msgid "every %s days"
 msgstr "elke %s dagen"
 
 # @ eme
-#: eme_recurrence.php:300 eme_recurrence.php:318
+#: eme_recurrence.php:310 eme_recurrence.php:328
 msgid " and "
 msgstr " en "
 
 # @ eme
-#: eme_recurrence.php:302
+#: eme_recurrence.php:312
 msgid "every week"
 msgstr "elke week"
 
 # @ eme
-#: eme_recurrence.php:304
+#: eme_recurrence.php:314
 msgid "every %s weeks"
 msgstr "elke %s weken"
 
 # @ eme
-#: eme_recurrence.php:320
+#: eme_recurrence.php:330
 msgid "every month"
 msgstr "elke maand"
 
 # @ eme
-#: eme_recurrence.php:322
+#: eme_recurrence.php:332
 msgid "every %s months"
 msgstr "elke %s maanden"
 
@@ -1874,37 +1908,37 @@ msgid "The booking price in %s is: %d"
 msgstr "De prijs van de boeking is: %s is: %d"
 
 # @ eme
-#: eme_rsvp.php:92 eme_rsvp.php:195
+#: eme_rsvp.php:92 eme_rsvp.php:205
 msgid "Bookings no longer allowed on this date."
 msgstr "Boekingen niet langer mogelijk op deze datum."
 
 # @ eme
-#: eme_rsvp.php:122
+#: eme_rsvp.php:136
 msgid "Bookings no longer possible: no seats available anymore"
 msgstr "Reserveren is niet meer mogelijk: geen plaatsen meer beschikbaar!"
 
 # @ eme
-#: eme_rsvp.php:143
+#: eme_rsvp.php:153
 msgid "(* marks a required field)"
 msgstr "(* vereist invoer)"
 
 # @ eme
-#: eme_rsvp.php:207 eme_rsvp.php:1257 eme_settings.php:14
+#: eme_rsvp.php:217 eme_rsvp.php:1377 eme_settings.php:14
 msgid "E-Mail"
 msgstr "E-Mail"
 
 # @ eme
-#: eme_rsvp.php:306
+#: eme_rsvp.php:316
 msgid "Booking deleted"
 msgstr "Reservering verwijderd"
 
 # @ eme
-#: eme_rsvp.php:308 eme_rsvp.php:311
+#: eme_rsvp.php:318 eme_rsvp.php:321
 msgid "There are no bookings associated to this name and e-mail"
 msgstr "Er zijn geen reserveringen gekoppeld aan deze naam en e-mail"
 
 # @ eme
-#: eme_rsvp.php:354 eme_rsvp.php:363
+#: eme_rsvp.php:363 eme_rsvp.php:372
 msgid ""
 "'%s' is a multiprice event, please fill in %d sets of spaces to reserve in "
 "the '%s' field."
@@ -1913,224 +1947,233 @@ msgstr ""
 "te reserveren in het '%s' veld."
 
 # @ eme
-#: eme_rsvp.php:432
+#: eme_rsvp.php:448
 msgid "You entered an incorrect code"
 msgstr "Je hebt een verkeerde code ingevuld"
 
 # @ eme
-#: eme_rsvp.php:436
+#: eme_rsvp.php:452
 msgid "You are a bad boy"
 msgstr "Je bent ondeugend!"
 
-# @ eme
-#: eme_rsvp.php:439
-msgid "Please fill in all the required fields"
-msgstr "Vul svp alle verplichte velden in"
+#: eme_rsvp.php:455
+msgid "Please fill out your name"
+msgstr "Vul aub uw naam in"
+
+#: eme_rsvp.php:458
+msgid "Please fill out your e-mail"
+msgstr "Vul aub uw e-mail in"
+
+#: eme_rsvp.php:462
+msgid ""
+"Please make sure all of the following required fields are filled out "
+"correctly: %s"
+msgstr "Vul aub alle volgende vereiste velden in: %s"
 
 # @ eme
-#: eme_rsvp.php:441
+#: eme_rsvp.php:464
 msgid "Please enter a valid mail address"
 msgstr "Vul svp een geldig e-mailadres in"
 
 # @ eme
-#: eme_rsvp.php:443 eme_rsvp.php:445
-msgid "Please fill in a correct number of spaces to reserve"
-msgstr "Vul svp een correct aantal plaatsen in om te reserveren"
+#: eme_rsvp.php:466 eme_rsvp.php:468
+msgid "Please enter a correct number of spaces to reserve"
+msgstr "Vul aub een correct aantal plaatsen in om te reserveren"
 
 # @ eme
-#: eme_rsvp.php:448
+#: eme_rsvp.php:471
 msgid "WP membership is required for registration"
 msgstr "Lidmaatschap van WP Blog vereist om te kunnen registreren?"
 
 # @ eme
-#: eme_rsvp.php:481
+#: eme_rsvp.php:508
 msgid "No booker ID found, something is wrong here"
 msgstr "Geen reserverings ID gevonden, er is hier iets niet in orde"
 
 # @ eme
-#: eme_rsvp.php:485
+#: eme_rsvp.php:512
 msgid "Booking cannot be made: not enough seats available!"
 msgstr ""
 "Reservering kan niet worden gemaakt. Er zijn niet genoeg plaatsen "
 "beschikbaar!"
 
 # @ eme
-#: eme_rsvp.php:792 eme_rsvp.php:1326 eme_rsvp.php:1514
+#: eme_rsvp.php:912 eme_rsvp.php:1446 eme_rsvp.php:1634
 msgid "Booker"
 msgstr "Aanmelder"
 
 # @ eme
-#: eme_rsvp.php:792 eme_rsvp.php:1331 eme_rsvp.php:1519
+#: eme_rsvp.php:912 eme_rsvp.php:1451 eme_rsvp.php:1639
 msgid "Unique nbr"
 msgstr "Uniek nr"
 
 # @ eme
-#: eme_rsvp.php:811 eme_rsvp.php:854
+#: eme_rsvp.php:931 eme_rsvp.php:974
 msgid "Booked spaces"
 msgstr "Gereserveerde plaatsen"
 
 # @ eme
-#: eme_rsvp.php:812 eme_rsvp.php:855
+#: eme_rsvp.php:932 eme_rsvp.php:975
 msgid "Available spaces"
 msgstr "Beschikbare plaatsen"
 
 # @ eme
-#: eme_rsvp.php:833
+#: eme_rsvp.php:953
 msgid "approved"
 msgstr "goedgekeurd"
 
 # @ eme
-#: eme_rsvp.php:833
+#: eme_rsvp.php:953
 msgid "pending"
 msgstr "goed te keuren"
 
 # @ default
-#: eme_rsvp.php:843
+#: eme_rsvp.php:963
 msgid "respondents so far"
 msgstr "aanmeldingen tot nu toe"
 
 # @ eme
-#: eme_rsvp.php:848
+#: eme_rsvp.php:968
 msgid "Respondent"
 msgstr "Aanmelder"
 
 # @ eme
-#: eme_rsvp.php:861
+#: eme_rsvp.php:981
 msgid "Comment:"
 msgstr "Opmerking:"
 
 # @ eme
-#: eme_rsvp.php:890 eme_rsvp.php:958 eme_rsvp.php:973
+#: eme_rsvp.php:1010 eme_rsvp.php:1078 eme_rsvp.php:1093
 msgid "No responses yet!"
 msgstr "Nog geen reacties!"
 
 # @ eme
-#: eme_rsvp.php:1160 eme_rsvp.php:1174
+#: eme_rsvp.php:1280 eme_rsvp.php:1294
 msgid "Reservation for '%s' confirmed"
 msgstr "Reservering voor '%s' bevestigd"
 
 # @ eme
-#: eme_rsvp.php:1162
+#: eme_rsvp.php:1282
 msgid "Reservation for '%s' denied"
 msgstr "Reservering voor '%s' afgewezen"
 
 # @ eme
-#: eme_rsvp.php:1164
+#: eme_rsvp.php:1284
 msgid "Reservation for '%s' cancelled"
 msgstr "Reservering voor '%s' geannuleerd"
 
 # @ eme
-#: eme_rsvp.php:1165
+#: eme_rsvp.php:1285
 msgid "A reservation has been cancelled for '%s'"
 msgstr "Een reservering voor '%s' is geannuleerd"
 
 # @ eme
-#: eme_rsvp.php:1170
+#: eme_rsvp.php:1290
 msgid "Approval required for new booking for '%s'"
 msgstr "Goedkeuring benodigd voor nieuwe reservering voor '%s'"
 
 # @ eme
-#: eme_rsvp.php:1171
+#: eme_rsvp.php:1291
 msgid "Reservation for '%s' is pending"
 msgstr "Reservering voor '%s' is in behandeling (goedkeuren)."
 
 # @ eme
-#: eme_rsvp.php:1173
+#: eme_rsvp.php:1293
 msgid "New booking for '%s'"
 msgstr "Nieuwe reservering voor '%s'"
 
 # @ eme
-#: eme_rsvp.php:1249
+#: eme_rsvp.php:1369
 msgid "Change reserved spaces or cancel registrations"
 msgstr "Wijzig of annuleer gereserveerde plaatsen"
 
 # @ eme
-#: eme_rsvp.php:1259
+#: eme_rsvp.php:1379
 msgid "Event"
 msgstr "Event"
 
 # @ eme
-#: eme_rsvp.php:1280
+#: eme_rsvp.php:1400
 msgid "Send mails for new registration?"
 msgstr "Stuur e-mails voor nieuwe registratie?"
 
 # @ eme
-#: eme_rsvp.php:1282
+#: eme_rsvp.php:1402
 msgid "Register booking"
 msgstr "RSVP: registreer reserveringen"
 
 # @ eme
-#: eme_rsvp.php:1293
+#: eme_rsvp.php:1413
 msgid "Update registration"
 msgstr "Werk registratie bij"
 
 # @ eme
-#: eme_rsvp.php:1294 eme_rsvp.php:1482
+#: eme_rsvp.php:1414 eme_rsvp.php:1602
 msgid "Deny registration"
 msgstr "Weiger reservering"
 
 # @ eme
-#: eme_rsvp.php:1316 eme_rsvp.php:1504
+#: eme_rsvp.php:1436 eme_rsvp.php:1624
 msgid "Send mails to attendees upon changes being made?"
 msgstr "Stuur e-mails naar deelnemers over wijzigen die zijn gemaakt?"
 
 # @ eme
-#: eme_rsvp.php:1327 eme_rsvp.php:1515
+#: eme_rsvp.php:1447 eme_rsvp.php:1635
 msgid "Booking date"
 msgstr "Boekingsdatum"
 
 # @ eme
-#: eme_rsvp.php:1329 eme_rsvp.php:1517
+#: eme_rsvp.php:1449 eme_rsvp.php:1637
 msgid "Event price"
 msgstr "Prijs evenement"
 
 # @ eme
-#: eme_rsvp.php:1330 eme_rsvp.php:1518
+#: eme_rsvp.php:1450 eme_rsvp.php:1638
 msgid "Total price"
 msgstr "Totale pijs"
 
 # @ eme
-#: eme_rsvp.php:1372 eme_rsvp.php:1558
+#: eme_rsvp.php:1492 eme_rsvp.php:1678
 msgid "Approved: "
 msgstr "Goedgekeurd: "
 
 # @ eme
-#: eme_rsvp.php:1391 eme_rsvp.php:1576
+#: eme_rsvp.php:1511 eme_rsvp.php:1696
 msgid "(Multiprice)"
 msgstr "(Meerdere prijzen)"
 
 # @ eme
-#: eme_rsvp.php:1473 events-manager.php:918
+#: eme_rsvp.php:1593 events-manager.php:946
 msgid "Pending Approvals"
 msgstr "Goed te keuren reserveringen"
 
 # @ eme
-#: eme_rsvp.php:1481
+#: eme_rsvp.php:1601
 msgid "Approve registration"
 msgstr "Keur reservering goed"
 
 # @ eme
-#: eme_rsvp.php:1632
+#: eme_rsvp.php:1752
 msgid "Please enter both subject and message for the mail to be sent."
 msgstr "Vul svp onderwerp en bericht in om e-mail te versturen."
 
 # @ eme
-#: eme_rsvp.php:1673
+#: eme_rsvp.php:1793
 msgid "The mail has been sent."
 msgstr "De mail is verstuurd."
 
 # @ eme
-#: eme_rsvp.php:1675
+#: eme_rsvp.php:1795
 msgid "You do not have the permission to send mails for this event."
 msgstr "Je hebt geen rechten om mails voor dit evenement te sturen."
 
 # @ eme
-#: eme_rsvp.php:1689
+#: eme_rsvp.php:1809
 msgid "Send Mails to attendees or bookings for a event"
 msgstr "Stuur mails naar deelnemers of boekingen van een evenement"
 
 # @ eme
-#: eme_rsvp.php:1693
+#: eme_rsvp.php:1813
 msgid ""
 "Warning: using this functionality to send mails to attendees can result in a "
 "php timeout, so not everybody will receive the mail then. This depends on "
@@ -2145,98 +2188,98 @@ msgstr ""
 "en gebruik een bulk mail tool (zoals OpenOffice) voor je mailing."
 
 # @ eme
-#: eme_rsvp.php:1704
+#: eme_rsvp.php:1824
 msgid "Select the event"
 msgstr "Selecteer evenement"
 
 # @ eme
-#: eme_rsvp.php:1722
+#: eme_rsvp.php:1842
 msgid "Select the type of mail"
 msgstr "Selecteer type mail"
 
 # @ eme
-#: eme_rsvp.php:1725 eme_rsvp.php:1758
+#: eme_rsvp.php:1845 eme_rsvp.php:1878
 msgid "Attendee mails"
 msgstr "Deelnemer mails"
 
 # @ eme
-#: eme_rsvp.php:1726 eme_rsvp.php:1759
+#: eme_rsvp.php:1846 eme_rsvp.php:1879
 msgid "Booking mails"
 msgstr "Boeking mails"
 
 # @ eme
-#: eme_rsvp.php:1731
+#: eme_rsvp.php:1851
 msgid "Select your target audience"
 msgstr "Selecteer je doelgroep"
 
 # @ eme
-#: eme_rsvp.php:1734
+#: eme_rsvp.php:1854
 msgid "All"
 msgstr "Alle"
 
 # @ eme
-#: eme_rsvp.php:1735
+#: eme_rsvp.php:1855
 msgid "Exclude pending registrations"
 msgstr "Afwachtende registraties uitsluiten"
 
 # @ eme
-#: eme_rsvp.php:1736
+#: eme_rsvp.php:1856
 msgid "Only pending registrations"
 msgstr "Alleen afwachtende registraties"
 
 # @ eme
-#: eme_rsvp.php:1741
+#: eme_rsvp.php:1861
 msgid "Only send mails to attendees who did not pay yet"
 msgstr "Stuur alleen mails naar deelnemers die nog niet betaald hebben"
 
 # @ eme
-#: eme_rsvp.php:1748
+#: eme_rsvp.php:1868
 msgid "Subject"
 msgstr "Onderwerp"
 
 # @ eme
-#: eme_rsvp.php:1752
+#: eme_rsvp.php:1872
 msgid "Message"
 msgstr "Bericht"
 
 # @ eme
-#: eme_rsvp.php:1756
+#: eme_rsvp.php:1876
 msgid "You can use any placeholders mentioned here:"
 msgstr "Je kunt alle hier genoemde placeholders gebruiken:"
 
 # @ eme
-#: eme_rsvp.php:1757
+#: eme_rsvp.php:1877
 msgid "Event placeholders"
 msgstr "Event placeholders"
 
 # @ eme
-#: eme_rsvp.php:1758
+#: eme_rsvp.php:1878
 msgid "Attendees placeholders"
 msgstr "Deelnemer placeholders"
 
 # @ eme
-#: eme_rsvp.php:1758 eme_rsvp.php:1759
+#: eme_rsvp.php:1878 eme_rsvp.php:1879
 msgid "for "
 msgstr "voor "
 
 # @ eme
-#: eme_rsvp.php:1759
+#: eme_rsvp.php:1879
 msgid "Booking placeholders"
 msgstr "Boeking placeholders"
 
 # @ eme
-#: eme_rsvp.php:1763
+#: eme_rsvp.php:1883
 msgid "Send Mail"
 msgstr "Stuur Mail"
 
 # @ eme
-#: eme_rsvp.php:1778 eme_rsvp.php:1811 eme_rsvp.php:1841 eme_rsvp.php:1887
-#: eme_rsvp.php:1942
+#: eme_rsvp.php:1898 eme_rsvp.php:1931 eme_rsvp.php:1961 eme_rsvp.php:2007
+#: eme_rsvp.php:2062
 msgid "Booking for '%s'"
 msgstr "Reservering voor '%s'"
 
 # @ eme
-#: eme_rsvp.php:1801 eme_rsvp.php:1816
+#: eme_rsvp.php:1921 eme_rsvp.php:1936
 msgid ""
 "You can pay for this event via 2Checkout. If you wish to do so, click the "
 "button below."
@@ -2245,7 +2288,7 @@ msgstr ""
 "knop hieronder."
 
 # @ eme
-#: eme_rsvp.php:1851
+#: eme_rsvp.php:1971
 msgid ""
 "You can pay for this event via First Data. If you wish to do so, click the "
 "button below."
@@ -2254,7 +2297,7 @@ msgstr ""
 "de knop hieronder."
 
 # @ eme
-#: eme_rsvp.php:1892
+#: eme_rsvp.php:2012
 msgid ""
 "You can pay for this event via Google Checkout. If you wish to do so, click "
 "the button below."
@@ -2263,7 +2306,7 @@ msgstr ""
 "de knop hieronder."
 
 # @ eme
-#: eme_rsvp.php:1907
+#: eme_rsvp.php:2027
 msgid ""
 "You can pay for this event via paypal. If you wish to do so, click the 'Pay "
 "via Paypal' button below."
@@ -2272,7 +2315,7 @@ msgstr ""
 "dan op de 'Betaal via Paypal' knop hieronder."
 
 # @ eme
-#: eme_rsvp.php:1922
+#: eme_rsvp.php:2042
 msgid "Pay via Paypal"
 msgstr "Betaal via Paypal"
 
@@ -2361,7 +2404,7 @@ msgid "Your booking has been recorded"
 msgstr "De reservering is opgeslagen"
 
 # @ default
-#: eme_settings.php:270
+#: eme_settings.php:271
 msgid ""
 "Conversion done, please check your events and restore from backup if you see "
 "any sign of troubles."
@@ -2370,12 +2413,12 @@ msgstr ""
 "problemen ziet."
 
 # @ eme
-#: eme_settings.php:308
+#: eme_settings.php:309
 msgid "Event Manager Options"
 msgstr "Event Manager Opties"
 
 # @ eme
-#: eme_settings.php:311
+#: eme_settings.php:312
 msgid ""
 "Please also check <a href='%s'>your profile</a> for some per-user EME "
 "settings."
@@ -2384,17 +2427,17 @@ msgstr ""
 "specifieke EME instellingen."
 
 # @ eme
-#: eme_settings.php:321
+#: eme_settings.php:322
 msgid "General options"
 msgstr "Algemene Opties"
 
 # @ default
-#: eme_settings.php:324
+#: eme_settings.php:325
 msgid "Use dropdown for locations?"
 msgstr "Gebruik keuzelijst voor locaties?"
 
 # @ eme
-#: eme_settings.php:324
+#: eme_settings.php:325
 msgid ""
 "Select yes to select location from a drop-down menu; location selection will "
 "be faster, but you will lose the ability to insert locations with events."
@@ -2404,7 +2447,7 @@ msgstr ""
 "toe te voegen bij evenementen."
 
 # @ eme
-#: eme_settings.php:324
+#: eme_settings.php:325
 msgid ""
 "When the qtranslate plugin is installed and activated, this setting will be "
 "ignored and always considered 'Yes'."
@@ -2413,22 +2456,22 @@ msgstr ""
 "genegeerd worden en altijd als 'Ja' worden gezien."
 
 # @ default
-#: eme_settings.php:325
+#: eme_settings.php:326
 msgid "Use recurrence?"
 msgstr "Terugkeerpatroon gebruiken?"
 
 # @ eme
-#: eme_settings.php:325
+#: eme_settings.php:326
 msgid "Select yes to enable the possibility to create recurrent events."
 msgstr "Selecteer ja om terugkerende evenementen te kunnen maken."
 
 # @ default
-#: eme_settings.php:326
+#: eme_settings.php:327
 msgid "Use RSVP?"
 msgstr "RSVP gebruiken?"
 
 # @ eme
-#: eme_settings.php:326
+#: eme_settings.php:327
 msgid ""
 "Select yes to enable the RSVP feature so people can register for an event "
 "and book places."
@@ -2437,42 +2480,42 @@ msgstr ""
 "aanmelden voor een evenement en plaatsen reserveren."
 
 # @ default
-#: eme_settings.php:327
+#: eme_settings.php:328
 msgid "Use categories?"
 msgstr "Categorieën gebruiken?"
 
 # @ eme
-#: eme_settings.php:327
+#: eme_settings.php:328
 msgid "Select yes to enable the category features."
 msgstr "Selecteer ja om categorieën te kunnen gebruiken."
 
 # @ default
-#: eme_settings.php:328
+#: eme_settings.php:329
 msgid "Use attributes?"
 msgstr "Attributen gebruiken?"
 
 # @ eme
-#: eme_settings.php:328
+#: eme_settings.php:329
 msgid "Select yes to enable the attributes feature."
 msgstr "Selecteer ja om attributen te kunnen gebruiken."
 
 # @ default
-#: eme_settings.php:329
+#: eme_settings.php:330
 msgid "Enable Google Maps integration?"
 msgstr "Activeer Google Maps integratie?"
 
 # @ eme
-#: eme_settings.php:329
+#: eme_settings.php:330
 msgid "Check this option to enable Google Map integration."
 msgstr "Vink deze optie aan om Google Maps te integreren."
 
 # @ default
-#: eme_settings.php:330
+#: eme_settings.php:331
 msgid "Enable map scroll-wheel zooming?"
 msgstr "Gebruik map scroll-wheel zooming?"
 
 # @ eme
-#: eme_settings.php:330
+#: eme_settings.php:331
 msgid ""
 "Yes, enables map scroll-wheel zooming. No, enables scroll-wheel page "
 "scrolling over maps. (It will be necessary to refresh your web browser on a "
@@ -2483,12 +2526,12 @@ msgstr ""
 "browser refresh te doen op een getoonde kaart om het effect hiervan te zien)."
 
 # @ default
-#: eme_settings.php:331
+#: eme_settings.php:332
 msgid "Always include JS in header?"
 msgstr "Altijd JS in de header laden?"
 
 # @ eme
-#: eme_settings.php:331
+#: eme_settings.php:332
 msgid ""
 "Some themes are badely designed and can have issues showing the google maps "
 "or advancing in the calendar. If so, try activating this option which will "
@@ -2501,12 +2544,12 @@ msgstr ""
 "wordt geladen (standaard: uit)."
 
 # @ eme
-#: eme_settings.php:332
+#: eme_settings.php:333
 msgid "Use the client computer clock for the calendar"
 msgstr "Gebruik de client computer klok voor de kalender"
 
 # @ eme
-#: eme_settings.php:332
+#: eme_settings.php:333
 msgid ""
 "Check this option if you want to use the clock of the client as base to "
 "calculate current day for the calendar."
@@ -2515,27 +2558,27 @@ msgstr ""
 "voor het berekenen van de huidige dag in de kalender."
 
 # @ eme
-#: eme_settings.php:333
+#: eme_settings.php:334
 msgid "Theme loop protection"
 msgstr "Thema loop bescherming"
 
 # @ eme
-#: eme_settings.php:333
+#: eme_settings.php:334
 msgid "Simple loop protection (default)"
 msgstr "Eenvoudige loop bescherming (standaard)"
 
 # @ eme
-#: eme_settings.php:333
+#: eme_settings.php:334
 msgid "Loop protection for older or misbehaving themes"
 msgstr "Loop bescherming voor oudere en verkeerd werkende thema's"
 
 # @ eme
-#: eme_settings.php:333
+#: eme_settings.php:334
 msgid "Last attempt at loop protection (if all else fails)"
 msgstr "Laatste poging loop bescherming (als al het andere niet werkt)"
 
 # @ eme
-#: eme_settings.php:333
+#: eme_settings.php:334
 msgid ""
 "Choose the level of loop protection against the_content filter you want. "
 "Depending on the theme you may need to change this."
@@ -2544,12 +2587,12 @@ msgstr ""
 "dit mogelijk aanpassen, afhankelijk van het thema."
 
 # @ eme
-#: eme_settings.php:334
+#: eme_settings.php:335
 msgid "Delete all EME data when upgrading or deactivating?"
 msgstr "Alle data verwijderen bij upgraden of deactiveren EME?"
 
 # @ eme
-#: eme_settings.php:334
+#: eme_settings.php:335
 msgid ""
 "Check this option if you want to delete all EME data (database tables and "
 "options) when upgrading or deactivating the plugin."
@@ -2558,12 +2601,12 @@ msgstr ""
 "verwijderen bij het upgraden of decativeren van de plugin."
 
 # @ eme
-#: eme_settings.php:335
+#: eme_settings.php:336
 msgid "Enable shortcodes in widgets"
 msgstr "Activeer shortcodes in widgets"
 
 # @ eme
-#: eme_settings.php:335
+#: eme_settings.php:336
 msgid ""
 "Check this option if you want to enable the use of shortcodes in widgets "
 "(affects shortcodes of any plugin used in widgets, so use with care)."
@@ -2572,24 +2615,24 @@ msgstr ""
 "shortcodes van alle plugins in widgets, dus wees voorzichtig)."
 
 # @ eme
-#: eme_settings.php:344
+#: eme_settings.php:345
 msgid "Permalink options"
 msgstr "Permalink opties"
 
 # @ eme
-#: eme_settings.php:347
+#: eme_settings.php:348
 msgid "Enable event permalinks if possible?"
 msgstr "Gebruikt evenement permalinks, indien mogelijk?"
 
 # @ eme
-#: eme_settings.php:347
+#: eme_settings.php:348
 msgid "If Yes, EME will render SEO permalinks if permalinks are activated."
 msgstr ""
 "Indien Ja zal EME SEO permalinks gebruiken indien permalinks geactiveerd "
 "zijn."
 
 # @ eme
-#: eme_settings.php:347
+#: eme_settings.php:348
 msgid ""
 "It is necessary to click 'Save Changes' on the  WordPress 'Settings/"
 "Permalinks' page before you will see the effect of this change."
@@ -2598,32 +2641,32 @@ msgstr ""
 "'Save Changes' klikken in de WordPress 'Settings/Permalinks' pagina."
 
 # @ eme
-#: eme_settings.php:348
+#: eme_settings.php:349
 msgid "Events permalink prefix"
 msgstr "Events permalink prefix"
 
 # @ eme
-#: eme_settings.php:348
+#: eme_settings.php:349
 msgid "The permalink prefix used for events and the calendar."
 msgstr "De permalink prefix gebruikt voor evenementen en de kalender."
 
 # @ eme
-#: eme_settings.php:349
+#: eme_settings.php:350
 msgid "Locations permalink prefix"
 msgstr "Locaties permalink prefix"
 
 # @ eme
-#: eme_settings.php:349
+#: eme_settings.php:350
 msgid "The permalink prefix used for locations."
 msgstr "De permalink prefix gebruikt voor locaties."
 
 # @ eme
-#: eme_settings.php:358
+#: eme_settings.php:359
 msgid "Access rights"
 msgstr "Toegangsrechten"
 
 # @ eme
-#: eme_settings.php:359
+#: eme_settings.php:360
 msgid ""
 "Tip: Use a plugin like \"User Role Editor\" to add/edit capabilities and "
 "roles."
@@ -2632,42 +2675,42 @@ msgstr ""
 "toe te voegen/te bewerken."
 
 # @ eme
-#: eme_settings.php:362
+#: eme_settings.php:363
 msgid "Add event"
 msgstr "Voeg een evenement toe"
 
 # @ eme
-#: eme_settings.php:362
+#: eme_settings.php:363
 msgid "Permission needed to add a new event. Default: %s"
 msgstr "Rechten benodigd om een nieuw evenement toe te voegen. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:363
+#: eme_settings.php:364
 msgid "Author event"
 msgstr "Auteur Event"
 
 # @ eme
-#: eme_settings.php:363
+#: eme_settings.php:364
 msgid "Permission needed to edit own events. Default: %s"
 msgstr "Rechten benodigd om eigen evenementen te bewerken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:364
+#: eme_settings.php:365
 msgid "Publish event"
 msgstr "Publiceer evenement"
 
 # @ eme
-#: eme_settings.php:364
+#: eme_settings.php:365
 msgid "Permission needed to make an event public. Default: %s"
 msgstr "Rechten benodigd om een evenement openbaar te maken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:365
+#: eme_settings.php:366
 msgid "List events"
 msgstr "Toon evenement"
 
 # @ eme
-#: eme_settings.php:365
+#: eme_settings.php:366
 msgid ""
 "Permission needed to just list all events, useful for CSV exports for "
 "bookings and such. Default: %s"
@@ -2676,7 +2719,7 @@ msgstr ""
 "exports van reserveringen e.d. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:365
+#: eme_settings.php:366
 msgid ""
 "All your event admins need this as well, otherwise the menu will not show."
 msgstr ""
@@ -2684,143 +2727,153 @@ msgstr ""
 "worden getoond."
 
 # @ eme
-#: eme_settings.php:366
+#: eme_settings.php:367
 msgid "Edit events"
 msgstr "Bewerk evenement"
 
 # @ eme
-#: eme_settings.php:366
+#: eme_settings.php:367
 msgid "Permission needed to edit all events. Default: %s"
 msgstr "Rechten benodigd om alle evenementen te bewerken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:367
+#: eme_settings.php:368
 msgid "Permission needed to add locations. Default: %s"
 msgstr "Rechten benodigd om locaties toe te voegen. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:368
+#: eme_settings.php:369
 msgid "Author location"
 msgstr "Voeg een locatie toe"
 
 # @ eme
-#: eme_settings.php:368
+#: eme_settings.php:369
 msgid "Permission needed to edit own locations. Default: %s"
 msgstr "Rechten benodigd om eigen locaties te bewerken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:369
+#: eme_settings.php:370
 msgid "Permission needed to edit all locations. Default: %s"
 msgstr "Rechten benodigd om alle locaties te bewerken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:370
+#: eme_settings.php:371
 msgid "Edit categories"
 msgstr "Bewerk categorie"
 
 # @ eme
-#: eme_settings.php:370
+#: eme_settings.php:371
 msgid "Permission needed to edit all categories. Default: %s"
 msgstr "Rechten benodigd om alle categorieën te bewerken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:371
+#: eme_settings.php:372
+msgid "Edit templates"
+msgstr "Bewerk template"
+
+# @ eme
+#: eme_settings.php:372
+msgid "Permission needed to edit all templates. Default: %s"
+msgstr "Rechten benodigd om alle templates te bewerken. Standaard: %s"
+
+# @ eme
+#: eme_settings.php:373
 msgid "View people"
 msgstr "Toon mensen"
 
 # @ eme
-#: eme_settings.php:371
+#: eme_settings.php:373
 msgid "Permission needed to view registered people info. Default: %s"
 msgstr ""
 "Rechten benodigd om info van geregisteerde personen te zien. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:372
+#: eme_settings.php:374
 msgid "Approve registrations"
 msgstr "Reserveringen goedkeuren"
 
 # @ eme
-#: eme_settings.php:372
+#: eme_settings.php:374
 msgid "Permission needed to approve pending registrations. Default: %s"
 msgstr "Rechten benodigd om lopende registraties goed te keuren. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:373
+#: eme_settings.php:375
 msgid "Edit registrations"
 msgstr "Bewerk registraties"
 
 # @ eme
-#: eme_settings.php:373
+#: eme_settings.php:375
 msgid "Permission needed to edit approved registrations. Default: %s"
 msgstr ""
 "Rechten benodigd om goedgekeurde registraties te bewerken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:374 events-manager.php:923
+#: eme_settings.php:376 events-manager.php:951
 msgid "Send Mails"
 msgstr "Stuur Mails"
 
 # @ eme
-#: eme_settings.php:374
+#: eme_settings.php:376
 msgid "Permission needed to send mails for own events. Default: %s"
 msgstr ""
 "Goedkeuring nodig om mails van eigen evenement te sturen. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:375
+#: eme_settings.php:377
 msgid "Send Other Mails"
 msgstr "Stuur andere mails"
 
 # @ eme
-#: eme_settings.php:375
+#: eme_settings.php:377
 msgid "Permission needed to send mails for any event. Default: %s"
 msgstr "Goedkeuring nodig om mails voor elk evenement te sturen. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:376
+#: eme_settings.php:378
 msgid "Edit form fields"
 msgstr "Bewerk formulier velden"
 
 # @ eme
-#: eme_settings.php:376
+#: eme_settings.php:378
 msgid "Permission needed to edit form fields. Default: %s"
 msgstr "Rechten benodigd om eigen evenementen te bewerken. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:377 events-manager.php:929
+#: eme_settings.php:379 events-manager.php:957
 msgid "Cleanup"
 msgstr "Opruimen"
 
 # @ eme
-#: eme_settings.php:377
+#: eme_settings.php:379
 msgid "Permission needed to execute cleanup actions. Default: %s"
 msgstr "Rechten benodigd om opruim acties uit te voeren. Standaard: %s"
 
 # @ eme
-#: eme_settings.php:378
+#: eme_settings.php:380
 msgid "Edit settings"
 msgstr "Instellingen"
 
 # @ eme
-#: eme_settings.php:378
+#: eme_settings.php:380
 msgid "Permission needed to edit settings. Default: %s"
 msgstr "Rechten benodigd om instellingen te bewerken. Standaard: %s"
 
 # @ eme
 # @ default
-#: eme_settings.php:387 eme_settings.php:390
+#: eme_settings.php:389 eme_settings.php:392
 msgid "Events page"
 msgstr "Event pagina"
 
 # @ eme
-#: eme_settings.php:390
+#: eme_settings.php:392
 msgid "This option allows you to select which page to use as an events page."
 msgstr ""
 "Met deze optie kun je de pagina selecteren waarop je de evenementen "
 "weergeeft."
 
 # @ eme
-#: eme_settings.php:390
+#: eme_settings.php:392
 msgid ""
 "The content of this page (including shortcodes of any kind) will be ignored "
 "completely and dynamically replaced by events data."
@@ -2829,12 +2882,12 @@ msgstr ""
 "genegeerd worden en dynamisch worden vervangen door evenementen data."
 
 # @ eme
-#: eme_settings.php:391
+#: eme_settings.php:393
 msgid "Show events page in lists?"
 msgstr "De pagina met evenementen in lijsten laten zien?"
 
 # @ eme
-#: eme_settings.php:391
+#: eme_settings.php:393
 msgid ""
 "Check this option if you want the events page to appear together with other "
 "pages in pages lists."
@@ -2843,7 +2896,7 @@ msgstr ""
 "pagina's in pagina-lijsten wilt tonen."
 
 # @ eme
-#: eme_settings.php:391
+#: eme_settings.php:393
 msgid ""
 "This option should no longer be used, it will be deprecated. Using the "
 "[events_list] shortcode in a self created page is recommended."
@@ -2853,12 +2906,12 @@ msgstr ""
 "aangeraden."
 
 # @ eme
-#: eme_settings.php:392
+#: eme_settings.php:394
 msgid "Display calendar in events page?"
 msgstr "Kalender op evenementenpagina tonen?"
 
 # @ eme
-#: eme_settings.php:392
+#: eme_settings.php:394
 msgid ""
 "This option allows to display the calendar in the events page, instead of "
 "the default list. It is recommended not to display both the calendar widget "
@@ -2869,12 +2922,12 @@ msgstr ""
 "kalender-widget als een kalender-pagina te tonen."
 
 # @ eme
-#: eme_settings.php:393
+#: eme_settings.php:395
 msgid "Number of events to show per page in admin interface"
 msgstr "Aantal evenementen per pagina in de admin interface."
 
 # @ eme
-#: eme_settings.php:393
+#: eme_settings.php:395
 msgid ""
 "Indicates the number of events shown on one page in the admin interface "
 "(min. 5, max. 200)"
@@ -2883,12 +2936,12 @@ msgstr ""
 "interface (min. 5, max. 200)"
 
 # @ eme
-#: eme_settings.php:394
+#: eme_settings.php:396
 msgid "Number of events to show in lists"
 msgstr "Aantal evenementen in lijsten te tonen."
 
 # @ eme
-#: eme_settings.php:394
+#: eme_settings.php:396
 msgid ""
 "The number of events to show in a list if no specific limit is specified "
 "(used in the shortcode events_list, RSS feed, the placeholders #_NEXTEVENTS "
@@ -2900,27 +2953,27 @@ msgstr ""
 "ongelimiteerd."
 
 # @ eme
-#: eme_settings.php:395
+#: eme_settings.php:397
 msgid "State for new event"
 msgstr "Reikwijdte van de evenementen"
 
 # @ eme
-#: eme_settings.php:395
+#: eme_settings.php:397
 msgid "Initial state for a new event"
 msgstr "Maak registreren voor dit evenement mogelijk."
 
 # @ eme
-#: eme_settings.php:398
+#: eme_settings.php:400
 msgid "Events format"
 msgstr "Opmaak van evenement"
 
 # @ eme
-#: eme_settings.php:401
+#: eme_settings.php:403
 msgid "Remove leading zeros from minutes?"
 msgstr "Voorloop-nullen van minuut-notatie verbergen?"
 
 # @ eme
-#: eme_settings.php:401
+#: eme_settings.php:403
 msgid ""
 "PHP date/time functions have no notation to show minutes without leading "
 "zeros. Checking this option will return e.g. 9 for 09 and empty for 00."
@@ -2929,12 +2982,12 @@ msgstr ""
 "tonen. Deze optie aangevinkt geeft bijv. 9 i.p.v. 09 en leeg i.p.v. 00."
 
 # @ eme
-#: eme_settings.php:402
+#: eme_settings.php:404
 msgid "Default event list format header"
 msgstr "Standaard opmaak van de kop van de evenementenlijst"
 
 # @ eme
-#: eme_settings.php:402
+#: eme_settings.php:404
 msgid ""
 "This content will appear just above your code for the default event list "
 "format. If you leave this empty, the value <code>&lt;ul "
@@ -2945,12 +2998,12 @@ msgstr ""
 "code>"
 
 # @ eme
-#: eme_settings.php:403
+#: eme_settings.php:405
 msgid "Default event list format"
 msgstr "Standaard opmaak evenementenlijst"
 
 # @ eme
-#: eme_settings.php:403
+#: eme_settings.php:405
 msgid ""
 "The format of any events in a list.<br/>Insert one or more of the following "
 "placeholders: <code>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, "
@@ -3008,7 +3061,7 @@ msgstr ""
 "het toevoegen van attributen aan het evenement."
 
 # @ eme
-#: eme_settings.php:403
+#: eme_settings.php:405
 msgid ""
 "Use <code>#_PAST_FUTURE_CLASS</code> to return a class name indicating this "
 "event is future or past (<code>eme-future-event</code> or <code>eme-past-"
@@ -3022,20 +3075,20 @@ msgstr ""
 "van evenementen"
 
 # @ eme
-#: eme_settings.php:403 eme_settings.php:408 eme_settings.php:418
-#: eme_settings.php:445 eme_settings.php:450 eme_settings.php:524
-#: eme_settings.php:525 eme_settings.php:526 eme_settings.php:527
-#: eme_settings.php:528 eme_settings.php:529 eme_settings.php:530
+#: eme_settings.php:405 eme_settings.php:410 eme_settings.php:420
+#: eme_settings.php:447 eme_settings.php:452 eme_settings.php:526
+#: eme_settings.php:527 eme_settings.php:528 eme_settings.php:529
+#: eme_settings.php:530 eme_settings.php:531 eme_settings.php:532
 msgid "For all possible placeholders, see "
 msgstr "Voor alle mogelijke placeholders, zie "
 
 # @ eme
-#: eme_settings.php:404
+#: eme_settings.php:406
 msgid "Default event list format footer"
 msgstr "Standaard opmaak van de voettekst van de evenementen lijst"
 
 # @ eme
-#: eme_settings.php:404
+#: eme_settings.php:406
 msgid ""
 "This content will appear just below your code for the default event list "
 "format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be "
@@ -3045,12 +3098,12 @@ msgstr ""
 "evenementenlijst. Standaard is <code>&lt;/ul&gt;</code>"
 
 # @ eme
-#: eme_settings.php:406
+#: eme_settings.php:408
 msgid "Single event page title format"
 msgstr "Opmaak titel van de pagina waarop één evenement verschijnt."
 
 # @ eme
-#: eme_settings.php:406
+#: eme_settings.php:408
 msgid ""
 "The format of a single event page title. Follow the previous formatting "
 "instructions."
@@ -3059,12 +3112,12 @@ msgstr ""
 "voorgaande instructies."
 
 # @ eme
-#: eme_settings.php:407
+#: eme_settings.php:409
 msgid "Single event html title format"
 msgstr "Opmaak titel van de pagina waarop één evenement verschijnt."
 
 # @ eme
-#: eme_settings.php:407
+#: eme_settings.php:409
 msgid ""
 "The format of a single event html page title. Follow the previous formatting "
 "instructions."
@@ -3073,18 +3126,18 @@ msgstr ""
 "voorgaande instructies."
 
 # @ eme
-#: eme_settings.php:407 eme_settings.php:409 eme_settings.php:410
-#: eme_settings.php:449
+#: eme_settings.php:409 eme_settings.php:411 eme_settings.php:412
+#: eme_settings.php:451
 msgid " The default is: "
 msgstr "Standaard is: "
 
 # @ eme
-#: eme_settings.php:408
+#: eme_settings.php:410
 msgid "Default single event format"
 msgstr "Standaard opmaak enkel evenement"
 
 # @ eme
-#: eme_settings.php:408
+#: eme_settings.php:410
 msgid ""
 "The format of a single event page.<br/>Follow the previous formatting "
 "instructions. <br/>Use <code>#_MAP</code> to insert a map.<br/>Use "
@@ -3107,7 +3160,7 @@ msgstr ""
 "reservering te annuleren."
 
 # @ eme
-#: eme_settings.php:408
+#: eme_settings.php:410
 msgid ""
 "<br/>Use <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> to insert the "
 "booking form only if the user has not registered yet. Similar use "
@@ -3122,7 +3175,7 @@ msgstr ""
 "heeft. Deze 2 placeholders werken enkel voor WP gebruikers."
 
 # @ eme
-#: eme_settings.php:408
+#: eme_settings.php:410
 msgid ""
 "<br/> Use <code>#_DIRECTIONS</code> to insert a form so people can ask "
 "directions to the event."
@@ -3131,7 +3184,7 @@ msgstr ""
 "mensen een routebeschrijving naar het evenement kunnen aanvragen."
 
 # @ eme
-#: eme_settings.php:408
+#: eme_settings.php:410
 msgid ""
 "<br/> Use <code>#_CATEGORIES</code> to insert a comma-seperated list of "
 "categories an event is in."
@@ -3140,7 +3193,7 @@ msgstr ""
 "voegen van categorieën waar het evenement onder valt."
 
 # @ eme
-#: eme_settings.php:408
+#: eme_settings.php:410
 msgid ""
 "<br/> Use <code>#_ATTENDEES</code> to get a list of the names attending the "
 "event."
@@ -3149,12 +3202,12 @@ msgstr ""
 "deelnemers aan het evenement."
 
 # @ eme
-#: eme_settings.php:409
+#: eme_settings.php:411
 msgid "Monthly period date format"
 msgstr "Datumopmaak Maandelijks periode"
 
 # @ eme
-#: eme_settings.php:409
+#: eme_settings.php:411
 msgid ""
 "The format of the date-string used when you use showperiod=monthly as an "
 "option to &#91;the events_list] shortcode, also used for monthly pagination. "
@@ -3165,12 +3218,12 @@ msgstr ""
 "maandelijkse paginering. Gebruik php date() compatible instellingen."
 
 # @ eme
-#: eme_settings.php:410
+#: eme_settings.php:412
 msgid "Yearly period date format"
 msgstr "Datumopmaak jaarlijkse periode"
 
 # @ eme
-#: eme_settings.php:410
+#: eme_settings.php:412
 msgid ""
 "The format of the date-string used when you use showperiod=yearly as an "
 "option to &#91;the events_list] shortcode, also used for yearly pagination. "
@@ -3181,37 +3234,37 @@ msgstr ""
 "jaarlijkse paginatie. Gebruik php date() compatibele instellingen."
 
 # @ eme
-#: eme_settings.php:411
+#: eme_settings.php:413
 msgid "Events page title"
 msgstr "Titel van de evenementen pagina"
 
 # @ eme
-#: eme_settings.php:411
+#: eme_settings.php:413
 msgid "The title on the multiple events page."
 msgstr "Titel van de pagina met meerdere  evenementen"
 
 # @ eme
-#: eme_settings.php:412
+#: eme_settings.php:414
 msgid "No events message"
 msgstr "Bericht als er geen evenementen gepland staan"
 
 # @ eme
-#: eme_settings.php:412
+#: eme_settings.php:414
 msgid "The message displayed when no events are available."
 msgstr "Het bericht dat wordt weergegeven wanneer er geen evenementen zijn"
 
 # @ eme
-#: eme_settings.php:415
+#: eme_settings.php:417
 msgid "Events filtering format"
 msgstr "Opmaak voor evenement filteren"
 
 # @ eme
-#: eme_settings.php:418
+#: eme_settings.php:420
 msgid "Default event list filtering format"
 msgstr "Standaard opmaak filter evenementenlijst"
 
 # @ eme
-#: eme_settings.php:418
+#: eme_settings.php:420
 msgid ""
 "This defines the layout of the event list filtering form when using the "
 "shortcode <code>[events_filterform]</code>. Use <code>#_FILTER_CATS</code>, "
@@ -3225,17 +3278,17 @@ msgstr ""
 "<code>#_FILTER_MONTHS</code>."
 
 # @ eme
-#: eme_settings.php:427
+#: eme_settings.php:429
 msgid "Calendar format"
 msgstr "Opmaak Kalender"
 
 # @ eme
-#: eme_settings.php:430
+#: eme_settings.php:432
 msgid "Small calendar title"
 msgstr "Titel kleine kalender"
 
 # @ eme
-#: eme_settings.php:430
+#: eme_settings.php:432
 msgid ""
 "The format of the title, corresponding to the text that appears when "
 "hovering on an eventful calendar day."
@@ -3244,12 +3297,12 @@ msgstr ""
 "met de muis over een vol geplande dag gaat."
 
 # @ eme
-#: eme_settings.php:431
+#: eme_settings.php:433
 msgid "Small calendar title separator"
 msgstr "Scheidingsteken voor de titel van de kleine kalender"
 
 # @ eme
-#: eme_settings.php:431
+#: eme_settings.php:433
 msgid ""
 "The separator appearing on the above title when more than one event is "
 "taking place on the same day."
@@ -3258,12 +3311,12 @@ msgstr ""
 "meerdere evenementen op dezelfde dag zijn."
 
 # @ eme
-#: eme_settings.php:432
+#: eme_settings.php:434
 msgid "Full calendar events format"
 msgstr "Opmaak van de grote kalender"
 
 # @ eme
-#: eme_settings.php:432
+#: eme_settings.php:434
 msgid ""
 "The format of each event when displayed in the full calendar. Remember to "
 "include <code>li</code> tags before and after the event."
@@ -3272,17 +3325,17 @@ msgstr ""
 "<code>li</code> tags voor en achter het evenement."
 
 # @ eme
-#: eme_settings.php:441
+#: eme_settings.php:443
 msgid "Locations format"
 msgstr "Opmaak van de Locaties"
 
 # @ eme
-#: eme_settings.php:444
+#: eme_settings.php:446
 msgid "Default location list format header"
 msgstr "Standaard opmaak van de kop van de evenementenlijst"
 
 # @ eme
-#: eme_settings.php:444
+#: eme_settings.php:446
 msgid ""
 "This content will appear just above your code for the default location list "
 "format. If you leave this empty, the value <code>&lt;ul "
@@ -3294,12 +3347,12 @@ msgstr ""
 "code>.<br/>Gebruikt door shortcode <code>[events_locations]</code>"
 
 # @ eme
-#: eme_settings.php:445
+#: eme_settings.php:447
 msgid "Default location list item format"
 msgstr "Opmaak evenementenlijst standaard locatie."
 
 # @ eme
-#: eme_settings.php:445
+#: eme_settings.php:447
 msgid ""
 "The format of a location in a location list. If you leave this empty, the "
 "value <code>&lt;li class=\\\"location-#_LOCATIONID\\\"&gt;#_LOCATIONNAME&lt;/"
@@ -3314,12 +3367,12 @@ msgstr ""
 "de shortcode <code>[events_locations]</code>"
 
 # @ eme
-#: eme_settings.php:446
+#: eme_settings.php:448
 msgid "Default location list format footer"
 msgstr "Standaard opmaak van de voettekst van de evenementen lijst"
 
 # @ eme
-#: eme_settings.php:446
+#: eme_settings.php:448
 msgid ""
 "This content will appear just below your code for the default location list "
 "format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be "
@@ -3330,12 +3383,12 @@ msgstr ""
 "shortcode <code>[events_locations]</code>"
 
 # @ eme
-#: eme_settings.php:448
+#: eme_settings.php:450
 msgid "Single location page title format"
 msgstr "Opmaak van pagina met enkele locatie"
 
 # @ eme
-#: eme_settings.php:448
+#: eme_settings.php:450
 msgid ""
 "The format of a single location page title.<br/>Follow the previous "
 "formatting instructions."
@@ -3344,12 +3397,12 @@ msgstr ""
 "instructies."
 
 # @ eme
-#: eme_settings.php:449
+#: eme_settings.php:451
 msgid "Single location html title format"
 msgstr "Opmaak van pagina met enkele locatie"
 
 # @ eme
-#: eme_settings.php:449
+#: eme_settings.php:451
 msgid ""
 "The format of a single location html page title.<br/>Follow the previous "
 "formatting instructions."
@@ -3358,12 +3411,12 @@ msgstr ""
 "instructies."
 
 # @ eme
-#: eme_settings.php:450
+#: eme_settings.php:452
 msgid "Default single location page format"
 msgstr "Standaard opmaak pagina met een enkele locatie."
 
 # @ eme
-#: eme_settings.php:450
+#: eme_settings.php:452
 msgid ""
 "The format of a single location page.<br/>Insert one or more of the "
 "following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, "
@@ -3384,12 +3437,12 @@ msgstr ""
 "alle evenementen die op deze locatie plaastvinden."
 
 # @ eme
-#: eme_settings.php:451
+#: eme_settings.php:453
 msgid "Default location balloon format"
 msgstr "Standaard locatie \"ballon\"-opmaak."
 
 # @ eme
-#: eme_settings.php:451
+#: eme_settings.php:453
 msgid ""
 "The format of the text appearing in the balloon describing the location in "
 "the map.<br/>Insert one or more of the following placeholders: "
@@ -3404,12 +3457,12 @@ msgstr ""
 "code> of <code>#_DIRECTIONS</code>.."
 
 # @ eme
-#: eme_settings.php:452
+#: eme_settings.php:454
 msgid "Default location event list format"
 msgstr "Opmaak evenementenlijst standaard locatie."
 
 # @ eme
-#: eme_settings.php:452
+#: eme_settings.php:454
 msgid ""
 "The format of the events list inserted in the location page through the "
 "<code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</"
@@ -3421,12 +3474,12 @@ msgstr ""
 "van de evenementen."
 
 # @ eme
-#: eme_settings.php:453
+#: eme_settings.php:455
 msgid "Default no events message"
 msgstr "Standaard bericht geen evenementen"
 
 # @ eme
-#: eme_settings.php:453
+#: eme_settings.php:455
 msgid ""
 "The message to be displayed in the list generated by <code>#_NEXTEVENTS</"
 "code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> when no events "
@@ -3437,47 +3490,47 @@ msgstr ""
 "code> wanneer er geen evenementen beschikbaar zijn."
 
 # @ eme
-#: eme_settings.php:462
+#: eme_settings.php:464
 msgid "RSS and ICAL feed format"
 msgstr "RSS en ICAL formaat"
 
 # @ eme
-#: eme_settings.php:465
+#: eme_settings.php:467
 msgid "RSS main title"
 msgstr "RSS kop titel"
 
 # @ eme
-#: eme_settings.php:465
+#: eme_settings.php:467
 msgid "The main title of your RSS events feed."
 msgstr "De koptitel van je RSS evenementen feed."
 
 # @ eme
-#: eme_settings.php:466
+#: eme_settings.php:468
 msgid "RSS main description"
 msgstr "De (kop) beschrijving van de RSS"
 
 # @ eme
-#: eme_settings.php:466
+#: eme_settings.php:468
 msgid "The main description of your RSS events feed."
 msgstr "De hoofdbeschrijving van de RSS feed van de evenementen."
 
 # @ eme
-#: eme_settings.php:467
+#: eme_settings.php:469
 msgid "RSS title format"
 msgstr "Opmaak van de titel van de RSS feed"
 
 # @ eme
-#: eme_settings.php:467
+#: eme_settings.php:469
 msgid "The format of the title of each item in the events RSS feed."
 msgstr "De opmaak van elk item in de RSS feed van de evenementen."
 
 # @ eme
-#: eme_settings.php:468
+#: eme_settings.php:470
 msgid "RSS description format"
 msgstr "Beschrijving opmaak RSS"
 
 # @ eme
-#: eme_settings.php:468
+#: eme_settings.php:470
 msgid ""
 "The format of the description of each item in the events RSS feed. Follow "
 "the previous formatting instructions."
@@ -3486,12 +3539,12 @@ msgstr ""
 "instructies over de opmaak"
 
 # @ eme
-#: eme_settings.php:469
+#: eme_settings.php:471
 msgid "RSS Pubdate usage"
 msgstr "RSS Pubdate gebruik"
 
 # @ eme
-#: eme_settings.php:469
+#: eme_settings.php:471
 msgid ""
 "Show the event creation/modification date as PubDate info in the in the "
 "events RSS feed."
@@ -3500,12 +3553,12 @@ msgstr ""
 "van het evenement."
 
 # @ eme
-#: eme_settings.php:470
+#: eme_settings.php:472
 msgid "RSS Pubdate is start date"
 msgstr "RSS Pubdatum is start datum"
 
 # @ eme
-#: eme_settings.php:470
+#: eme_settings.php:472
 msgid ""
 "If you select this, the pubDate field in RSS will be the event start date, "
 "not the modification date."
@@ -3514,22 +3567,22 @@ msgstr ""
 "zijn, niet de modificatie datum."
 
 # @ eme
-#: eme_settings.php:471
+#: eme_settings.php:473
 msgid "ICAL title format"
 msgstr "ICAL titel formaat"
 
 # @ eme
-#: eme_settings.php:471
+#: eme_settings.php:473
 msgid "The format of the title of each item in the events ICAL feed."
 msgstr "Titel formaat van alle items in de evenementen ICAL feed."
 
 # @ eme
-#: eme_settings.php:472
+#: eme_settings.php:474
 msgid "ICAL description format"
 msgstr "Formaat ICAL beschrijving"
 
 # @ eme
-#: eme_settings.php:472
+#: eme_settings.php:474
 msgid ""
 "The format of the description of each item in the events ICAL feed. Follow "
 "the previous formatting instructions."
@@ -3538,17 +3591,17 @@ msgstr ""
 "de vorige opmaak instructies."
 
 # @ eme
-#: eme_settings.php:481
+#: eme_settings.php:483
 msgid "RSVP: registrations and bookings"
 msgstr "RSVP: registraties en reserveringen"
 
 # @ eme
-#: eme_settings.php:486
+#: eme_settings.php:488
 msgid "Default contact person"
 msgstr "Standaard contactpersoon"
 
 # @ eme
-#: eme_settings.php:486
+#: eme_settings.php:488
 msgid ""
 "Select the default contact person. This user will be employed whenever a "
 "contact person is not explicitly specified for an event"
@@ -3558,12 +3611,12 @@ msgstr ""
 "toegewezen"
 
 # @ eme
-#: eme_settings.php:487
+#: eme_settings.php:489
 msgid "By default enable registrations for new events?"
 msgstr "Standaard de registratie voor nieuwe evenmenten toevoegen?"
 
 # @ eme
-#: eme_settings.php:487
+#: eme_settings.php:489
 msgid ""
 "Check this option if you want to enable registrations by default for new "
 "events."
@@ -3572,12 +3625,12 @@ msgstr ""
 "mogelijkheid om te registreren wordt toegevoegd."
 
 # @ eme
-#: eme_settings.php:488
+#: eme_settings.php:490
 msgid "By default require approval for registrations?"
 msgstr "Standaard goedkeuring nodig voor registraties?"
 
 # @ eme
-#: eme_settings.php:488
+#: eme_settings.php:490
 msgid ""
 "Check this option if you want by default that new registrations require "
 "approval."
@@ -3586,12 +3639,12 @@ msgstr ""
 "hebben."
 
 # @ eme
-#: eme_settings.php:489
+#: eme_settings.php:491
 msgid "By default require WP membership to be able to register?"
 msgstr "Standaad lidmaatschap van WP Blog vereist om te kunnen registreren?"
 
 # @ eme
-#: eme_settings.php:489
+#: eme_settings.php:491
 msgid ""
 "Check this option if you want by default that only WP registered users can "
 "book for an event."
@@ -3600,22 +3653,22 @@ msgstr ""
 "voor een evenement kunnen reserveren."
 
 # @ eme
-#: eme_settings.php:490
+#: eme_settings.php:492
 msgid "Default number of spaces"
 msgstr "Standaard aantal plaatsen"
 
 # @ eme
-#: eme_settings.php:490
+#: eme_settings.php:492
 msgid "The default number of spaces an event has."
 msgstr "Het standaard aantal plaatsen dat een evenment kan bevatten"
 
 # @ eme
-#: eme_settings.php:491
+#: eme_settings.php:493
 msgid "Min number of spaces to book"
 msgstr "Min aantal te reserveren plaatsen"
 
 # @ eme
-#: eme_settings.php:491
+#: eme_settings.php:493
 msgid ""
 "The minimum number of spaces a person can book in one go (it can be 0, for e."
 "g. just an attendee list)."
@@ -3624,43 +3677,43 @@ msgstr ""
 "zijn, voor e.g. een aanwezigheidslijst)."
 
 # @ eme
-#: eme_settings.php:492
+#: eme_settings.php:494
 msgid "Max number of spaces to book"
 msgstr "Max aantal te reserveren plaatsen"
 
 # @ eme
-#: eme_settings.php:492
+#: eme_settings.php:494
 msgid "The maximum number of spaces a person can book in one go."
 msgstr "Het maximum aantal plaatsen dat iemand in één keer kan reserveren."
 
 # @ eme
-#: eme_settings.php:493
+#: eme_settings.php:495
 msgid "By default allow RSVP until this many days before the event starts"
 msgstr "Keur standaard RSVP goed tot dit aantal dagen voordat evenement begint"
 
 # @ eme
-#: eme_settings.php:493
+#: eme_settings.php:495
 msgid "By default allow RSVP until this many days before the event starts."
 msgstr ""
 "Keur standaard RSVP goed tot dit aantal dagen voordat evenement begint."
 
 # @ eme
-#: eme_settings.php:494
+#: eme_settings.php:496
 msgid "By default allow RSVP until this many hours before the event starts"
 msgstr "Sta standaard RSVP toe tot dit aantal uren voordat evenement start"
 
 # @ eme
-#: eme_settings.php:494
+#: eme_settings.php:496
 msgid "By default allow RSVP until this many hours before the event starts."
 msgstr "Sta standaard RSVP toe tot dit aantal uren voordat evenement start."
 
 # @ eme
-#: eme_settings.php:495
+#: eme_settings.php:497
 msgid "Use captcha for booking form?"
 msgstr "Gebruik captcha voor registratieformulier?"
 
 # @ eme
-#: eme_settings.php:495
+#: eme_settings.php:497
 msgid ""
 "Check this option if you want to use a captcha on the booking form, to "
 "thwart spammers a bit."
@@ -3669,12 +3722,12 @@ msgstr ""
 "registratieformulier, om spammers een beetje dwars te zitten."
 
 # @ eme
-#: eme_settings.php:496
+#: eme_settings.php:498
 msgid "Hide fully booked events?"
 msgstr "Verberg volgeboekte evenmenten?"
 
 # @ eme
-#: eme_settings.php:496
+#: eme_settings.php:498
 msgid ""
 "Check this option if you want to hide events that are fully booked from the "
 "calendar and events listing in the front."
@@ -3683,33 +3736,33 @@ msgstr ""
 "wilt verbergen."
 
 # @ eme
-#: eme_settings.php:497
+#: eme_settings.php:499
 msgid "Add booking form submit text"
 msgstr "Voeg boekingsformulier indienen tekst toe."
 
 # @ eme
-#: eme_settings.php:497
+#: eme_settings.php:499
 msgid "The string of the submit button on the add booking form"
 msgstr ""
 "De string van de knop Bevestigen op het toe te voegen boekingsformulier."
 
 # @ eme
-#: eme_settings.php:498
+#: eme_settings.php:500
 msgid "Delete booking form submit text"
 msgstr "Verwijderen boekingsformulier indienen tekst."
 
 # @ eme
-#: eme_settings.php:498
+#: eme_settings.php:500
 msgid "The string of the submit button on the delete booking form"
 msgstr "De string van de knop Indienen op het verwijder boekingsformulier"
 
 # @ eme
-#: eme_settings.php:499
+#: eme_settings.php:501
 msgid "Attendees list format"
 msgstr "Opmaak lijst deelnemers"
 
 # @ eme
-#: eme_settings.php:499
+#: eme_settings.php:501
 msgid ""
 "The format for the attendees list when using the <code>#_ATTENDEES</code> "
 "placeholder. Use <code>#_NAME</code>, <code>#_EMAIL</code>, <code>#_PHONE</"
@@ -3720,7 +3773,7 @@ msgstr ""
 "code>, <code>#_PHONE</code>, <code>#_ID</code>."
 
 # @ eme
-#: eme_settings.php:499
+#: eme_settings.php:501
 msgid ""
 "Use <code>#_USER_RESERVEDSPACES</code> to show the number of seats for that "
 "person."
@@ -3729,12 +3782,12 @@ msgstr ""
 "die persoon te tonen."
 
 # @ eme
-#: eme_settings.php:500
+#: eme_settings.php:502
 msgid "Bookings list header format"
 msgstr "Header formaat boekingen overzicht"
 
 # @ eme
-#: eme_settings.php:500
+#: eme_settings.php:502
 msgid ""
 "The header format for the bookings list when using the <code>#_BOOKINGS</"
 "code> placeholder."
@@ -3743,18 +3796,18 @@ msgstr ""
 "placeholder gebruikt wordt."
 
 # @ eme
-#: eme_settings.php:500 eme_settings.php:502 eme_settings.php:636
-#: eme_settings.php:637 eme_settings.php:638 eme_settings.php:639
+#: eme_settings.php:502 eme_settings.php:504 eme_settings.php:638
+#: eme_settings.php:639 eme_settings.php:640 eme_settings.php:641
 msgid " The default is '%s'"
 msgstr "Standaard is  '%s'"
 
 # @ eme
-#: eme_settings.php:501
+#: eme_settings.php:503
 msgid "Bookings list format"
 msgstr "Formaat boekingen overzicht"
 
 # @ eme
-#: eme_settings.php:501
+#: eme_settings.php:503
 msgid ""
 "The format for the bookings list when using the <code>#_BOOKINGS</code> "
 "placeholder."
@@ -3763,17 +3816,17 @@ msgstr ""
 "placeholder gebruikt wordt."
 
 # @ eme
-#: eme_settings.php:501
+#: eme_settings.php:503
 msgid "For all placeholders you can use here, see "
 msgstr "Voor alle te gebruiken placeholders, zie "
 
 # @ eme
-#: eme_settings.php:502
+#: eme_settings.php:504
 msgid "Bookings list footer format"
 msgstr "Footer formaat boekingen overzicht"
 
 # @ eme
-#: eme_settings.php:502
+#: eme_settings.php:504
 msgid ""
 "The footer format for the bookings list when using the <code>#_BOOKINGS</"
 "code> placeholder."
@@ -3782,22 +3835,22 @@ msgstr ""
 "placeholder gebruikt wordt."
 
 # @ eme
-#: eme_settings.php:503
+#: eme_settings.php:505
 msgid "Booking recorded message"
 msgstr "Reservering gelukt boodschap"
 
 # @ eme
-#: eme_settings.php:507
+#: eme_settings.php:509
 msgid "RSVP: form format"
 msgstr "RSVP: formulier opmaak"
 
 # @ eme
-#: eme_settings.php:510
+#: eme_settings.php:512
 msgid "Form format"
 msgstr "Opmaak formulier"
 
 # @ eme
-#: eme_settings.php:510
+#: eme_settings.php:512
 msgid ""
 "The look and feel of the form for registrations. #_NAME, #_EMAIL and #_SEATS "
 "are obligated fields, if not present then the form will not be shown. Use "
@@ -3809,17 +3862,17 @@ msgstr ""
 "velden."
 
 # @ eme
-#: eme_settings.php:520
+#: eme_settings.php:522
 msgid "RSVP: mail options"
 msgstr "RSVP: mail opties"
 
 # @ eme
-#: eme_settings.php:523
+#: eme_settings.php:525
 msgid "Enable the RSVP e-mail notifications?"
 msgstr "Het ontvangen van RSVP e-mail notificaties aanzetten?"
 
 # @ eme
-#: eme_settings.php:523
+#: eme_settings.php:525
 msgid ""
 "Check this option if you want to receive an email when someone books places "
 "for your events."
@@ -3828,17 +3881,17 @@ msgstr ""
 "reserveert voor je evenementen."
 
 # @ eme
-#: eme_settings.php:524
+#: eme_settings.php:526
 msgid "Contact person email format"
 msgstr "Opmaak e-mail aan contactpersoon"
 
 # @ eme
-#: eme_settings.php:525
+#: eme_settings.php:527
 msgid "Contact person cancelled email format"
 msgstr "Opmaak annulering e-mail aan contactpersoon"
 
 # @ eme
-#: eme_settings.php:525
+#: eme_settings.php:527
 msgid ""
 "The format of the email which will be sent to the contact person for a "
 "cancellation."
@@ -3847,12 +3900,12 @@ msgstr ""
 "annulering."
 
 # @ eme
-#: eme_settings.php:526
+#: eme_settings.php:528
 msgid "Contact person pending email format"
 msgstr "Opmaak wachtend op goedkeuring e-mail aan contactpersoon"
 
 # @ eme
-#: eme_settings.php:526
+#: eme_settings.php:528
 msgid ""
 "The format of the email which will be sent to the contact person if approval "
 "is needed."
@@ -3861,17 +3914,17 @@ msgstr ""
 "nodig is."
 
 # @ eme
-#: eme_settings.php:527
+#: eme_settings.php:529
 msgid "Respondent email format"
 msgstr "Opmaak e-mail aanmelder"
 
 # @ eme
-#: eme_settings.php:528
+#: eme_settings.php:530
 msgid "Registration pending email format"
 msgstr "Opmaak e-mail goed te keuren reservering"
 
 # @ eme
-#: eme_settings.php:528
+#: eme_settings.php:530
 msgid ""
 "The format of the email which will be sent to the respondent when the event "
 "requires registration approval."
@@ -3880,12 +3933,12 @@ msgstr ""
 "evenement goedkeuring vereist."
 
 # @ eme
-#: eme_settings.php:529
+#: eme_settings.php:531
 msgid "Registration cancelled email format"
 msgstr "Opmaak e-mail geannuleerde reservering"
 
 # @ eme
-#: eme_settings.php:529
+#: eme_settings.php:531
 msgid ""
 "The format of the email which will be sent to the respondent when the "
 "respondent cancels the registrations for an event."
@@ -3894,12 +3947,12 @@ msgstr ""
 "reserveringen voor een evenement annuleert."
 
 # @ eme
-#: eme_settings.php:530
+#: eme_settings.php:532
 msgid "Registration denied email format"
 msgstr "Opmaak e-mail geweigerde reservering"
 
 # @ eme
-#: eme_settings.php:530
+#: eme_settings.php:532
 msgid ""
 "The format of the email which will be sent to the respondent when the admin "
 "denies the registration request if the event requires registration approval."
@@ -3908,24 +3961,24 @@ msgstr ""
 "wordt geweigerd in het geval dat goedkeuring benodigd is."
 
 # @ eme
-#: eme_settings.php:531
+#: eme_settings.php:533
 msgid "Notification sender name"
 msgstr "Naam van de afzender van aankondigingen"
 
 # @ eme
-#: eme_settings.php:531
+#: eme_settings.php:533
 msgid "Insert the display name of the notification sender."
 msgstr ""
 "Schermnaam van de afzender van aankondigingen (zoals die in de kop van de e-"
 "mail verschijnt)"
 
 # @ eme
-#: eme_settings.php:532
+#: eme_settings.php:534
 msgid "Notification sender address"
 msgstr "Adres van de afzender vanaankondigingen"
 
 # @ eme
-#: eme_settings.php:532
+#: eme_settings.php:534
 msgid ""
 "Insert the address of the notification sender. It must correspond with your "
 "Gmail account user"
@@ -3934,22 +3987,22 @@ msgstr ""
 "met je Gmail-account"
 
 # @ eme
-#: eme_settings.php:533
+#: eme_settings.php:535
 msgid "Mail sending method"
 msgstr "Methode om mail te versturen"
 
 # @ eme
-#: eme_settings.php:533
+#: eme_settings.php:535
 msgid "PHP mail function"
 msgstr "PHP mail functie"
 
 # @ eme
-#: eme_settings.php:533
+#: eme_settings.php:535
 msgid "Select the method to send email notification."
 msgstr "Selecteer de methode om e-mail notificatie te sturen."
 
 # @ eme
-#: eme_settings.php:534
+#: eme_settings.php:536
 msgid ""
 "The SMTP host. Usually it corresponds to 'localhost'. If you use Gmail, set "
 "this value to 'ssl://smtp.gmail.com:465'."
@@ -3958,7 +4011,7 @@ msgstr ""
 "waarde op 'ssl://smtp.gmail.com:465'."
 
 # @ eme
-#: eme_settings.php:535
+#: eme_settings.php:537
 msgid ""
 "The port through which you e-mail notifications will be sent. Make sure the "
 "firewall doesn't block this port"
@@ -3967,12 +4020,12 @@ msgstr ""
 "firewall deze poort niet blokkeert"
 
 # @ eme
-#: eme_settings.php:536
+#: eme_settings.php:538
 msgid "Use SMTP authentication?"
 msgstr "SMTP authenticatie gebruiken?"
 
 # @ eme
-#: eme_settings.php:536
+#: eme_settings.php:538
 msgid ""
 "SMTP authentication is often needed. If you use Gmail, make sure to set this "
 "parameter to Yes"
@@ -3981,32 +4034,32 @@ msgstr ""
 "parameter op Ja"
 
 # @ eme
-#: eme_settings.php:537
+#: eme_settings.php:539
 msgid "SMTP username"
 msgstr "SMTP gebruikersnaam"
 
 # @ eme
-#: eme_settings.php:537
+#: eme_settings.php:539
 msgid "Insert the username to be used to access your SMTP server."
 msgstr "Voer de gebruikersnaam in voor toegang tot je SMTP server."
 
 # @ eme
-#: eme_settings.php:538
+#: eme_settings.php:540
 msgid "SMTP password"
 msgstr "SMTP wachtwoord"
 
 # @ eme
-#: eme_settings.php:538
+#: eme_settings.php:540
 msgid "Insert the password to be used to access your SMTP server"
 msgstr "Voer het wachtwoord in voor toegang tot je SMTP server"
 
 # @ eme
-#: eme_settings.php:539
+#: eme_settings.php:541
 msgid "Debug SMTP?"
 msgstr "Debug SMTP?"
 
 # @ eme
-#: eme_settings.php:539
+#: eme_settings.php:541
 msgid ""
 "Check this option if you have issues sending mail via SMTP. Only do this for "
 "debugging purposes and deactivate it afterwards!"
@@ -4015,52 +4068,52 @@ msgstr ""
 "alleen voor debugging doeleinden en deactiveer dit naderhand!"
 
 # @ eme
-#: eme_settings.php:548
+#: eme_settings.php:550
 msgid "RSVP: price options"
 msgstr "RSVP: prijs opties"
 
 # @ eme
-#: eme_settings.php:551
+#: eme_settings.php:553
 msgid "Default currency"
 msgstr "Standaard munteenheid"
 
 # @ eme
-#: eme_settings.php:551
+#: eme_settings.php:553
 msgid "Select the default currency for payments."
 msgstr "Selecteer de standaard munteenheid voor betalingen."
 
 # @ eme
-#: eme_settings.php:552
+#: eme_settings.php:554
 msgid "Default price"
 msgstr "Standaard prijs"
 
 # @ eme
-#: eme_settings.php:552
+#: eme_settings.php:554
 msgid "The default price for an event."
 msgstr "Standaard prijs voor een evenement."
 
 # @ eme
-#: eme_settings.php:556
+#: eme_settings.php:558
 msgid "RSVP: paypal options"
 msgstr "RSVP: paypal opties"
 
 # @ eme
-#: eme_settings.php:559
+#: eme_settings.php:561
 msgid "PayPal live or test"
 msgstr "PayPal live of test"
 
 # @ eme
-#: eme_settings.php:559
+#: eme_settings.php:561
 msgid "Paypal Sandbox (for testing)"
 msgstr "Paypal Sandbox (voor testdoeleinden)"
 
 # @ eme
-#: eme_settings.php:559
+#: eme_settings.php:561
 msgid "Paypal Live"
 msgstr "Paypal Live"
 
 # @ eme
-#: eme_settings.php:559
+#: eme_settings.php:561
 msgid ""
 "Choose wether you want to test paypal in a paypal sandbox or go live and "
 "really use paypal."
@@ -4069,87 +4122,87 @@ msgstr ""
 "paypal te gebruiken."
 
 # @ eme
-#: eme_settings.php:560
+#: eme_settings.php:562
 msgid "PayPal business info"
 msgstr "PayPal business info"
 
 # @ eme
-#: eme_settings.php:560
+#: eme_settings.php:562
 msgid "Paypal business ID or email."
 msgstr "PayPal business ID of e-mail."
 
 # @ default
-#: eme_settings.php:561
+#: eme_settings.php:563
 msgid "Use paypal encryption?"
 msgstr "PayPal encryptie gebruiken?"
 
 # @ eme
-#: eme_settings.php:561
+#: eme_settings.php:563
 msgid "Select yes to encrypt the paypal button using certificates."
 msgstr "Selecteer ja om PayPal knop te encrypten via cetificaten."
 
 # @ eme
-#: eme_settings.php:562
+#: eme_settings.php:564
 msgid "Paypal public cert"
 msgstr "PayPal openbare cert"
 
 # @ eme
-#: eme_settings.php:562
+#: eme_settings.php:564
 msgid "Path to paypal public certificate file."
 msgstr "Link naar PayPal openbaar certificaat bestand"
 
 # @ eme
-#: eme_settings.php:563
+#: eme_settings.php:565
 msgid "Own public cert"
 msgstr "Bezit openbare cert"
 
 # @ eme
-#: eme_settings.php:563
+#: eme_settings.php:565
 msgid "Path to own public certificate file."
 msgstr "Link om openbaar certificaat bestand te bezitten."
 
 # @ eme
-#: eme_settings.php:564
+#: eme_settings.php:566
 msgid "Own private key"
 msgstr "Eigen prive sleutel"
 
 # @ eme
-#: eme_settings.php:564
+#: eme_settings.php:566
 msgid "Path to own private key file."
 msgstr "Link naar eigen prive sleutel bestand."
 
 # @ eme
-#: eme_settings.php:565
+#: eme_settings.php:567
 msgid "Certificate ID"
 msgstr "Certificaat ID"
 
 # @ eme
-#: eme_settings.php:565
+#: eme_settings.php:567
 msgid "Certificate ID of your cert at paypal."
 msgstr "Certificaat ID van je cert bij PayPal."
 
 # @ eme
-#: eme_settings.php:569
+#: eme_settings.php:571
 msgid "RSVP: 2Checkout options"
 msgstr "RSVP: 2Checkout opties"
 
 # @ eme
-#: eme_settings.php:579
+#: eme_settings.php:581
 msgid "2Checkout live or test"
 msgstr "2Checkout live of test"
 
 # @ eme
-#: eme_settings.php:579
+#: eme_settings.php:581
 msgid "2Checkout Sandbox (for testing)"
 msgstr "2Checkout Sandbox (voor testen)"
 
 # @ eme
-#: eme_settings.php:579
+#: eme_settings.php:581
 msgid "2Checkout Live"
 msgstr "2Checkout Live"
 
 # @ eme
-#: eme_settings.php:579
+#: eme_settings.php:581
 msgid ""
 "Choose wether you want to test 2Checkout in a sandbox or go live and really "
 "use 2Checkout."
@@ -4158,52 +4211,52 @@ msgstr ""
 "2Checkout echt wilt gebruiken."
 
 # @ eme
-#: eme_settings.php:580
+#: eme_settings.php:582
 msgid "2Checkout Account number"
 msgstr "2Checkout account nummer"
 
 # @ eme
-#: eme_settings.php:580
+#: eme_settings.php:582
 msgid "2Checkout Account number."
 msgstr "2Checkout account nummer."
 
 # @ eme
-#: eme_settings.php:581
+#: eme_settings.php:583
 msgid "2Checkout Secret"
 msgstr "2Checkout geheim"
 
 # @ eme
-#: eme_settings.php:581
+#: eme_settings.php:583
 msgid "2Checkout secret."
 msgstr "2Checkout geheim."
 
 # @ eme
-#: eme_settings.php:582 eme_settings.php:599
+#: eme_settings.php:584 eme_settings.php:601
 msgid "Info: the url for payment notifications is: "
 msgstr "Info: the link van betalingsnotificaties is: "
 
 # @ eme
-#: eme_settings.php:586
+#: eme_settings.php:588
 msgid "RSVP: Webmoney options"
 msgstr "RSVP: Webmoney opties"
 
 # @ eme
-#: eme_settings.php:596
+#: eme_settings.php:598
 msgid "Webmoney live or test"
 msgstr "Webmoney live of test"
 
 # @ eme
-#: eme_settings.php:596
+#: eme_settings.php:598
 msgid "Webmoney Sandbox (for testing)"
 msgstr "Webmoney Sandbox (voor testen)"
 
 # @ eme
-#: eme_settings.php:596
+#: eme_settings.php:598
 msgid "Webmoney Live"
 msgstr "Webmoney live"
 
 # @ eme
-#: eme_settings.php:596
+#: eme_settings.php:598
 msgid ""
 "Choose wether you want to test Webmoney in a sandbox or go live and really "
 "use Webmoney."
@@ -4212,47 +4265,47 @@ msgstr ""
 "Webmoney echt wilt gebruiken."
 
 # @ eme
-#: eme_settings.php:597
+#: eme_settings.php:599
 msgid "Webmoney Purse"
 msgstr "Webmoney beus"
 
 # @ eme
-#: eme_settings.php:597
+#: eme_settings.php:599
 msgid "Webmoney Purse."
 msgstr "Webmoney beurs."
 
 # @ eme
-#: eme_settings.php:598
+#: eme_settings.php:600
 msgid "Webmoney Secret"
 msgstr "Webmoney geheim"
 
 # @ eme
-#: eme_settings.php:598
+#: eme_settings.php:600
 msgid "Webmoney secret."
 msgstr "Webmoney geheim."
 
 # @ eme
-#: eme_settings.php:603
+#: eme_settings.php:605
 msgid "RSVP: Google Checkout options"
 msgstr "RSVP: Google Checkout opties"
 
 # @ eme
-#: eme_settings.php:606
+#: eme_settings.php:608
 msgid "Google Checkout live or test"
 msgstr "Google Checkout live of test"
 
 # @ eme
-#: eme_settings.php:606
+#: eme_settings.php:608
 msgid "Google Checkout Sandbox (for testing)"
 msgstr "Google Checkout Sandbox (voor testen)"
 
 # @ eme
-#: eme_settings.php:606
+#: eme_settings.php:608
 msgid "Google Checkout Live"
 msgstr "Google Checkout live"
 
 # @ eme
-#: eme_settings.php:606
+#: eme_settings.php:608
 msgid ""
 "Choose wether you want to test Google Checkout in a sandbox or go live and "
 "really use Google Checkout."
@@ -4261,47 +4314,47 @@ msgstr ""
 "en Google Checkout echt wilt gebruiken"
 
 # @ eme
-#: eme_settings.php:607
+#: eme_settings.php:609
 msgid "Google Checkout merchant ID"
 msgstr "Google Checkout merchant ID"
 
 # @ eme
-#: eme_settings.php:607
+#: eme_settings.php:609
 msgid "Google Checkout Merchant ID."
 msgstr "Google Checkout merchant ID."
 
 # @ eme
-#: eme_settings.php:608
+#: eme_settings.php:610
 msgid "Google Checkout merchant Key"
 msgstr "Google Checkout merchant sleutel"
 
 # @ eme
-#: eme_settings.php:608
+#: eme_settings.php:610
 msgid "Google Checkout Merchant Key."
 msgstr "Google Checkout merchant sluetel."
 
 # @ eme
-#: eme_settings.php:612
+#: eme_settings.php:614
 msgid "RSVP: First Data options"
 msgstr "RSVP: First Data opties"
 
 # @ eme
-#: eme_settings.php:615
+#: eme_settings.php:617
 msgid "First Data live or test"
 msgstr "First Data live of test"
 
 # @ eme
-#: eme_settings.php:615
+#: eme_settings.php:617
 msgid "First Data Sandbox (for testing)"
 msgstr "First Data Sandbox (voor testen)"
 
 # @ eme
-#: eme_settings.php:615
+#: eme_settings.php:617
 msgid "First Data Live"
 msgstr "First Data Live"
 
 # @ eme
-#: eme_settings.php:615
+#: eme_settings.php:617
 msgid ""
 "Choose wether you want to test First Data in a sandbox or go live and really "
 "use First Datal."
@@ -4310,37 +4363,37 @@ msgstr ""
 "First Data echt wilt gebruiken"
 
 # @ eme
-#: eme_settings.php:616
+#: eme_settings.php:618
 msgid "First Data Store Name"
 msgstr "First Data Winkel Naam"
 
 # @ eme
-#: eme_settings.php:616
+#: eme_settings.php:618
 msgid "First Data Store Name."
 msgstr "First Data Winkel Naam."
 
 # @ eme
-#: eme_settings.php:617
+#: eme_settings.php:619
 msgid "First Data Shared Secret"
 msgstr "First Data geheim"
 
 # @ eme
-#: eme_settings.php:617
+#: eme_settings.php:619
 msgid "First Data Shared Secret."
 msgstr "First Data geheim."
 
 # @ eme
-#: eme_settings.php:626
+#: eme_settings.php:628
 msgid "Images size"
 msgstr "Afbeeldingsafmetingen"
 
 # @ eme
-#: eme_settings.php:629
+#: eme_settings.php:631
 msgid "Thumbnail size"
 msgstr "Thumbnail grootte"
 
 # @ eme
-#: eme_settings.php:629
+#: eme_settings.php:631
 msgid ""
 "Choose thumbnail size to be shown when placeholders involging thumbnails "
 "like e.g. #_EVENTIMAGETHUMB, #_LOCATIONIMAGETHUMB ..."
@@ -4349,79 +4402,79 @@ msgstr ""
 "invoegen zoals #_EVENTIMAGETHUMB, #_LOCATIONIMAGETHUMB ..."
 
 # @ eme
-#: eme_settings.php:633
+#: eme_settings.php:635
 msgid "Map options"
 msgstr "Kaart Opties"
 
 # @ eme
-#: eme_settings.php:636
+#: eme_settings.php:638
 msgid "Global map zoom factor"
 msgstr "Globale plattegrond zoomfactor"
 
 # @ eme
-#: eme_settings.php:636
+#: eme_settings.php:638
 msgid "The zoom factor used for the global map (max: 14)."
 msgstr "Zoomfactor die voor de globale plattegrond gebruikt wordt (max: 14)."
 
 # @ eme
-#: eme_settings.php:637
+#: eme_settings.php:639
 msgid "Individual map zoom factor"
 msgstr "Individuele plattegrond zoomfactor"
 
 # @ eme
-#: eme_settings.php:637
+#: eme_settings.php:639
 msgid "The zoom factor used when showing a single map (max: 14)."
 msgstr "Zoomfactor die voor de losse plattegrond gebruikt wordt (max: 14)."
 
 # @ eme
-#: eme_settings.php:638
+#: eme_settings.php:640
 msgid "Global map type"
 msgstr "Globaal kaart-soort"
 
-#: eme_settings.php:638 eme_settings.php:639
+#: eme_settings.php:640 eme_settings.php:641
 msgid "Road map view"
 msgstr "Stratenplan"
 
-#: eme_settings.php:638 eme_settings.php:639
+#: eme_settings.php:640 eme_settings.php:641
 msgid "Google Earth satellite images"
 msgstr "Google Earth satelliet beelden"
 
-#: eme_settings.php:638 eme_settings.php:639
+#: eme_settings.php:640 eme_settings.php:641
 msgid "Hybrid: a mixture of normal and satellite views"
 msgstr "Hybride: een mengeling van stratenplan en satelliet beelden"
 
-#: eme_settings.php:638 eme_settings.php:639
+#: eme_settings.php:640 eme_settings.php:641
 msgid "Terrain: a physical map based on terrain information"
 msgstr "Terrein: een kaart gebaseerd op terrein informatie"
 
 # @ eme
-#: eme_settings.php:638
+#: eme_settings.php:640
 msgid "The map type used for the global map (max: 14)."
 msgstr "Het type  kaartdie voor de globale kaart gebruikt wordt (max: 14)."
 
 # @ eme
-#: eme_settings.php:639
+#: eme_settings.php:641
 msgid "Individual map type"
 msgstr "Individuele kaart-soort"
 
 # @ eme
-#: eme_settings.php:639
+#: eme_settings.php:641
 msgid "The map type used when showing a single map (max: 14)."
 msgstr ""
 "Het type kaart die voor een individuele kaart gebruikt wordt (max: 14)."
 
 # @ eme
-#: eme_settings.php:643
+#: eme_settings.php:645
 msgid "Extra html headers"
 msgstr "Extra html headers"
 
 # @ eme
-#: eme_settings.php:646
+#: eme_settings.php:648
 msgid "Extra event html headers"
 msgstr "Extra html headers voor evenementen"
 
 # @ eme
-#: eme_settings.php:646
+#: eme_settings.php:648
 msgid ""
 "Here you can define extra html headers when viewing a single event, "
 "typically used to add meta tags for facebook or SEO. All event placeholders "
@@ -4433,12 +4486,12 @@ msgstr ""
 "resulterende html-tags worden verwijderd."
 
 # @ eme
-#: eme_settings.php:647
+#: eme_settings.php:649
 msgid "Extra location html headers"
 msgstr "Extra locatie html headers"
 
 # @ eme
-#: eme_settings.php:647
+#: eme_settings.php:649
 msgid ""
 "Here you can define extra html headers when viewing a single location, "
 "typically used to add meta tags for facebook or SEO. All location "
@@ -4450,17 +4503,17 @@ msgstr ""
 "html-tags worden verwijderd."
 
 # @ eme
-#: eme_settings.php:651
+#: eme_settings.php:653
 msgid "Facebook info"
 msgstr "Facebook info"
 
 # @ eme
-#: eme_settings.php:654
+#: eme_settings.php:656
 msgid "Facebook app id"
 msgstr "Facebook app id"
 
 # @ eme
-#: eme_settings.php:654
+#: eme_settings.php:656
 msgid ""
 "Provide facebook app id. This is needed to be able to import info from a "
 "facebook event when creating a new event."
@@ -4469,9 +4522,81 @@ msgstr ""
 "importeren wanneer een nieuw evenement aangemaakt wordt."
 
 # @ default
-#: eme_settings.php:663
+#: eme_settings.php:665
 msgid "Save Changes"
 msgstr "Sla wijzigingen op"
+
+# @ eme
+#: eme_templates.php:7
+msgid "You have no right to update templates!"
+msgstr "Je hebt geen rechten om templates bij te werken! "
+
+#: eme_templates.php:42
+msgid "Successfully deleted the template(s)."
+msgstr "Templates succesvol verwijderd."
+
+# @ eme
+#: eme_templates.php:45 eme_templates.php:49
+msgid ""
+"Couldn't delete the templates. Incorrect template IDs supplied. Please try "
+"again."
+msgstr ""
+"Kon de templates niet verwijderen. Ongeldige template ID opgegeven. Probeer "
+"het nogmaals."
+
+#: eme_templates.php:74 events-manager.php:941
+msgid "Templates"
+msgstr "Templates"
+
+# @ eme
+#: eme_templates.php:97 eme_templates.php:104
+msgid "Format description"
+msgstr "Beschrijving opmaak"
+
+# @ eme
+#: eme_templates.php:129
+msgid "No templates have been inserted yet!"
+msgstr "Er zijn nog geen templates toegevoegd!"
+
+# @ eme
+#: eme_templates.php:142 eme_templates.php:152
+msgid "Add template"
+msgstr "Voeg template toe"
+
+# @ eme
+#: eme_templates.php:146 eme_templates.php:190
+msgid "Template description"
+msgstr "Beschrijving template"
+
+# @ eme
+#: eme_templates.php:148
+msgid "Format"
+msgstr "Opmaak"
+
+# @ eme
+#: eme_templates.php:150 eme_templates.php:197
+msgid "The format of the template"
+msgstr "Formaat van de template"
+
+# @ eme
+#: eme_templates.php:172
+msgid "Edit template"
+msgstr "Wijzig template"
+
+# @ eme
+#: eme_templates.php:192
+msgid "The description of the template"
+msgstr "De beschrijving van de template"
+
+# @ eme
+#: eme_templates.php:195
+msgid "Template format"
+msgstr "Template opmaak"
+
+# @ eme
+#: eme_templates.php:200
+msgid "Update template"
+msgstr "Werk template bij"
 
 # @ eme
 #: eme_widgets.php:5 eme_widgets.php:6
@@ -4571,72 +4696,72 @@ msgid "Show Long Events?"
 msgstr "Uitgebreide info evenementen tonen?"
 
 # @ eme
-#: events-manager.php:157
+#: events-manager.php:159
 msgid "No events"
 msgstr "Geen evenementen"
 
 # @ eme
-#: events-manager.php:163
+#: events-manager.php:165
 msgid "<li>No events in this location</li>"
 msgstr "<li>Geen evenementen op deze locatie</li>"
 
 # @ eme
-#: events-manager.php:171
+#: events-manager.php:173
 msgid "Send your booking"
 msgstr "Verzend je reservering"
 
 # @ eme
-#: events-manager.php:172
+#: events-manager.php:174
 msgid "Cancel your booking"
 msgstr "Annuleer je reservering"
 
 # @ eme
-#: events-manager.php:877
+#: events-manager.php:903
 msgid "events"
 msgstr "evenementen"
 
 # @ default
-#: events-manager.php:903 events-manager.php:1006
+#: events-manager.php:929 events-manager.php:1034
 msgid "Edit"
 msgstr "Bewerken"
 
 # @ eme
-#: events-manager.php:906
+#: events-manager.php:932
 msgid "Add new"
 msgstr "Voeg nieuwe toe"
 
 # @ eme
-#: events-manager.php:912
+#: events-manager.php:938
 msgid "Event Categories"
 msgstr "Event Categorieën"
 
 # @ eme
-#: events-manager.php:916
+#: events-manager.php:944
 msgid "People"
 msgstr "Personen"
 
 # @ eme
-#: events-manager.php:920
+#: events-manager.php:948
 msgid "Change Registration"
 msgstr "Wijzig registratie"
 
 # @ eme
-#: events-manager.php:926
+#: events-manager.php:954
 msgid "Form Fields"
 msgstr "Formulier velden"
 
 # @ eme
-#: events-manager.php:933 events-manager.php:935
+#: events-manager.php:961 events-manager.php:963
 msgid "Events Made Easy Settings"
 msgstr "Events Made Easy Instellingen"
 
 # @ eme
-#: events-manager.php:933 events-manager.php:935
+#: events-manager.php:961 events-manager.php:963
 msgid "Settings"
 msgstr "Instellingen"
 
 # @ eme
-#: events-manager.php:1738
+#: events-manager.php:1766
 msgid ""
 "It seems you upgraded Events Made Eeasy but your events database hasn't been "
 "updated accordingly yet. Please deactivate/activate the plugin for this to "
@@ -4647,7 +4772,7 @@ msgstr ""
 "plugin te deactiveren / activeren om dit te bewerkstelligen."
 
 # @ eme
-#: events-manager.php:1738
+#: events-manager.php:1766
 msgid ""
 "<strong>Warning:</strong> make sure the option 'Delete all EME data when "
 "upgrading or deactivating' is not activated if you don't want to lose all "
@@ -4658,12 +4783,12 @@ msgstr ""
 "wenst te verliezen!"
 
 # @ eme
-#: events-manager.php:1748
+#: events-manager.php:1776
 msgid "Donate"
 msgstr "Doneer"
 
 # @ eme
-#: events-manager.php:1750
+#: events-manager.php:1778
 msgid ""
 "If you find this plugin useful to you, please consider making a small "
 "donation to help contribute to my time invested and to further development. "
@@ -4674,14 +4799,14 @@ msgstr ""
 "verdere ontwikkeling. Alvast bedankt hiervoor!"
 
 # @ eme
-#: events-manager.php:1759
+#: events-manager.php:1787
 msgid "<a href=\"%s\" title=\"I already donated\">I already donated.</a>"
 msgstr ""
 "<a href=\"%s\" title=\"I already donated\">Ik heb reeds een donatie gedaan.</"
 "a>"
 
 # @ eme
-#: events-manager.php:1773
+#: events-manager.php:1801
 msgid ""
 "<p>Hey, <strong>%s</strong>, welcome to <strong>Events Made Easy</strong>! "
 "We hope you like it around here.</p> \n"
