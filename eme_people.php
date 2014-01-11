@@ -217,9 +217,9 @@ function eme_printable_booking_report($event_id) {
    $is_multiseat = eme_is_multi($event['event_seats']);
    $bookings = eme_get_bookings_for($event_id);
    $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
-   $available_seats = eme_get_available_seats($event_id,$is_multiseat);
-   $booked_seats = eme_get_booked_seats($event_id,$is_multiseat);
-   $pending_seats = eme_get_pending_seats($event_id,$is_multiseat);
+   $available_seats = eme_get_available_seats($event_id);
+   $booked_seats = eme_get_booked_seats($event_id);
+   $pending_seats = eme_get_pending_seats($event_id);
    if ($is_multiseat) {
       $available_seats_ms=join('||',eme_get_available_multiseats($event_id));
       $booked_seats_ms=join('||',eme_get_booked_multiseats($event_id));

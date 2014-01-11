@@ -949,10 +949,24 @@ function eme_bookings_compact_table($event_id) {
    $approved_seats = eme_get_approved_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
-   if ($pending_seats>0) {
-      $booked_seats_info="$booked_seats ($approved_seats ".__('approved','eme').", $pending_seats ".__('pending','eme');
+   if (eme_is_event_multiseats($event_id)) {
+	   $available_seats_ms=join('||',eme_get_available_multiseats($event_id));
+	   $approved_seats_ms=join('||',eme_get_approved_multiseats($event_id));
+	   $booked_seats_ms=join('||',eme_get_booked_multiseats($event_id));
+	   $pending_seats_ms=join('||',eme_get_pending_multiseats($event_id));
+	   if ($pending_seats>0) {
+		   $booked_seats_info="$booked_seats: $booked_seats_ms ($approved_seats_ms ".__('approved','eme').", $pending_seats_ms ".__('pending','eme');
+	   } else {
+	      $booked_seats_info="$booked_seats: $booked_seats_ms";
+	   }
+	   $available_seats_info="$available_seats: $available_seats_ms";
    } else {
-      $booked_seats_info=$booked_seats;
+	   if ($pending_seats>0) {
+		   $booked_seats_info="$booked_seats ($approved_seats ".__('approved','eme').", $pending_seats ".__('pending','eme');
+	   } else {
+		   $booked_seats_info=$booked_seats;
+	   }
+	   $available_seats_info=$available_seats;
    }
    $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=$event_id");
    $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=$event_id");
@@ -972,22 +986,25 @@ function eme_bookings_compact_table($event_id) {
                <tfoot>
                   <tr>
                      <th scope='row' colspan='2'>".__('Booked spaces','eme').":</th><td class='booking-result' id='booked-seats'>$booked_seats_info</td></tr>
-                  <tr><th scope='row' colspan='2'>".__('Available spaces','eme').":</th><td class='booking-result' id='available-seats'>$available_seats</td>
+                  <tr><th scope='row' colspan='2'>".__('Available spaces','eme').":</th><td class='booking-result' id='available-seats'>$available_seats_info</td>
                   </tr>
                </tfoot>
                <tbody>" ;
       foreach ($bookings as $booking) {
          $person  = eme_get_person ($booking['person_id']);
          ($booking['booking_comment']) ? $baloon = " <img src='".EME_PLUGIN_URL."images/baloon.png' title='".__('Comment:','eme')." ".$booking['booking_comment']."' alt='comment'/>" : $baloon = "";
-         $pending_string="";
+	 if (eme_is_event_multiprice($event_id))
+		 $booking_info = $booking['booking_seats'].': '.$booking['booking_seats_mp'];
+	 else
+		 $booking_info = $booking['booking_seats'];
          if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
-            $pending_string=__('(pending)','eme');
+            $booking_info.=" ".__('(pending)','eme');
          }
          $table .= 
          "<tr id='booking-".$booking['booking_id']."'> 
             <td><a id='booking-check-".$booking['booking_id']."' class='bookingdelbutton'>X</a></td>
             <td><a title=\"".eme_sanitize_html($person['person_email'])." - ".eme_sanitize_html($person['person_phone'])."\">".eme_sanitize_html($person['person_name'])."</a>$baloon</td>
-            <td>".$booking['booking_seats']." $pending_string </td>
+            <td>$booking_info</td>
           </tr>";
       }
     
