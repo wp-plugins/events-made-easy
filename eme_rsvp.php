@@ -394,7 +394,13 @@ function eme_book_seats($event, $send_mail=1) {
          } elseif (preg_match ("/COMMENT/",$required_field)) {
             if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
          } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
-            array_push($missing_required_fields, $required_field);
+		 if (preg_match('/FIELD(.+)/', $required_field, $matches)) {
+			 $field_id = intval($matches[1]);
+			 $formfield = eme_get_formfield_byid($field_id);
+			 array_push($missing_required_fields, $formfield['field_name']);
+		 } else {
+			 array_push($missing_required_fields, $required_field);
+		 }
          }
       }
    }
