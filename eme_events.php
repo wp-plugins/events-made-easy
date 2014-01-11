@@ -21,18 +21,19 @@ function eme_new_event() {
       "event_end_12h_time" => '',
       "event_end_24h_time" => '',
       "event_notes" => '',
-      "event_rsvp" => 0,
-      "use_paypal" => 0,
-      "use_google" => 0,
-      "use_2co" => 0,
-      "use_webmoney" => 0,
+      "event_rsvp" => get_option('eme_rsvp_reg_for_new_events'),
+      "use_paypal" => get_option('eme_paypal_business'),
+      "use_google" => get_option('eme_google_merchant_id'),
+      "use_2co" => get_option('eme_2co_business'),
+      "use_webmoney" => get_option('eme_webmoney_purse'),
+      "use_fdgg" => get_option('eme_fdgg_store_name'),
       "price" => get_option('eme_default_price'),
       "currency" => get_option('eme_default_currency'),
       "rsvp_number_days" => get_option('eme_rsvp_number_days'),
       "rsvp_number_hours" => get_option('eme_rsvp_number_hours'),
-      "registration_requires_approval" => 0,
-      "registration_wp_users_only" => 0,
-      "event_seats" => 0,
+      "registration_requires_approval" => get_option('eme_rsvp_require_approval'),
+      "registration_wp_users_only" => get_option('eme_rsvp_registered_users_only'),
+      "event_seats" => get_option('eme_rsvp_default_number_spaces'),
       "location_id" => 0,
       "event_author" => 0,
       "event_contactperson_id" => get_option('eme_default_contact_person'),
@@ -346,7 +347,6 @@ function eme_events_page() {
             $event_attributes[$_POST["mtm_{$i}_ref"]] = stripslashes($_POST["mtm_{$i}_name"]);
          }
       }
-      $event['event_attributes'] = serialize($event_attributes);
 
       $event_properties = array();
       $event_properties = eme_init_event_props($event_properties);
@@ -355,8 +355,6 @@ function eme_events_page() {
             $event_properties[$matches[1]] = stripslashes($value);
          }
       }
-      $event['event_properties'] = serialize($event_properties);
-      
       
       $validation_result = eme_validate_event ( $event );
       if ($validation_result != "OK") {
@@ -367,6 +365,10 @@ function eme_events_page() {
          eme_event_form ( $event, "Edit event $event_ID", $event_ID );
          return;
       }
+
+      // we do the serialize after the validation
+      $event['event_attributes'] = serialize($event_attributes);
+      $event['event_properties'] = serialize($event_properties);
 
       // validation successful
       if(isset($_POST['location-select-id']) && $_POST['location-select-id'] != "") {
@@ -2190,8 +2192,12 @@ function eme_event_form($event, $title, $element) {
    $currency_array = eme_currency_array();
 
    // let's determine if it is a new event, handy
+   // or, in case of validation errors, $event can already contain info, but no $element (=event id)
+   // so we create a new event and copy over the info into $event for the elements that do not exist
    if (! $element) {
       $is_new_event=1;
+      $new_event=eme_new_event();
+      $event = array_replace_recursive($new_event,$event);
    } else {
       $is_new_event=0;
    }
@@ -2209,7 +2215,7 @@ function eme_event_form($event, $title, $element) {
       else
          $form_destination = "admin.php?page=events-manager&amp;action=update_event&amp;event_id=" . $element;
 
-      if ($event['recurrence_id']) {
+      if (isset($event['recurrence_id']) && $event['recurrence_id']) {
          # editing a single event of an recurrence: don't show the recurrence form
          $show_recurrent_form = 0;
       } else {
@@ -2243,42 +2249,22 @@ function eme_event_form($event, $title, $element) {
    $days_names = array (1 => __ ( 'Mon' ), 2 => __ ( 'Tue' ), 3 => __ ( 'Wed' ), 4 => __ ( 'Thu' ), 5 => __ ( 'Fri' ), 6 => __ ( 'Sat' ), 7 => __ ( 'Sun' ) );
    $weekno_options = array ("1" => __ ( 'first', 'eme' ), '2' => __ ( 'second', 'eme' ), '3' => __ ( 'third', 'eme' ), '4' => __ ( 'fourth', 'eme' ), '5' => __ ( 'fifth', 'eme' ), '-1' => __ ( 'last', 'eme' ), "none" => __('Start day') );
    
-   // for new events, check the setting wether or not to enable RSVP
-   if ($is_new_event) {
-      $event_number_spaces=intval(get_option('eme_rsvp_default_number_spaces'));
-      $event_RSVP_checked = (get_option('eme_rsvp_reg_for_new_events')) ? "checked='checked'" : "";
-      $registration_wp_users_only = (get_option('eme_rsvp_registered_users_only')) ? "checked='checked'" : "";
-      $registration_requires_approval = (get_option('eme_rsvp_require_approval')) ? "checked='checked'" : "";
+   $event_RSVP_checked = ($event['event_rsvp']) ? "checked='checked'" : "";
+   $event_number_spaces=$event['event_seats'];
+   $registration_wp_users_only = ($event['registration_wp_users_only']) ? "checked='checked'" : "";
+   $registration_requires_approval = ($event['registration_requires_approval']) ? "checked='checked'" : "";
 
-      $use_paypal_checked = (get_option('eme_paypal_business')) ? "checked='checked'" : "";
-      $use_google_checked = (get_option('eme_google_merchant_id')) ? "checked='checked'" : "";
-      $use_2co_checked = (get_option('eme_2co_business')) ? "checked='checked'" : "";
-      $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : "";
-      $use_fdgg_checked = (get_option('eme_fdgg_store_name')) ? "checked='checked'" : "";
+   $use_paypal_checked = ($event['use_paypal']) ? "checked='checked'" : "";
+   $use_google_checked = ($event['use_google']) ? "checked='checked'" : "";
+   $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : "";
+   $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : "";
+   $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : "";
 
-      // all properties
-      $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
-      $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
-      $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
+   // all properties
+   $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
+   $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
+   $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 
-   } else {
-      $event_RSVP_checked = ($event['event_rsvp']) ? "checked='checked'" : "";
-      $event_number_spaces=$event['event_seats'];
-      $registration_wp_users_only = ($event['registration_wp_users_only']) ? "checked='checked'" : "";
-      $registration_requires_approval = ($event['registration_requires_approval']) ? "checked='checked'" : "";
-
-      $use_paypal_checked = ($event['use_paypal']) ? "checked='checked'" : "";
-      $use_google_checked = ($event['use_google']) ? "checked='checked'" : "";
-      $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : "";
-      $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : "";
-      $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : "";
-
-      // all properties
-      $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
-      $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
-      $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
-   }
-   
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
    ?>
 
@@ -2531,7 +2517,7 @@ function eme_event_form($event, $title, $element) {
                               <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout','eme' ); ?><br />
                               <input id="webmoney-checkbox" name='use_webmoney' value='1' type='checkbox' <?php echo $use_webmoney_checked; ?> /><?php _e ( 'Webmoney','eme' ); ?><br />
                               <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout','eme' ); ?><br />
-                              <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'Firs Data','eme' ); ?><br />
+                              <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'First Data','eme' ); ?><br />
                            </p>
                            <?php if ($event['event_rsvp']) {
                                  eme_bookings_compact_table ( $event['event_id'] );
@@ -2681,6 +2667,15 @@ function eme_validate_event($event) {
    }  
    if (isset($_POST['repeated_event']) && $_POST['repeated_event'] == "1" && (!isset($_POST['recurrence_end_date']) || $_POST['recurrence_end_date'] == ""))
       $troubles .= "<li>".__ ( 'Since the event is repeated, you must specify an event date for the recurrence.', 'eme' )."</li>";
+
+   if (eme_is_multi($event['event_seats']) && !eme_is_multi($event['price']))
+      $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the price per category (multiprice) as well.', 'eme' )."</li>";
+   if (eme_is_multi($event['event_seats']) && eme_is_multi($event['price'])) {
+      $count1=count(preg_split("/\|\|/",$event['event_seats']));
+      $count2=count(preg_split("/\|\|/",$event['price']));
+      if ($count1 != $count2)
+         $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the exact same amount of prices (multiprice) as well.', 'eme' )."</li>";
+   }
 
    if (empty($troubles)) {
       return "OK";
@@ -3097,7 +3092,7 @@ function eme_meta_box_div_event_name($event){
                         <?php _e ( 'The event name. Example: Birthday party', 'eme' )?>
                         <br />
                         <br />
-                        <?php if ($event['event_name'] != "") {
+                        <?php if ($event['event_id'] && $event['event_name'] != "") {
                                  _e ('Permalink: ', 'eme' );
                                  echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_events_prefix')).$event['event_id']."/";
                                  $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
