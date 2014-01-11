@@ -2425,4 +2425,8 @@ function eme_is_event_multiseats($event_id) {
    return eme_is_multi($seats);
 }
 
+function eme_get_multitotal($multistring) {
+   return array_sum(preg_split("/\|\|/",$multistring));
+}
+
 ?>
