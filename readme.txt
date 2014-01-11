@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.1.7 =
+* Feature: multi-seat events are now possible: the same as multiprice events, but now you can limit the number of seats per price category if wanted
 * Feature: format templates can now be created and used in the events_list and events_locations shortcodes as follows:
   [events_list template_id=3]
   This renders the use of the 'format' parameter obsolete and is more powerfull as it allows conditional tags inside the format template.

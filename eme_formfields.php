@@ -375,7 +375,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          $required_fields_count++;
       } elseif (preg_match('/#_SEATS(\d+)$|#_SPACES(\d+)$/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
+         $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options[$field_id-1]);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT$/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";

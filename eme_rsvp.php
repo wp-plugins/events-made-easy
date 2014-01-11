@@ -105,9 +105,23 @@ function eme_add_booking_form($event_id) {
    else
       $min_allowed = intval(get_option('eme_rsvp_addbooking_min_spaces'));
    $max_allowed = intval(get_option('eme_rsvp_addbooking_max_spaces'));
-   $max = eme_get_available_seats($event_id);
-   if ($max > $max_allowed && $max_allowed>0) {
-      $max = $max_allowed;
+   if (eme_is_event_multiseats($event_id)) {
+      $multi_max = eme_get_available_multiseats($event_id);
+      $booked_places_options = array();
+      foreach ($multi_max as $key => $value) {
+         if ($value> $max_allowed && $max_allowed>0)
+            $multi_max[$key]=$max_allowed;
+         for ( $i = $min_allowed; $i <= $multi_max[$key]; $i++) 
+            $booked_places_options[$key][$i]=$i;
+      }
+      $max=array_sum($multi_max);
+   } else {
+      $max = eme_get_available_seats($event_id);
+      if ($max > $max_allowed && $max_allowed>0)
+         $max = $max_allowed;
+      $booked_places_options = array();
+      for ( $i = $min_allowed; $i <= $max; $i++) 
+         $booked_places_options[$i]=$i;
    }
    // just for stupidity reasons
    if ($min_allowed<0) $min_allowed=0;
@@ -131,10 +145,6 @@ function eme_add_booking_form($event_id) {
    if(!empty($form_html))
       $form_html = "<div id='eme-rsvp-message'>".$form_html."</div>";
 
-   $booked_places_options = array();
-   for ( $i = $min_allowed; $i <= $max; $i++) 
-      $booked_places_options[$i]=$i;
-   
    $form_html .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
    $form_html .= eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment);
    // also add a honeypot field: if it gets completed with data, 
@@ -463,7 +473,11 @@ function eme_book_seats($event, $send_mail=1) {
       // the result of own eval rules
       $result = $eval_filter_return[1];
    } else {
-      if (eme_are_seats_available_for($event_id, $bookedSeats)) {
+      if (eme_is_multi($event['event_seats']))
+         $seats_available=eme_are_multiseats_available_for($event_id, $bookedSeats_mp);
+      else
+         $seats_available=eme_are_seats_available_for($event_id, $bookedSeats);
+      if ($seats_available) {
          if (!$booker) {
             $booker = eme_add_person($bookerName, $bookerEmail, $bookerPhone, $booker_wp_id);
          }
@@ -747,6 +761,9 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
 
 function eme_get_available_seats($event_id) {
    $event = eme_get_event($event_id);
+   if (eme_is_multi($event['event_seats']))
+      return array_sum(eme_get_available_multiseats($event_id));
+
    if ($event['event_properties']['ignore_pending'] == 1)
       $available_seats = $event['event_seats'] - eme_get_approved_seats($event_id);
    else
@@ -756,25 +773,105 @@ function eme_get_available_seats($event_id) {
    return $available_seats;
 }
 
+function eme_get_available_multiseats($event_id) {
+   $event = eme_get_event($event_id);
+   $multiseats = preg_split("/\|\|/",$event['event_seats']);
+   $available_seats=array();
+   if ($event['event_properties']['ignore_pending'] == 1) {
+      $used_multiseats=eme_get_approved_multiseats($event_id);
+   } else {
+      $used_multiseats=eme_get_booked_multiseats($event_id);
+   }
+   foreach ($multiseats as $key=>$value) {
+      if (isset($used_multiseats[$key]))
+         $available_seats[$key] = $value - $used_multiseats[$key];
+      else
+         $available_seats[$key] = $value;
+      // the number of seats left can be <0 if more than one booking happened at the same time and people fill in things slowly
+      if ($available_seats[$key]<0) $available_seats[$key]=0;
+   }
+   return $available_seats;
+}
+
 function eme_get_booked_seats($event_id) {
    global $wpdb; 
+   if (eme_is_event_multiseats($event_id))
+      return array_sum(eme_get_booked_multiseats($event_id));
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = "SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = $event_id"; 
    return $wpdb->get_var($sql);
 }
 
+function eme_get_booked_multiseats($event_id) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id"; 
+   $booking_seats_mp = $wpdb->get_col($sql);
+   $result=array();
+   foreach($booking_seats_mp as $booked_seats) {
+      $multiseats = preg_split("/\|\|/",$booked_seats);
+      foreach ($multiseats as $key=>$value) {
+         if (!isset($result[$key]))
+            $result[$key]=$value;
+         else
+            $result[$key]+=$value;
+      }
+   }
+   return $result;
+}
+
 function eme_get_approved_seats($event_id) {
    global $wpdb; 
+   if (eme_is_event_multiseats($event_id))
+      return array_sum(eme_get_approved_multiseats($event_id));
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = "SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = $event_id and booking_approved=1"; 
    return $wpdb->get_var($sql);
 }
 
+function eme_get_approved_multiseats($event_id) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id and booking_approved=1"; 
+   $booking_seats_mp = $wpdb->get_col($sql);
+   $result=array();
+   foreach($booking_seats_mp as $booked_seats) {
+      $multiseats = preg_split("/\|\|/",$booked_seats);
+      foreach ($multiseats as $key=>$value) {
+         if (!isset($result[$key]))
+            $result[$key]=$value;
+         else
+            $result[$key]+=$value;
+      }
+   }
+   return $result;
+}
+
 function eme_get_pending_seats($event_id) {
    global $wpdb; 
+   if (eme_is_event_multiseats($event_id))
+      return array_sum(eme_get_pending_multiseats($event_id));
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = "SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = $event_id and booking_approved=0"; 
    return $wpdb->get_var($sql);
+}
+
+function eme_get_pending_multiseats($event_id) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id and booking_approved=0"; 
+   $booking_seats_mp = $wpdb->get_col($sql);
+   $result=array();
+   foreach($booking_seats_mp as $booked_seats) {
+      $multiseats = preg_split("/\|\|/",$booked_seats);
+      foreach ($multiseats as $key=>$value) {
+         if (!isset($result[$key]))
+            $result[$key]=$value;
+         else
+            $result[$key]+=$value;
+      }
+   }
+   return $result;
 }
 
 function eme_get_pending_bookings($event_id) {
@@ -786,8 +883,18 @@ function eme_get_pending_bookings($event_id) {
 
 function eme_are_seats_available_for($event_id, $seats) {
    $available_seats = eme_get_available_seats($event_id);
-   $remaning_seats = $available_seats - $seats;
-   return ($remaning_seats >= 0);
+   $remaining_seats = $available_seats - $seats;
+   return ($remaining_seats >= 0);
+} 
+
+function eme_are_multiseats_available_for($event_id, $multiseats) {
+   $available_seats = eme_get_available_multiseats($event_id);
+   foreach ($available_seats as $key=> $value) {
+   	$remaining_seats = $value - $multiseats[$key];
+	if ($remaining_seats<0)
+		return 0;
+   }
+   return 1;
 } 
  
 function eme_bookings_table($event_id) {
@@ -853,7 +960,7 @@ function eme_bookings_compact_table($event_id) {
    if ($count_respondents>0) { 
       $table = 
       "<div class='wrap'>
-            <h4>$count_respondents ".__('respondents so far').":</h4>
+            <h4>$count_respondents ".__('respondents so far','eme').":</h4>
             <table id='eme-bookings-table-$event_id' class='widefat post fixed'>
                <thead>
                   <tr>
@@ -2313,7 +2420,7 @@ function eme_is_multi($price) {
 function eme_is_event_multiseats($event_id) {
    global $wpdb;
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
-   $sql = $wpdb->prepare("SELECT seats from $events_table where event_id=%d",$event_id);
+   $sql = $wpdb->prepare("SELECT event_seats from $events_table where event_id=%d",$event_id);
    $seats = $wpdb->get_var( $sql );
    return eme_is_multi($seats);
 }

@@ -264,7 +264,16 @@ function eme_events_page() {
       $event['rsvp_number_hours'] = (isset ($_POST['rsvp_number_hours']) && is_numeric($_POST['rsvp_number_hours'])) ? $_POST['rsvp_number_hours']:0;
       $event['registration_requires_approval'] = (isset ($_POST['registration_requires_approval']) && is_numeric($_POST['registration_requires_approval'])) ? $_POST['registration_requires_approval']:0;
       $event['registration_wp_users_only'] = (isset ($_POST['registration_wp_users_only']) && is_numeric($_POST['registration_wp_users_only'])) ? $_POST['registration_wp_users_only']:0;
-      $event['event_seats'] = (isset ($_POST['event_seats']) && is_numeric($_POST['event_seats'])) ? $_POST['event_seats']:0;
+      $event['event_seats'] = isset ($_POST['event_seats']) ? $_POST['event_seats']:0;
+      if (preg_match("/\|\|/",$event['event_seats'])) {
+         $multiseat=preg_split("/\|\|/",$event['event_seats']);
+         foreach ($multiseat as $key=>$value) {
+            if (!is_numeric($value)) $multiseat[$key]=0;
+         }
+         $event['event_seats'] = join("||",$multiseat);
+      } else {
+         if (!is_numeric($event['event_seats'])) $event['event_seats'] = 0;
+      }
       
       $event['use_paypal'] = (isset ($_POST['use_paypal']) && is_numeric($_POST['use_paypal'])) ? $_POST['use_paypal']:0;
       $event['use_2co'] = (isset ($_POST['use_2co']) && is_numeric($_POST['use_2co'])) ? $_POST['use_2co']:0;
@@ -2484,7 +2493,7 @@ function eme_event_form($event, $title, $element) {
                            <br /><table>
                               <tr>
                               <td><?php _e ( 'Spaces','eme' ); ?> :</td>
-                              <td><input id="seats-input" type="text" name="event_seats" size='5' value="<?php echo $event_number_spaces; ?>" /></td>
+                              <td><input id="seats-input" type="text" name="event_seats" maxlength='25' title="<?php _e('For multiseat events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event_number_spaces; ?>" /></td>
                               </tr>
                               <tr>
                               <td><?php _e ( 'Price: ','eme' ); ?></td>
