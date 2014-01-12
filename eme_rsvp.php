@@ -1166,7 +1166,6 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             $replacement = apply_filters('eme_general_rss', $replacement); 
       } elseif (preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)(.+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
-         if ($field_id<0) $field_id=0;
          if (eme_is_multi($booking['booking_price'])) {
              $seats=preg_split("/\|\|/",$booking['booking_seats_mp']);
              if (array_key_exists($field_id,$seats))
@@ -1177,9 +1176,9 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_TOTALPRICE(\d+)$/', $result, $matches)) {
          // total price to pay per price if multiprice
          $total_prices=eme_get_total_booking_multiprice($event,$booking);
-         $price_id = intval($matches[1]);
-         if ($price_id >0 && $price_id <=count($total_prices))
-            $replacement = $total_prices[$price_id-1];
+         $field_id = intval($matches[1])-1;
+         if (array_key_exists($field_id,$total_prices))
+            $replacement = $total_prices[$field_id];
       } elseif (preg_match('/#_RESPSPACES$|#_SPACES$|#_BOOKEDSEATS$/', $result)) {
          $replacement = $booking['booking_seats'];
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
