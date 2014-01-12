@@ -61,14 +61,14 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.1.7 =
+= 1.2.0 =
 * Feature: multi-seat events are now possible: the same as multiprice events, but now you can limit the number of seats per price category if wanted
 * Feature: format templates can now be created and used in the events_list and events_locations shortcodes as follows:
   [events_list template_id=3]
   This renders the use of the 'format' parameter obsolete and is more powerfull as it allows conditional tags inside the format template.
 * Feature: recurrence is now also possible on specific days, not just a pattern
 * Feature: maptype for google maps can be defined in the settings for global and individual maps (Roadmap, Satellite, Hybrid or Terrain)
-* Feature: added #_TOTALSEATSxx, #_AVAILABLESEATSxx and #_BOOKEDSEATSxx placeholders to show seat info per seat category
+* Feature: added event placeholders #_TOTALSEATSxx, #_AVAILABLESEATSxx and #_BOOKEDSEATSxx to show seat info per seat category
 * Improvement: remove some unneeded caching in the EME admin section.
 * Improvement: Dutch language update, thanks to Guido
 * Improvement: show which required fields are missing when filling out a rsvp form
