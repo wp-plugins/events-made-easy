@@ -36,10 +36,15 @@ function eme_categories_page() {
             //Run the query if we have an array of category ids
             if (count($cats > 0)) {
                $validation_result = $wpdb->query( "DELETE FROM $categories_table WHERE ". implode(" OR ", $cats) );
+               if (is_numeric($validation_result))
+                  $message = __("Successfully deleted the selected categories.","eme");
             } else {
                $validation_result = false;
                $message = __("Couldn't delete the categories. Incorrect category IDs supplied. Please try again.","eme");
             }
+         } else {
+            $validation_result = false;
+            $message = __("Couldn't delete the categories. Incorrect category IDs supplied. Please try again.","eme");
          }
       }
       //die(print_r($_POST));
@@ -47,11 +52,11 @@ function eme_categories_page() {
          $message = (isset($message)) ? $message : __("Successfully {$_POST['action']}ed category", "eme");
          eme_categories_table_layout($message);
       } elseif ( $validation_result === false ) {
-         $message = (isset($message)) ? $message : __("There was a problem {$_POST['action']}ing your category, please try again.");                     
+         $message = (isset($message)) ? $message : __("There was a problem {$_POST['action']}ing your category, please try again.");
          eme_categories_table_layout($message);
       } else {
          // no action, just a categories list
-         eme_categories_table_layout();   
+         eme_categories_table_layout();
       }
    }
 } 
@@ -137,7 +142,7 @@ function eme_categories_table_layout($message = "") {
                         <input type='hidden' name='action' value='add' />
                          <div class='form-field form-required'>
                            <label for='category_name'>".__('Category name', 'eme')."</label>
-                           <input id='category-name' name='category_name' id='category_name' type='text' value='' size='40' />
+                           <input name='category_name' id='category_name' type='text' value='' size='40' />
                             <p>".__('The name of the category', 'eme').".</p>
                          </div>
                          <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add category', 'eme')."' /></p>
@@ -179,7 +184,7 @@ function eme_categories_edit_layout($message = "") {
          <table class='form-table'>
             <tr class='form-field form-required'>
                <th scope='row' valign='top'><label for='category_name'>".__('Category name', 'eme')."</label></th>
-               <td><input name='category_name' id='category-name' type='text' value='".eme_sanitize_html($category['category_name'])."' size='40'  /><br />
+               <td><input name='category_name' id='category_name' type='text' value='".eme_sanitize_html($category['category_name'])."' size='40'  /><br />
                  ".__('The name of the category', 'eme')."</td>
             </tr>
          </table>
@@ -233,11 +238,13 @@ function eme_get_category($category_id) {
    return $category;
 }
 
-function eme_get_event_categories($event_id) { 
+function eme_get_event_categories($event_id,$extra_conditions="") { 
    global $wpdb;
    $event_table = $wpdb->prefix.EVENTS_TBNAME; 
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
-   $sql = "SELECT category_name FROM $categories_table, $event_table where event_id ='$event_id' AND FIND_IN_SET(category_id,event_category_ids)";
+   if ($extra_conditions !="")
+      $extra_conditions = " AND ($extra_conditions)";
+   $sql = "SELECT category_name FROM $categories_table, $event_table where event_id ='$event_id' AND FIND_IN_SET(category_id,event_category_ids) $extra_conditions";
    $category = $wpdb->get_col($sql);
    return $category;
 }
