@@ -1146,14 +1146,41 @@ function eme_replace_placeholders($format, $event="", $target="html") {
             $replacement = eme_get_available_seats($event['event_id']);
          }
 
+      } elseif (preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(.+)/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if ($field_id<0) $field_id=0;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats=eme_get_available_multiseats($event['event_id']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
+         }
+
       } elseif ($event && preg_match('/#_(TOTALSPACES|TOTALSEATS)$/', $result)) {
          if ($rsvp_is_active && $event['event_rsvp']) {
             $replacement = $event['event_seats'];
          }
 
+      } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)(.+)/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if ($field_id<0) $field_id=0;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats = preg_split("/\|\|/",$event['event_seats']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
+         }
+
       } elseif ($event && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          if ($rsvp_is_active && $event['event_rsvp']) {
             $replacement = eme_get_booked_seats($event['event_id']);
+         }
+
+      } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(.+)/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if ($field_id<0) $field_id=0;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats=eme_get_booked_multiseats($event['event_id']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
          }
 
       } elseif ($event && preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
