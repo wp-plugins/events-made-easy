@@ -559,9 +559,30 @@ function eme_get_booking_ids_by_person_event_id($person_id,$event_id) {
 
 function eme_get_booked_seats_by_person_event_id($person_id,$event_id) {
    global $wpdb;
+   if (eme_is_event_multiseats($event_id))
+      return array_sum(eme_get_booked_multiseats_by_person_event_id($person_id,$event_id));
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE person_id = %d AND event_id = %d",$person_id,$event_id);
    return $wpdb->get_var($sql);
+}
+
+function eme_get_booked_multiseats_by_person_event_id($person_id,$event_id) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id"; 
+   $sql = $wpdb->prepare("SELECT booking_seats_mp FROM $bookings_table WHERE person_id = %d AND event_id = %d",$person_id,$event_id);
+   $booking_seats_mp = $wpdb->get_col($sql);
+   $result=array();
+   foreach($booking_seats_mp as $booked_seats) {
+      $multiseats = preg_split("/\|\|/",$booked_seats);
+      foreach ($multiseats as $key=>$value) {
+         if (!isset($result[$key]))
+            $result[$key]=$value;
+         else
+            $result[$key]+=$value;
+      }
+   }
+   return $result;
 }
 
 function eme_get_event_id_by_booking_id($booking_id) {
@@ -798,14 +819,14 @@ function eme_get_booked_seats($event_id) {
    if (eme_is_event_multiseats($event_id))
       return array_sum(eme_get_booked_multiseats($event_id));
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = $event_id"; 
+   $sql = $wpdb->prepare("SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = %d",$event_id);
    return $wpdb->get_var($sql);
 }
 
 function eme_get_booked_multiseats($event_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id"; 
+   $sql = $wpdb->prepare("SELECT booking_seats_mp FROM $bookings_table WHERE event_id = %d",$event_id);
    $booking_seats_mp = $wpdb->get_col($sql);
    $result=array();
    foreach($booking_seats_mp as $booked_seats) {
@@ -825,14 +846,14 @@ function eme_get_approved_seats($event_id) {
    if (eme_is_event_multiseats($event_id))
       return array_sum(eme_get_approved_multiseats($event_id));
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = $event_id and booking_approved=1"; 
+   $sql = $wpdb->prepare("SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = %d and booking_approved=1",$event_id);
    return $wpdb->get_var($sql);
 }
 
 function eme_get_approved_multiseats($event_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id and booking_approved=1"; 
+   $sql = $wpdb->prepare("SELECT booking_seats_mp FROM $bookings_table WHERE event_id = %d and booking_approved=1",$event_id);
    $booking_seats_mp = $wpdb->get_col($sql);
    $result=array();
    foreach($booking_seats_mp as $booked_seats) {
@@ -852,14 +873,14 @@ function eme_get_pending_seats($event_id) {
    if (eme_is_event_multiseats($event_id))
       return array_sum(eme_get_pending_multiseats($event_id));
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = $event_id and booking_approved=0"; 
+   $sql = $wpdb->prepare("SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE event_id = %d and booking_approved=0",$event_id);
    return $wpdb->get_var($sql);
 }
 
 function eme_get_pending_multiseats($event_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id and booking_approved=0"; 
+   $sql = $wpdb->prepare("SELECT booking_seats_mp FROM $bookings_table WHERE event_id = %d and booking_approved=0",$event_id);
    $booking_seats_mp = $wpdb->get_col($sql);
    $result=array();
    foreach($booking_seats_mp as $booked_seats) {
@@ -878,6 +899,7 @@ function eme_get_pending_bookings($event_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = "SELECT COUNT(*) AS pending_bookings FROM $bookings_table WHERE event_id = $event_id and booking_approved=0"; 
+   $sql = $wpdb->prepare("SELECT COUNT(*) AS pending_bookings FROM $bookings_table WHERE event_id = %d and booking_approved=0",$event_id);
    return $wpdb->get_var($sql);
 }
 
