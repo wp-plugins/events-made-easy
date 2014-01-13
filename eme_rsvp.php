@@ -1180,9 +1180,9 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          if (array_key_exists($field_id,$total_prices))
             $replacement = $total_prices[$field_id];
       } elseif (preg_match('/#_RESPSPACES$|#_SPACES$|#_BOOKEDSEATS$/', $result)) {
-         $replacement = $booking['booking_seats'];
+         $replacement = eme_get_multitotal($booking['booking_seats']);
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
-         $replacement = $booking['booking_seats'];
+         $replacement = eme_get_multitotal($booking['booking_seats']);
       } elseif (preg_match('/#_BOOKINGCREATIONDATE$/', $result)) {
          $replacement = eme_localised_date($booking['creation_date']);
       } elseif (preg_match('/#_BOOKINGMODIFDATE$/', $result)) {
