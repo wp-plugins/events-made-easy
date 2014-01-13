@@ -1603,7 +1603,6 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($event && preg_match('/#_IS_REGISTERED/', $result)) {
          if ($rsvp_is_active && $event['event_rsvp']
                    && is_user_logged_in()
-                   && $event['registration_wp_users_only']
                    && eme_get_booking_by_person_event_id($person_id,$event['event_id']))
             $replacement = 1;
          else
