@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.2.1 =
+* Bugfix: the template format field was too small in the database, limiting the number of characters
+
 = 1.2.0 =
 * Feature: multi-seat events are now possible: the same as multiprice events, but now you can limit the number of seats per price category if wanted
 * Feature: format templates can now be created and used in the events_list and events_locations shortcodes as follows:

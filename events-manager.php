@@ -110,7 +110,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 40);
+define('EME_DB_VERSION', 41);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -838,10 +838,14 @@ function eme_create_templates_table($charset,$collate) {
       $sql = "CREATE TABLE ".$table_name." (
          id int(11) NOT NULL auto_increment,
          description text DEFAULT NULL,
-         format tinytext NOT NULL,
+         format text NOT NULL,
          UNIQUE KEY  (id)
          ) $charset $collate;";
       dbDelta($sql);
+   } else {
+      if ($db_version<41) {
+         $wpdb->query("ALTER TABLE $table_name MODIFY format text NOT NULL;");
+      }
    }
 }
 
