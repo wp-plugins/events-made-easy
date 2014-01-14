@@ -729,7 +729,11 @@ function eme_update_booking_payed($booking_id,$booking_payed) {
       if ($event['event_properties']['auto_approve'] == 1)
          $fields['booking_approved'] = 1;
    }
-   return $wpdb->update($bookings_table, $fields, $where);
+   $res = $wpdb->update($bookings_table, $fields, $where);
+   if ($res && $event['event_properties']['auto_approve'] == 1)
+      eme_email_rsvp_booking($booking_id,"approveRegistration");
+   return $res;
+   
 }
 
 function eme_approve_booking($booking_id) {
