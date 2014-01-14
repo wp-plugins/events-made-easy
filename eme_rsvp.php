@@ -1730,9 +1730,6 @@ function eme_registration_approval_form_table($event_id=0) {
          <td>
             <?php echo $localised_booking_date ." ". $localised_booking_time;?>
          </td>
-         <td>
-            <?php echo $localised_booking_date . $localised_booking_time;?>
-         </td>
          <?php if (eme_is_multi(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
             <input title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" type="text" name="bookings_seats[]" value="<?php echo $event_booking['booking_seats_mp']; ?>" /><?php _e('(Multiprice)','eme');?>
