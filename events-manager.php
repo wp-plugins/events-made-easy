@@ -1614,6 +1614,18 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          else
             $replacement = 0;
 
+      } elseif ($event && preg_match('/#_IS_MULTISEAT/', $result)) {
+         if (eme_is_multi($event['event_seats']))
+            $replacement = 1;
+         else
+            $replacement = 0;
+
+      } elseif ($event && preg_match('/#_IS_ALLDAY/', $result)) {
+         if ($event['event_properties']['all_day'])
+            $replacement = 1;
+         else
+            $replacement = 0;
+
       } else {
          $found = 0;
       }
