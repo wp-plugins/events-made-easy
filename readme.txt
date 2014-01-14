@@ -63,10 +63,12 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.2.1 =
 * Feature: added conditional tags #_IS_MULTISEAT and #_IS_ALLDAY
+* Feature: add template_id_header and template_id_footer for events_list and events_locations shortcodes, so you can also use templates for the headers and footers
 * Improvement: make #_IS_REGISTERED also work even when the option "Require WP membership for registration" is not checked, of course you still need to be logged in as a WP user for it to work.
 * Bugfix: the template format field was too small in the database, limiting the number of characters
 * Bugfix: booking list should show a single number for booked seats for multiseat events when asked for
 * Bugfix: send approval mail also for auto-approve events upon payment
+* Bugfix: events_locations shortcode no longer listed all locations
 
 = 1.2.0 =
 * Feature: multi-seat events are now possible: the same as multiprice events, but now you can limit the number of seats per price category if wanted
