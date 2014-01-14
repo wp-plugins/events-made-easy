@@ -837,7 +837,7 @@ function eme_create_templates_table($charset,$collate) {
    if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
       $sql = "CREATE TABLE ".$table_name." (
          id int(11) NOT NULL auto_increment,
-         description text DEFAULT NULL,
+         description tinytext DEFAULT NULL,
          format text NOT NULL,
          UNIQUE KEY  (id)
          ) $charset $collate;";
