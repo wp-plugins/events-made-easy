@@ -730,7 +730,7 @@ function eme_update_booking_payed($booking_id,$booking_payed) {
          $fields['booking_approved'] = 1;
    }
    $res = $wpdb->update($bookings_table, $fields, $where);
-   if ($res && $event['event_properties']['auto_approve'] == 1)
+   if ($res && $event['event_properties']['auto_approve'] == 1 && $booking_payed==1)
       eme_email_rsvp_booking($booking_id,"approveRegistration");
    return $res;
    
@@ -1609,7 +1609,7 @@ function eme_registration_approval_page() {
          $booking = eme_get_booking ($booking_id);
          // update the db
          if ($action == 'approveRegistration') {
-            eme_approve_booking($booking_id);
+            //eme_approve_booking($booking_id);
             if ($booking['booking_payed']!= intval($bookings_payed[$key]))
                eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
             if ($booking['booking_seats']!= $bookings_seats[$key]) {
