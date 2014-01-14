@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.5
 Tested up to: 3.8
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL, 2Checkout, Webmoney and Google Checkout support. SEO compatible.
              
@@ -68,7 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: the template format field was too small in the database, limiting the number of characters
 * Bugfix: booking list should show a single number for booked seats for multiseat events when asked for
 * Bugfix: send approval mail also for auto-approve events upon payment
-* Bugfix: events_locations shortcode no longer listed all locations
+* Bugfix: events_locations shortcode no longer listed all locations (typo in 1.2.0 caused this)
 
 = 1.2.0 =
 * Feature: multi-seat events are now possible: the same as multiprice events, but now you can limit the number of seats per price category if wanted
