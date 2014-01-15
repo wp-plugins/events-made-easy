@@ -713,7 +713,7 @@ function eme_delete_booking($booking_id) {
    return $wpdb->query($sql);
 }
 
-function eme_update_booking_payed($booking_id,$booking_payed) {
+function eme_update_booking_payed($booking_id,$booking_payed,$send_mail_for_auto_approve=0) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    
@@ -730,7 +730,7 @@ function eme_update_booking_payed($booking_id,$booking_payed) {
          $fields['booking_approved'] = 1;
    }
    $res = $wpdb->update($bookings_table, $fields, $where);
-   if ($res && $event['event_properties']['auto_approve'] == 1 && $booking_payed==1)
+   if ($res && $event['event_properties']['auto_approve'] == 1 && $booking_payed==1 && $send_mail_for_auto_approve)
       eme_email_rsvp_booking($booking_id,"approveRegistration");
    return $res;
    
@@ -2156,7 +2156,7 @@ function eme_paypal_notification() {
          The complete() method below logs the valid IPN to the places you choose
        */
       $booking_id=$ipn->ipn['item_number'];
-      eme_update_booking_payed($booking_id,1);
+      eme_update_booking_payed($booking_id,1,1);
       $ipn->complete();
    }
 }
@@ -2250,7 +2250,7 @@ function eme_google_notification() {
         }
         case 'CHARGED': {
           $booking_id=$data[$root]['google-order-number']['VALUE'];
-          eme_update_booking_payed($booking_id,1);
+          eme_update_booking_payed($booking_id,1,1);
           break;
         }
         case 'PAYMENT_DECLINED': {
@@ -2324,7 +2324,7 @@ function eme_2co_notification() {
       #$event = eme_get_event($booking['event_id']);
  
       if ($insMessage['invoice_status'] == 'approved' || $insMessage['invoice_status'] == 'deposited') {
-          eme_update_booking_payed($booking_id,1);
+          eme_update_booking_payed($booking_id,1,1);
       }
    }
 }
@@ -2349,7 +2349,7 @@ function eme_webmoney_notification() {
       #   die ('Not the webmoney amount I expected ...');
       #}
       if ($wm_notif->CheckMD5($webmoney_purse, $amount, $booking_id, $webmoney_secret) == WM_RES_OK) {
-          eme_update_booking_payed($booking_id,1);
+          eme_update_booking_payed($booking_id,1,1);
       }
    }
 }
@@ -2382,7 +2382,7 @@ function eme_fdgg_notification() {
    #$price=eme_get_total_booking_price($event,$booking);
 
    if (strtolower($response_status) == 'approved') {
-      eme_update_booking_payed($booking_id,1);
+      eme_update_booking_payed($booking_id,1,1);
    }
 }
 
