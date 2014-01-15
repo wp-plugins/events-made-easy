@@ -292,7 +292,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    foreach($results[0] as $resultKey => $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = $result;
+      $orig_result = preg_quote($result,'/');
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -318,7 +318,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = str_replace($orig_result, $replacement ,$format );
+      $format = preg_replace("/$orig_result/", $replacement ,$format );
    }
 
    // the 2 placeholders that can contain extra text are treated seperately first
@@ -343,7 +343,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    # we need 3 required fields: #_NAME, #_EMAIL and #_SEATS
    # if these are not present: we don't replace anything and the form is worthless
    foreach($placeholders[0] as $result) {
-      $orig_result = $result;
+      $orig_result = preg_quote($result,'/');
       $found=1;
       $required=0;
       $html5_wanted=0;
@@ -375,7 +375,11 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          $required_fields_count++;
       } elseif (preg_match('/#_SEATS(\d+)$|#_SPACES(\d+)$/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
+	 // in case of multiseats, $booked_places_options contains the options for seat bookings per multiseat
+	 if (eme_is_multi($event['event_seats']))
+		 $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options[$field_id-1]);
+	 else
+		 $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT$/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
@@ -400,7 +404,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
 
       if ($found) {
          $replacement = eme_translate($replacement);
-         $format = str_replace($orig_result, $replacement ,$format );
+         $format = preg_replace("/$orig_result/", $replacement ,$format );
       }
    }
 
@@ -410,7 +414,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
    # for multiprice: 3 + number of possible prices
    # if these are not present: we don't replace anything and the form is worthless
-   if (eme_is_multiprice($event['price'])) {
+   if (eme_is_multi($event['price'])) {
       $matches=preg_split('/\|\|/', $event['price']);
       $count=count($matches);
       // the count can be >3+$count if conditional tags are used to combine a form for single and multiple prices

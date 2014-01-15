@@ -1,7 +1,7 @@
 <?php
 
 function eme_if_shortcode($atts,$content) {
-   extract ( shortcode_atts ( array ('tag' => '', 'value' => '', 'notvalue' => '', 'lt' => '', 'gt' => '', 'contains'=>'', 'notcontains'=>'', 'is_empty'=>0 ), $atts ) );
+   extract ( shortcode_atts ( array ('tag' => '', 'value' => '', 'notvalue' => '', 'lt' => '', 'le' => '',  'gt' => '', 'ge' => '', 'contains'=>'', 'notcontains'=>'', 'is_empty'=>0 ), $atts ) );
    if ($is_empty) {
       if (empty($tag)) return do_shortcode($content);
    } elseif (is_numeric($value) || !empty($value)) {
@@ -10,8 +10,12 @@ function eme_if_shortcode($atts,$content) {
       if ($tag!=$notvalue) return do_shortcode($content);
    } elseif (is_numeric($lt) || !empty($lt)) {
       if ($tag<$lt) return do_shortcode($content);
+   } elseif (is_numeric($le) || !empty($le)) {
+      if ($tag<=$le) return do_shortcode($content);
    } elseif (is_numeric($gt) || !empty($gt)) {
       if ($tag>$gt) return do_shortcode($content);
+   } elseif (is_numeric($ge) || !empty($ge)) {
+      if ($tag>=$ge) return do_shortcode($content);
    } elseif (is_numeric($contains) || !empty($contains)) {
       if (strpos($tag,"$contains")!== false) return do_shortcode($content);
    } elseif (is_numeric($notcontains) || !empty($notcontains)) {
@@ -307,6 +311,17 @@ function eme_check_location_exists($location_id) {
    return $wpdb->get_var($sql);
 }
 
+function _eme_are_dates_valid($date) {
+   // if it is a series of dates
+   if (strstr($date, ',')) {
+	$dates=explode(',',$date);
+   	foreach ( $dates as $date ) {
+		if (!_eme_is_date_valid($date)) return false;
+	}
+   }
+   return true;
+}
+	
 function _eme_is_date_valid($date) {
    if (strlen($date) != 10)
       return false;
@@ -315,6 +330,7 @@ function _eme_is_date_valid($date) {
    $day = intval(substr ( $date, 8 ));
    return (checkdate ( $month, $day, $year ));
 }
+
 function eme_is_time_valid($time) {
    $result = preg_match ( "/([01]\d|2[0-3])(:[0-5]\d)/", $time );
    return ($result);
@@ -352,7 +368,7 @@ function eme_daydifference($date1,$date2) {
    $ConvertToTimeStamp_Date1 = strtotime($date1);
    $ConvertToTimeStamp_Date2 = strtotime($date2);
    $DateDifference = intval($ConvertToTimeStamp_Date2) - intval($ConvertToTimeStamp_Date1);
-   return abs(round($DateDifference/86400));
+   return round($DateDifference/86400);
 }
 
 function eme_delete_image_files($image_basename) {
@@ -403,6 +419,69 @@ function eme_currency_array() {
    $currency_array ['CHF'] = __ ( 'Swiss Franc', 'eme' );
    $currency_array ['THB'] = __ ( 'Thai Baht', 'eme' );
    $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
+   $currency_array ['CNY'] = __ ( 'Chinese Yuan Renminbi', 'eme' );
    return $currency_array;
+}
+
+function eme_thumbnail_sizes() {
+   global $_wp_additional_image_sizes;
+   $sizes = array();
+   foreach ( get_intermediate_image_sizes() as $s ) {
+      $sizes[ $s ] = $s;
+   }
+   return $sizes;
+}
+
+function eme_transfer_nbr_be97($my_nbr) {
+   $transfer_nbr_be97_main=sprintf("%010d",$my_nbr);
+   // the control number is the %97 result, or 97 in case %97=0
+   $transfer_nbr_be97_check=$transfer_nbr_be97_main % 97;
+   if ($transfer_nbr_be97_check==0)
+      $transfer_nbr_be97_check = 97 ;
+   $transfer_nbr_be97_check=sprintf("%02d",$transfer_nbr_be97_check);
+   $transfer_nbr_be97 = $transfer_nbr_be97_main.$transfer_nbr_be97_check;
+   $transfer_nbr_be97 = substr($transfer_nbr_be97,0,3)."/".substr($transfer_nbr_be97,3,4)."/".substr($transfer_nbr_be97,7,5);
+   return $transfer_nbr_be97_main.$transfer_nbr_be97_check;
+}
+
+function eme_convert_date_format($format,$datestring) {
+   if (empty($datestring))
+      return date($format);
+   else
+      return date($format, strtotime($datestring));
+}
+
+# support older php version for array_replace_recursive
+if (!function_exists('array_replace_recursive')) {
+   function array_replace_recursive($array, $array1) {
+      function recurse($array, $array1) {
+         foreach ($array1 as $key => $value) {
+            // create new key in $array, if it is empty or not an array
+            if (!isset($array[$key]) || (isset($array[$key]) && !is_array($array[$key]))) {
+               $array[$key] = array();
+            }
+
+            // overwrite the value in the base array
+            if (is_array($value)) {
+               $value = recurse($array[$key], $value);
+            }
+            $array[$key] = $value;
+         }
+         return $array;
+      }
+
+      // handle the arguments, merge one by one
+      $args = func_get_args();
+      $array = $args[0];
+      if (!is_array($array)) {
+         return $array;
+      }
+      for ($i = 1; $i < count($args); $i++) {
+         if (is_array($args[$i])) {
+            $array = recurse($array, $args[$i]);
+         }
+      }
+      return $array;
+   }
 }
 ?>
