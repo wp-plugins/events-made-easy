@@ -713,7 +713,7 @@ function eme_delete_booking($booking_id) {
    return $wpdb->query($sql);
 }
 
-function eme_update_booking_payed($booking_id,$booking_payed,$send_mail_for_auto_approve=0) {
+function eme_update_booking_payed($booking_id,$booking_payed,$approve_pending=0) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    
@@ -723,14 +723,10 @@ function eme_update_booking_payed($booking_id,$booking_payed,$send_mail_for_auto
    $fields['booking_payed'] = intval($booking_payed) ;
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
-   if ($booking_payed==1) {
-      $event_id = eme_get_event_id_by_booking_id($booking_id);
-      $event = eme_get_event($event_id);
-      if ($event['event_properties']['auto_approve'] == 1)
-         $fields['booking_approved'] = 1;
-   }
+   if ($booking_payed==1 && $approve_pending == 1)
+      $fields['booking_approved'] = 1;
    $res = $wpdb->update($bookings_table, $fields, $where);
-   if ($res && $event['event_properties']['auto_approve'] == 1 && $booking_payed==1 && $send_mail_for_auto_approve)
+   if ($res && $approve_pending == 1 && $booking_payed==1)
       eme_email_rsvp_booking($booking_id,"approveRegistration");
    return $res;
    
@@ -2155,8 +2151,14 @@ function eme_paypal_notification() {
          You can access the IPN data with $ipn->ipn['value']
          The complete() method below logs the valid IPN to the places you choose
        */
-      $booking_id=$ipn->ipn['item_number'];
-      eme_update_booking_payed($booking_id,1,1);
+      $booking_id=intval($ipn->ipn['item_number']);
+      $booking=eme_get_booking($booking_id);
+      $event_id = eme_get_event_id_by_booking_id($booking_id);
+      $event = eme_get_event($event_id);
+      if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
+         eme_update_booking_payed($booking_id,1,1);
+      else
+         eme_update_booking_payed($booking_id,1,0);
       $ipn->complete();
    }
 }
@@ -2249,8 +2251,14 @@ function eme_google_notification() {
           break;
         }
         case 'CHARGED': {
-          $booking_id=$data[$root]['google-order-number']['VALUE'];
-          eme_update_booking_payed($booking_id,1,1);
+          $booking_id=intval($data[$root]['google-order-number']['VALUE']);
+          $booking=eme_get_booking($booking_id);
+          $event_id = eme_get_event_id_by_booking_id($booking_id);
+          $event = eme_get_event($event_id);
+          if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
+             eme_update_booking_payed($booking_id,1,1);
+          else
+             eme_update_booking_payed($booking_id,1,0);
           break;
         }
         case 'PAYMENT_DECLINED': {
@@ -2318,13 +2326,18 @@ function eme_2co_notification() {
          die('Hash Incorrect');
       }
 
-      $booking_id=$insMessage['item_id_1'];
-      // TODO: do some extra checks, like the price payed and such
-      #$booking=eme_get_booking($booking_id);
-      #$event = eme_get_event($booking['event_id']);
- 
       if ($insMessage['invoice_status'] == 'approved' || $insMessage['invoice_status'] == 'deposited') {
-          eme_update_booking_payed($booking_id,1,1);
+         $booking_id=intval($insMessage['item_id_1']);
+         // TODO: do some extra checks, like the price payed and such
+#$booking=eme_get_booking($booking_id);
+#$event = eme_get_event($booking['event_id']);
+         $booking=eme_get_booking($booking_id);
+         $event_id = eme_get_event_id_by_booking_id($booking_id);
+         $event = eme_get_event($event_id);
+         if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
+            eme_update_booking_payed($booking_id,1,1);
+         else
+            eme_update_booking_payed($booking_id,1,0);
       }
    }
 }
@@ -2336,10 +2349,11 @@ function eme_webmoney_notification() {
    require_once('webmoney/webmoney.inc.php');
    $wm_notif = new WM_Notification(); 
    if ($wm_notif->GetForm() != WM_RES_NOPARAM) {
-      $booking_id=$wm_notif->payment_no;
+      $booking_id=intval($wm_notif->payment_no);
+      $booking=eme_get_booking($booking_id);
+      $event_id = eme_get_event_id_by_booking_id($booking_id);
+      $event = eme_get_event($event_id);
       // TODO: do some extra checks, like the price payed and such
-      #$booking=eme_get_booking($booking_id);
-      #$event = eme_get_event($booking['event_id']);
       #$price=eme_get_total_booking_price($event,$booking)
       $amount=$wm_notif->payment_amount;
       if ($webmoney_purse != $wm_notif->payee_purse) {
@@ -2349,7 +2363,10 @@ function eme_webmoney_notification() {
       #   die ('Not the webmoney amount I expected ...');
       #}
       if ($wm_notif->CheckMD5($webmoney_purse, $amount, $booking_id, $webmoney_secret) == WM_RES_OK) {
-          eme_update_booking_payed($booking_id,1,1);
+         if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
+            eme_update_booking_payed($booking_id,1,1);
+         else
+            eme_update_booking_payed($booking_id,1,0);
       }
    }
 }
@@ -2359,7 +2376,7 @@ function eme_fdgg_notification() {
    $shared_secret = get_option('eme_fdgg_shared_secret');
    require_once('fdgg/fdgg-util_sha2.php');
 
-   $booking_id      = $_POST['invoicenumber'];
+   $booking_id      = intval($_POST['invoicenumber']);
    $charge_total    = $_POST['charge_total'];
    $approval_code   = $_POST['approval_code'];
    $response_hash   = $_POST['response_hash'];
@@ -2369,6 +2386,8 @@ function eme_fdgg_notification() {
    // First Data only allows USD
    $cur="USD";
    $booking=eme_get_booking($booking_id);
+   $event_id = eme_get_event_id_by_booking_id($booking_id);
+   $event = eme_get_event($event_id);
    $datetime=date("Y:m:d-H:i:s",strtotime($booking['creation_date_gmt']));
    $timezone_short="GMT";
    $calc_hash=fdgg_createHash($shared_secret.$approval_code.$charge_total.$cur.$datetime.$store_name);
@@ -2378,11 +2397,13 @@ function eme_fdgg_notification() {
    }
 
    // TODO: do some extra checks, like the price payed and such
-   #$event=eme_get_event($booking['event_id']);
    #$price=eme_get_total_booking_price($event,$booking);
 
    if (strtolower($response_status) == 'approved') {
-      eme_update_booking_payed($booking_id,1,1);
+      if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
+         eme_update_booking_payed($booking_id,1,1);
+      else
+         eme_update_booking_payed($booking_id,1,0);
    }
 }
 
