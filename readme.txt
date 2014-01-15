@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.5
 Tested up to: 3.8
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL, 2Checkout, Webmoney and Google Checkout support. SEO compatible.
              
@@ -60,6 +60,9 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
 See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
+
+= 1.2.2 =
+* Fixed a small bug I introduced in 1.2.1
 
 = 1.2.1 =
 * Feature: added conditional tags #_IS_MULTISEAT and #_IS_ALLDAY
