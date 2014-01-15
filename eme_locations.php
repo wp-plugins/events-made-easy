@@ -1019,28 +1019,34 @@ function get_locations_shortcode($atts) {
    if ($template_id) {
       $format_arr = eme_get_template($template_id);
       $format=$format_arr['format'];
+   } else {
+      $format="";
    }
    if ($template_id_header) {
       $format_arr = eme_get_template($template_id_header);
       $format_header = $format_arr['format'];
       $eme_format_header=eme_replace_locations_placeholders($format_header);
+   } else {
+      $eme_format_header="";
    }
    if ($template_id_footer) {
       $format_arr = eme_get_template($template_id_footer);
       $format_footer = $format_arr['format'];
       $eme_format_footer=eme_replace_locations_placeholders($format_footer);
+   } else {
+      $eme_format_footer="";
    }
    if (empty($format)) {
       $format = get_option('eme_location_list_item_format' );
       $format = ( $format != '' ) ? $format : "<li class=\"location-#_LOCATIONID\">#_LOCATIONNAME</li>";
-   }
-   if (empty($eme_format_header)) {
-      $eme_format_header = eme_replace_locations_placeholders(get_option('eme_location_list_item_format_header' ));
-      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : "<ul class='eme_events_list'>";
-   }
-   if (empty($eme_format_footer)) {
-      $eme_format_footer = eme_replace_locations_placeholders(get_option('eme_location_list_item_format_footer' ));
-      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : "</ul>";
+      if (empty($eme_format_header)) {
+	      $eme_format_header = eme_replace_locations_placeholders(get_option('eme_location_list_item_format_header' ));
+	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : "<ul class='eme_events_list'>";
+      }
+      if (empty($eme_format_footer)) {
+	      $eme_format_footer = eme_replace_locations_placeholders(get_option('eme_location_list_item_format_footer' ));
+	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : "</ul>";
+      }
    }
 
    $output = "";

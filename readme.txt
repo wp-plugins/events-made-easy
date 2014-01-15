@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.2.3 =
+* Bugfix: prevent double header/footer appearance in event lists
+
 = 1.2.2 =
 * Fixed a small bug I introduced in 1.2.1 + better detection for sending mail for auto-approval
 
