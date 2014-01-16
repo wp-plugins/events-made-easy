@@ -3,8 +3,8 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.5
-Tested up to: 3.6
-Stable tag: 1.1.2
+Tested up to: 3.8
+Stable tag: 1.2.4
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; PAYPAL, 2Checkout, Webmoney and Google Checkout support. SEO compatible.
              
@@ -57,63 +57,91 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
  
 == Frequently Asked Questions ==
 
-= I enabled the Google Maps integration, but instead of the map there is a green background. What should I do? =
-
-I call that "the green screen of death", but it's quite easy to fix your issue. If you see that green background, your theme has a little problem that should be fixed. Open the `header.php` page of your theme; if your theme hasn't any `header.php` page, just open the `index.php page` and/or any page containing the `<head>` section of the html code. Make sure that the page contains a line like this:              
-
-    <?php wp_head(); ?>              
-
-If your page(s) doesn't contain such line, add it just before the line containing `</head>`. Now everything should work allright.    
-For curiosity's sake, `<?php wp_head(); ?>` is an action hook, that is a function call allowing plugins to insert their stuff in Wordpress pages; if you're a theme maker, you should make sure to include `<?php wp_head(); ?> ` and all the necessary hooks in your theme.
-
-= How do I resize the single events map? Or change the font color or any style of the balloon? = 
-
-Create a file called 'myown.css' in the plugin directory and put in there eg.:  
-  
-.eme-location-map {  
-width: 600px;  
-height: 400px;  
-}  
-.eme-location-balloon {  
-        color: #FF7146;  
-}  
-
-You can start from events_manager.css as a base and just change the parts you want.  
-Warning: when wordpress updates a plugin automatically, it removes the plugin directory completely. So be sure to have a backup of myown.css somewhere to put back in place afterwards.
-  
-For the multiple locations map, see the shortcode [locations_map] with its possible parameters on the documentation site.
-
-= Can I customise the event page? =
-
-Sure, you can do that by editing the page and changing its [template](http://codex.wordpress.org/Pages#Page_Templates). For heavy customisation, you can use the some of the plugin's own conditional tags, described in the *Template Tags* section.
-
-= How does Events Made Easy work? =   
-
-When installed, Events Made Easy creates a special "Events" page. This page is used for the dynamic content of the events. All the events link actually link to this page, which gets rendered differently for each event.
-
-= Are events posts? =
-
-Events aren't posts. They are stored in a different table and have no relationship whatsoever with posts.
-
-= Why aren't events posts? =
-
-I decided to treat events as a separate class because my priority was the usability of the user interface in the administration; I wanted my users to have a simple, straightforward way of inserting the events, without confusing them with posts. I wanted to make my own simple event form.  
-If you need to treat events like posts, you should use one of the other excellent events plugin.
-
-= Is Events Made Easy available in my language? = 
-
-At this stage, Events Made Easy is only available in English and Italian. Yet, the plugin is fully localisable; I will welcome any translator willing to add to this package a translation of Events Made Easy into his mother tongue.
-
-== Screenshots ==
-
-1. A default event page with a map automatically pulled from Google Maps through the #_MAP placeholder.
-2. The events management page.
-3. The Events Made Easy Menu.
+See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
 
+= 1.2.4 =
+* Bugfix: prevent double header/footer appearance in event lists
+
+= 1.2.3 =
+* Bugfix: prevent double header/footer appearance in event lists
+
+= 1.2.2 =
+* Fixed a small bug I introduced in 1.2.1 + better detection for sending mail for auto-approval
+
+= 1.2.1 =
+* Feature: added conditional tags #_IS_MULTISEAT and #_IS_ALLDAY
+* Feature: add template_id_header and template_id_footer for events_list and events_locations shortcodes, so you can also use templates for the headers and footers
+* Improvement: make #_IS_REGISTERED also work even when the option "Require WP membership for registration" is not checked, of course you still need to be logged in as a WP user for it to work.
+* Bugfix: the template format field was too small in the database, limiting the number of characters
+* Bugfix: booking list should show a single number for booked seats for multiseat events when asked for
+* Bugfix: send approval mail also for auto-approve events upon payment
+* Bugfix: events_locations shortcode no longer listed all locations (typo in 1.2.0 caused this)
+
+= 1.2.0 =
+* Feature: multi-seat events are now possible: the same as multiprice events, but now you can limit the number of seats per price category if wanted
+* Feature: format templates can now be created and used in the events_list and events_locations shortcodes as follows:
+  [events_list template_id=3]
+  This renders the use of the 'format' parameter obsolete and is more powerfull as it allows conditional tags inside the format template.
+* Feature: recurrence is now also possible on specific days, not just a pattern
+* Feature: maptype for google maps can be defined in the settings for global and individual maps (Roadmap, Satellite, Hybrid or Terrain)
+* Feature: added event placeholders #_TOTALSEATSxx, #_AVAILABLESEATSxx and #_BOOKEDSEATSxx to show seat info per seat category
+* Improvement: remove some unneeded caching in the EME admin section.
+* Improvement: Dutch language update, thanks to Guido
+* Improvement: show which required fields are missing when filling out a rsvp form
+* Bugfix: better all-day indication in ical
+* Bugfix: make #_TOTALPRICE and #_TOTALPRICExx also work for "Booking mails" reminders
+* Bugfix: jump to RSVP confirmation message upon successfull registration
+* Bugfix: better matching rules for #_CATEGORIES with include/exclude categories
+* Bugfix: all day event fix
+
+= 1.1.6 =
+* Improvement: #_MAP and #_DIRECTIONS for an event are only replaced/shown if the event is linked to a location
+* Bugfix: forgot to escape the forward slash, so some placeholders might have resulted in errors
+
+= 1.1.5 =
+* Bugfix: better regex replacement for replacing placeholders
+
+= 1.1.4 =
+* Feature: added 'First Data Global Gateway Connect 2.0' payment gateway implementation
+* Feature: new option: consider pending registrations as available seats for new bookings (meaning: ignore pending registrations for new rsvp's)
+* Feature: implemented feature request "Automatic Approval after Payment is received", optional per event
+* Feature: all day events can now be indicated as such
+* Feature: placeholder #_TOTALPRICEx added for mail formats (with x being a number: gives the total price to pay per price for multiprice events: the amount of spaces booked times the specific price of the multiprice event)
+* Feature: added a facebook import function when creating a new event. Thanks to Tom Chubb and Jashwant Singh Chaudhary.
+* Feature: some themes result in weird behaviour because they use the_content filters, resulting in loops or unwanted content replacement. Added a setting against possible loop protection.
+* Feature: RSS pubdate can now also be the event start time
+* Feature: separate format for ICAL entries
+* Feature: zoom factor can be changed for the global or individual maps
+* Feature: added new filter eme_event_preinsert_filter, taking place just before the event is inserted in the DB
+* Feature: added 2 placeholder options to #_CATEGORIES and #_LINKEDCATEGORIES to include/exclude categories. To be used like this:
+     #_CATEGORIES[1,3][] ==> this will get all categories for the event, but only show cat 1 or 3
+     #_CATEGORIES[][1,3] ==> this will get all categories for the event, but not show cat 1 or 3
+* Feature: added option to define image size for placeholders #_EVENTIMAGETHUMB and #_EVENTIMAGETHUMBURL, to be used as:
+  #_EVENTIMAGETHUMB[MyCustomSize] or #_EVENTIMAGETHUMBURL[MyCustomSize], where "MyCustomSize" is a custom size either known to wordpress or defined in your
+  functions.php via the function add_image_size()
+* Feature: the events_if shortcode now also supports "le" (lower than or equal to) and "ge" (greater than or equal to) comparisons
+* Feature: new filter eme_eval_booking_form_filter, so you can create your own eval rules for a booking
+* Feature: make #_SPACESxx also work in RSVP info, next to #_RESPSPACES
+* Feature: new hook eme_update_rsvp_action, executed when updating booking info
+* Bugfix: correct escaping of characters for ical format
+* Bugfix: better regex replacement for replacing placeholders
+* Bugfix: make sure URL's created by placeholders aren't touched by wordpress anymore
+* Bugfix: when specifying a location by latitude and longitude, town and address are not needed
+* Bugfix: fix a JS error on some admin pages
+* Bugfix: the multiprice array was not correctly initialized, causing troubles if you used #_SEATSx form fields that were out of order
+* Improvement: shortcodes [add_booking_form] and [delete_booking_form] now properly return the generated html instead of echoing it, and also return empty if rsvp not active
+* Improvement: events_list header/footer can now also contain shortcodes, usefull for conditional tags. Idem for locations.
+* Improvement: json is limited in size we only return what's needed in the javascript
+* Improvement: booking date/time info is now visible in the backend registration pages
+* Improvement: add image thumb url to the ical feed if present
+* Improvement: the day difference function now returns a negative value as well, the countdown and DAYS_TILL* placeholders can take advantage of this
+* Improvement: use the WP time setting for new/edit events as well when trying to detect 12 or 24 hour notation
+* Code improvement: added event_properties to stop needing to change the event database table all the time. Ideal for new event properties.
+
 = 1.1.3 =
-* Feature: added #_HTML5_PHONE and #__HTML5_EMAIL to indicate you want the html5 input type field for phone and/or email
+* Feature: added #_HTML5_PHONE and #_HTML5_EMAIL to indicate you want the html5 input type field for phone and/or email
   So you can use e.g. #_HTML5_PHONE or #REQ_HTML5_PHONE and the result will be: the html5 tel-type field for phone, and required if #REQ used.
   Other html5 input types will be added.
 * Feature: events_if4, events_if5 and events_if6 added
@@ -122,15 +150,22 @@ At this stage, Events Made Easy is only available in English and Italian. Yet, t
 * Feature: new option 'title' for the shortcode events_rss_link, so the title can be given a specific name
 * Feature: you can now exclude categories in the widget list and calendar as well, and in the regular shortcode events_calendar also with the new option 'notcategory'
 * Feature: events_ical_link shortcode now also supports the options scope (default: future), author, contact_person and notcategory
+* Feature: added placeholder #_EVENTIMAGETHUMB, to show a thumbnail of a featured image, so you can e.g. show a thumbnail of a featured image instead of the whole image. The size can be choosen in the EME settings (panel 'Other'), by default it is 'thumbnail' size.
+* Feature: added placeholder #_EVENTIMAGETHUMBURL, to get just the url to the thumbnail. Also added #_LOCATIONIMAGETHUMB and #_LOCATIONIMAGETHUMBURL
 * Improvement: mail sending is by default enabled for new installations
 * Improvement: upon auto-update, the DB version of EME is now also checked and a DB update is done if needed
 * Improvement: the 'No events' message now also has a div surrounding it, with div-id 'events-no-events'
+* Improvement: extra plugin events-made-easy-frontend-submit now also uses AM/PM or 24 hours notation based on site preferences
 * Bugfix: html encapsulated in RSS feed was needlessly escaped inside a CDATA section
 * Bugfix: multiprice bookings were reset to "1" if the first booking was 0 upon approval
 * Bugfix: default selected town was always the first town when using [events_filterform]
 * Bugfix: make sure the correct scheme is used for admin_url
 * Bugfix: the generated ical link didn't take the author or contact person into account
 * Bugfix: the calendar links now take into account all options for contact person, categories etc ...
+* Bugfix: fix class warnings in extra plugin events-made-easy-frontend-submit
+* Bugfix: the featured image for locations was not retained after you re-edit and save the location without changing the image
+* Bugfix: url-encoded strings in the format argument of the [events_list] shortcode were not being interpreted
+* Bugfix: remove use of deprecated wordpress functions get_userdatabylogin and wpdb::escape
 
 = 1.1.2 =
 * Feature: new placeholder #_RESPSPACESxx for bookings, to indicate the bookings per price for multiprice events

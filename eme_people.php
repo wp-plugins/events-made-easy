@@ -47,8 +47,9 @@ function eme_people_page() {
 add_action('init','eme_ajax_actions'); 
 function eme_ajax_actions() {
    if (isset($_GET['eme_ajax_action']) && $_GET['eme_ajax_action'] == 'booking_data') {
-      if (isset($_GET['event_id']))
+      if (isset($_GET['event_id'])) {
          echo "[ {bookedSeats:".eme_get_booked_seats(intval($_GET['event_id'])).", availableSeats:".eme_get_available_seats(intval($_GET['event_id']))."}]"; 
+      }
       die();
    }
    if (isset($_POST['eme_ajax_action']) && $_POST['eme_ajax_action'] == 'client_clock_submit') {
@@ -88,21 +89,30 @@ function eme_global_map_json($eventful = false, $scope = "all", $category = '', 
       $tmp_loc=preg_replace("/\r\n|\n\r|\n/","<br />",$tmp_loc);
       $json_location[] = '"location_balloon":"'.eme_trans_sanitize_html($tmp_loc).'"';
 
-      # second, we unset the description, it might interfere with the json result
-      unset($location['location_description']);
-
-      # third, we fill in the rest of the info
+      # second, we fill in the rest of the info
       foreach($location as $key => $value) {
-         # no newlines allowed, otherwise no map is shown
-         $value=preg_replace("/\r\n|\n\r|\n/","<br />",$value);
-         $json_location[] = '"'.$key.'":"'.eme_trans_sanitize_html($value).'"';
+         # we skip some keys, since json is limited in size we only return what's needed in the javascript
+         if (preg_match('/location_balloon|location_id|location_latitude|location_longitude/', $key)) {
+            # no newlines allowed, otherwise no map is shown
+            $value=preg_replace("/\r\n|\n\r|\n/","<br />",$value);
+            $json_location[] = '"'.$key.'":"'.eme_trans_sanitize_html($value).'"';
+         }
       }
       $json_locations[] = "{".implode(",",$json_location)."}";
    }
+
+   $zoom_factor=get_option('eme_global_zoom_factor');
+   $maptype=get_option('eme_global_maptype');
+   if ($zoom_factor >14) $zoom_factor=14;
+
    $json = '{"locations":[';
    $json .= implode(",", $json_locations); 
    $json .= '],"enable_zooming":"';
    $json .= get_option('eme_gmap_zooming') ? 'true' : 'false';
+   $json .= '","zoom_factor":"' ;
+   $json .= $zoom_factor;
+   $json .= '","maptype":"' ;
+   $json .= $maptype;
    $json .= '"}' ;
    echo $json;
 }
@@ -127,7 +137,7 @@ function fputcsv2 ($fh, $fields, $delimiter = ',', $enclosure = '"', $mysql_null
 }
 function eme_csv_booking_report($event_id) {
    $event = eme_get_event($event_id);
-   $is_multiprice = eme_is_multiprice($event['price']);
+   $is_multiprice = eme_is_multi($event['price']);
    $current_userid=get_current_user_id();
    if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
         (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)))) {
@@ -203,12 +213,18 @@ function eme_printable_booking_report($event_id) {
         die;
    }
 
+   $is_multiprice = eme_is_multi($event['price']);
+   $is_multiseat = eme_is_multi($event['event_seats']);
    $bookings = eme_get_bookings_for($event_id);
    $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $available_seats = eme_get_available_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
-   $is_multiprice = eme_is_multiprice($event['price']);
+   if ($is_multiseat) {
+      $available_seats_ms=join('||',eme_get_available_multiseats($event_id));
+      $booked_seats_ms=join('||',eme_get_booked_multiseats($event_id));
+      $pending_seats_ms=join('||',eme_get_pending_multiseats($event_id));
+   }
 
    $stylesheet = EME_PLUGIN_URL."events_manager.css";
    foreach($answer_columns as $col) {
@@ -302,16 +318,21 @@ function eme_printable_booking_report($event_id) {
                <td colspan='2'>&nbsp;</td>
                <td class='total-label'><?php _e('Booked', 'eme')?>:</td>
                <td colspan='3' class='seats-number'><?php
-			echo $booked_seats;
-			if ($pending_seats>0)
-				echo " ".sprintf( __('(%s pending)','eme'), $pending_seats);
+               print $booked_seats;
+               if ($is_multiseat) print " ($booked_seats_ms)";
+			      if ($pending_seats>0) {
+                  if ($is_multiseat)
+                     print " ".sprintf( __('(%s pending)','eme'), $pending_seats . " ($pending_seats_ms)");
+                  else
+                     print " ".sprintf( __('(%s pending)','eme'), $pending_seats);
+               }
 			?>
 		</td>
             </tr>
             <tr id='available-seats'>
                <td colspan='2'>&nbsp;</td> 
                <td class='total-label'><?php _e('Available', 'eme')?>:</td>
-               <td colspan='3' class='seats-number'><?php echo $available_seats; ?></td>
+               <td colspan='3' class='seats-number'><?php print $available_seats; if ($is_multiseat) print " ($available_seats_ms)"; ?></td>
             </tr>
          </table>
          </div>
