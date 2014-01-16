@@ -1016,25 +1016,24 @@ function get_locations_shortcode($atts) {
 
    $locations = eme_get_locations((bool)$eventful, $scope, $category, $offset);
 
+   // format is not a locations shortcode, so we need to set the value to "" here, to avoid php warnings
+   $format="";
+   $eme_format_header="";
+   $eme_format_footer="";
+
    if ($template_id) {
       $format_arr = eme_get_template($template_id);
       $format=$format_arr['format'];
-   } else {
-      $format="";
    }
    if ($template_id_header) {
       $format_arr = eme_get_template($template_id_header);
       $format_header = $format_arr['format'];
       $eme_format_header=eme_replace_locations_placeholders($format_header);
-   } else {
-      $eme_format_header="";
    }
    if ($template_id_footer) {
       $format_arr = eme_get_template($template_id_footer);
       $format_footer = $format_arr['format'];
       $eme_format_footer=eme_replace_locations_placeholders($format_footer);
-   } else {
-      $eme_format_footer="";
    }
    if (empty($format)) {
       $format = get_option('eme_location_list_item_format' );

@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.2.4 =
+* Bugfix: prevent double header/footer appearance in event lists
+
 = 1.2.3 =
 * Bugfix: prevent double header/footer appearance in event lists
 
