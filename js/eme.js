@@ -14,7 +14,7 @@ function isoStringToDate(s) {
 function remove_booking() {
 	eventId = ($j_eme(this).parents('table:first').attr('id').split("-"))[3]; 
 	idToRemove = ($j_eme(this).parents('tr:first').attr('id').split("-"))[1];
-	$j_eme_booking.ajax({
+	$j_eme.ajax({
   	  type: "POST",
 	    url: "admin.php?page=eme-people&action=remove_booking",
 	    data: "booking_id="+ idToRemove,
