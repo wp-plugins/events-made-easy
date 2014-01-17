@@ -1373,7 +1373,7 @@ function eme_add_directions_form($location) {
    $locale_code = substr ( get_locale (), 0, 2 );
    $res = "";
    if (isset($location['location_address']) && isset($location['location_town'])) {
-      $res .= '<form action="http://maps.google.com/maps" method="get" target="_blank" style="text-align:left;">';
+      $res .= '<form action="//maps.google.com/maps" method="get" target="_blank" style="text-align:left;">';
       $res .= '<div id="eme_direction_form"><label for="saddr">'.__('Your Street Address','eme').'</label><br />';
       $res .= '<input type="text" name="saddr" id="saddr" value="" />';
       $res .= '<input type="hidden" name="daddr" value="'.$location['location_address'].', '.$location['location_town'].'" />';
