@@ -161,8 +161,22 @@ function eme_add_booking_form($event_id) {
 }
 
 function eme_add_booking_form_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id' => 0), $atts));
+   extract ( shortcode_atts ( array ('id'=>0), $atts));
    return eme_add_booking_form($id);
+}
+
+function eme_booking_list_shortcode($atts) {
+   extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
+   $event = eme_get_event(intval($id));
+   if ($event && $rsvp_is_active && $event['event_rsvp'])
+      return eme_get_bookings_list_for($event,$template_id,$template_id_header,$template_id_footer);
+}
+
+function eme_attendee_list_shortcode($atts) {
+   extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
+   $event = eme_get_event(intval($id));
+   if ($event && $rsvp_is_active && $event['event_rsvp'])
+      return eme_get_attendees_list_for($event,$template_id,$template_id_header,$template_id_footer);
 }
 
 function eme_delete_booking_form($event_id) {
@@ -1103,29 +1117,67 @@ function eme_get_attendees_for($event_id,$pending_approved=0,$only_unpayed=0) {
    return $attendees;
 }
 
-function eme_get_attendees_list_for($event) {
+function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,$template_id_footer=0) {
    $attendees = eme_get_attendees_for($event['event_id']);
+   $format=get_option('eme_attendees_list_format');
+   $eme_format_header="<ul class='eme_bookings_list_ul'>";
+   $eme_format_footer="</ul>";
+
+   if ($template_id) {
+      $format_arr = eme_get_template($template_id);
+      $format=$format_arr['format'];
+   }
+   if ($template_id_header) {
+      $format_arr = eme_get_template($template_id_header);
+      $format_header = $format_arr['format'];
+      $eme_format_header=eme_replace_attendees_placeholders($format_header);
+   }
+   if ($template_id_footer) {
+      $format_arr = eme_get_template($template_id_footer);
+      $format_footer = $format_arr['format'];
+      $eme_format_footer=eme_replace_attendees_placeholders($format_footer);
+   }
+
    if ($attendees) {
-      $res="<ul class='eme_bookings_list_ul'>";
+      $res=$eme_format_header;
       foreach ($attendees as $attendee) {
-         $res.=eme_replace_attendees_placeholders(get_option('eme_attendees_list_format'),$event,$attendee);
+         $res.=eme_replace_attendees_placeholders($format,$event,$attendee);
       }
-      $res.="</ul>";
+      $res.=$eme_format_footer;
    } else {
       $res="<p class='eme_no_bookings'>".__('No responses yet!','eme')."</p>";
    }
    return $res;
 }
 
-function eme_get_bookings_list_for($event) {
+function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$template_id_footer=0) {
    global $wpdb; 
    $bookings=eme_get_bookings_for($event['event_id']);
+   $format=get_option('eme_bookings_list_format');
+   $eme_format_header=get_option('eme_bookings_list_header_format');
+   $eme_format_footer=get_option('eme_bookings_list_footer_format');
+
+   if ($template_id) {
+      $format_arr = eme_get_template($template_id);
+      $format=$format_arr['format'];
+   }
+   if ($template_id_header) {
+      $format_arr = eme_get_template($template_id_header);
+      $format_header = $format_arr['format'];
+      $eme_format_header=eme_replace_bookings_placeholders($format_header);
+   }
+   if ($template_id_footer) {
+      $format_arr = eme_get_template($template_id_footer);
+      $format_footer = $format_arr['format'];
+      $eme_format_footer=eme_replace_bookings_placeholders($format_footer);
+   }
+
    if ($bookings) {
-      $res=get_option('eme_bookings_list_header_format');
+      $res=$eme_format_header;
       foreach ($bookings as $booking) {
-         $res.= eme_replace_booking_placeholders(get_option('eme_bookings_list_format'),$event,$booking);
+         $res.= eme_replace_booking_placeholders($format,$event,$booking);
       }
-      $res.=get_option('eme_bookings_list_footer_format');
+      $res.=$eme_format_footer;
    } else {
       $res="<p class='eme_no_bookings'>".__('No responses yet!','eme')."</p>";
    }

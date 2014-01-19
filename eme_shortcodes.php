@@ -20,6 +20,8 @@ add_shortcode('eme_locations','eme_get_locations_shortcode');
 add_shortcode('eme_location','eme_get_location_shortcode');
 add_shortcode('eme_add_booking_form','eme_add_booking_form_shortcode');
 add_shortcode('eme_delete_booking_form','eme_delete_booking_form_shortcode');
+add_shortcode('eme_bookings','eme_booking_list_shortcode');
+add_shortcode('eme_attendees','eme_attendee_list_shortcode');
 
 // old shortcode names
 add_shortcode('events_calendar', 'eme_get_calendar_shortcode');
