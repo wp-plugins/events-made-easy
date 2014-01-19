@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.2.5 =
+* Feature: added option template_id to shortcode display_single_event
 * Bugfix: make sure that relative protocol urls (no http: or https:) are used for google api's in the admin backend
 * Bugfix: in the event edit window, the ajax method for removing rsvp's wasn't working anymore
 

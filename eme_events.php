@@ -1264,16 +1264,21 @@ function eme_get_events_list_shortcode($atts) {
 }
 add_shortcode ( 'events_list', 'eme_get_events_list_shortcode' );
 
-function eme_display_single_event($event_id) {
+function eme_display_single_event($event_id,$template_id=0) {
    $event = eme_get_event ( intval($event_id) );
-   $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+   if ($template_id) {
+      $format_arr = eme_get_template($template_id);
+      $single_event_format=$format_arr['format'];
+   } else {
+      $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+   }
    $page_body = eme_replace_placeholders ($single_event_format, $event);
    return $page_body;
 }
 
 function eme_display_single_event_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id'=>''), $atts ) );
-   return eme_display_single_event($id);
+   extract ( shortcode_atts ( array ('id'=>'','template_id'=>0), $atts ) );
+   return eme_display_single_event($id,$template_id);
 }
 add_shortcode('display_single_event', 'eme_display_single_event_shortcode');
 
