@@ -989,7 +989,6 @@ function eme_global_map($atts) {
    }
    return $result;
 }
-add_shortcode('locations_map', 'eme_global_map'); 
 
 function eme_display_single_location_shortcode($atts){
    extract ( shortcode_atts ( array ('id'=>''), $atts ) );
@@ -997,7 +996,6 @@ function eme_display_single_location_shortcode($atts){
    $map_div = eme_single_location_map($location);
    return $map_div;
 }
-add_shortcode('display_single_location', 'eme_display_single_location_shortcode');
 
 function get_locations_shortcode($atts) {
    global $wpdb, $jquery_override_lang;
@@ -1079,7 +1077,6 @@ function get_locations_shortcode($atts) {
 EOD;
    return $output;
 }
-add_shortcode('events_locations','get_locations_shortcode');
 
 function eme_replace_locations_placeholders($format, $location="", $target="html", $do_shortcode=1) {
 

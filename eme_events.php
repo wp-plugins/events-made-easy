@@ -1262,7 +1262,6 @@ function eme_get_events_list_shortcode($atts) {
    $result = eme_get_events_list ( $limit,$scope,$order,$format,0,$category,$showperiod,$long_events,$author,$contact_person,$paging,$location_id,$user_registered_only,$show_ongoing,$link_showperiod,$notcategory,$template_id,$template_id_header,$template_id_footer);
    return $result;
 }
-add_shortcode ( 'events_list', 'eme_get_events_list_shortcode' );
 
 function eme_display_single_event($event_id,$template_id=0) {
    $event = eme_get_event ( intval($event_id) );
@@ -1280,7 +1279,6 @@ function eme_display_single_event_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>'','template_id'=>0), $atts ) );
    return eme_display_single_event($id,$template_id);
 }
-add_shortcode('display_single_event', 'eme_display_single_event_shortcode');
 
 function eme_get_events_page($justurl = 0, $echo = 1, $text = '') {
    if (strpos ( $justurl, "=" )) {
@@ -1314,7 +1312,6 @@ function eme_get_events_page_shortcode($atts) {
    $result = eme_get_events_page ( "justurl=$justurl&text=$text&echo=0" );
    return $result;
 }
-add_shortcode ( 'events_page', 'eme_get_events_page_shortcode' );
 
 // API function
 function eme_are_events_available($scope = "future",$order = "ASC", $location_id = "", $category = '', $author = '', $contact_person = '') {
@@ -3683,7 +3680,6 @@ function eme_rss_link_shortcode($atts) {
    $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&location_id=$location_id&title=".urlencode($title) );
    return $result;
 }
-add_shortcode ( 'events_rss_link', 'eme_rss_link_shortcode' );
 
 function eme_rss() {
    if (isset ( $_GET['eme_rss'] ) && $_GET['eme_rss'] == 'main') {
@@ -4029,7 +4025,6 @@ function eme_countdown($atts) {
    $start_date=$event['event_start_date'];
    return eme_daydifference($now,$start_date);
 }
-add_shortcode('events_countdown', 'eme_countdown');
 
 function eme_image_url_for_event($event) {
    if (isset($event['recurrence_id']) && $event['recurrence_id']>0) {

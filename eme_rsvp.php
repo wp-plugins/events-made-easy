@@ -164,7 +164,6 @@ function eme_add_booking_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('id' => 0), $atts));
    return eme_add_booking_form($id);
 }
-add_shortcode ('events_add_booking_form','eme_add_booking_form_shortcode');
 
 function eme_delete_booking_form($event_id) {
    global $form_delete_message, $current_user;
@@ -229,7 +228,6 @@ function eme_delete_booking_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('id' => 0), $atts));
    return eme_delete_booking_form($id);
 }
-add_shortcode ('events_delete_booking_form','eme_delete_booking_form_shortcode');
 
 function eme_catch_rsvp() {
    global $current_user;

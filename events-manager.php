@@ -327,6 +327,7 @@ include("eme_attributes.php");
 include("eme_ical.php");
 include("eme_cleanup.php");
 include("eme_formfields.php");
+include("eme_shortcodes.php");
 
 require_once("phpmailer/eme_phpmailer.php") ;
 //require_once("phpmailer/language/phpmailer.lang-en.php") ;

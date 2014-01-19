@@ -113,7 +113,6 @@ function eme_ical_link_shortcode($atts) {
    $result = eme_ical_link ( $justurl,0,$text,$category,$location_id, $scope,$author,$contact_person,$notcategory );
    return $result;
 }
-add_shortcode ( 'events_ical_link', 'eme_ical_link_shortcode' );
 
 function eme_ical() {
    if (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public_single' && isset ( $_GET ['event_id'] )) {

@@ -63,6 +63,30 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.2.5 =
 * Feature: added option template_id to shortcode display_single_event
+* Improvement: unified shortcode names:
+
+  events_calendar             ==>   eme_calendar
+  events_list                 ==>   eme_events
+  display_single_event        ==>   eme_event
+  events_page                 ==>   eme_events_page
+  events_rss_link             ==>   eme_rss_link
+  events_ical_link            ==>   eme_ical_link
+  events_countdown            ==>   eme_countdown
+  events_filterform           ==>   eme_filterform
+  events_if                   ==>   eme_if
+  events_if2                  ==>   eme_if2
+  events_if3                  ==>   eme_if3
+  events_if4                  ==>   eme_if4
+  events_if5                  ==>   eme_if5
+  events_if6                  ==>   eme_if6
+  locations_map               ==>   eme_locations_map
+  display_single_location     ==>   eme_locations
+  events_locations            ==>   eme_location
+  events_add_booking_form     ==>   eme_add_booking_form
+  events_delete_booking_form  ==>   eme_delete_booking_form
+  
+  The old names are still valid, but will disappear from the doc
+
 * Bugfix: make sure that relative protocol urls (no http: or https:) are used for google api's in the admin backend
 * Bugfix: in the event edit window, the ajax method for removing rsvp's wasn't working anymore
 

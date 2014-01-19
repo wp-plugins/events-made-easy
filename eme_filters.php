@@ -17,7 +17,6 @@ function eme_filter_form_shortcode($atts) {
    $form .= "<input type='submit' value='$submit' /></form>";
    return $form;
 }
-add_shortcode ( 'events_filterform', 'eme_filter_form_shortcode' );
 
 function eme_create_week_scope($count) {
    $day_offset=date('w');
