@@ -63,6 +63,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.2.5 =
 * Feature: added option template_id to shortcode display_single_event
+* Feature: added shortcode eme_location, with location id as argument, and optional a template_id
 * Improvement: unified shortcode names:
 
   events_calendar             ==>   eme_calendar
@@ -80,8 +81,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   events_if5                  ==>   eme_if5
   events_if6                  ==>   eme_if6
   locations_map               ==>   eme_locations_map
-  display_single_location     ==>   eme_locations
-  events_locations            ==>   eme_location
+  display_single_location     ==>   eme_location_map
+  events_locations            ==>   eme_locations
   events_add_booking_form     ==>   eme_add_booking_form
   events_delete_booking_form  ==>   eme_delete_booking_form
   

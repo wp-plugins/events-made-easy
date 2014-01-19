@@ -990,14 +990,31 @@ function eme_global_map($atts) {
    return $result;
 }
 
-function eme_display_single_location_shortcode($atts){
+function eme_single_location_map_shortcode($atts){
    extract ( shortcode_atts ( array ('id'=>''), $atts ) );
    $location=eme_get_location($id);
    $map_div = eme_single_location_map($location);
    return $map_div;
 }
 
-function get_locations_shortcode($atts) {
+function eme_display_single_location($location_id,$template_id=0) {
+   $location = eme_get_location( intval($location_id) );
+   if ($template_id) {
+      $format_arr = eme_get_template($template_id);
+      $single_location_format=$format_arr['format'];
+   } else {
+      $single_location_format = get_option('eme_location_list_item_format');
+   }
+   $page_body = eme_replace_location_placeholders ($single_location_format, $location);
+   return $page_body;
+}
+
+function eme_get_location_shortcode($atts) {
+   extract ( shortcode_atts ( array ('id'=>'','template_id'=>0), $atts ) );
+   return eme_display_single_location($id,$template_id);
+}
+
+function eme_get_locations_shortcode($atts) {
    global $wpdb, $jquery_override_lang;
    extract(shortcode_atts(array(
       'eventful'  => false,
