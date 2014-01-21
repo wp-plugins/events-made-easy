@@ -67,6 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   [eme_location id=1 template_id=3]
 * Feature: added shortcodes eme_bookings and eme_attendees, with event id as argument, and optional a template_id for header, content and footer
   [eme_attendees id=1 template_id=3 template_id_header=7 template_id_footer=9]
+* Feature: added placeholder #_IS_MULTIDAY. Returns 1 if the event start date is different from the end date, 0 otherwise.
 * Improvement: unified shortcode names:
 
   events_calendar             ==>   eme_calendar
