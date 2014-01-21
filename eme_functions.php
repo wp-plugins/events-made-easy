@@ -127,18 +127,23 @@ function eme_event_url($event) {
          $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
          $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
          $name=$events_prefix.$event['event_id']."/".eme_permalink_convert($slug);
+         $the_link = home_url();
+         // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+         $the_link = trailingslashit(remove_query_arg('lang',$the_link));
          if (!empty($language)) {
             if ($url_mode==2) {
-               $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+               $the_link = $the_link."$language/".user_trailingslashit($name);
             } else {
-               $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+               $the_link = $the_link.user_trailingslashit($name);
                $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
             }
          } else {
-            $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+            $the_link = $the_link.user_trailingslashit($name);
          }
       } else {
          $the_link = eme_get_events_page(true, false);
+         // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+         $the_link = remove_query_arg('lang',$the_link);
          $the_link = add_query_arg( array( 'event_id' => $event['event_id'] ), $the_link );
          if (!empty($language))
             $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
@@ -168,18 +173,23 @@ function eme_location_url($location) {
             $locations_prefix=eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix'));
             $slug = $location['location_slug'] ? $location['location_slug'] : $location['location_name'];
             $name=$locations_prefix.$location['location_id']."/".eme_permalink_convert($slug);
+            $the_link = home_url();
+            // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+            $the_link = trailingslashit(remove_query_arg('lang',$the_link));
             if (!empty($language)) {
                if ($url_mode==2) {
-                  $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+                  $the_link = $the_link."$language/".user_trailingslashit($name);
                } else {
-                  $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+                  $the_link = $the_link.user_trailingslashit($name);
                   $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
                }
             } else {
-               $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+               $the_link = $the_link.user_trailingslashit($name);
             }
          } else {
             $the_link = eme_get_events_page(true, false);
+            // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+            $the_link = remove_query_arg('lang',$the_link);
             $the_link = add_query_arg( array( 'location_id' => $location['location_id'] ), $the_link );
             if (!empty($language))
                $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
@@ -204,18 +214,23 @@ function eme_calendar_day_url($day) {
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix.eme_permalink_convert($day);
+      $the_link = home_url();
+      // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+      $the_link = trailingslashit(remove_query_arg('lang',$the_link));
       if (!empty($language)) {
          if ($url_mode==2) {
-            $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+            $the_link = $the_link."$language/".user_trailingslashit($name);
          } else {
-            $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+            $the_link = $the_link.user_trailingslashit($name);
             $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
          }
       } else {
-         $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+         $the_link = $the_link.user_trailingslashit($name);
       }
    } else {
       $the_link = eme_get_events_page(true, false);
+      // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+      $the_link = remove_query_arg('lang',$the_link);
       $the_link = add_query_arg( array( 'calendar_day' => $day ), $the_link );
       if (!empty($language))
          $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
@@ -238,18 +253,23 @@ function eme_payment_url($booking_id) {
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix."p$booking_id";
+      $the_link = home_url();
+      // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+      $the_link = trailingslashit(remove_query_arg('lang',$the_link));
       if (!empty($language)) {
          if ($url_mode==2) {
-            $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+            $the_link = $the_link."$language/".user_trailingslashit($name);
          } else {
-            $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+            $the_link = $the_link.user_trailingslashit($name);
             $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
          }
       } else {
-         $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+         $the_link = $the_link.user_trailingslashit($name);
       }
    } else {
       $the_link = eme_get_events_page(true, false);
+      // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+      $the_link = remove_query_arg('lang',$the_link);
       $the_link = add_query_arg( array( 'eme_pmt_id' => $booking_id ), $the_link );
       if (!empty($language))
          $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
@@ -272,18 +292,23 @@ function eme_event_category_url($cat_name) {
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix."cat/".eme_permalink_convert($cat_name);
+      $the_link = home_url();
+      // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+      $the_link = trailingslashit(remove_query_arg('lang',$the_link));
       if (!empty($language)) {
          if ($url_mode==2) {
-            $the_link = trailingslashit(home_url())."$language/".user_trailingslashit($name);
+            $the_link = $the_link."$language/".user_trailingslashit($name);
          } else {
-            $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+            $the_link = $the_link.user_trailingslashit($name);
             $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
          }
       } else {
-         $the_link = trailingslashit(home_url()).user_trailingslashit($name);
+         $the_link = $the_link.user_trailingslashit($name);
       }
    } else {
       $the_link = eme_get_events_page(true, false);
+      // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+      $the_link = remove_query_arg('lang',$the_link);
       $the_link = add_query_arg( array( 'eme_event_cat' => $cat_name ), $the_link );
       if (!empty($language))
          $the_link = add_query_arg( array( 'lang' => $language ), $the_link );

@@ -94,6 +94,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 * Bugfix: make sure that relative protocol urls (no http: or https:) are used for google api's in the admin backend
 * Bugfix: in the event edit window, the ajax method for removing rsvp's wasn't working anymore
+* Bugfix: some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
 
 = 1.2.4 =
 * Bugfix: prevent double header/footer appearance in event lists
