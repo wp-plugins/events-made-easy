@@ -503,8 +503,10 @@ function eme_book_seats($event, $send_mail=1) {
 
             $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment);
             eme_record_answers($booking_id);
+            $booking = eme_get_booking ($booking_id);
             $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
             $result = eme_replace_placeholders($format, $event);
+            $result = eme_replace_booking_placeholders($result, $event, $booking);
             if (is_admin()) {
                $action="approveRegistration";
             } else {
@@ -1363,16 +1365,14 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $cancelled_body = eme_translate($cancelled_body);  
    $event_name = eme_translate($event_name);  
 
-   if ($action!="") {
-      if ($action == 'approveRegistration') {
-         eme_send_mail(sprintf(__("Reservation for '%s' confirmed",'eme'),$event_name),$confirmed_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
-      } elseif ($action == 'denyRegistration') {
-         eme_send_mail(sprintf(__("Reservation for '%s' denied",'eme'),$event_name),$denied_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
-      } elseif ($action == 'cancelRegistration') {
-         eme_send_mail(sprintf(__("Reservation for '%s' cancelled",'eme'),$event_name),$cancelled_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
-         eme_send_mail(sprintf(__("A reservation has been cancelled for '%s'",'eme'),$event_name), $contact_cancelled_body, $contact_email, $contact_name, $contact_email, $contact_name);
-      }
-   } else {
+   if ($action == 'approveRegistration') {
+      eme_send_mail(sprintf(__("Reservation for '%s' confirmed",'eme'),$event_name),$confirmed_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
+   } elseif ($action == 'denyRegistration') {
+      eme_send_mail(sprintf(__("Reservation for '%s' denied",'eme'),$event_name),$denied_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
+   } elseif ($action == 'cancelRegistration') {
+      eme_send_mail(sprintf(__("Reservation for '%s' cancelled",'eme'),$event_name),$cancelled_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
+      eme_send_mail(sprintf(__("A reservation has been cancelled for '%s'",'eme'),$event_name), $contact_cancelled_body, $contact_email, $contact_name, $contact_email, $contact_name);
+   } elseif (empty($action)) {
       // send different mails depending on approval or not
       if ($event['registration_requires_approval']) {
          eme_send_mail(sprintf(__("Approval required for new booking for '%s'",'eme'),$event_name), $contact_pending_body, $contact_email, $contact_name, $contact_email, $contact_name);
