@@ -40,6 +40,11 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    //DTSTAMP must be in UTC format, so adding "Z" as well
    $res .= "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z\r\n";
    if ($event['event_properties']['all_day']) {
+      // ical standard for an all day event: specify only the day, meaning
+      // an 'all day' event is flagged as starting at the beginning of one day and lasting until the beginning of the next
+      // so it is the same as adding "T000000" as time spec to the start/end datestring
+      // But since it "ends" at the beginning of the next day, we should add 24 hours, otherwise the event ends one day too soon
+      $dtenddate=date_i18n("Ymd",$endstring+86400);
       $res .= "DTSTART;VALUE=DATE:$dtstartdate\r\n";
       $res .= "DTEND;VALUE=DATE:$dtenddate\r\n";
    } else {
