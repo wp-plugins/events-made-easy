@@ -96,6 +96,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: in the event edit window, the ajax method for removing rsvp's wasn't working anymore
 * Bugfix: some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
 * Bugfix: booking placeholders are also possible for the 'booking ok' message
+* Bugfix: only show location info in the ical feed if there's actually a location
 
 = 1.2.4 =
 * Bugfix: prevent double header/footer appearance in event lists

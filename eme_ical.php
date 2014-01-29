@@ -15,7 +15,6 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    $title = eme_sanitize_ical (eme_replace_placeholders ( $title_format, $event, "text" ));
    $description = eme_sanitize_ical (eme_replace_placeholders ( $description_format, $event, "text" ));
    $html_description = eme_sanitize_ical (eme_replace_placeholders ( $description_format, $event, "html" ),1);
-   $location = eme_sanitize_ical (eme_replace_placeholders ( "#_LOCATION, #_ADDRESS, #_TOWN", $event, "text" ));
 
    $event_link = eme_event_url($event);
    $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
@@ -58,7 +57,10 @@ function eme_ical_single_event($event, $title_format, $description_format) {
       $thumb_url = $thumb_array[0];
       $res .= "ATTACH:$thumb_url\r\n";
    }
-   $res .= "LOCATION:$location\r\n";
+   if (isset($event['location_id']) && $event['location_id']) {
+      $location = eme_sanitize_ical (eme_replace_placeholders ( "#_LOCATION, #_ADDRESS, #_TOWN", $event, "text" ));
+      $res .= "LOCATION:$location\r\n";
+   }
    $res .= "END:VEVENT\r\n";
    return $res;
 }
