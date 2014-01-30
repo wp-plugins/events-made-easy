@@ -175,7 +175,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
 
       if ($found) {
          $replacement = apply_filters('eme_general', $replacement);
-         $format = preg_replace("/$orig_result/", $replacement ,$format );
+         $format = str_replace($orig_result, $replacement ,$format );
       }
    }
 

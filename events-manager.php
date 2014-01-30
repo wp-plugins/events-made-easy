@@ -1011,7 +1011,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = preg_replace("/$orig_result/", $replacement ,$format );
+      $format = str_replace($orig_result, $replacement ,$format );
    }
 
    // and now all the other placeholders
@@ -1643,7 +1643,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          $replacement = rawurlencode($replacement);
       }
       if ($found)
-         $format = preg_replace("/$orig_result/", $replacement ,$format );
+         $format = str_replace($orig_result, $replacement ,$format );
    }
 
    # now handle all possible location placeholders
@@ -1703,7 +1703,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          $replacement = rawurlencode($replacement);
       }
       if ($found)
-         $format = preg_replace("/$orig_result/", $replacement ,$format );
+         $format = str_replace($orig_result, $replacement ,$format );
    }
 
    // for extra date formatting, eg. #_{d/m/Y}
@@ -1740,7 +1740,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($need_urlencode) {
          $replacement = rawurlencode($replacement);
       }
-      $format = preg_replace("/$orig_result/", $replacement ,$format );
+      $format = str_replace($orig_result, $replacement ,$format );
    }
 
    return do_shortcode($format);   
