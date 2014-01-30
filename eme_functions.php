@@ -439,6 +439,9 @@ function eme_currency_array() {
    $currency_array ['THB'] = __ ( 'Thai Baht', 'eme' );
    $currency_array ['USD'] = __ ( 'U.S. Dollar', 'eme' );
    $currency_array ['CNY'] = __ ( 'Chinese Yuan Renminbi', 'eme' );
+
+   # the next filter allows people to add extra currencies:
+   if (has_filter('eme_add_currencies')) $currency_array=apply_filters('eme_add_currencies',$currency_array);
    return $currency_array;
 }
 
