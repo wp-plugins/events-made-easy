@@ -985,7 +985,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($results[0] as $resultKey => $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -1023,7 +1023,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       $found = 1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1657,7 +1657,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       $result=$placeholders[0];
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       $found = 1;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
@@ -1714,7 +1714,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    foreach($results[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;

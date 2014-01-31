@@ -1195,7 +1195,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       $replacement='';
       $found = 1;
       $need_escape=0;
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -1288,7 +1288,7 @@ function eme_replace_attendees_placeholders($format, $event, $attendee, $target=
    foreach($placeholders[0] as $result) {
       $replacement='';
       $found = 1;
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       if (preg_match('/#_(ATTEND)?(NAME|PHONE|ID|EMAIL)$/', $result)) {
          $field = preg_replace("/#_ATTEND|#_/","",$result);
          $field = "person_".strtolower($field);

@@ -292,7 +292,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    foreach($results[0] as $resultKey => $result) {
       $need_escape = 0;
       $need_urlencode = 0;
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       if (strstr($result,'#ESC')) {
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
@@ -343,7 +343,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    # we need 3 required fields: #_NAME, #_EMAIL and #_SEATS
    # if these are not present: we don't replace anything and the form is worthless
    foreach($placeholders[0] as $result) {
-      $orig_result = preg_quote($result,'/');
+      $orig_result = $result;
       $found=1;
       $required=0;
       $html5_wanted=0;
