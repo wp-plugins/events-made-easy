@@ -492,7 +492,8 @@ class EMEFS {
 	 */
 	
 	public static function getCategories() {
-		return eme_get_categories();
+		$categories = eme_get_categories();
+      if (has_filter('emefs_categories_filter')) $categories=apply_filters('emefs_categories_filter',$categories);
 	}
 	
 	/**
