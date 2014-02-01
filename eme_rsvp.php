@@ -438,6 +438,11 @@ function eme_book_seats($event, $send_mail=1) {
       $bookerName = $current_user->display_name;
       $bookerEmail = $current_user->user_email;
       $booker = eme_get_person_by_wp_id($booker_wp_id); 
+   } elseif (!is_admin() && is_user_logged_in()) {
+      $booker_wp_id=get_current_user_id();
+      $bookerName = eme_strip_tags($_POST['bookerName']);
+      $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
+      $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    } else {
       $booker_wp_id=0;
       $bookerName = eme_strip_tags($_POST['bookerName']);
