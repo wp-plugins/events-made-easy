@@ -1162,7 +1162,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)(.+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
-            $seats = preg_split("/\|\|/",$event['event_seats']);
+            $seats = eme_convert_multi2array($event['event_seats']);
             if (array_key_exists($field_id,$seats))
                $replacement = $seats[$field_id];
          }
@@ -1332,8 +1332,8 @@ function eme_replace_placeholders($format, $event="", $target="html") {
 
       } elseif ($event && preg_match('/#_(EVENT)?PRICE(\d+)$/', $result, $matches)) {
          $field_id = intval($matches[2]-1);
-         if ($event["price"]) {
-            $prices = preg_split("/\|\|/",$event["price"]);
+         if ($event["price"] && eme_is_multi($event["price"])) {
+            $prices = eme_convert_multi2array($event["price"]);
             if (is_array($prices) && array_key_exists($field_id,$prices)) {
                $replacement = $prices[$field_id];
                if ($target == "html") {

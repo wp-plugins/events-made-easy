@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.2.5 =
+* Feature: max and min amount of seats to book for one booking can now also be used for multiprice events (multi-compatible)
 * Feature: added option template_id to shortcode display_single_event
 * Feature: added shortcode eme_location, with location id as argument, and optional a template_id for content:
   [eme_location id=1 template_id=3]

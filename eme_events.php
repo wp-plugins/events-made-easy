@@ -80,6 +80,10 @@ function eme_init_event_props($props) {
       $props['ignore_pending']=0;
    if (!isset($props['all_day']))
       $props['all_day']=0;
+   if (!isset($props['min_allowed']))
+      $props['min_allowed']=get_option('eme_rsvp_addbooking_min_spaces');
+   if (!isset($props['max_allowed']))
+      $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
    return $props;
 }
 
@@ -2511,6 +2515,14 @@ function eme_event_form($event, $title, $element) {
                                  }
                               ?>
                               </select></td>
+                              </tr>
+                              <tr>
+                              <td><?php _e ( 'Max number of spaces to book','eme' ); ?></td>
+                              <td><input id="eme_prop_max_allowed" type="text" name="eme_prop_max_allowed" maxlength='25' title="<?php echo __('The maximum number of spaces a person can book in one go.','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['max_allowed']; ?>" /></td>
+                              </tr>
+                              <tr>
+                              <td><?php _e ( 'Min number of spaces to book','eme' ); ?></td>
+                              <td><input id="eme_prop_min_allowed" type="text" name="eme_prop_min_allowed" maxlength='25' title="<?php echo __('The minimum number of spaces a person can book in one go (it can be 0, for e.g. just an attendee list).','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['min_allowed']; ?>" /></td>
                               </tr></table>
                            <br />
                               <?php _e ( 'Allow RSVP until ','eme' ); ?>
@@ -2681,10 +2693,22 @@ function eme_validate_event($event) {
    if (eme_is_multi($event['event_seats']) && !eme_is_multi($event['price']))
       $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the price per category (multiprice) as well.', 'eme' )."</li>";
    if (eme_is_multi($event['event_seats']) && eme_is_multi($event['price'])) {
-      $count1=count(preg_split("/\|\|/",$event['event_seats']));
-      $count2=count(preg_split("/\|\|/",$event['price']));
+      $count1=count(eme_convert_multi2array($event['event_seats']));
+      $count2=count(eme_convert_multi2array($event['price']));
       if ($count1 != $count2)
          $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the exact same amount of prices (multiprice) as well.', 'eme' )."</li>";
+   }
+   if (eme_is_multi($event['event_properties']['max_allowed']) && eme_is_multi($event['price'])) {
+      $count1=count(eme_convert_multi2array($event['event_properties']['max_allowed']));
+      $count2=count(eme_convert_multi2array($event['price']));
+      if ($count1 != $count2)
+         $troubles .= "<li>".__ ( 'Since this is a multiprice event and you decided to limit the max amount of seats to book (for one booking) per price category, you must specify the exact same amount of "max seats to book" as you did for the prices.', 'eme' )."</li>";
+   }
+   if (eme_is_multi($event['event_properties']['min_allowed']) && eme_is_multi($event['price'])) {
+      $count1=count(eme_convert_multi2array($event['event_properties']['min_allowed']));
+      $count2=count(eme_convert_multi2array($event['price']));
+      if ($count1 != $count2)
+         $troubles .= "<li>".__ ( 'Since this is a multiprice event and you decided to limit the min amount of seats to book (for one booking) per price category, you must specify the exact same amount of "min seats to book" as you did for the prices.', 'eme' )."</li>";
    }
 
    if (empty($troubles)) {
