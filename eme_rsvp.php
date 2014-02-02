@@ -18,7 +18,7 @@ function eme_payment_form($event,$booking_id) {
    if (is_array($event)) {
       $total_price=eme_get_total_booking_price($event,$booking);
       $ret_string = "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
-      $ret_string .= sprintf(__("The booking price in %s is: %d",'eme'),$event['currency'],$total_price);
+      $ret_string .= sprintf(__("The booking price in %s is: %f",'eme'),$event['currency'],$total_price);
       if ($event['use_paypal'])
          $ret_string .= eme_paypal_form($event,$booking_id);
       if ($event['use_2co'])
