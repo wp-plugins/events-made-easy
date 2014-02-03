@@ -1221,6 +1221,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
    $person  = eme_get_person ($booking['person_id']);
    $answers = eme_get_answers($booking['booking_id']);
    
+   usort($placeholders[0],'sort_stringlenth');
    foreach($placeholders[0] as $result) {
       $replacement='';
       $found = 1;
@@ -1315,6 +1316,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
 
 function eme_replace_attendees_placeholders($format, $event, $attendee, $target="html") {
    preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
+   usort($placeholders[0],'sort_stringlenth');
    foreach($placeholders[0] as $result) {
       $replacement='';
       $found = 1;
