@@ -1647,57 +1647,52 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    $format = eme_replace_locations_placeholders ( $format, $event, $target, 0 );
 
    # we handle NOTES the last, so no placeholder replacement happens accidentaly in the text of #_NOTES
-   if ($event && preg_match('/#_(DETAILS|NOTES|EXCERPT|EVENTDETAILS)/', $format, $placeholders)) {
-      $result=$placeholders[0];
-      $need_escape = 0;
-      $need_urlencode = 0;
-      $orig_result = $result;
-      $found = 1;
-      if (strstr($result,'#ESC')) {
-         $result = str_replace("#ESC","#",$result);
-         $need_escape=1;
-      } elseif (strstr($result,'#URL')) {
-         $result = str_replace("#URL","#",$result);
-         $need_urlencode=1;
-      }
-      $replacement = "";
-      $field = "event_".ltrim(strtolower($result), "#_");
-      // to catch every alternative (we just need to know if it is an excerpt or not)
-      if ($field != "event_excerpt")
-         $field = "event_notes";
-
-      // when on the single event page, never show just the excerpt
-      if ($field == "event_excerpt" && eme_is_single_event_page()) {
-         $field = "event_notes";
-      }
-
-      //If excerpt, we use more link text
-      if ($field == "event_excerpt") {
-         if (isset($event['event_notes'])) {
-            $matches = explode('<!--more-->', $event['event_notes']);
-            $replacement = $matches[0];
+   if ($event && preg_match_all('/#(ESC)?_(DETAILS|NOTES|EXCERPT|EVENTDETAILS)/', $format, $placeholders)) {
+      foreach($placeholders[0] as $result) {
+         $need_escape = 0;
+         $orig_result = $result;
+         $found = 1;
+         if (strstr($result,'#ESC')) {
+            $result = str_replace("#ESC","#",$result);
+            $need_escape=1;
          }
-      } elseif (isset($event[$field])) {
-         $replacement = $event[$field];
-      }
-      $replacement = eme_translate($replacement);
-      if ($target == "html") {
-         $replacement = apply_filters('eme_notes', $replacement);
-      } else {
-         if ($target == "rss") {
-            $replacement = apply_filters('eme_notes_rss', $replacement);
-            $replacement = apply_filters('the_content_rss', $replacement);
+         $replacement = "";
+         $field = "event_".ltrim(strtolower($result), "#_");
+         // to catch every alternative (we just need to know if it is an excerpt or not)
+         if ($field != "event_excerpt")
+            $field = "event_notes";
+
+         // when on the single event page, never show just the excerpt
+         if ($field == "event_excerpt" && eme_is_single_event_page()) {
+            $field = "event_notes";
+         }
+
+         //If excerpt, we use more link text
+         if ($field == "event_excerpt") {
+            if (isset($event['event_notes'])) {
+               $matches = explode('<!--more-->', $event['event_notes']);
+               $replacement = $matches[0];
+            }
+         } elseif (isset($event[$field])) {
+            $replacement = $event[$field];
+         }
+         $replacement = eme_translate($replacement);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_notes', $replacement);
          } else {
-            $replacement = apply_filters('eme_text', $replacement);
+            if ($target == "rss") {
+               $replacement = apply_filters('eme_notes_rss', $replacement);
+               $replacement = apply_filters('the_content_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
          }
+         if ($need_escape) {
+            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         }
+         if ($found)
+            $format = str_replace($orig_result, $replacement ,$format );
       }
-      if ($need_escape) {
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-      } elseif ($need_urlencode) {
-         $replacement = rawurlencode($replacement);
-      }
-      if ($found)
-         $format = str_replace($orig_result, $replacement ,$format );
    }
 
    // for extra date formatting, eg. #_{d/m/Y}
