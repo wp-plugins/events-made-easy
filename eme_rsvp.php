@@ -18,7 +18,9 @@ function eme_payment_form($event,$booking_id) {
    if (is_array($event)) {
       $total_price=eme_get_total_booking_price($event,$booking);
       $ret_string = "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
-      $ret_string .= sprintf(__("The booking price in %s is: %f",'eme'),$event['currency'],$total_price);
+      // we use %s for the price format too, to avoid trailing deciman zeros 
+      // %d doesn't work, and %f adds trailing zeros
+      $ret_string .= sprintf(__("The booking price in %s is: %s",'eme'),$event['currency'],$total_price);
       if ($event['use_paypal'])
          $ret_string .= eme_paypal_form($event,$booking_id);
       if ($event['use_2co'])
@@ -2511,7 +2513,7 @@ function eme_get_booking_price($event,$booking) {
       $basic_price=$booking['booking_price'];
    else
       $basic_price=$event['price'];
-   return $basic_price;
+   return floatval($basic_price);
 }
 
 function eme_get_total_booking_price($event,$booking) {
