@@ -459,9 +459,9 @@ function eme_get_persons($person_ids="") {
    foreach ($lines as $line) {
       if (!is_null($line['wp_id']) && $line['wp_id']) {
          $user_info = get_userdata($line['wp_id']);
-         $line['person_name']=$user_info->display_name;
-         $line['person_email']=$user_info->user_email;
-         $line['person_phone']=eme_get_user_phone($line['wp_id']);
+         $line['person_name'].= " (WP username: ".$user_info->display_name.")";
+         #$line['person_email']=$user_info->user_email;
+         #$line['person_phone']=eme_get_user_phone($line['wp_id']);
       }
       # to be able to sort on person names, we need a hash starting with the name
       # but some people might have the same name (or register more than once),
