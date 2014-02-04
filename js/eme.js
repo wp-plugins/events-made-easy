@@ -36,7 +36,7 @@ function update_booking_data () {
 
 function areyousuretodeny() {
    if ($j_eme("select[name=action]").val() == "denyRegistration") {
-      if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
+      if (!confirm("Are you sure you want to deny registration for these bookings?")) {
          return false;
       } else {
          return true;
