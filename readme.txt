@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added shortcodes eme_bookings and eme_attendees, with event id as argument, and optional a template_id for header, content and footer
   [eme_attendees id=1 template_id=3 template_id_header=7 template_id_footer=9]
 * Feature: added placeholder #_IS_MULTIDAY. Returns 1 if the event start date is different from the end date, 0 otherwise.
+* Feature: added placeholder #_BOOKINGID for rsvp mails and booking info, in case you want to share the booking id
 * Feature: added new filter eme_add_currencies, so you can add extra currencies to the list. Be aware that not all payment portals support all currencies.
   Example: to add Ghanaian Cedi (GHS) to the list of currencies, add the following to your theme's functions.php:
 

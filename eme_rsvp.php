@@ -1274,6 +1274,8 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          $replacement = eme_localised_time($booking['creation_date']);
       } elseif (preg_match('/#_BOOKINGMODIFTIME$/', $result)) {
          $replacement = eme_localised_time($booking['modif_date']);
+      } elseif (preg_match('/#_BOOKINGID$/', $result)) {
+         $replacement = $booking['booking_id'];
       } elseif (preg_match('/#_TRANSFER_NBR_BE97$/', $result)) {
          $replacement = $booking['transfer_nbr_be97'];
       } elseif (preg_match('/#_PAYMENT_URL$/', $result)) {
