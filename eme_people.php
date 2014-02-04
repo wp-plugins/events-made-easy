@@ -442,12 +442,6 @@ function eme_get_person($person_id) {
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    $sql = "SELECT * FROM $people_table WHERE person_id = '$person_id';" ;
    $result = $wpdb->get_row($sql, ARRAY_A);
-   if (!is_null($result['wp_id']) && $result['wp_id']) {
-      $user_info = get_userdata($result['wp_id']);
-      $result['person_name']=$user_info->display_name;
-      $result['person_email']=$user_info->user_email;
-      $result['person_phone']=eme_get_user_phone($result['wp_id']);
-   }
    return $result;
 }
 
