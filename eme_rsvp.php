@@ -2513,7 +2513,8 @@ function eme_get_booking_price($event,$booking) {
       $basic_price=$booking['booking_price'];
    else
       $basic_price=$event['price'];
-   return floatval($basic_price);
+   // don't convert to int or float or whatever; it can be multiprice
+   return $basic_price;
 }
 
 function eme_get_total_booking_price($event,$booking) {
