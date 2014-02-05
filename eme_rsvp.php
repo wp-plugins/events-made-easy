@@ -119,7 +119,8 @@ function eme_add_booking_form($event_id) {
             $multi_min_allowed=eme_convert_multi2array($min_allowed);
             $real_min_allowed=$multi_min_allowed[$key];
          } else {
-            $real_min_allowed=$min_allowed;
+            // it's no use to have a non-multi minimum for multiseats
+            $real_min_allowed=0;
          }
          for ( $i = $real_min_allowed; $i <= $multi_max[$key]; $i++) 
             $booked_places_options[$key][$i]=$i;
@@ -505,8 +506,11 @@ function eme_book_seats($event, $send_mail=1) {
    } elseif (eme_is_multi($min_allowed) && eme_is_multi($event['event_seats']) && $bookedSeats_mp < eme_convert_multi2array($min_allowed)) {
       $result = __('Please enter a correct number of spaces to reserve','eme');
    } elseif (!eme_is_multi($max_allowed) && $max_allowed>0 && $bookedSeats>$max_allowed) {
+      // we check the max, but only is max_allowed>0, max_allowed=0 means no limit
       $result = __('Please enter a correct number of spaces to reserve','eme');
    } elseif (eme_is_multi($max_allowed) && eme_is_multi($event['event_seats']) && eme_get_multitotal($max_allowed)>0 && $bookedSeats_mp >  eme_convert_multi2array($max_allowed)) {
+      // we check the max, but only is the total max_allowed>0, max_allowed=0 means no limit
+      // currently we don't support 0 as being no limit per array element
       $result = __('Please enter a correct number of spaces to reserve','eme');
    } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
       // spammers might get here, but we catch them
