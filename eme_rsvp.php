@@ -102,54 +102,91 @@ function eme_add_booking_form($event_id) {
    // you can book the available number of seats, with a max of x per time
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];
-   if (eme_is_event_multiseats($event_id)) {
-      $multi_max = eme_get_available_multiseats($event_id);
-      $max=array_sum($multi_max);
-      $booked_places_options = array();
-      foreach ($multi_max as $key => $value) {
-         if (eme_is_multi($max_allowed)) {
-            $multi_max_allowed=eme_convert_multi2array($max_allowed);
-            if ($value>$multi_max_allowed[$key] && $multi_max_allowed[$key]>0)
-               $multi_max[$key]=$multi_max_allowed[$key];
-         } else {
-            if ($value>$max_allowed && $max_allowed>0)
-               $multi_max[$key]=$max_allowed;
-         }
-         if (eme_is_multi($min_allowed)) {
-            $multi_min_allowed=eme_convert_multi2array($min_allowed);
+   $booked_places_options = array();
+   // the next gives the number of available seats, even for multiprice
+   $avail_seats = eme_get_available_seats($event_id);
+   if (eme_is_multi($max_allowed)) {
+      $multi_max_allowed=eme_convert_multi2array($max_allowed);
+      $max_allowed_is_multi=1;
+   } else {
+      $max_allowed_is_multi=0;
+   }
+   if (eme_is_multi($min_allowed)) {
+      $multi_min_allowed=eme_convert_multi2array($min_allowed);
+      $min_allowed_is_multi=1;
+   } else {
+      $min_allowed_is_multi=0;
+   }
+   if (eme_is_multi($event['event_seats'])) {
+      $multi_avail = eme_get_available_multiseats($event_id);
+      foreach ($multi_avail as $key => $avail_seats) {
+         $booked_places_options[$key] = array();
+         if ($max_allowed_is_multi)
+            $real_max_allowed=$multi_max_allowed[$key];
+         else
+            $real_max_allowed=$max_allowed;
+         
+         // don't let people choose more seats than available
+         if ($real_max_allowed>$avail_seats)
+            $real_max_allowed=$avail_seats;
+
+         if ($min_allowed_is_multi)
             $real_min_allowed=$multi_min_allowed[$key];
-         } else {
+         else
             // it's no use to have a non-multi minimum for multiseats
             $real_min_allowed=0;
-         }
-         for ( $i = $real_min_allowed; $i <= $multi_max[$key]; $i++) 
+         
+         for ( $i = $real_min_allowed; $i <= $real_max_allowed; $i++) 
+            $booked_places_options[$key][$i]=$i;
+      }
+   } elseif (eme_is_multi($event['price'])) {
+      // we just need to loop through the same amount of seats as there are prices
+      foreach (eme_convert_multi2array($event['price']) as $key => $value) {
+         $booked_places_options[$key] = array();
+         if ($max_allowed_is_multi)
+            $real_max_allowed=$multi_max_allowed[$key];
+         else
+            $real_max_allowed=$max_allowed;
+
+         // don't let people choose more seats than available
+         if ($real_max_allowed>$avail_seats)
+            $real_max_allowed=$avail_seats;
+
+         if ($min_allowed_is_multi)
+            $real_min_allowed=$multi_min_allowed[$key];
+         else
+            // it's no use to have a non-multi minimum for multiseats/multiprice
+            $real_min_allowed=0;
+
+         for ( $i = $real_min_allowed; $i <= $real_max_allowed; $i++)
             $booked_places_options[$key][$i]=$i;
       }
    } else {
-      $max = eme_get_available_seats($event_id);
-      if (eme_is_multi($max_allowed)) {
-         $multi_max_allowed=eme_convert_multi2array($max_allowed);
-         $max_allowed=$multi_max_allowed[0];
-      }
-      if (eme_is_multi($min_allowed)) {
-         $multi_min_allowed=$min_allowed;
-         $min_allowed=$multi_min_allowed[0];
-      }
-      if ($max > $max_allowed && $max_allowed>0)
-         $max = $max_allowed;
-      $booked_places_options = array();
-      for ( $i = $min_allowed; $i <= $max; $i++) 
+      if ($max_allowed_is_multi)
+         $real_max_allowed=$multi_max_allowed[0];
+      else
+         $real_max_allowed=$max_allowed;
+
+      // don't let people choose more seats than available
+      if ($real_max_allowed > $avail_seats)
+         $real_max_allowed = $avail_seats;
+
+      if ($min_allowed_is_multi)
+         $real_min_allowed=$multi_min_allowed[0];
+      else
+         $real_min_allowed=$min_allowed;
+
+      for ( $i = $real_min_allowed; $i <= $real_max_allowed; $i++) 
          $booked_places_options[$i]=$i;
    }
    // no seats anymore? No booking form then ... but only if it is required that the min number of
    // bookings should be >0 (it can be=0 for attendance bookings)
-   if (eme_is_multi($min_allowed)) {
-      $multi_min_allowed=eme_convert_multi2array($min_allowed);
-      $min=array_sum($multi_min_allowed);
-   } else {
+   if (eme_is_multi($min_allowed))
+      $min=eme_get_multitotal($min_allowed);
+   else
       $min=$min_allowed;
-   }
-   if ($max == 0 && $min>0) {
+
+   if ($avail_seats == 0 && $min>0) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_add_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";

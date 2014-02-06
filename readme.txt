@@ -110,7 +110,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: only show location info in the ical feed if there's actually a location
 * Bugfix: ical fix for multiday allday events (they ended a day too soon)
 * Bugfix: use str_replace for replacing placeholders, to avoid issues with replacement strings containing $13 (preg_replace interprets those as backreferences)
-* Bugfix: the booking price is now shown correctly as floating point, not just ainteger
+* Bugfix: the booking price is now shown correctly as floating point, not just integer
 * Bugfix: correct the placeholder replacement sequence for attendees and bookings
 * Bugfix: #ESC_NOTES was not working
 
