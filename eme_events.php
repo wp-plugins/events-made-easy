@@ -351,6 +351,7 @@ function eme_events_page() {
             $event_attributes[$_POST["mtm_{$i}_ref"]] = stripslashes($_POST["mtm_{$i}_name"]);
          }
       }
+      $event['event_attributes'] = $event_attributes;
 
       $event_properties = array();
       $event_properties = eme_init_event_props($event_properties);
@@ -359,6 +360,7 @@ function eme_events_page() {
             $event_properties[$matches[1]] = stripslashes($value);
          }
       }
+      $event['event_properties'] = $event_properties;
       
       $validation_result = eme_validate_event ( $event );
       if ($validation_result != "OK") {
@@ -370,7 +372,8 @@ function eme_events_page() {
          return;
       }
 
-      // we do the serialize after the validation
+      // we do the serialize after the validation, because it needs to be stored in the db like that
+      // but during validation we still needed the unserialized values
       $event['event_attributes'] = serialize($event_attributes);
       $event['event_properties'] = serialize($event_properties);
 

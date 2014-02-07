@@ -127,7 +127,7 @@ function eme_add_booking_form($event_id) {
             $real_max_allowed=$max_allowed;
          
          // don't let people choose more seats than available
-         if ($real_max_allowed>$avail_seats)
+         if ($real_max_allowed>$avail_seats || $real_max_allowed==0)
             $real_max_allowed=$avail_seats;
 
          if ($min_allowed_is_multi)
@@ -149,7 +149,7 @@ function eme_add_booking_form($event_id) {
             $real_max_allowed=$max_allowed;
 
          // don't let people choose more seats than available
-         if ($real_max_allowed>$avail_seats)
+         if ($real_max_allowed>$avail_seats || $real_max_allowed==0)
             $real_max_allowed=$avail_seats;
 
          if ($min_allowed_is_multi)
@@ -168,7 +168,7 @@ function eme_add_booking_form($event_id) {
          $real_max_allowed=$max_allowed;
 
       // don't let people choose more seats than available
-      if ($real_max_allowed > $avail_seats)
+      if ($real_max_allowed > $avail_seats || $real_max_allowed==0)
          $real_max_allowed = $avail_seats;
 
       if ($min_allowed_is_multi)
