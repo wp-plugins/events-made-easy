@@ -62,6 +62,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.2.5 =
+* Feature: the payment form showing the buttons can now be customized in the EME settings, Payment section. The same placeholders as for bookings can be used.
+  You can format the section above and below the payment buttons and everything is surrounded by CSS tags as well.
 * Feature: max and min amount of seats to book for one booking can now also be used for multiprice events (multi-compatible)
 * Feature: added option template_id to shortcode display_single_event
 * Feature: added shortcode eme_location, with location id as argument, and optional a template_id for content:

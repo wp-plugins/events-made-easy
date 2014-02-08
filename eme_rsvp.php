@@ -13,12 +13,27 @@ function eme_payment_form($event,$booking_id) {
    if (!is_array($booking))
       return "";
    if ($booking['booking_payed'])
-      return "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('This booking has already been payed for','eme')."</div>";
+      return "<div class='eme-already-payed'>".__('This booking has already been payed for','eme')."</div>";
 
    if (is_array($event)) {
-      $total_price=eme_get_total_booking_price($event,$booking);
-      $ret_string = "<div id='eme-rsvp-message' class='eme-rsvp-message'>".__('Payment handling','eme')."</div>";
-      $ret_string .= sprintf(__("The booking price in %s is: %01.2f",'eme'),$event['currency'],$total_price);
+      // no payment form configured, then just return
+      if (!($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg']))
+         return "";
+
+      $ret_string = "";
+      $eme_payment_form_header_format=get_option('eme_payment_form_header_format');
+      if (!empty($eme_payment_form_header_format)) {
+            $result = eme_replace_placeholders($eme_payment_form_header_format, $event);
+            $result = eme_replace_booking_placeholders($result, $event, $booking);
+            $ret_string .= "<div id='eme-payment-formtext' class='eme-payment-formtext'>";
+            $ret_string .= $result;
+            $ret_string .= "</div>";
+      } else {
+         $total_price = eme_get_total_booking_price($event,$booking);
+         $ret_string .= "<div id='eme-payment-handling' class='eme-payment-handling'>".__('Payment handling','eme')."</div>";
+         $ret_string .= "<div id='eme-payment-price-info' class='eme-payment-price-info'>".sprintf(__("The booking price in %s is: %01.2f",'eme'),$event['currency'],$total_price)."</div>";
+      }
+      $ret_string .= "<div id='eme-payment-form' class='eme-payment-form'>";
       if ($event['use_paypal'])
          $ret_string .= eme_paypal_form($event,$booking_id);
       if ($event['use_2co'])
@@ -29,12 +44,20 @@ function eme_payment_form($event,$booking_id) {
          $ret_string .= eme_google_form($event,$booking_id);
       if ($event['use_fdgg'])
          $ret_string .= eme_fdgg_form($event,$booking_id);
+      $ret_string .= "</div>";
 
-      if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'])
-         return $ret_string;
-      else
-         return "";
+      $eme_payment_form_footer_format=get_option('eme_payment_form_footer_format');
+      if (!empty($eme_payment_form_footer_format)) {
+            $result = eme_replace_placeholders($eme_payment_form_footer_format, $event);
+            $result = eme_replace_booking_placeholders($result, $event, $booking);
+            $ret_string .= "<div id='eme-payment-formtext' class='eme-payment-formtext'>";
+            $ret_string .= $result;
+            $ret_string .= "</div>";
+      }
+
+      return $ret_string;
    } else {
+      // no event, then no form
       return "";
    }
 }
