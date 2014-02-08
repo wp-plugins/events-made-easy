@@ -554,8 +554,8 @@ function eme_options_page() {
    <?php
    eme_options_select ( __ ( 'Default currency', 'eme' ), 'eme_default_currency', eme_currency_array(), __ ( 'Select the default currency for payments.', 'eme' ) );
    eme_options_input_text ( __ ( 'Default price', 'eme' ), 'eme_default_price', __ ( 'The default price for an event.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Payment form header format', 'eme' ), 'eme_payment_form_header_format', __ ( 'The format of the text shown above the payment buttons. If left empty, a standard text will be shown.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('the documentation', 'eme').'</a>' );
-   eme_options_textarea ( __ ( 'Payment form footer format', 'eme' ), 'eme_payment_form_footer_format', __ ( 'The format of the text shown below the payment buttons. Default: empty.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Payment form header format', 'eme' ), 'eme_payment_form_header_format', __ ( 'The format of the text shown above the payment buttons. If left empty, a standard text will be shown.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
+   eme_options_textarea ( __ ( 'Payment form footer format', 'eme' ), 'eme_payment_form_footer_format', __ ( 'The format of the text shown below the payment buttons. Default: empty.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
    ?>
 </table>
 
