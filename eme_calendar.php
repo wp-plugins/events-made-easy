@@ -60,7 +60,6 @@ function eme_get_calendar_shortcode($atts) {
    $result = eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}&notcategory={$notcategory}");
    return $result;
 }
-add_shortcode('events_calendar', 'eme_get_calendar_shortcode');
 
 function eme_get_calendar($args="") {
    global $wp_locale;

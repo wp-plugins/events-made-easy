@@ -17,7 +17,6 @@ function eme_filter_form_shortcode($atts) {
    $form .= "<input type='submit' value='$submit' /></form>";
    return $form;
 }
-add_shortcode ( 'events_filterform', 'eme_filter_form_shortcode' );
 
 function eme_create_week_scope($count) {
    $day_offset=date('w');
@@ -93,6 +92,9 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    foreach($placeholders[0] as $result) {
       $replacement = "";
       $eventful=0;
+      $found = 1;
+      $orig_result = $result;
+
       if (preg_match('/^#_(EVENTFUL_)?FILTER_CATS$/', $result) && get_option('eme_categories_enabled')) {
          if (strstr($result,'#_EVENTFUL')) {
             $eventful=1;
@@ -167,10 +169,14 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
       } elseif (preg_match('/^#_FILTER_YEARS$/', $result)) {
          if (strstr($fields,'years'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_year_scope($scope_count));
-      } 
+      } else {
+         $found = 0;
+      }
 
-      $replacement = apply_filters('eme_general', $replacement);
-      $format = str_replace($result, $replacement ,$format );
+      if ($found) {
+         $replacement = apply_filters('eme_general', $replacement);
+         $format = str_replace($orig_result, $replacement ,$format );
+      }
    }
 
    return do_shortcode($format);
