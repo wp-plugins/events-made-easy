@@ -2496,11 +2496,11 @@ function eme_event_form($event, $title, $element) {
                            <br /><table>
                               <tr>
                               <td><?php _e ( 'Spaces','eme' ); ?> :</td>
-                              <td><input id="seats-input" type="text" name="event_seats" maxlength='25' title="<?php _e('For multiseat events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event_number_spaces; ?>" /></td>
+                              <td><input id="seats-input" type="text" name="event_seats" maxlength='125' title="<?php _e('For multiseat events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event_number_spaces; ?>" /></td>
                               </tr>
                               <tr>
                               <td><?php _e ( 'Price: ','eme' ); ?></td>
-                              <td><input id="price" type="text" name="price" maxlength='25' title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" /></td>
+                              <td><input id="price" type="text" name="price" maxlength='125' title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" /></td>
                               </tr>
                               <tr>
                               <td><?php _e ( 'Currency: ','eme' ); ?></td>
@@ -2521,11 +2521,11 @@ function eme_event_form($event, $title, $element) {
                               </tr>
                               <tr>
                               <td><?php _e ( 'Max number of spaces to book','eme' ); ?></td>
-                              <td><input id="eme_prop_max_allowed" type="text" name="eme_prop_max_allowed" maxlength='25' title="<?php echo __('The maximum number of spaces a person can book in one go.','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['max_allowed']; ?>" /></td>
+                              <td><input id="eme_prop_max_allowed" type="text" name="eme_prop_max_allowed" maxlength='125' title="<?php echo __('The maximum number of spaces a person can book in one go.','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['max_allowed']; ?>" /></td>
                               </tr>
                               <tr>
                               <td><?php _e ( 'Min number of spaces to book','eme' ); ?></td>
-                              <td><input id="eme_prop_min_allowed" type="text" name="eme_prop_min_allowed" maxlength='25' title="<?php echo __('The minimum number of spaces a person can book in one go (it can be 0, for e.g. just an attendee list).','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['min_allowed']; ?>" /></td>
+                              <td><input id="eme_prop_min_allowed" type="text" name="eme_prop_min_allowed" maxlength='125' title="<?php echo __('The minimum number of spaces a person can book in one go (it can be 0, for e.g. just an attendee list).','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['min_allowed']; ?>" /></td>
                               </tr></table>
                            <br />
                               <?php _e ( 'Allow RSVP until ','eme' ); ?>
