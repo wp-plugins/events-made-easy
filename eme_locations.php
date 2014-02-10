@@ -991,9 +991,9 @@ function eme_global_map($atts) {
 }
 
 function eme_single_location_map_shortcode($atts){
-   extract ( shortcode_atts ( array ('id'=>''), $atts ) );
+   extract ( shortcode_atts ( array ('id'=>'','width' => 0, 'height' => 0), $atts ) );
    $location=eme_get_location($id);
-   $map_div = eme_single_location_map($location);
+   $map_div = eme_single_location_map($location, $width, $height);
    return $map_div;
 }
 
@@ -1402,7 +1402,7 @@ function eme_add_directions_form($location) {
    return $res;
 }
 
-function eme_single_location_map($location) {
+function eme_single_location_map($location,$width=0,$height=0) {
    global $eme_need_gmap_js;
 
    $gmap_is_active = get_option('eme_gmap_is_active'); 
@@ -1435,9 +1435,12 @@ function eme_single_location_map($location) {
       #$latitude_string="latitude";
       #$longitude_string="longitude";
          //$map_div = "<div id='$id' style=' background: green; width: 400px; height: 300px'></div>" ;
-         $map_div = "<div id='$id' class=\"eme-location-map\"></div>" ;
-         $map_div .= "<script type='text/javascript'>
-         <!--// 
+      if ($width>0 && $height>0)
+         $map_div = "<div id='$id' style='width: {$width}px; height: {$height}px' ></div>" ;
+      else
+         $map_div = "<div id='$id' class='eme-location-map'></div>" ;
+      $map_div .= "<script type='text/javascript'>
+      <!--// 
       $latitude_string = parseFloat('".$location['location_latitude']."');
       $longitude_string = parseFloat('".$location['location_longitude']."');
       $map_text_string = '$map_text';
