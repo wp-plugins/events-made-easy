@@ -143,4 +143,20 @@ function eme_ui_multiselect($option_value_arr, $name, $list, $size) {
      return $val;
 }
 
+function eme_ui_radio($option_value, $name, $list) {
+     $val = "";
+     foreach($list as $key => $value) {
+        if (is_array($value)) {
+           $t_key=$value[0];
+           $t_value=$value[1];
+        } else {
+           $t_key=$key;
+           $t_value=$value;
+        }
+        "$t_key" == $option_value ? $selected = "checked='checked' " : $selected = '';
+        $val.= "<input type='radio' id='$name' name='$name' value='$t_key' $selected>$t_value</option></br>";
+     }
+     return $val;
+}
+
 ?>

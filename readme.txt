@@ -63,6 +63,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.2.6 =
 * Feature: added width/height as optional parameters to shortcode eme_location_map
+* Feature: added radiobox as new formfield type
 
 = 1.2.5 =
 * Feature: the payment form showing the buttons can now be customized in the EME settings, Payment section. The same placeholders as for bookings can be used.

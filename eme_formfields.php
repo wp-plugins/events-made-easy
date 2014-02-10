@@ -265,6 +265,7 @@ function eme_get_formfield_html($field_id) {
          $html = "<input type='text' name='FIELD$field_id' value='$value'>";
          break;
       case 2:
+         # dropdown
          $values = explode("||",$value);
          $my_arr = array();
          foreach ($values as $val) {
@@ -273,6 +274,7 @@ function eme_get_formfield_html($field_id) {
          $html = eme_ui_select('',"FIELD$field_id",$my_arr);
          break;
       case 3:
+         # textarea
          $html = "<textarea name='FIELD$field_id'>$value</textarea>";
          break;
    }
