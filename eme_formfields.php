@@ -277,7 +277,16 @@ function eme_get_formfield_html($field_id) {
          # textarea
          $html = "<textarea name='FIELD$field_id'>$value</textarea>";
          break;
-   }
+      case 4:
+         # radiobox
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_radio('',"FIELD$field_id",$my_arr);
+         break;
+    }
    return $html;
 }
 
