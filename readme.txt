@@ -63,7 +63,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.2.6 =
 * Feature: added width/height as optional parameters to shortcode eme_location_map
-* Feature: added radiobox as new formfield type
+* Feature: added radiobox, 'radiobox vertical', 'checkbox' and 'checkbox vertical' as new formfield types
 * Bugfix: fix layout for location list (the default format setting was being ignored)
 
 = 1.2.5 =

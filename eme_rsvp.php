@@ -771,6 +771,9 @@ function eme_record_answers($booking_id) {
       if (preg_match('/FIELD(.+)/', $key, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
+	 // for multivalue fields like checkbox, the value is in fact an array
+	 // to store it, we make it a simple string
+	 if (is_array($value)) $value = implode(', ',$value);
          $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
          $wpdb->query($sql);
       }

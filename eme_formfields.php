@@ -286,7 +286,34 @@ function eme_get_formfield_html($field_id) {
          }
          $html = eme_ui_radio('',"FIELD$field_id",$my_arr);
          break;
-    }
+      case 5:
+         # radiobox, vertical
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_radio('',"FIELD$field_id",$my_arr,false);
+         break;
+      case 6:
+	# checkbox
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_checkbox('',"FIELD$field_id",$my_arr);
+         break;
+      case 7:
+	# checkbox, vertical
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_checkbox('',"FIELD$field_id",$my_arr,false);
+         break;
+   }
    return $html;
 }
 
