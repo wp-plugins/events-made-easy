@@ -1003,7 +1003,7 @@ function eme_display_single_location($location_id,$template_id=0) {
       $format_arr = eme_get_template($template_id);
       $single_location_format=$format_arr['format'];
    } else {
-      $single_location_format = get_option('eme_location_list_item_format');
+      $single_location_format = get_option('eme_location_list_format_item');
    }
    $page_body = eme_replace_location_placeholders ($single_location_format, $location);
    return $page_body;
@@ -1051,14 +1051,14 @@ function eme_get_locations_shortcode($atts) {
       $eme_format_footer=eme_replace_locations_placeholders($format_footer);
    }
    if (empty($format)) {
-      $format = get_option('eme_location_list_item_format' );
+      $format = get_option('eme_location_list_format_item' );
       $format = ( $format != '' ) ? $format : "<li class=\"location-#_LOCATIONID\">#_LOCATIONNAME</li>";
       if (empty($eme_format_header)) {
-	      $eme_format_header = eme_replace_locations_placeholders(get_option('eme_location_list_item_format_header' ));
+	      $eme_format_header = eme_replace_locations_placeholders(get_option('eme_location_list_format_header' ));
 	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : "<ul class='eme_events_list'>";
       }
       if (empty($eme_format_footer)) {
-	      $eme_format_footer = eme_replace_locations_placeholders(get_option('eme_location_list_item_format_footer' ));
+	      $eme_format_footer = eme_replace_locations_placeholders(get_option('eme_location_list_format_footer' ));
 	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : "</ul>";
       }
    }
