@@ -457,9 +457,11 @@ function eme_get_persons($person_ids="") {
    $lines = $wpdb->get_results($sql, ARRAY_A);
    $result = array();
    foreach ($lines as $line) {
-      if (!is_null($line['wp_id']) && $line['wp_id']) {
+      // if in the admin backend: also show the WP username if it exists
+      if (is_admin() && !is_null($line['wp_id']) && $line['wp_id']) {
          $user_info = get_userdata($line['wp_id']);
-         $line['person_name'].= " (WP username: ".$user_info->display_name.")";
+         if ($line['person_name'] != $user_info->display_name)
+            $line['person_name'].= " (WP username: ".$user_info->display_name.")";
          #$line['person_email']=$user_info->user_email;
          #$line['person_phone']=eme_get_user_phone($line['wp_id']);
       }
