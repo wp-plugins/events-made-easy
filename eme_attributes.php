@@ -1,6 +1,11 @@
 <?php
-function eme_attributes_form($event) {
-   $eme_data = $event['event_attributes'];
+function eme_attributes_form($eme_array) {
+   $eme_data = array();
+   if (isset($eme_array['event_attributes'])) {
+	   $eme_data = $eme_array['event_attributes'];
+   } elseif (isset($eme_array['location_attributes'])) {
+	   $eme_data = $eme_array['location_attributes'];
+   }
    //We also get a list of attribute names and create a ddm list (since placeholders are fixed)
    $formats = 
       get_option('eme_event_list_item_format' ).
@@ -27,11 +32,17 @@ function eme_attributes_form($event) {
       #get_option('eme_location_baloon_format' ).
       #get_option('eme_location_page_title_format' ).
 
+   // include all templates as well
+   $templates = eme_get_templates();
+   foreach ($templates as $template) {
+	$formats .= $template['format'];
+   }
+
    //We now have one long string of formats
    preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $formats, $placeholders);
 
    $attributes = array();
-   //Now grab all the unique attributes we can use in our event.
+   //Now grab all the unique attributes we can use in our event or location.
    foreach($placeholders[0] as $result) {
       $result = str_replace("#ESC","#",$result);
       $result = str_replace("#URL","#",$result);
@@ -42,7 +53,6 @@ function eme_attributes_form($event) {
    }
    ?>
    <div class="wrap">
-      <h2><?php _e('Attributes','eme'); ?></h2>
    <?php if( count( $attributes ) > 0 ) { ?> 
       <p><?php _e('Add attributes here','eme'); ?></p>
       <table class="form-table">

@@ -2,18 +2,21 @@
 $feedback_message = "";
 
 function eme_new_location() {
-   $location = array();
-   $location['location_name'] = '';
-   $location['location_address'] = '';
-   $location['location_town'] = '';
-   $location['location_latitude'] = '';
-   $location['location_longitude'] = '';
-   $location['location_description'] = '';
-   $location['location_category_ids'] = '';
-   $location['location_url'] = '';
-   $location['location_slug'] = '';
-   $location['location_image_url'] = '';
-   $location['location_image_id'] = 0;
+   $location = array(
+   'location_name' => '',
+   'location_address' => '',
+   'location_town' => '',
+   'location_latitude' => '',
+   'location_longitude' => '',
+   'location_description' => '',
+   'location_category_ids' => '',
+   'location_url' => '',
+   'location_slug' => '',
+   'location_image_url' => '',
+   'location_image_id' => 0,
+   'location_attributes' => array()
+   );
+
    return $location;
 }
  
@@ -52,8 +55,6 @@ function eme_locations_page() {
          $location['location_name'] = trim(stripslashes($_POST['location_name']));
          $location['location_address'] = stripslashes($_POST['location_address']); 
          $location['location_town'] = stripslashes($_POST['location_town']); 
-         $location['location_latitude'] = $_POST['location_latitude'];
-         $location['location_longitude'] = $_POST['location_longitude'];
          $location['location_description'] = stripslashes($_POST['content']);
          $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
          $location['location_image_url'] = isset($_POST ['location_image_url']) ? eme_strip_tags ( $_POST ['location_image_url'] ) : '';
@@ -79,10 +80,20 @@ function eme_locations_page() {
             $location ['location_category_ids']="";
          }
 
+         $location['location_latitude'] = $_POST['location_latitude'];
+         $location['location_longitude'] = $_POST['location_longitude'];
          if(empty($location['location_latitude'])) {
             $location['location_latitude']  = 0;
             $location['location_longitude'] = 0;
          }
+
+         $location_attributes = array();
+         for($i=1 ; isset($_POST["mtm_{$i}_ref"]) && trim($_POST["mtm_{$i}_ref"])!='' ; $i++ ) {
+            if(trim($_POST["mtm_{$i}_name"]) != '') {
+               $location_attributes[$_POST["mtm_{$i}_ref"]] = stripslashes($_POST["mtm_{$i}_name"]);
+            }
+         }
+         $location['location_attributes'] = serialize($location_attributes);
 
          $validation_result = eme_validate_location($location);
          if ($validation_result == "OK") {
@@ -133,6 +144,14 @@ function eme_locations_page() {
          } else {
             $location ['location_category_ids']="";
          }
+
+         $location_attributes = array();
+         for($i=1 ; isset($_POST["mtm_{$i}_ref"]) && trim($_POST["mtm_{$i}_ref"])!='' ; $i++ ) {
+            if(trim($_POST["mtm_{$i}_name"]) != '') {
+               $location_attributes[$_POST["mtm_{$i}_ref"]] = stripslashes($_POST["mtm_{$i}_name"]);
+            }
+         }
+         $location['location_attributes'] = serialize($location_attributes);
 
          $validation_result = eme_validate_location($location);
          if ($validation_result == "OK") {
@@ -340,6 +359,14 @@ jQuery(document).ready(function($){
                <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
             </div>
          </div>
+     	 <?php if (get_option('eme_attributes_enabled')) { ?>
+         <div class="postbox">
+            <h3>
+               <?php _e ( 'Attributes', 'eme' ); ?>
+            </h3>
+               <?php eme_attributes_form($location); ?>
+         </div>
+	 <?php } ?>
          <div class="postbox">
             <h3>
                <?php _e ( 'External link', 'eme' ); ?>
@@ -542,6 +569,12 @@ jQuery(document).ready(function($){
                                  <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
                               </div>
                            </div>
+     	 <?php if (get_option('eme_attributes_enabled')) { ?>
+         <div class="form-field">
+            <label for="location_url" ><?php _e ( 'Attributes', 'eme' ); ?></label>
+               <?php eme_attributes_form($new_location); ?>
+         </div>
+     	 <?php } ?>
          <div class="form-field">
             <label for="location_url" ><?php _e ( 'External link', 'eme' ); ?></label>
             <input name="location_url" id="location_url" type="text" value="<?php echo eme_sanitize_html($new_location['location_url']); ?>" size="40"  />
@@ -641,6 +674,8 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
       foreach ($locations as $key=>$location) {
          if (empty($locations[$key]['location_image_id']) && empty($locations[$key]['location_image_url']))
             $locations[$key]['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
+         $locations[$key]['location_attributes'] = @unserialize($locations[$key]['location_attributes']);
+         $locations[$key]['location_attributes'] = (!is_array($locations[$key]['location_attributes'])) ?  array() : $locations[$key]['location_attributes'] ;
       }
    }
    if (has_filter('eme_location_list_filter')) $locations=apply_filters('eme_location_list_filter',$locations);
@@ -662,6 +697,9 @@ function eme_get_location($location_id=0) {
       // don't forget the images (for the older locations that didn't use the wp gallery)
       if (empty($location['location_image_id']) && empty($location['location_image_url']))
          $location['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
+
+      $location['location_attributes'] = @unserialize($location['location_attributes']);
+      $location['location_attributes'] = (!is_array($location['location_attributes'])) ?  array() : $location['location_attributes'] ;
 
       if (has_filter('eme_location_filter')) $location=apply_filters('eme_location_filter',$location);
 
@@ -1096,6 +1134,40 @@ EOD;
 }
 
 function eme_replace_locations_placeholders($format, $location="", $target="html", $do_shortcode=1) {
+
+   // first we do the custom attributes, since these can contain other placeholders
+   preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $format, $results);
+   foreach($results[0] as $resultKey => $result) {
+      $need_escape = 0;
+      $need_urlencode = 0;
+      $orig_result = $result;
+      if (strstr($result,'#ESC')) {
+         $result = str_replace("#ESC","#",$result);
+         $need_escape=1;
+      } elseif (strstr($result,'#URL')) {
+         $result = str_replace("#URL","#",$result);
+         $need_urlencode=1;
+      }
+      $replacement = "";
+      //Strip string of placeholder and just leave the reference
+      $attRef = substr( substr($result, 0, strpos($result, '}')), 6 );
+      if (isset($event['event_attributes'][$attRef])) {
+         $replacement = $event['event_attributes'][$attRef];
+      }
+      if( trim($replacement) == ''
+            && isset($results[2][$resultKey])
+            && $results[2][$resultKey] != '' ) {
+         //Check to see if we have a second set of braces;
+         $replacement = substr( $results[2][$resultKey], 1, strlen(trim($results[2][$resultKey]))-2 );
+      }
+
+      if ($need_escape) {
+         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+      } elseif ($need_urlencode) {
+         $replacement = rawurlencode($replacement);
+      }
+      $format = str_replace($orig_result, $replacement ,$format );
+   }
 
    preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_\[\]]+/", $format, $placeholders);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.

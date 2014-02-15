@@ -110,7 +110,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 44);
+define('EME_DB_VERSION', 45);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -718,6 +718,7 @@ function eme_create_locations_table($charset,$collate) {
          location_modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          location_image_url text NULL,
          location_image_id mediumint(9) DEFAULT 0 NOT NULL,
+         location_attributes text NULL, 
          UNIQUE KEY (location_id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -739,6 +740,7 @@ function eme_create_locations_table($charset,$collate) {
       maybe_add_column($table_name, 'location_slug', "alter table $table_name add location_slug text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'location_image_url', "alter table $table_name add location_image_url text NULL;"); 
       maybe_add_column($table_name, 'location_image_id', "alter table $table_name add location_image_id mediumint(9) DEFAULT 0 NOT NULL;"); 
+      maybe_add_column($table_name, 'location_attributes', "alter table $table_name add location_attributes text NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY location_name text NOT NULL ;");
       }

@@ -38,7 +38,7 @@ function eme_new_event() {
       "event_author" => 0,
       "event_contactperson_id" => get_option('eme_default_contact_person'),
       "event_category_ids" => '',
-      "event_attributes" => '',
+      "event_attributes" => array(),
       "event_properties" => array(),
       "event_page_title_format" => '',
       "event_single_event_format" => '',
@@ -351,7 +351,7 @@ function eme_events_page() {
             $event_attributes[$_POST["mtm_{$i}_ref"]] = stripslashes($_POST["mtm_{$i}_name"]);
          }
       }
-      $event['event_attributes'] = $event_attributes;
+      $event['event_attributes'] = serialize($event_attributes);
 
       $event_properties = array();
       $event_properties = eme_init_event_props($event_properties);
@@ -360,7 +360,7 @@ function eme_events_page() {
             $event_properties[$matches[1]] = stripslashes($value);
          }
       }
-      $event['event_properties'] = $event_properties;
+      $event['event_properties'] = serialize($event_properties);
       
       $validation_result = eme_validate_event ( $event );
       if ($validation_result != "OK") {
@@ -371,11 +371,6 @@ function eme_events_page() {
          eme_event_form ( $event, "Edit event $event_ID", $event_ID );
          return;
       }
-
-      // we do the serialize after the validation, because it needs to be stored in the db like that
-      // but during validation we still needed the unserialized values
-      $event['event_attributes'] = serialize($event_attributes);
-      $event['event_properties'] = serialize($event_properties);
 
       // validation successful
       if(isset($_POST['location-select-id']) && $_POST['location-select-id'] != "") {
@@ -2701,14 +2696,16 @@ function eme_validate_event($event) {
       if ($count1 != $count2)
          $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the exact same amount of prices (multiprice) as well.', 'eme' )."</li>";
    }
-   if (eme_is_multi($event['event_properties']['max_allowed']) && eme_is_multi($event['price'])) {
-      $count1=count(eme_convert_multi2array($event['event_properties']['max_allowed']));
+
+   $event_attributes = unserialize($event['event_attributes']);
+   if (eme_is_multi($event_properties['max_allowed']) && eme_is_multi($event['price'])) {
+      $count1=count(eme_convert_multi2array($event_properties['max_allowed']));
       $count2=count(eme_convert_multi2array($event['price']));
       if ($count1 != $count2)
          $troubles .= "<li>".__ ( 'Since this is a multiprice event and you decided to limit the max amount of seats to book (for one booking) per price category, you must specify the exact same amount of "max seats to book" as you did for the prices.', 'eme' )."</li>";
    }
-   if (eme_is_multi($event['event_properties']['min_allowed']) && eme_is_multi($event['price'])) {
-      $count1=count(eme_convert_multi2array($event['event_properties']['min_allowed']));
+   if (eme_is_multi($event_properties['min_allowed']) && eme_is_multi($event['price'])) {
+      $count1=count(eme_convert_multi2array($event_properties['min_allowed']));
       $count2=count(eme_convert_multi2array($event['price']));
       if ($count1 != $count2)
          $troubles .= "<li>".__ ( 'Since this is a multiprice event and you decided to limit the min amount of seats to book (for one booking) per price category, you must specify the exact same amount of "min seats to book" as you did for the prices.', 'eme' )."</li>";
