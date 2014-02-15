@@ -110,7 +110,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 45);
+define('EME_DB_VERSION', 47);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -772,6 +772,7 @@ function eme_create_bookings_table($charset,$collate) {
          modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          booking_payed bool DEFAULT 0,
          transfer_nbr_be97 varchar(20),
+         wp_id bigint(20) unsigned DEFAULT NULL,
          UNIQUE KEY  (booking_id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -786,10 +787,15 @@ function eme_create_bookings_table($charset,$collate) {
       maybe_add_column($table_name, 'transfer_nbr_be97', "alter table $table_name add transfer_nbr_be97 varchar(20);"); 
       maybe_add_column($table_name, 'booking_seats_mp', "alter table $table_name add booking_seats_mp varchar(250);"); 
       maybe_add_column($table_name, 'booking_price', "alter table $table_name add booking_price text DEFAULT NULL;"); 
+      maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_id mediumint(9) NOT NULL;");
          $wpdb->query("ALTER TABLE $table_name MODIFY person_id mediumint(9) NOT NULL;");
          $wpdb->query("ALTER TABLE $table_name MODIFY booking_seats mediumint(9) NOT NULL;");
+      }
+      if ($db_version<47) {
+         $people_table_name = $wpdb->prefix.PEOPLE_TBNAME;
+         $wpdb->query("update $table_name a JOIN $people_table_name b on (a.person_id = b.person_id)  set a.wp_id=b.wp_id;");
       }
    }
 }
@@ -1137,7 +1143,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif ($rsvp_is_active && $event['event_rsvp'] && is_user_logged_in() ) {
-            if (!eme_get_booking_by_person_event_id($person_id,$event['event_id']))
+            if (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
                $replacement = eme_add_booking_form($event['event_id']);
          }
 
@@ -1152,7 +1158,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif ($rsvp_is_active && $event['event_rsvp'] && is_user_logged_in() ) {
-            if (eme_get_booking_by_person_event_id($person_id,$event['event_id']))
+            if (eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
                $replacement = eme_delete_booking_form($event['event_id']);
          }
 
@@ -1198,7 +1204,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($event && preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          if ($rsvp_is_active && $event['event_rsvp']
              && is_user_logged_in()) {
-            $replacement = eme_get_booked_seats_by_person_event_id($person_id,$event['event_id']);
+            $replacement = eme_get_booked_seats_by_wp_event_id($current_userid,$event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_LINKEDNAME$/', $result)) {
@@ -1613,7 +1619,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       } elseif ($event && preg_match('/#_IS_REGISTERED/', $result)) {
          if ($rsvp_is_active && $event['event_rsvp']
                    && is_user_logged_in()
-                   && eme_get_booking_by_person_event_id($person_id,$event['event_id']))
+                   && eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
             $replacement = 1;
          else
             $replacement = 0;

@@ -519,7 +519,7 @@ function eme_book_seats($event, $send_mail=1) {
       // we also need name and email for sending the mail
       $bookerName = $current_user->display_name;
       $bookerEmail = $current_user->user_email;
-      $booker = eme_get_person_by_wp_id($booker_wp_id); 
+      $booker = eme_get_person_id_by_wp_id($booker_wp_id);
    } elseif (!is_admin() && is_user_logged_in()) {
       $booker_wp_id=get_current_user_id();
       $bookerName = eme_strip_tags($_POST['bookerName']);
@@ -665,6 +665,42 @@ function eme_get_booking_ids_by_person_event_id($person_id,$event_id) {
    return $result;
 }
 
+function eme_get_booking_ids_by_wp_id($wp_id,$event_id) {
+   global $wpdb;
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
+   $sql = $wpdb->prepare("SELECT booking_id FROM $bookings_table WHERE wp_id = %d AND event_id = %d",$wp_id,$event_id);
+   $result = $wpdb->get_col($sql);
+   return $result;
+}
+
+function eme_get_booked_seats_by_wp_event_id($wp_id,$event_id) {
+   global $wpdb;
+   if (eme_is_event_multiseats($event_id))
+      return array_sum(eme_get_booked_multiseats_by_wp_event_id($wp_id,$event_id));
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = $wpdb->prepare("SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE wp_id = %d AND event_id = %d",$wp_id,$event_id);
+   return $wpdb->get_var($sql);
+}
+
+function eme_get_booked_multiseats_by_wp_event_id($wp_id,$event_id) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = "SELECT booking_seats_mp FROM $bookings_table WHERE event_id = $event_id"; 
+   $sql = $wpdb->prepare("SELECT booking_seats_mp FROM $bookings_table WHERE wp_id = %d AND event_id = %d",$wp_id,$event_id);
+   $booking_seats_mp = $wpdb->get_col($sql);
+   $result=array();
+   foreach($booking_seats_mp as $booked_seats) {
+      $multiseats = eme_convert_multi2array($booked_seats);
+      foreach ($multiseats as $key=>$value) {
+         if (!isset($result[$key]))
+            $result[$key]=$value;
+         else
+            $result[$key]+=$value;
+      }
+   }
+   return $result;
+}
+
 function eme_get_booked_seats_by_person_event_id($person_id,$event_id) {
    global $wpdb;
    if (eme_is_event_multiseats($event_id))
@@ -717,6 +753,7 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment = ""
    $comment = eme_sanitize_request($comment);
    $booking['event_id']=$event['event_id'];
    $booking['person_id']=$person_id;
+   $booking['wp_id']=get_current_user_id();
    $booking['booking_seats']=$seats;
    $booking['booking_seats_mp']=join("||",$seats_mp);
    $booking['booking_price']=$event['price'];
