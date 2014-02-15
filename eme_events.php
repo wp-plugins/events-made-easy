@@ -1064,13 +1064,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $this_page_url=get_permalink($post->ID);
       //$this_page_url=$_SERVER['REQUEST_URI'];
       // remove the offset info
-      $this_page_url= preg_replace("/\&eme_offset=-?\d+/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+$/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+\&(.*)/","?$1",$this_page_url);
-      if (stristr($this_page_url, "?"))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
+      $this_page_url= remove_query_arg('eme_offset',$this_page_url);
 
       // we add possible fields from the filter section
       $eme_filters["eme_eventAction"]=1;
@@ -1082,8 +1076,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          if (isset($eme_filters[$key])) {
             # if you selected multiple items, $item is an array, but rawurlencode needs a string
             if (is_array($item)) $item=join(',',eme_sanitize_request($item));
-            $this_page_url.=$joiner.rawurlencode($key)."=".rawurlencode($item);
-            $joiner = "&amp;";
+            $this_page_url=add_query_arg(array($key=>$item),$this_page_url);
          }
       }
 
@@ -1094,8 +1087,8 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $backward = $offset - $limit;
          if ($backward < 0)
             $left_nav_hidden_class="style='visibility:hidden;'";
-         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$backward'>&lt;&lt; $prev_text</a>";
-         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$forward'>$next_text &gt;&gt;</a>";
+         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url)."'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url)."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
       if ($events_count <= $limit && $offset>0) {
@@ -1104,25 +1097,19 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          if ($backward < 0)
             $left_nav_hidden_class="style='visibility:hidden;'";
          $right_nav_hidden_class="style='visibility:hidden;'";
-         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$backward'>&lt;&lt; $prev_text</a>";
-         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$forward'>$next_text &gt;&gt;</a>";
+         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url) ."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
    }
    if ($paging==1 && $limit==0) {
       $this_page_url=$_SERVER['REQUEST_URI'];
       // remove the offset info
-      $this_page_url= preg_replace("/\&eme_offset=-?\d+/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+$/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+\&(.*)/","?$1",$this_page_url);
-      if (stristr($this_page_url, "?"))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
+      $this_page_url= remove_query_arg('eme_offset',$this_page_url);
       if ($prev_text != "")
-         $pagination_top.= "<a class='eme_nav_left' href='" . $this_page_url.$joiner."eme_offset=$prev_offset'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$prev_offset),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
       if ($next_text != "")
-         $pagination_top.= "<a class='eme_nav_right' href='" . $this_page_url.$joiner."eme_offset=$next_offset'>$next_text &gt;&gt;</a>";
+         $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$next_offset),$this_page_url) ."'>$next_text &gt;&gt;</a>";
       $pagination_top.= "<span class='eme_nav_center'>$scope_text</span>";
    }
    $pagination_top.= "</div>";

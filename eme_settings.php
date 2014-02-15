@@ -576,11 +576,7 @@ function eme_options_page() {
 <table class='form-table'>
    <?php
       $events_page_link = eme_get_events_page(true, false);
-      if (stristr ( $events_page_link, "?" ))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
-      $notification_link = $events_page_link.$joiner."eme_eventAction=2co_notification";
+      $notification_link = add_query_arg(array('eme_eventAction'=>'2co_notification'),$events_page_link);
 
       eme_options_select ( __('2Checkout live or test','eme'), 'eme_2co_demo', array (1 => __('2Checkout Sandbox (for testing)','eme'), 0 => __ ( '2Checkout Live', 'eme' )), __('Choose wether you want to test 2Checkout in a sandbox or go live and really use 2Checkout.','eme') );
       eme_options_input_text (__('2Checkout Account number','eme'),'eme_2co_business', __("2Checkout Account number.",'eme'));
@@ -593,11 +589,7 @@ function eme_options_page() {
 <table class='form-table'>
    <?php
       $events_page_link = eme_get_events_page(true, false);
-      if (stristr ( $events_page_link, "?" ))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
-      $notification_link = $events_page_link.$joiner."eme_eventAction=webmoney_notification";
+      $notification_link = add_query_arg(array('eme_eventAction'=>'webmoney_notification'),$events_page_link);
 
       eme_options_select ( __('Webmoney live or test','eme'), 'eme_webmoney_demo', array (1 => __('Webmoney Sandbox (for testing)','eme'), 0 => __ ( 'Webmoney Live', 'eme' )), __('Choose wether you want to test Webmoney in a sandbox or go live and really use Webmoney.','eme') );
       eme_options_input_text (__('Webmoney Purse','eme'),'eme_webmoney_purse', __("Webmoney Purse.",'eme'));

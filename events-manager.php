@@ -1297,11 +1297,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
 
       } elseif ($event && preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
-         if (stristr($events_page_link, "?"))
-            $joiner = "&amp;";
-         else
-            $joiner = "?";
-         $replacement = $events_page_link.$joiner."event_id=".intval($matches[1]);
+         $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
 
       } elseif ($event && preg_match('/#_EVENTPAGEURL/', $result)) {
          $replacement = eme_event_url($event);

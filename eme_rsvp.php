@@ -808,9 +808,9 @@ function eme_record_answers($booking_id) {
       if (preg_match('/FIELD(.+)/', $key, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
-	 // for multivalue fields like checkbox, the value is in fact an array
-	 // to store it, we make it a simple string
-	 if (is_array($value)) $value = implode(', ',$value);
+         // for multivalue fields like checkbox, the value is in fact an array
+         // to store it, we make it a simple string
+         if (is_array($value)) $item=join(', ',$value);
          $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
          $wpdb->query($sql);
       }
@@ -2128,11 +2128,8 @@ function eme_webmoney_form($event,$booking_id) {
    $wm_request->payment_no = $booking_id;
    $wm_request->payee_purse = get_option('eme_webmoney_purse');
    $wm_request->success_method = WM_POST;
-   if (stristr ( $events_page_link, "?" ))
-      $joiner = "&amp;";
-   else
-      $joiner = "?";
-   $result_link = $events_page_link.$joiner."eme_eventAction=webmoney";
+   $result_link = add_query_arg(array('eme_eventAction'=>'webmoney'),$events_page_link);
+
    $wm_request->result_url = $result_link;
    $wm_request->success_url = eme_event_url($event);
    $wm_request->fail_url = eme_event_url($event);
@@ -2241,11 +2238,7 @@ function eme_paypal_form($event,$booking_id) {
    $price=eme_get_total_booking_price($event,$booking);
    $quantity=1;
    $events_page_link = eme_get_events_page(true, false);
-   if (stristr ( $events_page_link, "?" ))
-      $joiner = "&amp;";
-   else
-      $joiner = "?";
-   $notification_link = $events_page_link.$joiner."eme_eventAction=paypal_notification";
+   $notification_link = add_query_arg(array('eme_eventAction'=>'paypal_notification'),$events_page_link);
 
    $form_html = "<br>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme');
    require_once "paypal/Paypal.php";

@@ -873,11 +873,6 @@ function eme_global_map($atts) {
       $show_locations = ($show_locations==="false" || $show_locations==="0") ? false : $show_locations;
 
       $events_page_link = eme_get_events_page(true, false);
-      if (stristr($events_page_link, "?"))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
-
       $prev_text = "";
       $next_text = "";
       $scope_offset=0;
@@ -959,17 +954,11 @@ function eme_global_map($atts) {
          $pagination_top = "<div id='locations-pagination-top'> ";
          $this_page_url=$_SERVER['REQUEST_URI'];
          // remove the offset info
-         $this_page_url= preg_replace("/\&eme_offset=-?\d+/","",$this_page_url);
-         $this_page_url= preg_replace("/\?eme_offset=-?\d+$/","",$this_page_url);
-         $this_page_url= preg_replace("/\?eme_offset=-?\d+\&(.*)/","?$1",$this_page_url);
-         if (stristr($this_page_url, "?"))
-            $joiner = "&amp;";
-         else
-            $joiner = "?";
+         $this_page_url= remove_query_arg('eme_offset',$this_page_url);
          if ($prev_text != "")
-            $pagination_top.= "<a class='eme_nav_left' href='" . $this_page_url.$joiner."eme_offset=$prev_offset'>&lt;&lt; $prev_text</a>";
+            $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$prev_offset),$this_page_url)."'>&lt;&lt; $prev_text</a>";
          if ($next_text != "")
-            $pagination_top.= "<a class='eme_nav_right' href='" . $this_page_url.$joiner."eme_offset=$next_offset'>$next_text &gt;&gt;</a>";
+            $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$next_offset),$this_page_url)."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>$scope_text</span>";
          $pagination_top.= "</div>";
          $pagination_bottom = str_replace("locations-pagination-top","locations-pagination-bottom",$pagination_top);
@@ -982,7 +971,6 @@ function eme_global_map($atts) {
       scope = '$scope';
       category = '$category';
       events_page_link = '$events_page_link';
-      joiner = '$joiner';
          //-->
          </script>";
       //$result .= "<script src='".EME_PLUGIN_URL."eme_global_map.js' type='text/javascript'></script>";
