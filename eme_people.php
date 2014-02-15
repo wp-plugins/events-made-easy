@@ -400,9 +400,13 @@ function eme_people_table($message="") {
 function eme_get_person_by_name_and_email($name, $email) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
-   $name = eme_sanitize_request($name);
-   $email = eme_sanitize_request($email);
-   $sql = "SELECT * FROM $people_table WHERE person_name = '$name' AND person_email = '$email' ;" ;
+   $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE person_name = %s AND person_email = %s",$name,$email);
+   $result = $wpdb->get_row($sql, ARRAY_A);
+   return $result;
+}
+
+function eme_get_person_by_wp_info($name, $email, $wp_id) {
+   $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE person_name = %s AND person_email = %s AND wp_id = %d ",$name,$email,$wp_id);
    $result = $wpdb->get_row($sql, ARRAY_A);
    return $result;
 }

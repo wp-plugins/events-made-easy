@@ -382,18 +382,24 @@ function eme_catch_rsvp() {
 }
 add_action('init','eme_catch_rsvp');
  
+ // eme_cancel_seats is NOT called from the admin backend, but to be sure: we check for it
 function eme_cancel_seats($event) {
    global $current_user;
    $event_id = $event['event_id'];
    $registration_wp_users_only=$event['registration_wp_users_only'];
-   if ($registration_wp_users_only) {
+
+   if (is_admin()) {
+      return __('This function is not allowed from the admin backend.', 'eme');
+   }
+
+   if ($registration_wp_users_only && is_user_logged_in()) {
       // we require a user to be WP registered to be able to book
       get_currentuserinfo();
       $booker_wp_id=$current_user->ID;
       // we also need name and email for sending the mail
       $bookerName = $current_user->display_name;
       $bookerEmail = $current_user->user_email;
-      $booker = eme_get_person_by_wp_id($booker_wp_id); 
+      $booker = eme_get_person_by_wp_info($bookerName, $bookerEmail,$booker_wp_id);
    } else {
       $bookerName = eme_strip_tags($_POST['bookerName']);
       $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
@@ -511,21 +517,21 @@ function eme_book_seats($event, $send_mail=1) {
 
    $event_id = $event['event_id'];
    $registration_wp_users_only=$event['registration_wp_users_only'];
-   // if we're booking via the admin backend, we don't care about registration_wp_users_only
-   if (!is_admin() && $registration_wp_users_only) {
+   if (!is_admin() && $registration_wp_users_only && is_user_logged_in()) {
       // we require a user to be WP registered to be able to book
       get_currentuserinfo();
       $booker_wp_id=$current_user->ID;
       // we also need name and email for sending the mail
       $bookerName = $current_user->display_name;
       $bookerEmail = $current_user->user_email;
-      $booker = eme_get_person_by_wp_id($booker_wp_id);
+      $booker = eme_get_person_by_wp_info($bookerName, $bookerEmail,$booker_wp_id);
    } elseif (!is_admin() && is_user_logged_in()) {
       $booker_wp_id=get_current_user_id();
       $bookerName = eme_strip_tags($_POST['bookerName']);
       $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    } else {
+      // when called from the admin backend, we don't care about registration_wp_users_only
       $booker_wp_id=0;
       $bookerName = eme_strip_tags($_POST['bookerName']);
       $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
