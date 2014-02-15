@@ -2697,7 +2697,7 @@ function eme_validate_event($event) {
          $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the exact same amount of prices (multiprice) as well.', 'eme' )."</li>";
    }
 
-   $event_attributes = unserialize($event['event_attributes']);
+   $event_properties = unserialize($event['event_properties']);
    if (eme_is_multi($event_properties['max_allowed']) && eme_is_multi($event['price'])) {
       $count1=count(eme_convert_multi2array($event_properties['max_allowed']));
       $count2=count(eme_convert_multi2array($event['price']));
