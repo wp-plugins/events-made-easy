@@ -250,6 +250,7 @@ function eme_add_booking_form_shortcode($atts) {
 function eme_booking_list_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
    $event = eme_get_event(intval($id));
+   $rsvp_is_active = get_option('eme_rsvp_enabled');
    if ($event && $rsvp_is_active && $event['event_rsvp'])
       return eme_get_bookings_list_for($event,$template_id,$template_id_header,$template_id_footer);
 }
@@ -257,6 +258,7 @@ function eme_booking_list_shortcode($atts) {
 function eme_attendee_list_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
    $event = eme_get_event(intval($id));
+   $rsvp_is_active = get_option('eme_rsvp_enabled');
    if ($event && $rsvp_is_active && $event['event_rsvp'])
       return eme_get_attendees_list_for($event,$template_id,$template_id_header,$template_id_footer);
 }
