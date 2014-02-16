@@ -17,15 +17,16 @@ class WP_Widget_eme_list extends WP_Widget {
       $order = empty( $instance['order'] ) ? 'ASC' : $instance['order'];
       $header = empty( $instance['header'] ) ? '<ul>' : $instance['header'];
       $footer = empty( $instance['footer'] ) ? '</ul>' : $instance['footer'];
+      $category = empty( $instance['category'] ) ? '' : $instance['category'];
+      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
+      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
+
       if ($instance['authorid']==-1 ) {
          $author='';
       } else {
          $authinfo=get_userdata($instance['authorid']);
          $author=$authinfo->user_login;
       }
-      $category = empty( $instance['category'] ) ? '' : $instance['category'];
-      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
-      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
       echo $before_widget;
       if ( $title)
          echo $before_title . $title . $after_title;
