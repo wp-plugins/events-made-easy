@@ -70,6 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: make IS_REGISTERED work for all logged in users, not just when requiring WP membership for rsvp
 * Bugfix: fix layout for location list (the default format setting was being ignored)
 * Bugfix: some template header/footer fixes for attendee and booking lists
+* Bugfix: make [eme_location] work again
 
 = 1.2.5 =
 * Feature: the payment form showing the buttons can now be customized in the EME settings, Payment section. The same placeholders as for bookings can be used.

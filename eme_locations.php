@@ -1031,7 +1031,7 @@ function eme_display_single_location($location_id,$template_id=0) {
    } else {
       $single_location_format = get_option('eme_location_list_format_item');
    }
-   $page_body = eme_replace_location_placeholders ($single_location_format, $location);
+   $page_body = eme_replace_locations_placeholders ($single_location_format, $location);
    return $page_body;
 }
 
