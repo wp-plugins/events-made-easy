@@ -186,7 +186,7 @@ function eme_csv_booking_report($event_id) {
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
       foreach($answer_columns as $col) {
-	 $found=0;
+         $found=0;
          foreach ($answers as $answer) {
             if ($answer['field_name'] == $col['field_name']) {
                $line[]=$answer['answer'];
