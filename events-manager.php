@@ -993,6 +993,57 @@ function eme_create_events_submenu () {
    }
 }
 
+function eme_replace_notes_placeholders($format, $event="", $target="html") {
+   if ($event && preg_match_all('/#(ESC)?_(DETAILS|NOTES|EXCERPT|EVENTDETAILS)/', $format, $placeholders)) {
+      foreach($placeholders[0] as $result) {
+         $need_escape = 0;
+         $orig_result = $result;
+         $found = 1;
+         if (strstr($result,'#ESC')) {
+            $result = str_replace("#ESC","#",$result);
+            $need_escape=1;
+         }
+         $replacement = "";
+         $field = "event_".ltrim(strtolower($result), "#_");
+         // to catch every alternative (we just need to know if it is an excerpt or not)
+         if ($field != "event_excerpt")
+            $field = "event_notes";
+
+         // when on the single event page, never show just the excerpt
+         if ($field == "event_excerpt" && eme_is_single_event_page()) {
+            $field = "event_notes";
+         }
+
+         //If excerpt, we use more link text
+         if ($field == "event_excerpt") {
+            if (isset($event['event_notes'])) {
+               $matches = explode('<!--more-->', $event['event_notes']);
+               $replacement = $matches[0];
+            }
+         } elseif (isset($event[$field])) {
+            $replacement = $event[$field];
+         }
+         $replacement = eme_translate($replacement);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_notes', $replacement);
+         } else {
+            if ($target == "rss") {
+               $replacement = apply_filters('eme_notes_rss', $replacement);
+               $replacement = apply_filters('the_content_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+         if ($need_escape) {
+            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         }
+         if ($found)
+            $format = str_replace($orig_result, $replacement ,$format );
+      }
+   }
+   return $format;
+}
+
 function eme_replace_placeholders($format, $event="", $target="html") {
    global $wp_query, $eme_need_gmap_js;
 
@@ -1000,8 +1051,13 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    $current_userid=get_current_user_id();
    $person_id=eme_get_person_id_by_wp_id($current_userid);
    $rsvp_is_active = get_option('eme_rsvp_enabled'); 
+   $eme_enable_notes_placeholders = get_option('eme_enable_notes_placeholders'); 
 
-   // first we do the custom attributes, since these can contain other placeholders
+   // first replace the notes sections, since these can contain other placeholders
+   if ($eme_enable_notes_placeholders)
+      $format = eme_replace_notes_placeholders ( $format, $event, $target );
+
+   // then we do the custom attributes, since these can contain other placeholders
    preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $format, $results);
    foreach($results[0] as $resultKey => $result) {
       $need_escape = 0;
@@ -1663,56 +1719,7 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    # event haven't been replaced yet (like time placeholders, and event details)
    $format = eme_replace_locations_placeholders ( $format, $event, $target, 0 );
 
-   # we handle NOTES the last, so no placeholder replacement happens accidentaly in the text of #_NOTES
-   if ($event && preg_match_all('/#(ESC)?_(DETAILS|NOTES|EXCERPT|EVENTDETAILS)/', $format, $placeholders)) {
-      foreach($placeholders[0] as $result) {
-         $need_escape = 0;
-         $orig_result = $result;
-         $found = 1;
-         if (strstr($result,'#ESC')) {
-            $result = str_replace("#ESC","#",$result);
-            $need_escape=1;
-         }
-         $replacement = "";
-         $field = "event_".ltrim(strtolower($result), "#_");
-         // to catch every alternative (we just need to know if it is an excerpt or not)
-         if ($field != "event_excerpt")
-            $field = "event_notes";
-
-         // when on the single event page, never show just the excerpt
-         if ($field == "event_excerpt" && eme_is_single_event_page()) {
-            $field = "event_notes";
-         }
-
-         //If excerpt, we use more link text
-         if ($field == "event_excerpt") {
-            if (isset($event['event_notes'])) {
-               $matches = explode('<!--more-->', $event['event_notes']);
-               $replacement = $matches[0];
-            }
-         } elseif (isset($event[$field])) {
-            $replacement = $event[$field];
-         }
-         $replacement = eme_translate($replacement);
-         if ($target == "html") {
-            $replacement = apply_filters('eme_notes', $replacement);
-         } else {
-            if ($target == "rss") {
-               $replacement = apply_filters('eme_notes_rss', $replacement);
-               $replacement = apply_filters('the_content_rss', $replacement);
-            } else {
-               $replacement = apply_filters('eme_text', $replacement);
-            }
-         }
-         if ($need_escape) {
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-         }
-         if ($found)
-            $format = str_replace($orig_result, $replacement ,$format );
-      }
-   }
-
-   // for extra date formatting, eg. #_{d/m/Y}
+  // for extra date formatting, eg. #_{d/m/Y}
    preg_match_all("/#(ESC|URL)?@?_\{.*?\}/", $format, $results);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
@@ -1749,6 +1756,12 @@ function eme_replace_placeholders($format, $event="", $target="html") {
       $format = str_replace($orig_result, $replacement ,$format );
    }
 
+   # we handle NOTES the last, this used to be the default behavior
+   # so no placeholder replacement happened accidentaly in possible shortcodes inside #_NOTES
+   # but since we have templates to aid in all that ...
+   if (!$eme_enable_notes_placeholders)
+      $format = eme_replace_notes_placeholders ( $format, $event, $target );
+ 
    return do_shortcode($format);   
 }
 

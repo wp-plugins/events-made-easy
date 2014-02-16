@@ -1271,19 +1271,22 @@ function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,
       $format_arr = eme_get_template($template_id);
       $format=$format_arr['format'];
    }
+
+   // header and footer can't contain per booking info, so we don't replace booking placeholders there
    if ($template_id_header) {
       $format_arr = eme_get_template($template_id_header);
       $format_header = $format_arr['format'];
-      $eme_format_header=eme_replace_attendees_placeholders($format_header);
+      $eme_format_header=eme_replace_placeholders($format_header, $event);
    }
    if ($template_id_footer) {
       $format_arr = eme_get_template($template_id_footer);
       $format_footer = $format_arr['format'];
-      $eme_format_footer=eme_replace_attendees_placeholders($format_footer);
+      $eme_format_footer=eme_replace_placeholders($format_footer, $event);
    }
 
    if ($attendees) {
       $res=$eme_format_header;
+      $format=eme_replace_placeholders($format, $event);
       foreach ($attendees as $attendee) {
          $res.=eme_replace_attendees_placeholders($format,$event,$attendee);
       }
@@ -1301,23 +1304,27 @@ function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$
    $eme_format_header=get_option('eme_bookings_list_header_format');
    $eme_format_footer=get_option('eme_bookings_list_footer_format');
 
+   
    if ($template_id) {
       $format_arr = eme_get_template($template_id);
       $format=$format_arr['format'];
    }
+
+   // header and footer can't contain per booking info, so we don't replace booking placeholders there
    if ($template_id_header) {
       $format_arr = eme_get_template($template_id_header);
       $format_header = $format_arr['format'];
-      $eme_format_header=eme_replace_bookings_placeholders($format_header);
+      $eme_format_header=eme_replace_placeholders($format_header, $event);
    }
    if ($template_id_footer) {
       $format_arr = eme_get_template($template_id_footer);
       $format_footer = $format_arr['format'];
-      $eme_format_footer=eme_replace_bookings_placeholders($format_footer);
+      $eme_format_footer=eme_replace_placeholders($format_footer, $event);
    }
 
    if ($bookings) {
       $res=$eme_format_header;
+      $format=eme_replace_placeholders($format, $event);
       foreach ($bookings as $booking) {
          $res.= eme_replace_booking_placeholders($format,$event,$booking);
       }

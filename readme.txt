@@ -65,8 +65,11 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added width/height as optional parameters to shortcode eme_location_map
 * Feature: added radiobox, 'radiobox vertical', 'checkbox' and 'checkbox vertical' as new formfield types
 * Feature: added attributes for locations as well, and all templates are also searched for attribute definitions
+* Feature: event notes can now contain all event placeholders as well, when activating the new option called 'Enable placeholders in event notes'. This
+  changes old behavior, so by default it is disabled
 * Improvement: make IS_REGISTERED work for all logged in users, not just when requiring WP membership for rsvp
 * Bugfix: fix layout for location list (the default format setting was being ignored)
+* Bugfix: some template header/footer fixes for attendee and booking lists
 
 = 1.2.5 =
 * Feature: the payment form showing the buttons can now be customized in the EME settings, Payment section. The same placeholders as for bookings can be used.
