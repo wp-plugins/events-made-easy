@@ -1044,7 +1044,7 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
    return $format;
 }
 
-function eme_replace_placeholders($format, $event="", $target="html") {
+function eme_replace_placeholders($format, $event="", $target="html", $do_shortcode=1) {
    global $wp_query, $eme_need_gmap_js;
 
    // some variables we'll use further down more than once
@@ -1762,7 +1762,10 @@ function eme_replace_placeholders($format, $event="", $target="html") {
    if (!$eme_enable_notes_placeholders)
       $format = eme_replace_notes_placeholders ( $format, $event, $target );
  
-   return do_shortcode($format);   
+   if ($do_shortcode)
+      return do_shortcode($format);
+   else
+      return $format;
 }
 
 function eme_sanitize_request( $value ) {

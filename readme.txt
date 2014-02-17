@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.2.7 =
+* Bugfix: let shortcodes in booking lists be replaced at the end, so conditionals can be used there as well.
+
 = 1.2.6 =
 * Feature: added width/height as optional parameters to shortcode eme_location_map
 * Feature: added radiobox, 'radiobox vertical', 'checkbox' and 'checkbox vertical' as new formfield types

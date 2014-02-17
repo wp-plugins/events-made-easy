@@ -607,7 +607,8 @@ function eme_book_seats($event, $send_mail=1) {
             eme_record_answers($booking_id);
             $booking = eme_get_booking ($booking_id);
             $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
-            $result = eme_replace_placeholders($format, $event);
+            // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+            $result = eme_replace_placeholders($format, $event, "html", 0);
             $result = eme_replace_booking_placeholders($result, $event, $booking);
             if (is_admin()) {
                $action="approveRegistration";
@@ -1286,7 +1287,8 @@ function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,
 
    if ($attendees) {
       $res=$eme_format_header;
-      $format=eme_replace_placeholders($format, $event);
+      // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_attendees_placeholders finish and that will do it
+      $format = eme_replace_placeholders($format, $event, "html", 0);
       foreach ($attendees as $attendee) {
          $res.=eme_replace_attendees_placeholders($format,$event,$attendee);
       }
@@ -1324,7 +1326,8 @@ function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$
 
    if ($bookings) {
       $res=$eme_format_header;
-      $format=eme_replace_placeholders($format, $event);
+      // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+      $format = eme_replace_placeholders($format, $event, "html", 0);
       foreach ($bookings as $booking) {
          $res.= eme_replace_booking_placeholders($format,$event,$booking);
       }
