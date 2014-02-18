@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal and other payment gateways support. SEO compatible.
              
@@ -62,7 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.2.7 =
-* Bugfix: let shortcodes in booking lists be replaced at the end, so conditionals can be used there as well.
+* Bugfix: let shortcodes in booking and attendees lists be replaced at the end, so conditionals can be used there as well.
 
 = 1.2.6 =
 * Feature: added width/height as optional parameters to shortcode eme_location_map
