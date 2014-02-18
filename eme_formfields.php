@@ -265,6 +265,7 @@ function eme_get_formfield_html($field_id) {
          $html = "<input type='text' name='FIELD$field_id' value='$value'>";
          break;
       case 2:
+         # dropdown
          $values = explode("||",$value);
          $my_arr = array();
          foreach ($values as $val) {
@@ -273,7 +274,44 @@ function eme_get_formfield_html($field_id) {
          $html = eme_ui_select('',"FIELD$field_id",$my_arr);
          break;
       case 3:
+         # textarea
          $html = "<textarea name='FIELD$field_id'>$value</textarea>";
+         break;
+      case 4:
+         # radiobox
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_radio('',"FIELD$field_id",$my_arr);
+         break;
+      case 5:
+         # radiobox, vertical
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_radio('',"FIELD$field_id",$my_arr,false);
+         break;
+      case 6:
+	# checkbox
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_checkbox('',"FIELD$field_id",$my_arr);
+         break;
+      case 7:
+	# checkbox, vertical
+         $values = explode("||",$value);
+         $my_arr = array();
+         foreach ($values as $val) {
+            $my_arr[$val]=$val;
+         }
+         $html = eme_ui_checkbox('',"FIELD$field_id",$my_arr,false);
          break;
    }
    return $html;
@@ -375,7 +413,11 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          $required_fields_count++;
       } elseif (preg_match('/#_SEATS(\d+)$|#_SPACES(\d+)$/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
+         // in case of multi, $booked_places_options contains the options for seat bookings per multi
+         if (eme_is_multi($event['event_seats']) || eme_is_multi($event['price']))
+            $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options[$field_id-1]);
+         else
+            $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT$/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
@@ -410,7 +452,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
    # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
    # for multiprice: 3 + number of possible prices
    # if these are not present: we don't replace anything and the form is worthless
-   if (eme_is_multiprice($event['price'])) {
+   if (eme_is_multi($event['price'])) {
       $matches=preg_split('/\|\|/', $event['price']);
       $count=count($matches);
       // the count can be >3+$count if conditional tags are used to combine a form for single and multiple prices

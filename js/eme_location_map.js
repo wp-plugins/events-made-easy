@@ -26,6 +26,8 @@ function loadGMap() {
 			var max_longitude = -500.1;
 			var min_longitude = 500.1;
 
+			var zoom_factor=parseInt(data.zoom_factor);
+			var maptype=data.maptype;
 			var enable_zooming=false;
 			if (data.enable_zooming === 'true') {
 				enable_zooming = true;
@@ -34,14 +36,14 @@ function loadGMap() {
 			var mapCenter = new google.maps.LatLng(45.4213477,10.952397);
                         
 			var myOptions = {
-				zoom: 3,
+				zoom: zoom_factor,
 				center: mapCenter,
 				disableDoubleClickZoom: true,
 				scrollwheel: enable_zooming,
 				mapTypeControlOptions: {
-					mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]
+					mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN]
 				},
-				mapTypeId: google.maps.MapTypeId.ROADMAP
+				mapTypeId: google.maps.MapTypeId[maptype]
 			};
 			var map = new google.maps.Map(document.getElementById("eme_global_map"), myOptions);
 			var infowindow = new google.maps.InfoWindow();
@@ -127,7 +129,7 @@ function loadGMap() {
 			});
 
 			// fitbounds plays with the zoomlevel, and zooms in too much if only 1 marker, or zooms out too much if no markers
-			// solution taken from http://efreedom.com/Question/1-2989858/Google-Maps-V3-Enforcing-Min-Zoom-Level-Using-FitBounds
+			// solution taken from http://stackoverflow.com/questions/2989858/google-maps-v3-enforcing-min-zoom-level-when-using-fitbounds
 			// Content:
 			// At this discussion (http://groups.google.com/group/google-maps-js-api-v3/browse_thread/thread/48a49b1481aeb64c?pli=1)
 			//   I discovered that basically when you do a fitBounds, the zoom happens "asynchronously" so you need to capture the
@@ -136,7 +138,7 @@ function loadGMap() {
 			//   it the first time.
 			map.initialZoom = true;
 			google.maps.event.addListener(map, 'zoom_changed', function() {
-				zoomChangeBoundsListener = google.maps.event.addListener(map, 'bounds_changed', function(event) {
+				zoomChangeBoundsListener = google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
 					if (this.getZoom() > 14 && this.initialZoom === true) {
 					// Change max/min zoom here
 						this.setZoom(14);
@@ -147,7 +149,8 @@ function loadGMap() {
 						this.setZoom(1);
 						this.initialZoom = false;
 					}
-			        	google.maps.event.removeListener(zoomChangeBoundsListener);
+               // we use addListenerOnce, so we don't need to remove the listener anymore
+			      //	google.maps.event.removeListener(zoomChangeBoundsListener);
 				});
 			});
 		});
@@ -164,6 +167,8 @@ function loadGMap() {
 			var map_text_id = window['map_text_'+map_id]; 
 			var point = new google.maps.LatLng(lat_id, lon_id);
 
+         var zoom_factor=window['zoom_factor_'+map_id];
+         var maptype=window['maptype_'+map_id];
          var enable_zooming=false;
          if (window['enable_zooming_'+map_id] === 'true') {
             enable_zooming = true;
@@ -171,14 +176,14 @@ function loadGMap() {
 
 			var mapCenter= new google.maps.LatLng(point.lat()+0.005, point.lng()-0.003);
 			var myOptions = {
-                           zoom: 14,
+                           zoom: zoom_factor,
                            center: mapCenter,
                            disableDoubleClickZoom: true,
                            scrollwheel: enable_zooming,
                            mapTypeControlOptions: {
-                                 mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]
+                                 mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN]
                            },
-                           mapTypeId: google.maps.MapTypeId.ROADMAP
+                           mapTypeId: google.maps.MapTypeId[maptype]
 			};
 			var s_map = new google.maps.Map(divs[i], myOptions);
 			var s_balloon_id= "eme-location-balloon-"+map_id;
