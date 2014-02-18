@@ -10,11 +10,11 @@ function eme_add_options($reset=0) {
    $registration_denied_email_body_localizable = __("Dear #_RESPNAME,<br/><br/>your request to reserve #_SPACES space(s) for #_EVENTNAME has been denied.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON",'eme');
    $registration_recorded_ok_html_localizable = __('Your booking has been recorded','eme');
    $registration_form_format_localizable = "<table class='eme-rsvp-form'>
-            <tr><th scope='row'>".__('Name', 'eme')."*:</th><td>#_NAME</td></tr>
-            <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_EMAIL</td></tr>
-            <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_PHONE</td></tr>
-            <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_SEATS</td></tr>
-            <tr><th scope='row'>".__('Comment', 'eme').":</th><td>#_COMMENT</td></tr>
+            <tr><th scope='row'>".__('Name', 'eme')."*:</th><td>#_RESPNAME</td></tr>
+            <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_RESPEMAIL</td></tr>
+            <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_RESPPHONE</td></tr>
+            <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_RESPSPACES</td></tr>
+            <tr><th scope='row'>".__('Comment', 'eme').":</th><td>#_RESPCOMMENT</td></tr>
             #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
             </table>
             #_SUBMIT
@@ -502,7 +502,7 @@ function eme_options_page() {
    eme_options_radio_binary ( __ ( 'Hide fully booked events?', 'eme' ), 'eme_rsvp_hide_full_events', __ ( 'Check this option if you want to hide events that are fully booked from the calendar and events listing in the front.', 'eme' ) );
    eme_options_input_text ( __ ( 'Add booking form submit text', 'eme' ), 'eme_rsvp_addbooking_submit_string', __ ( "The string of the submit button on the add booking form", 'eme' ) );
    eme_options_input_text ( __ ( 'Delete booking form submit text', 'eme' ), 'eme_rsvp_delbooking_submit_string', __ ( "The string of the submit button on the delete booking form", 'eme' ) );
-   eme_options_input_text ( __ ( 'Attendees list format', 'eme' ), 'eme_attendees_list_format', __ ( "The format for the attendees list when using the <code>#_ATTENDEES</code> placeholder. Use <code>#_NAME</code>, <code>#_EMAIL</code>, <code>#_PHONE</code>, <code>#_ID</code>.", 'eme' ). __("Use <code>#_USER_RESERVEDSPACES</code> to show the number of seats for that person.", 'eme' ) );
+   eme_options_input_text ( __ ( 'Attendees list format', 'eme' ), 'eme_attendees_list_format', __ ( "The format for the attendees list when using the <code>#_ATTENDEES</code> placeholder.", 'eme' ). __('For all placeholders you can use here, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('the documentation', 'eme').'</a>' );
    eme_options_input_text ( __ ( 'Bookings list header format', 'eme' ), 'eme_bookings_list_header_format', __ ( "The header format for the bookings list when using the <code>#_BOOKINGS</code> placeholder.", 'eme' ). sprintf(__(" The default is '%s'",'eme'),eme_sanitize_html(DEFAULT_BOOKINGS_LIST_HEADER_FORMAT)));
    eme_options_input_text ( __ ( 'Bookings list format', 'eme' ), 'eme_bookings_list_format', __ ( "The format for the bookings list when using the <code>#_BOOKINGS</code> placeholder.", 'eme' ). __('For all placeholders you can use here, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('the documentation', 'eme').'</a>' .__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme').'</a>' );
    eme_options_input_text ( __ ( 'Bookings list footer format', 'eme' ), 'eme_bookings_list_footer_format', __ ( "The footer format for the bookings list when using the <code>#_BOOKINGS</code> placeholder.", 'eme' ). sprintf(__(" The default is '%s'",'eme'),eme_sanitize_html(DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT)));
