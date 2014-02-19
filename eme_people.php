@@ -406,6 +406,8 @@ function eme_get_person_by_name_and_email($name, $email) {
 }
 
 function eme_get_person_by_wp_info($name, $email, $wp_id) {
+   global $wpdb; 
+   $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE person_name = %s AND person_email = %s AND wp_id = %d ",$name,$email,$wp_id);
    $result = $wpdb->get_row($sql, ARRAY_A);
    return $result;
