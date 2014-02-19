@@ -1,16 +1,20 @@
 <?php
 
+function eme_sanitize_ical($value, $keep_html=0) {
+   $value = preg_replace('/"/', '', $value);
+   $value = preg_replace('/\\\\/', '\\\\', $value);
+   $value = preg_replace('/\r\n|\n/', '\\n', $value);
+   $value = preg_replace('/(;|\,)/', '\\\${1}', $value);
+   if (!$keep_html)
+      return apply_filters('eme_text', $value);
+   else
+      return $value;
+}
+
 function eme_ical_single_event($event, $title_format, $description_format) {
-   $title = eme_replace_placeholders ( $title_format, $event, "rss" );
-   // no html tags allowed in ical
-   $title = strip_tags($title);
-   $description = eme_replace_placeholders ( $description_format, $event, "rss" );
-   // no \r\n in description, only escaped \n is allowed
-   $description = preg_replace('/\r\n/', "", $description);
-   // no html tags allowed in ical, but we can convert br to escaped newlines to maintain readable output
-   $description = strip_tags(preg_replace('/<br(\s+)?\/?>/i', "\\n", $description));
-   $location = eme_replace_placeholders ( "#_LOCATION, #_ADDRESS, #_TOWN", $event, "rss" );
-   $location = strip_tags($location);
+   $title = eme_sanitize_ical (eme_replace_placeholders ( $title_format, $event, "text" ));
+   $description = eme_sanitize_ical (eme_replace_placeholders ( $description_format, $event, "text" ));
+   $html_description = eme_sanitize_ical (eme_replace_placeholders ( $description_format, $event, "html" ),1);
 
    $event_link = eme_event_url($event);
    $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
@@ -35,14 +39,33 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    $res .= "BEGIN:VEVENT\r\n";
    //DTSTAMP must be in UTC format, so adding "Z" as well
    $res .= "DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z\r\n";
-   $res .= "DTSTART;TZID=$tzstring:$dtstart\r\n";
-   $res .= "DTEND;TZID=$tzstring:$dtend\r\n";
+   if ($event['event_properties']['all_day']) {
+      // ical standard for an all day event: specify only the day, meaning
+      // an 'all day' event is flagged as starting at the beginning of one day and lasting until the beginning of the next
+      // so it is the same as adding "T000000" as time spec to the start/end datestring
+      // But since it "ends" at the beginning of the next day, we should add 24 hours, otherwise the event ends one day too soon
+      $dtenddate=date_i18n("Ymd",$endstring+86400);
+      $res .= "DTSTART;VALUE=DATE:$dtstartdate\r\n";
+      $res .= "DTEND;VALUE=DATE:$dtenddate\r\n";
+   } else {
+      $res .= "DTSTART;TZID=$tzstring:$dtstart\r\n";
+      $res .= "DTEND;TZID=$tzstring:$dtend\r\n";
+   }
    $res .= "UID:$dtstart-$dtend-".$event['event_id']."@".$_SERVER['SERVER_NAME']."\r\n";
    $res .= "SUMMARY:$title\r\n";
    $res .= "DESCRIPTION:$description\r\n";
+   $res .= "X-ALT-DESC;FMTTYPE=text/html:$html_description\r\n";
    $res .= "URL:$event_link\r\n";
    $res .= "ATTACH:$event_link\r\n";
-   $res .= "LOCATION:$location\r\n";
+   if ($event['event_image_id']) {
+      $thumb_array = image_downsize( $event['event_image_id'], get_option('eme_thumbnail_size') );
+      $thumb_url = $thumb_array[0];
+      $res .= "ATTACH:$thumb_url\r\n";
+   }
+   if (isset($event['location_id']) && $event['location_id']) {
+      $location = eme_sanitize_ical (eme_replace_placeholders ( "#_LOCATION, #_ADDRESS, #_TOWN", $event, "text" ));
+      $res .= "LOCATION:$location\r\n";
+   }
    $res .= "END:VEVENT\r\n";
    return $res;
 }
@@ -97,7 +120,6 @@ function eme_ical_link_shortcode($atts) {
    $result = eme_ical_link ( $justurl,0,$text,$category,$location_id, $scope,$author,$contact_person,$notcategory );
    return $result;
 }
-add_shortcode ( 'events_ical_link', 'eme_ical_link_shortcode' );
 
 function eme_ical() {
    if (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public_single' && isset ( $_GET ['event_id'] )) {
@@ -121,8 +143,8 @@ function eme_ical() {
    echo "METHOD:PUBLISH\r\n";
    echo "VERSION:2.0\r\n";
    echo "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n";
-   $title_format = get_option('eme_event_page_title_format' );
-   $description_format = get_option('eme_single_event_format');
+   $title_format = get_option('eme_ical_title_format' );
+   $description_format = get_option('eme_ical_description_format');
    if (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public_single' && isset ( $_GET ['event_id'] )) {
       $event=eme_get_event(intval($_GET ['event_id']));
       echo eme_ical_single_event($event,$title_format,$description_format);
