@@ -1715,7 +1715,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
    # now handle all possible location placeholders
    # but the eme_replace_locations_placeholders can't do "do_shortcode" at the end, because
-   # this would cause [events_if] tags to be replaced here already, while some placeholders of the
+   # this would cause [eme_if] tags to be replaced here already, while some placeholders of the
    # event haven't been replaced yet (like time placeholders, and event details)
    $format = eme_replace_locations_placeholders ( $format, $event, $target, 0 );
 

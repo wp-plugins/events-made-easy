@@ -1243,7 +1243,7 @@ function eme_get_events_list_shortcode($atts) {
    // if format is given as argument, sometimes people need url-encoded strings inside so wordpress doesn't get confused, so we decode them here again
    $format = urldecode($format);
    // for format: sometimes people want to give placeholders as options, but when using the shortcode inside
-   // another (e.g. when putting[events_list format="#_EVENTNAME"] inside the "display single event" setting,
+   // another (e.g. when putting[eme_events format="#_EVENTNAME"] inside the "display single event" setting,
    // the replacement of the placeholders happens too soon (placeholders get replaced first, before any other
    // shortcode is interpreted). So we add the option that people can use "#OTHER_", and we replace this with
    // "#_" here
