@@ -221,13 +221,15 @@ function eme_get_categories($eventful=false,$scope="future",$extra_conditions=""
          $event_cats=join(",",$categories);
          if ($extra_conditions !="")
             $extra_conditions = " AND ($extra_conditions)";
-         return $wpdb->get_results("SELECT * FROM $categories_table where category_id in ($event_cats) $extra_conditions $orderby", ARRAY_A);
+         $result = $wpdb->get_results("SELECT * FROM $categories_table where category_id in ($event_cats) $extra_conditions $orderby", ARRAY_A);
       }
    } else {
       if ($extra_conditions !="")
          $extra_conditions = " WHERE ($extra_conditions)";
-      return $wpdb->get_results("SELECT * FROM $categories_table $extra_conditions $orderby", ARRAY_A);
+      $result = $wpdb->get_results("SELECT * FROM $categories_table $extra_conditions $orderby", ARRAY_A);
    }
+   if (has_filter('eme_categories_filter')) $result=apply_filters('eme_categories_filter',$result); 
+   return $result;
 }
 
 function eme_get_category($category_id) { 
