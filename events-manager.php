@@ -1799,9 +1799,20 @@ function eme_sanitize_rss( $value ) {
    return "<![CDATA[".$value."]]>";
 }
 
+
+
+function eme_htmlspecialchars(&$value) {
+  //$value = htmlspecialchars($value, ENT_QUOTES');
+  $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
 function eme_sanitize_html( $value ) {
    //return htmlentities($value,ENT_QUOTES,get_option('blog_charset'));
-   return htmlspecialchars($value,ENT_QUOTES);
+   if (!is_array($value))
+      $value=htmlspecialchars($value,ENT_QUOTES);
+   else
+      array_walk_recursive($value, "eme_htmlspecialchars");
+   return $value;
 }
 
 function eme_strip_tags ( $value ) {

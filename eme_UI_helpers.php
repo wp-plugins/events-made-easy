@@ -165,9 +165,9 @@ function eme_ui_checkbox($option_value_arr, $name, $list, $horizontal = true) {
      $val = "";
      foreach($list as $key => $value) {
         if (is_array($option_value_arr)) {
-           in_array($key,$option_value_arr) ? $selected = "selected='selected' " : $selected = '';
+           in_array($key,$option_value_arr) ? $selected = "checked='checked' " : $selected = '';
         } else {
-           "$key" == $option_value_arr ? $selected = "selected='selected' " : $selected = '';
+           "$key" == $option_value_arr ? $selected = "checked='checked' " : $selected = '';
         }
         $val.= "<input type='checkbox' name='${name}[]' value='$key' $selected>$value";
 	if(!$horizontal)  

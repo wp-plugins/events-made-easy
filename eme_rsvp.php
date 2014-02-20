@@ -63,29 +63,9 @@ function eme_payment_form($event,$booking_id) {
 }
 
 function eme_add_booking_form($event_id) {
-   global $form_add_message, $form_error_message, $current_user;
+   global $form_add_message, $form_error_message;
    global $booking_id_done;
    $rsvp_is_active = get_option('eme_rsvp_enabled');
-
-   $bookerName="";
-   $bookerEmail="";
-   $bookerComment="";
-   $bookerPhone="";
-   $bookedSeats=0;
-
-   if (is_user_logged_in()) {
-      get_currentuserinfo();
-      $bookerName=$current_user->display_name;
-      $bookerEmail=$current_user->user_email;
-   }
-
-   // check for previously filled in data
-   // this in case people entered a wrong captcha
-   if (isset($_POST['bookerName'])) $bookerName = eme_sanitize_html(eme_sanitize_request($_POST['bookerName']));
-   if (isset($_POST['bookerEmail'])) $bookerEmail = eme_sanitize_html(eme_sanitize_request($_POST['bookerEmail']));
-   if (isset($_POST['bookerPhone'])) $bookerPhone = eme_sanitize_html(eme_sanitize_request($_POST['bookerPhone']));
-   if (isset($_POST['bookerComment'])) $bookerComment = eme_sanitize_html(eme_sanitize_request($_POST['bookerComment']));
-   if (isset($_POST['bookedSeats'])) $bookedSeats = eme_sanitize_html(eme_sanitize_request($_POST['bookedSeats']));
 
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
@@ -228,7 +208,7 @@ function eme_add_booking_form($event_id) {
       $form_html = "<div id='eme-rsvp-message'>".$form_html."</div>";
 
    $form_html .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
-   $form_html .= eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment);
+   $form_html .= eme_replace_formfields_placeholders ($event, $readonly, $booked_places_options);
    // also add a honeypot field: if it gets completed with data, 
    // it's a bot, since a humand can't see this (using CSS to render it invisible)
    $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>

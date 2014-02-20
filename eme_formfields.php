@@ -256,74 +256,104 @@ function eme_get_fieldtype($type_id){
    return $wpdb->get_var($sql);
 }
 
-function eme_get_formfield_html($field_id) {
+function eme_get_formfield_html($field_id, $entered_val) {
    $formfield = eme_get_formfield_byid($field_id);
-   $value = eme_sanitize_html($formfield['field_info']);
+   $field_info = eme_sanitize_html($formfield['field_info']);
    switch($formfield['field_type']) {
       case 1:
 	      # for text field
+         if (empty($entered_val))
+            $value=$field_info;
+         else
+            $value=$entered_val;
          $html = "<input type='text' name='FIELD$field_id' value='$value'>";
          break;
       case 2:
          # dropdown
-         $values = explode("||",$value);
+         $values = explode("||",$field_info);
          $my_arr = array();
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_select('',"FIELD$field_id",$my_arr);
+         $html = eme_ui_select($entered_val,"FIELD$field_id",$my_arr);
          break;
       case 3:
          # textarea
+         if (empty($entered_val))
+            $value=$field_info;
+         else
+            $value=$entered_val;
          $html = "<textarea name='FIELD$field_id'>$value</textarea>";
          break;
       case 4:
          # radiobox
-         $values = explode("||",$value);
+         $values = explode("||",$field_info);
          $my_arr = array();
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_radio('',"FIELD$field_id",$my_arr);
+         $html = eme_ui_radio($entered_val,"FIELD$field_id",$my_arr);
          break;
       case 5:
          # radiobox, vertical
-         $values = explode("||",$value);
+         $values = explode("||",$field_info);
          $my_arr = array();
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_radio('',"FIELD$field_id",$my_arr,false);
+         $html = eme_ui_radio($entered_val,"FIELD$field_id",$my_arr,false);
          break;
       case 6:
-	# checkbox
-         $values = explode("||",$value);
+      	# checkbox
+         $values = explode("||",$field_info);
          $my_arr = array();
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_checkbox('',"FIELD$field_id",$my_arr);
+         $html = eme_ui_checkbox($entered_val,"FIELD$field_id",$my_arr);
          break;
       case 7:
-	# checkbox, vertical
-         $values = explode("||",$value);
+      	# checkbox, vertical
+         $values = explode("||",$field_info);
          $my_arr = array();
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_checkbox('',"FIELD$field_id",$my_arr,false);
+         $html = eme_ui_checkbox($entered_val,"FIELD$field_id",$my_arr,false);
          break;
    }
    return $html;
 }
 
-function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $booked_places_options, $bookerName, $bookerEmail, $bookerPhone, $bookerComment) {
-   $required_fields_count = 0;
+function eme_replace_formfields_placeholders ($event, $readonly, $booked_places_options) {
+   global $current_user;
+
 
    $format = $event['event_registration_form_format'];
    if (empty($format)) {
       $format = get_option('eme_registration_form_format');
    }
+
+   $required_fields_count = 0;
+   $bookerName="";
+   $bookerEmail="";
+   $bookerComment="";
+   $bookerPhone="";
+   $bookedSeats=0;
+
+   if (is_user_logged_in()) {
+      get_currentuserinfo();
+      $bookerName=$current_user->display_name;
+      $bookerEmail=$current_user->user_email;
+   }
+
+   // check for previously filled in data
+   // this in case people entered a wrong captcha
+   if (isset($_POST['bookerName'])) $bookerName = eme_sanitize_html(eme_sanitize_request($_POST['bookerName']));
+   if (isset($_POST['bookerEmail'])) $bookerEmail = eme_sanitize_html(eme_sanitize_request($_POST['bookerEmail']));
+   if (isset($_POST['bookerPhone'])) $bookerPhone = eme_sanitize_html(eme_sanitize_request($_POST['bookerPhone']));
+   if (isset($_POST['bookerComment'])) $bookerComment = eme_sanitize_html(eme_sanitize_request($_POST['bookerComment']));
+   if (isset($_POST['bookedSeats'])) $bookedSeats = eme_sanitize_html(eme_sanitize_request($_POST['bookedSeats']));
 
    // first we do the custom attributes, since these can contain other placeholders
    preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $format, $results);
@@ -429,7 +459,11 @@ function eme_replace_formfields_placeholders ($event, $readonly, $bookedSeats, $
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
       } elseif (preg_match('/#_FIELD(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $replacement = eme_get_formfield_html($field_id);
+         if (isset($_POST['FIELD'.$field_id]))
+            $entered_val = eme_sanitize_html(eme_sanitize_request($_POST['FIELD'.$field_id]));
+         else
+            $entered_val = "";
+         $replacement = eme_get_formfield_html($field_id,$entered_val);
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
          $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."'/>";
          $required_fields_count++;
