@@ -1139,8 +1139,8 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       $replacement = "";
       //Strip string of placeholder and just leave the reference
       $attRef = substr( substr($result, 0, strpos($result, '}')), 6 );
-      if (isset($event['event_attributes'][$attRef])) {
-         $replacement = $event['event_attributes'][$attRef];
+      if (isset($location['location_attributes'][$attRef])) {
+         $replacement = $location['location_attributes'][$attRef];
       }
       if( trim($replacement) == ''
             && isset($results[2][$resultKey])

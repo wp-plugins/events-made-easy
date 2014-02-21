@@ -65,6 +65,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: retain all filled in values if RSVP form validation proved wrong
 * Feature: added new filter eme_categories_filter, executed when searching for the categories (e.g. when creating an event). With this, you can e.g. limit the categories shown when creating an event or location or ... . Has one parameter: array of categories.
 * Bugfix: make rsvp form work again (copy/paste error fix)
+* Bugfix: make location attributes actually work
 
 = 1.2.7 =
 * Bugfix: let shortcodes in booking and attendees lists be replaced at the end, so conditionals can be used there as well.
