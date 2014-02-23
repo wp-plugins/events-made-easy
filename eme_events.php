@@ -568,19 +568,38 @@ function eme_get_all_pages() {
 
 //This is the content of the event page
 function eme_events_page_content() {
-   global $wpdb,$wp_query;
+   global $wpdb;
 
    $format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
    $format_header = ( $format_header != '' ) ?  $format_header : "<ul class='eme_events_list'>";
    $format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
    $format_footer = ( $format_footer != '' ) ?  $format_footer : "</ul>";
 
-   if (isset ( $wp_query->query_vars['eme_pmt_id'] ) && $wp_query->query_vars['eme_pmt_id'] != '') {
-      $page_body = eme_payment_form("",$wp_query->query_vars['eme_pmt_id']);
+   if (get_query_var('eme_pmt_result') && get_option('eme_payment_show_custom_return_page')) {
+      // show the result of a payment
+      $result=get_query_var('eme_pmt_result');
+      if ($result == 'succes') {
+         $format = get_option('eme_payment_succes_format');
+      } else {
+         $format = get_option('eme_payment_fail_format');
+      }
+      if (get_option('eme_payment_add_bookingid_to_return') && get_query_var('eme_pmt_id') && get_query_var('event_id')) {
+         $event = eme_get_event(intval(get_query_var('event_id')));
+         $booking = eme_get_booking(intval(get_query_var('eme_pmt_id')));
+         return eme_replace_booking_placeholders($format,$event,$booking);
+      } elseif (get_query_var('event_id')) {
+         $event = eme_get_event(intval(get_query_var('event_id')));
+         return eme_replace_placeholders($format,$event);
+      } else {
+         return $format;
+      }
+   } elseif (get_query_var('eme_pmt_id')) {
+      $page_body = eme_payment_form("",get_query_var('eme_pmt_id'));
       return $page_body;
    }
-   if (isset ( $wp_query->query_vars['eme_town'] ) && $wp_query->query_vars['eme_town'] != '') {
-      $eme_town=eme_sanitize_request($wp_query->query_vars['eme_town']);
+
+   if (get_query_var('eme_town')) {
+      $eme_town=eme_sanitize_request(get_query_var('eme_town'));
       $location_ids = join(',',eme_get_town_location_ids($eme_town));
       $stored_format = get_option('eme_event_list_item_format');
       if (count($location_ids)>0) {
@@ -594,14 +613,14 @@ function eme_events_page_content() {
       }
       return $page_body;
    }
-   if (isset ( $wp_query->query_vars['location_id'] ) && $wp_query->query_vars['location_id'] != '') {
-      $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+   if (get_query_var('location_id')) {
+      $location = eme_get_location ( intval(get_query_var('location_id')));
       $single_location_format = get_option('eme_single_location_format' );
       $page_body = eme_replace_locations_placeholders ( $single_location_format, $location );
       return $page_body;
    }
-   if (!isset ( $wp_query->query_vars['calendar_day'] ) && isset ( $wp_query->query_vars['eme_event_cat'] ) && $wp_query->query_vars['eme_event_cat'] != '') {
-      $eme_event_cat=eme_sanitize_request($wp_query->query_vars['eme_event_cat']);
+   if (!get_query_var('calendar_day') && get_query_var('eme_event_cat')) {
+      $eme_event_cat=eme_sanitize_request(get_query_var('eme_event_cat'));
       $cat_ids = join(',',eme_get_category_ids($eme_event_cat));
       $stored_format = get_option('eme_event_list_item_format');
       if (!empty($cat_ids)) {
@@ -614,15 +633,15 @@ function eme_events_page_content() {
    //if (isset ( $_REQUEST['event_id'] ) && $_REQUEST['event_id'] != '') {
    if (eme_is_single_event_page()) {
       // single event page
-      $event_ID = intval($wp_query->query_vars['event_id']);
+      $event_ID = intval(get_query_var('event_id'));
       $event = eme_get_event ( $event_ID );
       $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
       //$page_body = eme_replace_placeholders ( $single_event_format, $event, 'stop' );
       if (count($event) > 0 && ($event['event_status'] == STATUS_PRIVATE && is_user_logged_in() || $event['event_status'] != STATUS_PRIVATE))
          $page_body = eme_replace_placeholders ( $single_event_format, $event );
       return $page_body;
-   } elseif (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
-      $scope = eme_sanitize_request($wp_query->query_vars['calendar_day']);
+   } elseif (get_query_var('calendar_day')) {
+      $scope = eme_sanitize_request(get_query_var('calendar_day'));
       $events_N = eme_events_count_for ( $scope );
       $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
       $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
@@ -721,7 +740,6 @@ function eme_filter_events_page($data) {
 add_filter ( 'the_content', 'eme_filter_events_page' );
 
 function eme_page_title($data) {
-   global $wp_query;
    $events_page_id = get_option('eme_events_page' );
    $events_page = get_page ( $events_page_id );
    $events_page_title = $events_page->post_title;
@@ -729,13 +747,13 @@ function eme_page_title($data) {
    // make sure we only replace the title for the events page, not anything
    // from the menu (which is also in the loop ...)
    if (($data == $events_page_title) && in_the_loop() && eme_is_events_page()) {
-      if (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
+      if (get_query_var('calendar_day')) {
          
-         $date = eme_sanitize_request($wp_query->query_vars['calendar_day']);
+         $date = eme_sanitize_request(get_query_var('calendar_day'));
          $events_N = eme_events_count_for ( $date );
          
          if ($events_N == 1) {
-            $events = eme_get_events ( 0, eme_sanitize_request($wp_query->query_vars['calendar_day']));
+            $events = eme_get_events ( 0, eme_sanitize_request(get_query_var('calendar_day')));
             $event = $events[0];
             $stored_page_title_format = ( $event['event_page_title_format'] != '' ) ? $event['event_page_title_format'] : get_option('eme_event_page_title_format' );
             $page_title = eme_replace_placeholders ( $stored_page_title_format, $event );
@@ -745,7 +763,7 @@ function eme_page_title($data) {
       
       if (eme_is_single_event_page()) {
          // single event page
-         $event_ID = intval($wp_query->query_vars['event_id']);
+         $event_ID = intval(get_query_var('event_id'));
          $event = eme_get_event ( $event_ID );
          if (isset( $event['event_page_title_format']) && ( $event['event_page_title_format'] != '' )) {
             $stored_page_title_format = $event['event_page_title_format'];
@@ -755,7 +773,7 @@ function eme_page_title($data) {
          $page_title = eme_replace_placeholders ( $stored_page_title_format, $event );
          return $page_title;
       } elseif (eme_is_single_location_page()) {
-         $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+         $location = eme_get_location ( intval(get_query_var('location_id')));
          $stored_page_title_format = get_option('eme_location_page_title_format' );
          $page_title = eme_replace_locations_placeholders ( $stored_page_title_format, $location );
          return $page_title;
@@ -770,17 +788,15 @@ function eme_page_title($data) {
 }
 
 function eme_html_title($data) {
-   global $wp_query;
-
    //$events_page_id = get_option('eme_events_page' );
    if (eme_is_events_page()) {
-      if (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
+      if (get_query_var('calendar_day')) {
          
-         $date = eme_sanitize_request($wp_query->query_vars['calendar_day']);
+         $date = eme_sanitize_request(get_query_var('calendar_day'));
          $events_N = eme_events_count_for ( $date );
          
          if ($events_N == 1) {
-            $events = eme_get_events ( 0, eme_sanitize_request($wp_query->query_vars['calendar_day']));
+            $events = eme_get_events ( 0, eme_sanitize_request(get_query_var('calendar_day')));
             $event = $events[0];
             $stored_html_title_format = get_option('eme_event_html_title_format' );
             $html_title = eme_strip_tags(eme_replace_placeholders ( $stored_html_title_format, $event ));
@@ -789,13 +805,13 @@ function eme_html_title($data) {
       }
       if (eme_is_single_event_page()) {
          // single event page
-         $event_ID = intval($wp_query->query_vars['event_id']);
+         $event_ID = intval(get_query_var('event_id'));
          $event = eme_get_event ( $event_ID );
          $stored_html_title_format = get_option('eme_event_html_title_format' );
          $html_title = eme_strip_tags(eme_replace_placeholders ( $stored_html_title_format, $event ));
          return $html_title;
       } elseif (eme_is_single_location_page()) {
-         $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+         $location = eme_get_location ( intval(get_query_var('location_id')));
          $stored_html_title_format = get_option('eme_location_html_title_format' );
          $html_title = eme_strip_tags(eme_replace_locations_placeholders ( $stored_html_title_format, $location ));
          return $html_title;
@@ -815,12 +831,11 @@ add_filter ( 'single_post_title', 'eme_html_title' );
 add_filter ( 'the_title', 'eme_page_title' );
 
 function eme_template_redir() {
-   global $wp_query;
 # We need to catch the request as early as possible, but
 # since it needs to be working for both permalinks and normal,
 # I can't use just any action hook. parse_query seems to do just fine
-   if (isset ( $wp_query->query_vars['event_id'])) {
-      $event_id = intval($wp_query->query_vars['event_id']);
+   if (get_query_var('event_id')) {
+      $event_id = intval(get_query_var('event_id'));
       if (!eme_check_event_exists($event_id)) {
 //         header('Location: '.home_url('404.php'));
          status_header(404);
@@ -829,8 +844,8 @@ function eme_template_redir() {
          exit;
       }
    }
-   if (isset ( $wp_query->query_vars['location_id'])) {
-      $location_id = intval($wp_query->query_vars['location_id']);
+   if (get_query_var('location_id')) {
+      $location_id = intval(get_query_var('location_id'));
       if (!eme_check_location_exists($location_id)) {
 //         header('Location: '.home_url('404.php'));
          status_header(404);
@@ -1330,7 +1345,7 @@ function eme_count_events_newer_than($scope) {
 
 // main function querying the database event table
 function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset = 0, $location_id = "", $category = "", $author = "", $contact_person = "",  $show_ongoing=1, $notcategory = "", $extra_conditions = "") {
-   global $wpdb, $wp_query;
+   global $wpdb;
 
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
@@ -1646,8 +1661,8 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    }
    
    // when used inside a location description, you can use this_location to indicate the current location being viewed
-   if ($location_id == "this_location" && isset($wp_query->query_vars['location_id'])) {
-      $location_id = $wp_query->query_vars['location_id'];
+   if ($location_id == "this_location" && get_query_var('location_id')) {
+      $location_id = get_query_var('location_id');
    }
 
    if (is_numeric($location_id)) {
@@ -3006,6 +3021,24 @@ $j_eme_event(document).ready( function() {
          $j_eme_event('tr#eme_paypal_s_certid_row').hide();
       }
    });
+
+   if ($j_eme_event('input[name=eme_payment_show_custom_return_page]:checked').val() != 1) {
+      $j_eme_event('tr#eme_payment_succes_format_row').hide();
+      $j_eme_event('tr#eme_payment_fail_format_row').hide();
+      $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').hide(); 
+   }
+   $j_eme_event('input[name=eme_payment_show_custom_return_page]').change(function() {
+      if($j_eme_event(this).val() == 1) {
+         $j_eme_event('tr#eme_payment_succes_format_row').show();
+         $j_eme_event('tr#eme_payment_fail_format_row').show();
+         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').show(); 
+      } else {
+         $j_eme_event('tr#eme_payment_succes_format_row').hide();
+         $j_eme_event('tr#eme_payment_fail_format_row').hide();
+         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').hide(); 
+      }
+   });
+
    updateIntervalDescriptor(); 
    updateIntervalSelectors();
    updateShowHideRecurrence();
@@ -3801,9 +3834,8 @@ Weblog Editor 2.0
 }
 add_action ( 'init', 'eme_rss' );
 function eme_general_head() {
-   global $wp_query;
    if (eme_is_single_event_page()) {
-      $event=eme_get_event($wp_query->query_vars['event_id']);
+      $event=eme_get_event(get_query_var('event_id'));
       // I don't know if the canonical rel-link is needed, but since WP adds it by default ...
       $canon_url=eme_event_url($event);
       echo "<link rel=\"canonical\" href=\"$canon_url\" />\n";
@@ -3820,7 +3852,7 @@ function eme_general_head() {
          }
       }
    } elseif (eme_is_single_location_page()) {
-      $location=eme_get_location($wp_query->query_vars['location_id']);
+      $location=eme_get_location(get_query_var('location_id'));
       $canon_url=eme_location_url($location);
       echo "<link rel=\"canonical\" href=\"$canon_url\" />\n";
       $extra_headers_format=get_option('eme_location_html_headers_format');

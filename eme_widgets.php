@@ -198,9 +198,9 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $options['category'] = $category;
       $options['notcategory'] = $notcategory;
       // the month shown depends on the calendar day clicked
-      if (isset ( $wp_query->query_vars ['calendar_day'] ) && $wp_query->query_vars ['calendar_day'] != '') {
-          $options['month'] = date("m", strtotime( $wp_query->query_vars ['calendar_day']) );
-          $options['year'] = date("Y", strtotime( $wp_query->query_vars ['calendar_day']) );
+      if (get_query_var('calendar_day')) {
+          $options['month'] = date("m", strtotime(get_query_var('calendar_day')));
+          $options['year'] = date("Y", strtotime(get_query_var('calendar_day')));
       } else {
           $options['month'] = date("m");
           $options['year'] = date("Y");

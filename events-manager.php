@@ -301,6 +301,8 @@ function eme_insertMyRewriteQueryVars($vars) {
     array_push($vars, 'eme_event_cat');
     // a bit cryptic for the booking id
     array_push($vars, 'eme_pmt_id');
+    // for the payment result
+    array_push($vars, 'eme_pmt_result');
     return $vars;
 }
 add_filter('query_vars','eme_insertMyRewriteQueryVars');
@@ -1597,7 +1599,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif (preg_match('/#_CALENDAR_DAY/', $result)) {
-         $day_key = $wp_query->query_vars ['calendar_day'];
+         $day_key = get_query_var('calendar_day');
          $replacement = date_i18n (get_option('date_format'), strtotime($day_key));
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
