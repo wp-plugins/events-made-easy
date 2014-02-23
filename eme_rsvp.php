@@ -2221,6 +2221,7 @@ function eme_google_form($event,$booking_id) {
    $merchant_key = get_option('eme_google_merchant_key');  // Your Merchant Key
    $server_type = get_option('eme_google_checkout_type');
    $cart = new GoogleCart($merchant_id, $merchant_key, $server_type, $event['currency']);
+   //$cart->SetContinueShoppingUrl($return_url);
    $item_1 = new GoogleItem("Booking", // Item name
                             sprintf(__("Booking for '%s'","eme"),eme_sanitize_html($event['event_name'])), // Item description
                             $quantity, // Quantity
