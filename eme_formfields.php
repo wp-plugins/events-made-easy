@@ -421,6 +421,11 @@ function eme_replace_formfields_placeholders ($event, $readonly, $booked_places_
          $required=1;
       }
 
+      // also support RESPNAME, RESPEMAIL, ...
+      if (strstr($result,'#_RESP')) {
+         $result = str_replace("#_RESP","#_",$result);
+      }
+
       if (preg_match('/#_NAME$/', $result)) {
          $replacement = "<input type='text' name='bookerName' value='$bookerName' $readonly />";
          $required_fields_count++;
