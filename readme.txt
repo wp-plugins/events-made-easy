@@ -61,13 +61,15 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.2.8 =
+= 1.2.9 =
 * Feature: added the possibility to define a return page for payment succes or failure, with event and/or booking placeholders
 * Feature: retain all filled in values if RSVP form validation proved wrong
-* Feature: added new filter eme_categories_filter, executed when searching for the categories (e.g. when creating an event). With this, you can e.g. limit the categories shown when creating an event or location or ... . Has one parameter: array of categories.
-* Bugfix: make rsvp form work again (copy/paste error fix)
 * Bugfix: make location attributes actually work
 * Bugfix: also deal with RESPNAME, RESPEMAIL, ... in the registration form format
+
+= 1.2.8 =
+* Feature: added new filter eme_categories_filter, executed when searching for the categories (e.g. when creating an event). With this, you can e.g. limit the categories shown when creating an event or location or ... . Has one parameter: array of categories.
+* Bugfix: make rsvp form work again (copy/paste error fix)
 
 = 1.2.7 =
 * Bugfix: let shortcodes in booking and attendees lists be replaced at the end, so conditionals can be used there as well.
