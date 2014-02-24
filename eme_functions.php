@@ -419,14 +419,20 @@ function eme_status_array() {
    return $event_status_array;
 }
 
-function eme_localised_date($mydate) {
+function eme_localised_date($mydate, $is_unixtimestamp=0) {
    $date_format = eme_get_date_format();
-   return date_i18n ( $date_format, strtotime($mydate));
+   if ($is_unixtimestamp)
+      return date_i18n ( $date_format, $mydate);
+   else
+      return date_i18n ( $date_format, strtotime($mydate));
 }
 
-function eme_localised_time($mydate) {
+function eme_localised_time($mydate, $is_unixtimestamp=0) {
    $date_format = get_option('time_format');
-   return date_i18n ( $date_format, strtotime($mydate));
+   if ($is_unixtimestamp)
+      return date_i18n ( $date_format, $mydate);
+   else
+      return date_i18n ( $date_format, strtotime($mydate));
 }
 
 function eme_currency_array() {

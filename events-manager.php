@@ -1621,6 +1621,16 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
+      } elseif ($event && preg_match('/#_RSVPEND/', $result)) {
+         // show the end date+time for which a user can rsvp for an event
+         if ($rsvp_is_active && $event['event_rsvp']) {
+               $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+               $rsvp_end_datetime = $event_start_datetime - $event['rsvp_number_days']*60*60*24 - $event['rsvp_number_hours']*60*60;
+               $rsvp_end_date = eme_localised_date($rsvp_end_datetime,1);
+               $rsvp_end_time = eme_localised_time($rsvp_end_datetime,1);
+               $replacement = $rsvp_end_date." ".$rsvp_end_time;
+         }
+
       } elseif (preg_match('/#_IS_SINGLE_DAY/', $result)) {
          if (eme_is_single_day_page())
             $replacement = 1;
