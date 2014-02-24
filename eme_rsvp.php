@@ -1903,7 +1903,7 @@ function eme_registration_approval_form_table($event_id=0) {
          ?>
          </td>
          <td>
-            <?php echo $localised_start_date; if ($localised_end_date !='') echo " - " . $localised_end_date; ?><br />
+            <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
          <td>
@@ -2129,8 +2129,8 @@ function eme_webmoney_form($event,$booking_id) {
    $result_link = add_query_arg(array('eme_eventAction'=>'webmoney'),$events_page_link);
 
    $wm_request->result_url = $result_link;
-   $wm_request->success_url = eme_event_url($event);
-   $wm_request->fail_url = eme_event_url($event);
+   $wm_request->success_url = eme_payment_return_url($event,$booking_id,1);
+   $wm_request->fail_url = eme_payment_return_url($event,$booking_id,2);
    if (get_option('eme_webmoney_demo')) {
       $wm_request->sim_mode = WM_ALL_SUCCESS;
    }
@@ -2150,11 +2150,13 @@ function eme_2co_form($event,$booking_id) {
    $price=eme_get_total_booking_price($event,$booking);
    $quantity=1;
    $cur=$event['currency'];
+   $return_url=eme_payment_return_url($event,$booking_id,1);
 
    $form_html = "<br>".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='sid' value='$business' >";
    $form_html.="<input type='hidden' name='mode' value='2CO' >";
+   $form_html.="<input type='hidden' name='return_url' value='$return_url' >";
    $form_html.="<input type='hidden' name='li_0_type' value='product' >";
    $form_html.="<input type='hidden' name='li_0_product_id' value='$booking_id' >";
    $form_html.="<input type='hidden' name='li_0_name' value='$name' >";
@@ -2200,8 +2202,8 @@ function eme_fdgg_form($event,$booking_id) {
    $form_html.="<input type='hidden' name='subtotal' value='$price'/>";
    $form_html.="<input type='hidden' name='invoicenumber' value='$booking_id' />";
    $form_html.="<input type='hidden' name='oid' value='$booking_id' />";
-   $form_html.="<input type='hidden' name='responseSuccessURL' value='".eme_event_url($event)."' >";
-   $form_html.="<input type='hidden' name='responseFailURL' value='".eme_event_url($event)."' >";
+   $form_html.="<input type='hidden' name='responseSuccessURL' value='".eme_payment_return_url($event,$booking_id,1)."' >";
+   $form_html.="<input type='hidden' name='responseFailURL' value='".eme_payment_return_url($event,$booking_id,2)."' >";
    $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_ipn' />";
    $form_html.="<input name='submit' type='submit' value='Pay via First Data' >";
    $form_html.="</form>";
@@ -2221,7 +2223,8 @@ function eme_google_form($event,$booking_id) {
    $merchant_key = get_option('eme_google_merchant_key');  // Your Merchant Key
    $server_type = get_option('eme_google_checkout_type');
    $cart = new GoogleCart($merchant_id, $merchant_key, $server_type, $event['currency']);
-   //$cart->SetContinueShoppingUrl($return_url);
+   $return_url=eme_payment_return_url($event,$booking_id,1);
+   $cart->SetContinueShoppingUrl($return_url);
    $item_1 = new GoogleItem("Booking", // Item name
                             sprintf(__("Booking for '%s'","eme"),eme_sanitize_html($event['event_name'])), // Item description
                             $quantity, // Quantity
@@ -2271,8 +2274,8 @@ function eme_paypal_form($event,$booking_id) {
    // https://www.paypal.com/IntegrationCenter/ic_std-variable-reference.html
    $p->add_field('charset','utf-8');
    $p->add_field('business', get_option('eme_paypal_business'));
-   $p->add_field('return', eme_event_url($event));
-   $p->add_field('cancel_return', eme_event_url($event));
+   $p->add_field('return', eme_payment_return_url($event,$booking_id,1));
+   $p->add_field('cancel_return', eme_payment_return_url($event,$booking_id,2));
    $p->add_field('notify_url', $notification_link);
    $p->add_field('item_name', sprintf(__("Booking for '%s'","eme"),eme_sanitize_html($event['event_name'])));
    $p->add_field('item_number', $booking_id);

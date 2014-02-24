@@ -311,6 +311,24 @@ function eme_event_category_url($cat_name) {
    return $the_link;
 }
 
+function eme_payment_return_url($event,$booking_id,$resultcode) {
+   $the_link=eme_event_url($event);
+   if (get_option('eme_payment_show_custom_return_page')) {
+      if ($resultcode==1) {
+         $res="succes";
+      } else {
+         $res="fail";
+      }
+      $the_link = add_query_arg( array( 'eme_pmt_result' => $res ), $the_link );
+      $event_id=$event['event_id'];
+      $the_link = add_query_arg( array( 'event_id' => $event_id ), $the_link );
+      if (get_option('eme_payment_add_bookingid_to_return')) {
+         $the_link = add_query_arg( array( 'eme_pmt_id' => $booking_id ), $the_link );
+      }
+   }
+   return $the_link;
+}
+
 function eme_check_event_exists($event_id) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
