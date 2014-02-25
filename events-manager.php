@@ -1631,6 +1631,15 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = $rsvp_end_date." ".$rsvp_end_time;
          }
 
+      } elseif (preg_match('/#_IS_RSVP_ENDED/', $result)) {
+         if ($rsvp_is_active && $event['event_rsvp']) {
+            $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+            if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime )
+               $replacement = 1;
+            else
+               $replacement = 0;
+         }
+
       } elseif (preg_match('/#_IS_SINGLE_DAY/', $result)) {
          if (eme_is_single_day_page())
             $replacement = 1;

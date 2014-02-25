@@ -64,6 +64,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.2.9 =
 * Feature: added the possibility to define a return page for payment succes or failure, with event and/or booking placeholders
 * Feature: added placeholder #_RSVPEND that will show the date+time end of the registration period
+* Feature: added conditional placeholder #_IS_RSVP_ENDED, returns 1 if the registration period has passed
 * Feature: retain all filled in values if RSVP form validation proved wrong
 * Bugfix: make location attributes actually work
 * Bugfix: also deal with RESPNAME, RESPEMAIL, ... in the registration form format
