@@ -531,6 +531,10 @@ function eme_options_page() {
 <table class='form-table'>
    <?php
    eme_options_radio_binary ( __ ( 'Enable the RSVP e-mail notifications?', 'eme' ), 'eme_rsvp_mail_notify_is_active', __ ( 'Check this option if you want to receive an email when someone books places for your events.', 'eme' ) );
+   ?>
+</table>
+<table id="rsvp_mail_notify-data" class='form-table'>
+   <?php
    eme_options_textarea ( __ ( 'Contact person email format', 'eme' ), 'eme_contactperson_email_body', __ ( 'The format of the email which will be sent to the contact person.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
    eme_options_textarea ( __ ( 'Contact person cancelled email format', 'eme' ), 'eme_contactperson_cancelled_email_body', __ ( 'The format of the email which will be sent to the contact person for a cancellation.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
    eme_options_textarea ( __ ( 'Contact person pending email format', 'eme' ), 'eme_contactperson_pending_email_body', __ ( 'The format of the email which will be sent to the contact person if approval is needed.', 'eme' ) .'<br/>'.__('For all possible placeholders, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=27'>".__('the documentation', 'eme').'</a>' );
@@ -548,6 +552,7 @@ function eme_options_page() {
    eme_options_input_password ( __ ( 'SMTP password', 'eme' ), 'eme_smtp_password', __ ( "Insert the password to be used to access your SMTP server", 'eme' ) );
    eme_options_radio_binary ( __ ( 'Debug SMTP?', 'eme' ), 'eme_smtp_debug', __ ( 'Check this option if you have issues sending mail via SMTP. Only do this for debugging purposes and deactivate it afterwards!', 'eme' ) );
    ?>
+   </div>
 </table>
 
 <?php

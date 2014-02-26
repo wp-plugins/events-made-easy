@@ -2743,7 +2743,7 @@ function eme_admin_general_script() {
    
    // all the rest below is needed on 3 pages only (for now), so we return if not there
    global $plugin_page;
-   if ( !in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
+   if ( !in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
       return;
    }
 
@@ -2830,7 +2830,7 @@ function updateShowHideRecurrenceSpecificDays () {
 }
 
 function updateShowHideRsvp () {
-   if($j_eme_event('input#rsvp-checkbox').attr("checked")) {
+   if ($j_eme_event('input#rsvp-checkbox').attr("checked")) {
       $j_eme_event("div#rsvp-data").fadeIn();
       $j_eme_event("div#div_event_contactperson_email_body").fadeIn();
       $j_eme_event("div#div_event_registration_recorded_ok_html").fadeIn();
@@ -2848,10 +2848,70 @@ function updateShowHideRsvp () {
 }
 
 function updateShowHideTime () {
-   if($j_eme_event('input#eme_prop_all_day').attr("checked")) {
+   if ($j_eme_event('input#eme_prop_all_day').attr("checked")) {
       $j_eme_event("div#div_event_time").hide();
    } else {
       $j_eme_event("div#div_event_time").show();
+   }
+}
+
+function updateShowHideCustomReturnPage () {
+   if ($j_eme_event('input[name=eme_payment_show_custom_return_page]').attr("checked")) {
+         $j_eme_event('tr#eme_payment_succes_format_row').show();
+         $j_eme_event('tr#eme_payment_fail_format_row').show();
+         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').show(); 
+   } else {
+         $j_eme_event('tr#eme_payment_succes_format_row').hide();
+         $j_eme_event('tr#eme_payment_fail_format_row').hide();
+         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').hide(); 
+   }
+}
+
+function updateShowHidePaypalSEncrypt () {
+   if ($j_eme_event('input[name=eme_paypal_s_encrypt]').attr("checked")) {
+         $j_eme_event('tr#eme_paypal_s_pubcert_row').show(); 
+         $j_eme_event('tr#eme_paypal_s_privkey_row').show();
+         $j_eme_event('tr#eme_paypal_s_paypalcert_row').show();
+         $j_eme_event('tr#eme_paypal_s_certid_row').show();
+   } else {
+         $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
+         $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
+         $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
+         $j_eme_event('tr#eme_paypal_s_certid_row').hide();
+   }
+}
+
+function updateShowHideRsvpMailNotify () {
+   if ($j_eme_event('input[name=eme_rsvp_mail_notify_is_active]').attr("checked")) {
+      $j_eme_event("table#rsvp_mail_notify-data").show();
+   } else {
+      $j_eme_event("table#rsvp_mail_notify-data").hide();
+   }
+}
+
+function updateShowHideRsvpMailSendMethod () {
+   if ($j_eme_event('select[name=eme_rsvp_mail_send_method]').val() == "smtp") {
+         $j_eme_event('tr#eme_smtp_host_row').show();
+         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').show();
+         $j_eme_event('tr#eme_smtp_username_row').show(); 
+         $j_eme_event('tr#eme_smtp_password_row').show(); 
+         $j_eme_event('tr#eme_rsvp_mail_port_row').show(); 
+   } else {
+         $j_eme_event('tr#eme_smtp_host_row').hide();
+         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').hide();
+         $j_eme_event('tr#eme_smtp_username_row').hide(); 
+         $j_eme_event('tr#eme_smtp_password_row').hide();
+         $j_eme_event('tr#eme_rsvp_mail_port_row').hide(); 
+   }
+}
+
+function updateShowHideRsvpMailSMTPAuth () {
+   if ($j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]').attr("checked")) {
+         $j_eme_event('tr#eme_smtp_username_row').show(); 
+         $j_eme_event('tr#eme_smtp_password_row').show(); 
+   } else {
+         $j_eme_event('tr#eme_smtp_username_row').hide(); 
+         $j_eme_event('tr#eme_smtp_password_row').hide();
    }
 }
 
@@ -2968,77 +3028,6 @@ $j_eme_event(document).ready( function() {
          $j_eme_event(this).val('');
    }); 
 
-   if ($j_eme_event('[name=eme_rsvp_mail_send_method]').val() != "smtp") {
-      $j_eme_event('tr#eme_smtp_host_row').hide();
-      $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').hide();
-      $j_eme_event('tr#eme_smtp_username_row').hide(); 
-      $j_eme_event('tr#eme_smtp_password_row').hide();
-   }
-   $j_eme_event('[name=eme_rsvp_mail_send_method]').change(function() {
-      if($j_eme_event(this).val() == "smtp") {
-         $j_eme_event('tr#eme_smtp_host_row').show();
-         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').show();
-         $j_eme_event('tr#eme_smtp_username_row').show(); 
-         $j_eme_event('tr#eme_smtp_password_row').show(); 
-         $j_eme_event('tr#eme_rsvp_mail_port_row').show(); 
-      } else {
-         $j_eme_event('tr#eme_smtp_host_row').hide();
-         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').hide();
-         $j_eme_event('tr#eme_smtp_username_row').hide(); 
-         $j_eme_event('tr#eme_smtp_password_row').hide();
-         $j_eme_event('tr#eme_rsvp_mail_port_row').hide(); 
-      }
-   });
-   if ($j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]:checked').val() != 1) {
-      $j_eme_event('tr#eme_smtp_username_row').hide(); 
-      $j_eme_event('tr#eme_smtp_password_row').hide();
-   }
-   $j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]').change(function() {
-      if($j_eme_event(this).val() == 1) {
-         $j_eme_event('tr#eme_smtp_username_row').show(); 
-         $j_eme_event('tr#eme_smtp_password_row').show(); 
-      } else {
-         $j_eme_event('tr#eme_smtp_username_row').hide(); 
-         $j_eme_event('tr#eme_smtp_password_row').hide();
-      }
-   });
-   if ($j_eme_event('input[name=eme_paypal_s_encrypt]:checked').val() != 1) {
-      $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
-      $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
-      $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
-      $j_eme_event('tr#eme_paypal_s_certid_row').hide();
-   }
-   $j_eme_event('input[name=eme_paypal_s_encrypt]').change(function() {
-      if($j_eme_event(this).val() == 1) {
-         $j_eme_event('tr#eme_paypal_s_pubcert_row').show(); 
-         $j_eme_event('tr#eme_paypal_s_privkey_row').show();
-         $j_eme_event('tr#eme_paypal_s_paypalcert_row').show();
-         $j_eme_event('tr#eme_paypal_s_certid_row').show();
-      } else {
-         $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
-         $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
-         $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
-         $j_eme_event('tr#eme_paypal_s_certid_row').hide();
-      }
-   });
-
-   if ($j_eme_event('input[name=eme_payment_show_custom_return_page]:checked').val() != 1) {
-      $j_eme_event('tr#eme_payment_succes_format_row').hide();
-      $j_eme_event('tr#eme_payment_fail_format_row').hide();
-      $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').hide(); 
-   }
-   $j_eme_event('input[name=eme_payment_show_custom_return_page]').change(function() {
-      if($j_eme_event(this).val() == 1) {
-         $j_eme_event('tr#eme_payment_succes_format_row').show();
-         $j_eme_event('tr#eme_payment_fail_format_row').show();
-         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').show(); 
-      } else {
-         $j_eme_event('tr#eme_payment_succes_format_row').hide();
-         $j_eme_event('tr#eme_payment_fail_format_row').hide();
-         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').hide(); 
-      }
-   });
-
    updateIntervalDescriptor(); 
    updateIntervalSelectors();
    updateShowHideRecurrence();
@@ -3053,6 +3042,18 @@ $j_eme_event(document).ready( function() {
    $j_eme_event('select#recurrence-frequency').change(updateIntervalDescriptor);
    $j_eme_event('select#recurrence-frequency').change(updateIntervalSelectors);
    $j_eme_event('select#recurrence-frequency').change(updateShowHideRecurrenceSpecificDays);
+
+   // for the eme-options pages
+   updateShowHideCustomReturnPage();
+   updateShowHidePaypalSEncrypt();
+   updateShowHideRsvpMailNotify ();
+   updateShowHideRsvpMailSendMethod ();
+   updateShowHideRsvpMailSMTPAuth ();
+   $j_eme_event('input[name=eme_payment_show_custom_return_page]').change(updateShowHideCustomReturnPage);
+   $j_eme_event('input[name=eme_paypal_s_encrypt]').change(updateShowHidePaypalSEncrypt);
+   $j_eme_event('input[name=eme_rsvp_mail_notify_is_active]').change(updateShowHideRsvpMailNotify);
+   $j_eme_event('select[name=eme_rsvp_mail_send_method]').change(updateShowHideRsvpMailSendMethod);
+   $j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]').change(updateShowHideRsvpMailSMTPAuth);
 
    // Add a "+" to the collapsable postboxes
    //jQuery('.postbox h3').prepend('<a class="togbox">+</a> ');
@@ -4048,7 +4049,7 @@ function eme_handlepostbox(){
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
    }
-   if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
+   if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
    }
 }
