@@ -1415,6 +1415,10 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       if ($found)
          $format = str_replace($orig_result, $replacement ,$format );
    }
+
+   // now, replace any language tags found in the format itself
+   $format = eme_translate($format);
+
    return do_shortcode($format);   
 }
 
@@ -1445,6 +1449,10 @@ function eme_replace_attendees_placeholders($format, $event, $attendee, $target=
       if ($found)
          $format = str_replace($orig_result, $replacement ,$format );
    }
+
+   // now, replace any language tags found in the format itself
+   $format = eme_translate($format);
+
    return do_shortcode($format);   
 }
 

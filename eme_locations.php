@@ -1437,6 +1437,10 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       $format = str_replace($orig_result, $replacement ,$format );
    }
 
+   // now, replace any language tags found
+   $format = eme_translate($format);
+
+   // and now replace any shortcodes, if wanted
    if ($do_shortcode)
       return do_shortcode($format);   
    else

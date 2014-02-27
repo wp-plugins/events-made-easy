@@ -1783,6 +1783,9 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
    if (!$eme_enable_notes_placeholders)
       $format = eme_replace_notes_placeholders ( $format, $event, $target );
  
+   // now, replace any language tags found in the format itself
+   $format = eme_translate($format);
+
    if ($do_shortcode)
       return do_shortcode($format);
    else

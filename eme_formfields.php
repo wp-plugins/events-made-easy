@@ -465,7 +465,7 @@ function eme_replace_formfields_placeholders ($event, $readonly, $booked_places_
       } elseif (preg_match('/#_FIELD(.+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          if (isset($_POST['FIELD'.$field_id]))
-            $entered_val = eme_sanitize_html(eme_sanitize_request($_POST['FIELD'.$field_id]));
+            $entered_val = eme_trans_sanitize_html(eme_sanitize_request($_POST['FIELD'.$field_id]));
          else
             $entered_val = "";
          $replacement = eme_get_formfield_html($field_id,$entered_val);
@@ -480,13 +480,15 @@ function eme_replace_formfields_placeholders ($event, $readonly, $booked_places_
          $replacement .= "<div class='eme-required-field'>&nbsp;".__('(Required field)','eme')."</div>";
 
       if ($found) {
-         $replacement = eme_translate($replacement);
          $format = str_replace($orig_result, $replacement ,$format );
       }
    }
 
    // now any leftover event placeholders
    $format = eme_replace_placeholders($format, $event);
+
+   // now, replace any language tags found in the format itself
+   $format = eme_translate($format);
 
    # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
    # for multiprice: 3 + number of possible prices
