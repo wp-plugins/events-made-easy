@@ -863,21 +863,22 @@ add_action( 'template_redirect', 'eme_template_redir' );
 
 // filter out the events page in the get_pages call
 function eme_filter_get_pages($data) {
-   $output = array ();
+   //$output = array ();
    $events_page_id = get_option('eme_events_page' );
-   for($i = 0; $i < count ( $data ); ++ $i) {
-      if(isset($data[$i])) {
-         if ($data[$i]->ID == $events_page_id) {
-            $list_events_page = get_option('eme_list_events_page' );
-            if ($list_events_page) {
-               $output[] = $data[$i];
-            }
-         } else {
-            $output[] = $data[$i];
+   $list_events_page = get_option('eme_list_events_page' );
+   // if we want the page to be shown, just return everything unfiltered
+   if ($list_events_page) {
+      return $data;
+   } else {
+      foreach ($data as $key => $item) {
+         if ($item->ID == $events_page_id) {
+            //$output[] = $item;
+            unset($data[$key]);
          }
       }
+      //return $output;
+      return $data;
    }
-   return $output;
 }
 add_filter ( 'get_pages', 'eme_filter_get_pages' );
 

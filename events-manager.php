@@ -403,13 +403,7 @@ function _eme_install() {
    $events_page_id = get_option('eme_events_page');
 
    if ($events_page_id != "" ) {
-      query_posts("page_id=$events_page_id");
-      $count = 0;
-      while(have_posts()) {
-         the_post();
-         $count++;
-      }
-      if ($count == 0)
+      if (!get_page($events_page_id))
          eme_create_events_page(); 
    } else {
       eme_create_events_page(); 
@@ -950,6 +944,10 @@ function eme_create_events_submenu () {
    $db_version = get_option('eme_version');
    if ($db_version && $db_version < EME_DB_VERSION)
       add_action('admin_notices', "eme_explain_deactivation_needed");
+
+   $events_page_id = get_option('eme_events_page');
+   if (!$events_page_id || !get_page($events_page_id))
+      add_action('admin_notices', "eme_explain_events_page_missing");
 
    if(function_exists('add_submenu_page')) {
       add_object_page(__('Events', 'eme'),__('Events', 'eme'),get_option('eme_cap_list_events'),'events-manager','eme_events_page', EME_PLUGIN_URL.'images/calendar-16.png');
@@ -1868,6 +1866,13 @@ function admin_show_warnings() {
 
 function eme_explain_deactivation_needed() {
    $advice = __("It seems you upgraded Events Made Eeasy but your events database hasn't been updated accordingly yet. Please deactivate/activate the plugin for this to happen.",'eme')."<br />".__("<strong>Warning:</strong> make sure the option 'Delete all EME data when upgrading or deactivating' is not activated if you don't want to lose all existing event data!",'eme');
+   ?>
+<div id="message" class="error"><p> <?php echo $advice; ?> </p></div>
+<?php
+}
+
+function eme_explain_events_page_missing() {
+   $advice = sprintf(__("Error: the special events page is not set or no longer exist, please set the option '%s' it to an existing page or EME will not work correctly!",'eme'),__ ( 'Events page', 'eme' ));
    ?>
 <div id="message" class="error"><p> <?php echo $advice; ?> </p></div>
 <?php
