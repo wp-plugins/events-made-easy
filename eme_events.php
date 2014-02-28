@@ -1911,9 +1911,7 @@ function eme_get_event_data($event) {
       
    $location = eme_get_location ( $event['location_id'] );
    // add all location info to the event
-   foreach ($location as $key => $value) {
-      $event[$key] = $value;
-   }
+   $event = array_merge($event,$location);
 
    $event['event_attributes'] = @unserialize($event['event_attributes']);
    $event['event_attributes'] = (!is_array($event['event_attributes'])) ?  array() : $event['event_attributes'] ;
