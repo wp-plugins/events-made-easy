@@ -67,6 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added conditional placeholder #_IS_RSVP_ENDED, returns 1 if the registration period has passed
 * Feature: retain all filled in values if RSVP form validation proved wrong
 * Improvement: show an admin warning if the special events page is not ok
+* Improvement: German and Italian language updates, thanks to Stephan Oberarzbacher
 * Bugfix: make location attributes actually work
 * Bugfix: also deal with RESPNAME, RESPEMAIL, ... in the registration form format
 
