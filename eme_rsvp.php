@@ -1,15 +1,13 @@
 <?php
-$form_add_message = "";
-$form_error_message = "";
-$form_delete_message = "";
+$form_result_message = "";
 
 function eme_payment_form($event,$booking_id) {
-   // we only show the payment form after succesfull registration, so the $form_add_message is there
-   global $form_add_message;
+   // we only show the payment form after succesfull registration, so the $form_result_message is there
+   global $form_result_message;
 
    $ret_string = "<div id='eme-rsvp-message'>";
-   if(!empty($form_add_message))
-      $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
+   if(!empty($form_result_message))
+      $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
    $ret_string .= "</div>";
 
    if (empty($event)) {
@@ -64,7 +62,7 @@ function eme_payment_form($event,$booking_id) {
 }
 
 function eme_add_booking_form($event_id) {
-   global $form_add_message, $form_error_message;
+   global $form_result_message;
    global $booking_id_done;
 
    $event = eme_get_event($event_id);
@@ -91,10 +89,8 @@ function eme_add_booking_form($event_id) {
    #$destination = eme_event_url($event)."#eme-rsvp-message";
    $destination = "#eme-rsvp-message";
    $ret_string = "<div id='eme-rsvp-message'>";
-   if(!empty($form_add_message))
-      $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
-   if(!empty($form_error_message))
-      $ret_string .= "<div class='eme-rsvp-message'>$form_error_message</div>";
+   if(!empty($form_result_message))
+      $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
@@ -227,7 +223,7 @@ function eme_attendee_list_shortcode($atts) {
 }
 
 function eme_delete_booking_form($event_id) {
-   global $form_delete_message, $current_user;
+   global $form_result_message, $current_user;
    
    if (is_user_logged_in()) {
       get_currentuserinfo();
@@ -259,14 +255,14 @@ function eme_delete_booking_form($event_id) {
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
       $ret_string = "<div id='eme-rsvp-message'>";
-      if(!empty($form_delete_message))
-         $ret_string .= "<div class='eme-rsvp-message'>$form_delete_message</div>";
+      if(!empty($form_result_message))
+         $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
-   if(!empty($form_delete_message)) {
+   if(!empty($form_result_message)) {
       $form_html = "<div id='eme-rsvp-message'>";
-      $form_html .= "<div class='eme-rsvp-message'>$form_delete_message</div>";
+      $form_html .= "<div class='eme-rsvp-message'>$form_result_message</div>";
       $form_html .= "</div>";
    }
 
@@ -291,9 +287,7 @@ function eme_delete_booking_form_shortcode($atts) {
 
 function eme_catch_rsvp() {
    global $current_user;
-   global $form_add_message;
-   global $form_error_message;
-   global $form_delete_message; 
+   global $form_result_message; 
    global $booking_id_done;
    $result = "";
 
@@ -329,18 +323,13 @@ function eme_catch_rsvp() {
 
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking') { 
       $booking_res = eme_book_seats($event);
-      $result=$booking_res[0];
+      $form_result_message = $booking_res[0];
       $booking_id_done=$booking_res[1];
-      // no booking? then fill in global error var
-      if (!$booking_id_done)
-         $form_error_message = $result;
-      else
-         $form_add_message = $result;
    } 
 
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'delete_booking') { 
       $result = eme_cancel_seats($event);
-      $form_delete_message = $result; 
+      $form_result_message = $result; 
    } 
    return $result;
 }

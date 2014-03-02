@@ -1213,14 +1213,20 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
-            $replacement = eme_delete_booking_form($event['event_id']);
+            if ($booking_id_done && eme_event_needs_payment($event))
+               $replacement = "";
+            else
+               $replacement = eme_delete_booking_form($event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM_IF_REGISTERED$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif (is_user_logged_in() ) {
-            if (eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
+            // when the booking just happened and the user needs to pay, we don't show the remove booking form
+            if ($booking_id_done && eme_event_needs_payment($event))
+               $replacement = "";
+            elseif (eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
                $replacement = eme_delete_booking_form($event['event_id']);
          }
 
