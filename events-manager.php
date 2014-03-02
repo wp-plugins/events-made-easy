@@ -1213,6 +1213,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
+            // when the booking just happened and the user needs to pay, we don't show the remove booking form
             if ($booking_id_done && eme_event_needs_payment($event))
                $replacement = "";
             else
