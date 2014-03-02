@@ -2101,18 +2101,18 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
             $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
             $booked_seats = eme_get_booked_seats($event['event_id']);
-	    $available_seats = eme_get_available_seats($event['event_id']);
-	    $pending_seats = eme_get_pending_seats($event['event_id']);
-	    $total_seats = $event['event_seats'];
+            $available_seats = eme_get_available_seats($event['event_id']);
+            $pending_seats = eme_get_pending_seats($event['event_id']);
+            $total_seats = $event['event_seats'];
             if (eme_is_multi($event['event_seats'])) {
-		    $available_seats_string = $available_seats.' ('.join('||',eme_get_available_multiseats($event['event_id'])).')';
-		    $pending_seats_string = $pending_seats.' ('.join('||',eme_get_pending_multiseats($event['event_id'])).')';
-		    $total_seats_string = eme_get_multitotal($total_seats) .' ('.$event['event_seats'].')';
-	    } else {
-		    $available_seats_string = $available_seats;
-		    $pending_seats_string = $pending_seats;
-		    $total_seats_string = $total_seats;
-	    }
+               $available_seats_string = $available_seats.' ('.join('||',eme_get_available_multiseats($event['event_id'])).')';
+               $pending_seats_string = $pending_seats.' ('.join('||',eme_get_pending_multiseats($event['event_id'])).')';
+               $total_seats_string = eme_get_multitotal($total_seats) .' ('.$event['event_seats'].')';
+            } else {
+               $available_seats_string = $available_seats;
+               $pending_seats_string = $pending_seats;
+               $total_seats_string = $total_seats;
+            }
             if ($pending_seats >0)
                echo "<br />".__('RSVP Info: ','eme').__('Free: ','eme' ).$available_seats_string.", ".__('Pending: ','eme').$pending_seats_string.", ".__('Max: ','eme').$total_seats_string;
             else
