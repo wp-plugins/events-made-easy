@@ -1045,12 +1045,12 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
 }
 
 function eme_replace_placeholders($format, $event="", $target="html", $do_shortcode=1) {
-   global $wp_query, $eme_need_gmap_js;
+   global $wp_query;
+   global $eme_need_gmap_js, $booking_id_done;
 
    // some variables we'll use further down more than once
    $current_userid=get_current_user_id();
    $person_id=eme_get_person_id_by_wp_id($current_userid);
-   $rsvp_is_active = get_option('eme_rsvp_enabled'); 
    $eme_enable_notes_placeholders = get_option('eme_enable_notes_placeholders'); 
 
    // first replace the notes sections, since these can contain other placeholders
@@ -1191,37 +1191,41 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_ADDBOOKINGFORM$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
-         } elseif ($rsvp_is_active && $event['event_rsvp']) {
-            $replacement = eme_add_booking_form($event['event_id']);
+         } else {
+            if ($booking_id_done)
+               $replacement = eme_payment_form($event,$booking_id_done);
+            else
+               $replacement = eme_add_booking_form($event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_ADDBOOKINGFORM_IF_NOT_REGISTERED$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
-         } elseif ($rsvp_is_active && $event['event_rsvp'] && is_user_logged_in() ) {
-            if (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
+         } elseif (is_user_logged_in() ) {
+            // we show the form if the user did not register yet, or after registration to show the paypal form
+            if ($booking_id_done)
+               $replacement = eme_payment_form($event,$booking_id_done);
+            elseif (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
                $replacement = eme_add_booking_form($event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
-         } elseif ($rsvp_is_active && $event['event_rsvp']) {
+         } else {
             $replacement = eme_delete_booking_form($event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM_IF_REGISTERED$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
-         } elseif ($rsvp_is_active && $event['event_rsvp'] && is_user_logged_in() ) {
+         } elseif (is_user_logged_in() ) {
             if (eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
                $replacement = eme_delete_booking_form($event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)$/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']) {
-            $replacement = eme_get_available_seats($event['event_id']);
-         }
+         $replacement = eme_get_available_seats($event['event_id']);
 
       } elseif (preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(.+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
@@ -1232,9 +1236,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_(TOTALSPACES|TOTALSEATS)$/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']) {
-            $replacement = $event['event_seats'];
-         }
+         $replacement = $event['event_seats'];
 
       } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)(.+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
@@ -1245,9 +1247,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']) {
-            $replacement = eme_get_booked_seats($event['event_id']);
-         }
+         $replacement = eme_get_booked_seats($event['event_id']);
 
       } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(.+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
@@ -1258,8 +1258,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']
-             && is_user_logged_in()) {
+         if (is_user_logged_in()) {
             $replacement = eme_get_booked_seats_by_wp_event_id($current_userid,$event['event_id']);
          }
 
@@ -1432,27 +1431,23 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_ATTENDEES$/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']) {
-            $replacement=eme_get_attendees_list_for($event);
-            if ($target == "html") {
-               $replacement = apply_filters('eme_general', $replacement); 
-            } elseif ($target == "rss")  {
-               $replacement = apply_filters('eme_general_rss', $replacement);
-            } else {
-               $replacement = apply_filters('eme_text', $replacement);
-            }
+         $replacement=eme_get_attendees_list_for($event);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif ($event && preg_match('/#_BOOKINGS$/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']) {
-            $replacement=eme_get_bookings_list_for($event);
-            if ($target == "html") {
-               $replacement = apply_filters('eme_general', $replacement); 
-            } elseif ($target == "rss")  {
-               $replacement = apply_filters('eme_general_rss', $replacement);
-            } else {
-               $replacement = apply_filters('eme_text', $replacement);
-            }
+         $replacement=eme_get_bookings_list_for($event);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif ($event && preg_match('/#_(CONTACTNAME|CONTACTPERSON)$/', $result)) {
@@ -1621,7 +1616,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#_RSVPEND/', $result)) {
          // show the end date+time for which a user can rsvp for an event
-         if ($rsvp_is_active && $event['event_rsvp']) {
+         if (eme_is_event_rsvp($event)) {
                $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
                $rsvp_end_datetime = $event_start_datetime - $event['rsvp_number_days']*60*60*24 - $event['rsvp_number_hours']*60*60;
                $rsvp_end_date = eme_localised_date($rsvp_end_datetime,1);
@@ -1630,7 +1625,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif (preg_match('/#_IS_RSVP_ENDED/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']) {
+         if (eme_is_event_rsvp($event)) {
             $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
             if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime )
                $replacement = 1;
@@ -1663,7 +1658,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = 0;
 
       } elseif ($event && preg_match('/#_IS_RSVP_ENABLED/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp'])
+         if (eme_is_event_rsvp($event))
             $replacement = 1;
          else
             $replacement = 0;
@@ -1688,9 +1683,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = 0;
 
       } elseif ($event && preg_match('/#_IS_REGISTERED/', $result)) {
-         if ($rsvp_is_active && $event['event_rsvp']
-                   && is_user_logged_in()
-                   && eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
+         if (is_user_logged_in() && eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
             $replacement = 1;
          else
             $replacement = 0;

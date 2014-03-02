@@ -4,23 +4,31 @@ $form_error_message = "";
 $form_delete_message = "";
 
 function eme_payment_form($event,$booking_id) {
+   // we only show the payment form after succesfull registration, so the $form_add_message is there
+   global $form_add_message;
+
+   $ret_string = "<div id='eme-rsvp-message'>";
+   if(!empty($form_add_message))
+      $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
+   $ret_string .= "</div>";
+
    if (empty($event)) {
       $event_id=eme_get_event_id_by_booking_id($booking_id);
       if ($event_id)
          $event = eme_get_event($event_id);
    }
+
    $booking = eme_get_booking($booking_id);
    if (!is_array($booking))
-      return "";
+      return $ret_string;
    if ($booking['booking_payed'])
-      return "<div class='eme-already-payed'>".__('This booking has already been payed for','eme')."</div>";
+      return $ret_string."<div class='eme-already-payed'>".__('This booking has already been payed for','eme')."</div>";
 
    if (is_array($event)) {
       // no payment form configured, then just return
       if (!($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg']))
-         return "";
+         return $ret_string;
 
-      $ret_string = "";
       $eme_payment_form_header_format=get_option('eme_payment_form_header_format');
       if (!empty($eme_payment_form_header_format)) {
             $result = eme_replace_placeholders($eme_payment_form_header_format, $event,"html",0);
@@ -54,24 +62,26 @@ function eme_payment_form($event,$booking_id) {
             $ret_string .= $result;
             $ret_string .= "</div>";
       }
-
-      return $ret_string;
-   } else {
-      // no event, then no form
-      return "";
    }
+
+   return $ret_string;
 }
 
 function eme_add_booking_form($event_id) {
    global $form_add_message, $form_error_message;
    global $booking_id_done;
-   $rsvp_is_active = get_option('eme_rsvp_enabled');
 
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
-   if (!($rsvp_is_active && $event['event_rsvp'])) {
+   if (!eme_is_event_rsvp($event)) {
       return;
    }
+   
+   // you did a successfull registration, so now we decide wether to show the form again, or the payment form
+   if($booking_id_done) {
+      return eme_payment_form($event,$booking_id_done);
+   }
+
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only) {
       // we require a user to be WP registered to be able to book
@@ -84,22 +94,15 @@ function eme_add_booking_form($event_id) {
    }
    #$destination = eme_event_url($event)."#eme-rsvp-message";
    $destination = "#eme-rsvp-message";
+   $ret_string = "<div id='eme-rsvp-message'>";
+   if(!empty($form_add_message))
+      $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
+   if(!empty($form_error_message))
+      $ret_string .= "<div class='eme-rsvp-message'>$form_error_message</div>";
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
-      $ret_string = "<div id='eme-rsvp-message'>";
-      if(!empty($form_add_message))
-         $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
-      if(!empty($form_error_message))
-         $ret_string .= "<div class='eme-rsvp-message'>$form_error_message</div>";
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
-   }
-
-   # you did a successfull registration, so now we decide wether to show the form again, or the paypal form
-   if(!empty($form_add_message) && empty($form_error_message)) {
-      $ret_string = "<div id='eme-rsvp-message'><div class='eme-rsvp-message'>$form_add_message</div></div>";
-      $ret_string .= eme_payment_form($event,$booking_id_done);
-      return $ret_string;
    }
 
    // you can book the available number of seats, with a max of x per time
@@ -190,35 +193,21 @@ function eme_add_booking_form($event_id) {
       $min=$min_allowed;
 
    if ($avail_seats == 0 && $min>0) {
-      $ret_string = "<div id='eme-rsvp-message'>";
-      if(!empty($form_add_message))
-         $ret_string .= "<div class='eme-rsvp-message'>$form_add_message</div>";
-      if(!empty($form_error_message))
-         $ret_string .= "<div class='eme-rsvp-message'>$form_error_message</div>";
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div></div>";
    }
 
-   $form_html="";
-   if(!empty($form_add_message))
-      $form_html .= "<div class='eme-rsvp-message'>$form_add_message</div>";
-   if(!empty($form_error_message))
-      $form_html .= "<div class='eme-rsvp-message'>$form_error_message</div>";
-   # only add the id to the div if it is not empty
-   if(!empty($form_html))
-      $form_html = "<div id='eme-rsvp-message'>".$form_html."</div>";
-
-   $form_html .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
-   $form_html .= eme_replace_formfields_placeholders ($event, $readonly, $booked_places_options);
+   $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
+   $ret_string .= eme_replace_formfields_placeholders ($event, $readonly, $booked_places_options);
    // also add a honeypot field: if it gets completed with data, 
    // it's a bot, since a humand can't see this (using CSS to render it invisible)
-   $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
+   $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
       <p>".__('(* marks a required field)', 'eme')."</p>
       <input type='hidden' name='eme_eventAction' value='add_booking'/>
       <input type='hidden' name='event_id' value='$event_id'/>
-   </form>";
+   </form></div>";
  
-   if (has_filter('eme_add_booking_form_filter')) $form_html=apply_filters('eme_add_booking_form_filter',$form_html);
-   return $form_html;
+   if (has_filter('eme_add_booking_form_filter')) $ret_string=apply_filters('eme_add_booking_form_filter',$form_html);
+   return $ret_string;
    
 }
 
@@ -230,22 +219,19 @@ function eme_add_booking_form_shortcode($atts) {
 function eme_booking_list_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
    $event = eme_get_event(intval($id));
-   $rsvp_is_active = get_option('eme_rsvp_enabled');
-   if ($event && $rsvp_is_active && $event['event_rsvp'])
+   if ($event)
       return eme_get_bookings_list_for($event,$template_id,$template_id_header,$template_id_footer);
 }
 
 function eme_attendee_list_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
    $event = eme_get_event(intval($id));
-   $rsvp_is_active = get_option('eme_rsvp_enabled');
-   if ($event && $rsvp_is_active && $event['event_rsvp'])
+   if ($event)
       return eme_get_attendees_list_for($event,$template_id,$template_id_header,$template_id_footer);
 }
 
 function eme_delete_booking_form($event_id) {
    global $form_delete_message, $current_user;
-   $rsvp_is_active = get_option('eme_rsvp_enabled');
    
    if (is_user_logged_in()) {
       get_currentuserinfo();
@@ -258,7 +244,7 @@ function eme_delete_booking_form($event_id) {
    $form_html = "";
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
-   if (!($rsvp_is_active && $event['event_rsvp'])) {
+   if (!eme_is_event_rsvp($event)) {
       return;
    }
    $registration_wp_users_only=$event['registration_wp_users_only'];
@@ -1248,6 +1234,11 @@ function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,
    $eme_format_header="<ul class='eme_bookings_list_ul'>";
    $eme_format_footer="</ul>";
 
+   // rsvp not active or no rsvp for this event, then return
+   if (!eme_is_event_rsvp($event)) {
+      return;
+   }
+   
    if ($template_id) {
       $format_arr = eme_get_template($template_id);
       $format=$format_arr['format'];
@@ -1286,6 +1277,10 @@ function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$
    $eme_format_header=get_option('eme_bookings_list_header_format');
    $eme_format_footer=get_option('eme_bookings_list_footer_format');
 
+   // rsvp not active or no rsvp for this event, then return
+   if (!eme_is_event_rsvp($event)) {
+      return;
+   }
    
    if ($template_id) {
       $format_arr = eme_get_template($template_id);
@@ -2652,6 +2647,14 @@ function eme_get_total_booking_multiprice($event,$booking) {
       }
    }
    return $price;
+}
+
+function eme_is_event_rsvp ($event) {
+   $rsvp_is_active = get_option('eme_rsvp_enabled');
+   if ($rsvp_is_active && $event['event_rsvp'])
+      return 1;
+   else
+      return 0;
 }
 
 function eme_is_event_multiprice($event_id) {
