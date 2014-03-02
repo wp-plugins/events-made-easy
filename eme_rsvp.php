@@ -1098,10 +1098,10 @@ function eme_bookings_compact_table($event_id) {
 	   }
 	   $available_seats_info=$available_seats;
    }
-   $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=$event_id");
-   $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=$event_id");
    $count_respondents=count($bookings);
    if ($count_respondents>0) { 
+      $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=$event_id");
+      $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=$event_id");
       $table = 
       "<div class='wrap'>
             <h4>$count_respondents ".__('respondents so far','eme').":</h4>
@@ -1123,10 +1123,10 @@ function eme_bookings_compact_table($event_id) {
       foreach ($bookings as $booking) {
          $person  = eme_get_person ($booking['person_id']);
          ($booking['booking_comment']) ? $baloon = " <img src='".EME_PLUGIN_URL."images/baloon.png' title='".__('Comment:','eme')." ".$booking['booking_comment']."' alt='comment'/>" : $baloon = "";
-	 if (eme_is_event_multiprice($event_id))
-		 $booking_info = $booking['booking_seats'].': '.$booking['booking_seats_mp'];
-	 else
-		 $booking_info = $booking['booking_seats'];
+         if (eme_is_event_multiprice($event_id))
+            $booking_info = $booking['booking_seats'].': '.$booking['booking_seats_mp'];
+         else
+            $booking_info = $booking['booking_seats'];
          if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
             $booking_info.=" ".__('(pending)','eme');
          }
@@ -1696,13 +1696,13 @@ function eme_registration_seats_form_table($event_id=0) {
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>
          <?php
-             $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
-             $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
              $approved_seats = eme_get_approved_seats($event['event_id']);
              $pending_seats = eme_get_pending_seats($event['event_id']);
              $total_seats = $event ['event_seats'];
              echo "<br />".__('Approved: ','eme' ).$approved_seats.", ".__('Pending: ','eme').$pending_seats.", ".__('Max: ','eme').$total_seats;
              if ($approved_seats>0) {
+                $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
+                $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
                 echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
                 echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
              }
