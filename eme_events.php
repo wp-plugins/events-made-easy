@@ -2732,6 +2732,7 @@ function eme_admin_general_css() {
       echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme.css' type='text/css'/>\n";
    }
 }
+
 // General script to make sure hidden fields are shown when containing data
 function eme_admin_general_script() {
    eme_admin_general_css();
@@ -2801,11 +2802,13 @@ function updateIntervalSelectors () {
 function updateShowHideRecurrence () {
    if($j_eme_event('input#event-recurrence').attr("checked")) {
       $j_eme_event("#event_recurrence_pattern").fadeIn();
+      $j_eme_event("span#event-date-recursive-explanation").show();
       $j_eme_event("div#div_recurrence_date").show();
       $j_eme_event("p#recurrence-tip").hide();
       $j_eme_event("p#recurrence-tip-2").show();
    } else {
       $j_eme_event("#event_recurrence_pattern").hide();
+      $j_eme_event("span#event-date-recursive-explanation").hide();
       $j_eme_event("div#div_recurrence_date").hide();
       $j_eme_event("p#recurrence-tip").show();
       $j_eme_event("p#recurrence-tip-2").hide();
@@ -3110,6 +3113,12 @@ $j_eme_event(document).ready( function() {
 <?php
 }
 
+//function eme_admin_options_save() {
+//   if (is_admin() && isset($_GET['settings-updated']) && $_GET['settings-updated']) {
+//     return; 
+//   }
+//}
+
 function eme_admin_event_boxes() {
    global $plugin_page;
    $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
@@ -3118,8 +3127,8 @@ function eme_admin_event_boxes() {
 
            // we need titlediv for qtranslate as ID
            add_meta_box("titlediv", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
-           add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
            add_meta_box("div_recurrence_date", __('Recurrence dates', 'eme'), "eme_meta_box_div_recurrence_date",$screen,"post");
+           add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
            add_meta_box("div_event_time", __('Event time', 'eme'), "eme_meta_box_div_event_time",$screen,"post");
            add_meta_box("div_event_page_title_format", __('Single Event Title Format', 'eme'), "eme_meta_box_div_event_page_title_format",$screen,"post");
            add_meta_box("div_event_single_event_format", __('Single Event Format', 'eme'), "eme_meta_box_div_event_single_event_format",$screen,"post");
@@ -3165,7 +3174,11 @@ function eme_meta_box_div_event_date($event){
                         <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
                         <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
                         <span id='event-date-explanation'>
-                        <?php _e ( 'The event date.', 'eme' ); ?>
+                        <?php _e ( 'The event beginning and end date.', 'eme' ); ?>
+                        </span>
+                        <br />
+                        <span id='event-date-recursive-explanation'>
+                        <?php _e ( 'In case of a recurrent event, use the beginning and end date to just indicate the duration of one event in days. The real start date is determined by the recurrence scheme being used.', 'eme' ); ?>
                         </span>
                         <br />
                         <br />

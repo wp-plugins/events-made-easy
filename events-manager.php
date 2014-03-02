@@ -990,6 +990,8 @@ function eme_create_events_submenu () {
          $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), get_option('eme_cap_settings'), "eme-options", 'eme_options_page');
       }
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
+      // do some option checking after the options have been updated
+      // add_action( 'load-'. $plugin_page, 'eme_admin_options_save');
    }
 }
 
