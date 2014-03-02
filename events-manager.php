@@ -1192,7 +1192,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
-            if ($booking_id_done)
+            if ($booking_id_done && eme_event_needs_payment($event))
                $replacement = eme_payment_form($event,$booking_id_done);
             else
                $replacement = eme_add_booking_form($event['event_id']);
@@ -1203,7 +1203,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = "";
          } elseif (is_user_logged_in() ) {
             // we show the form if the user did not register yet, or after registration to show the paypal form
-            if ($booking_id_done)
+            if ($booking_id_done && eme_event_needs_payment($event))
                $replacement = eme_payment_form($event,$booking_id_done);
             elseif (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
                $replacement = eme_add_booking_form($event['event_id']);

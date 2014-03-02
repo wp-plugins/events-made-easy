@@ -24,11 +24,7 @@ function eme_payment_form($event,$booking_id) {
    if ($booking['booking_payed'])
       return $ret_string."<div class='eme-already-payed'>".__('This booking has already been payed for','eme')."</div>";
 
-   if (is_array($event)) {
-      // no payment form configured, then just return
-      if (!($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg']))
-         return $ret_string;
-
+   if (is_array($event) && eme_event_needs_payment($event)) {
       $eme_payment_form_header_format=get_option('eme_payment_form_header_format');
       if (!empty($eme_payment_form_header_format)) {
             $result = eme_replace_placeholders($eme_payment_form_header_format, $event,"html",0);
@@ -78,7 +74,7 @@ function eme_add_booking_form($event_id) {
    }
    
    // you did a successfull registration, so now we decide wether to show the form again, or the payment form
-   if($booking_id_done) {
+   if($booking_id_done && eme_event_needs_payment($event)) {
       return eme_payment_form($event,$booking_id_done);
    }
 
@@ -2652,6 +2648,13 @@ function eme_get_total_booking_multiprice($event,$booking) {
 function eme_is_event_rsvp ($event) {
    $rsvp_is_active = get_option('eme_rsvp_enabled');
    if ($rsvp_is_active && $event['event_rsvp'])
+      return 1;
+   else
+      return 0;
+}
+
+function eme_event_needs_payment ($event) {
+   if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'])
       return 1;
    else
       return 0;
