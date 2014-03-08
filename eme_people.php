@@ -47,8 +47,9 @@ function eme_people_page() {
 add_action('init','eme_ajax_actions'); 
 function eme_ajax_actions() {
    if (isset($_GET['eme_ajax_action']) && $_GET['eme_ajax_action'] == 'booking_data') {
-      if (isset($_GET['event_id']))
+      if (isset($_GET['event_id'])) {
          echo "[ {bookedSeats:".eme_get_booked_seats(intval($_GET['event_id'])).", availableSeats:".eme_get_available_seats(intval($_GET['event_id']))."}]"; 
+      }
       die();
    }
    if (isset($_POST['eme_ajax_action']) && $_POST['eme_ajax_action'] == 'client_clock_submit') {
@@ -88,21 +89,30 @@ function eme_global_map_json($eventful = false, $scope = "all", $category = '', 
       $tmp_loc=preg_replace("/\r\n|\n\r|\n/","<br />",$tmp_loc);
       $json_location[] = '"location_balloon":"'.eme_trans_sanitize_html($tmp_loc).'"';
 
-      # second, we unset the description, it might interfere with the json result
-      unset($location['location_description']);
-
-      # third, we fill in the rest of the info
+      # second, we fill in the rest of the info
       foreach($location as $key => $value) {
-         # no newlines allowed, otherwise no map is shown
-         $value=preg_replace("/\r\n|\n\r|\n/","<br />",$value);
-         $json_location[] = '"'.$key.'":"'.eme_trans_sanitize_html($value).'"';
+         # we skip some keys, since json is limited in size we only return what's needed in the javascript
+         if (preg_match('/location_balloon|location_id|location_latitude|location_longitude/', $key)) {
+            # no newlines allowed, otherwise no map is shown
+            $value=preg_replace("/\r\n|\n\r|\n/","<br />",$value);
+            $json_location[] = '"'.$key.'":"'.eme_trans_sanitize_html($value).'"';
+         }
       }
       $json_locations[] = "{".implode(",",$json_location)."}";
    }
+
+   $zoom_factor=get_option('eme_global_zoom_factor');
+   $maptype=get_option('eme_global_maptype');
+   if ($zoom_factor >14) $zoom_factor=14;
+
    $json = '{"locations":[';
    $json .= implode(",", $json_locations); 
    $json .= '],"enable_zooming":"';
    $json .= get_option('eme_gmap_zooming') ? 'true' : 'false';
+   $json .= '","zoom_factor":"' ;
+   $json .= $zoom_factor;
+   $json .= '","maptype":"' ;
+   $json .= $maptype;
    $json .= '"}' ;
    echo $json;
 }
@@ -127,7 +137,7 @@ function fputcsv2 ($fh, $fields, $delimiter = ',', $enclosure = '"', $mysql_null
 }
 function eme_csv_booking_report($event_id) {
    $event = eme_get_event($event_id);
-   $is_multiprice = eme_is_multiprice($event['price']);
+   $is_multiprice = eme_is_multi($event['price']);
    $current_userid=get_current_user_id();
    if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
         (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)))) {
@@ -176,7 +186,7 @@ function eme_csv_booking_report($event_id) {
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
       foreach($answer_columns as $col) {
-	 $found=0;
+         $found=0;
          foreach ($answers as $answer) {
             if ($answer['field_name'] == $col['field_name']) {
                $line[]=$answer['answer'];
@@ -203,12 +213,18 @@ function eme_printable_booking_report($event_id) {
         die;
    }
 
+   $is_multiprice = eme_is_multi($event['price']);
+   $is_multiseat = eme_is_multi($event['event_seats']);
    $bookings = eme_get_bookings_for($event_id);
    $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $available_seats = eme_get_available_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
-   $is_multiprice = eme_is_multiprice($event['price']);
+   if ($is_multiseat) {
+      $available_seats_ms=join('||',eme_get_available_multiseats($event_id));
+      $booked_seats_ms=join('||',eme_get_booked_multiseats($event_id));
+      $pending_seats_ms=join('||',eme_get_pending_multiseats($event_id));
+   }
 
    $stylesheet = EME_PLUGIN_URL."events_manager.css";
    foreach($answer_columns as $col) {
@@ -302,16 +318,21 @@ function eme_printable_booking_report($event_id) {
                <td colspan='2'>&nbsp;</td>
                <td class='total-label'><?php _e('Booked', 'eme')?>:</td>
                <td colspan='3' class='seats-number'><?php
-			echo $booked_seats;
-			if ($pending_seats>0)
-				echo " ".sprintf( __('(%s pending)','eme'), $pending_seats);
+               print $booked_seats;
+               if ($is_multiseat) print " ($booked_seats_ms)";
+			      if ($pending_seats>0) {
+                  if ($is_multiseat)
+                     print " ".sprintf( __('(%s pending)','eme'), $pending_seats . " ($pending_seats_ms)");
+                  else
+                     print " ".sprintf( __('(%s pending)','eme'), $pending_seats);
+               }
 			?>
 		</td>
             </tr>
             <tr id='available-seats'>
                <td colspan='2'>&nbsp;</td> 
                <td class='total-label'><?php _e('Available', 'eme')?>:</td>
-               <td colspan='3' class='seats-number'><?php echo $available_seats; ?></td>
+               <td colspan='3' class='seats-number'><?php print $available_seats; if ($is_multiseat) print " ($available_seats_ms)"; ?></td>
             </tr>
          </table>
          </div>
@@ -379,9 +400,15 @@ function eme_people_table($message="") {
 function eme_get_person_by_name_and_email($name, $email) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
-   $name = eme_sanitize_request($name);
-   $email = eme_sanitize_request($email);
-   $sql = "SELECT * FROM $people_table WHERE person_name = '$name' AND person_email = '$email' ;" ;
+   $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE person_name = %s AND person_email = %s",$name,$email);
+   $result = $wpdb->get_row($sql, ARRAY_A);
+   return $result;
+}
+
+function eme_get_person_by_wp_info($name, $email, $wp_id) {
+   global $wpdb; 
+   $people_table = $wpdb->prefix.PEOPLE_TBNAME;
+   $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE person_name = %s AND person_email = %s AND wp_id = %d ",$name,$email,$wp_id);
    $result = $wpdb->get_row($sql, ARRAY_A);
    return $result;
 }
@@ -421,12 +448,6 @@ function eme_get_person($person_id) {
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    $sql = "SELECT * FROM $people_table WHERE person_id = '$person_id';" ;
    $result = $wpdb->get_row($sql, ARRAY_A);
-   if (!is_null($result['wp_id']) && $result['wp_id']) {
-      $user_info = get_userdata($result['wp_id']);
-      $result['person_name']=$user_info->display_name;
-      $result['person_email']=$user_info->user_email;
-      $result['person_phone']=eme_get_user_phone($result['wp_id']);
-   }
    return $result;
 }
 
@@ -442,11 +463,13 @@ function eme_get_persons($person_ids="") {
    $lines = $wpdb->get_results($sql, ARRAY_A);
    $result = array();
    foreach ($lines as $line) {
-      if (!is_null($line['wp_id']) && $line['wp_id']) {
+      // if in the admin backend: also show the WP username if it exists
+      if (is_admin() && !is_null($line['wp_id']) && $line['wp_id']) {
          $user_info = get_userdata($line['wp_id']);
-         $line['person_name']=$user_info->display_name;
-         $line['person_email']=$user_info->user_email;
-         $line['person_phone']=eme_get_user_phone($line['wp_id']);
+         if ($line['person_name'] != $user_info->display_name)
+            $line['person_name'].= " (WP username: ".$user_info->display_name.")";
+         #$line['person_email']=$user_info->user_email;
+         #$line['person_phone']=eme_get_user_phone($line['wp_id']);
       }
       # to be able to sort on person names, we need a hash starting with the name
       # but some people might have the same name (or register more than once),

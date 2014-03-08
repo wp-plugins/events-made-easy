@@ -17,15 +17,16 @@ class WP_Widget_eme_list extends WP_Widget {
       $order = empty( $instance['order'] ) ? 'ASC' : $instance['order'];
       $header = empty( $instance['header'] ) ? '<ul>' : $instance['header'];
       $footer = empty( $instance['footer'] ) ? '</ul>' : $instance['footer'];
+      $category = empty( $instance['category'] ) ? '' : $instance['category'];
+      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
+      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
+
       if ($instance['authorid']==-1 ) {
          $author='';
       } else {
          $authinfo=get_userdata($instance['authorid']);
          $author=$authinfo->user_login;
       }
-      $category = empty( $instance['category'] ) ? '' : $instance['category'];
-      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
-      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
       echo $before_widget;
       if ( $title)
          echo $before_title . $title . $after_title;
@@ -197,9 +198,9 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $options['category'] = $category;
       $options['notcategory'] = $notcategory;
       // the month shown depends on the calendar day clicked
-      if (isset ( $wp_query->query_vars ['calendar_day'] ) && $wp_query->query_vars ['calendar_day'] != '') {
-          $options['month'] = date("m", strtotime( $wp_query->query_vars ['calendar_day']) );
-          $options['year'] = date("Y", strtotime( $wp_query->query_vars ['calendar_day']) );
+      if (get_query_var('calendar_day')) {
+          $options['month'] = date("m", strtotime(get_query_var('calendar_day')));
+          $options['year'] = date("Y", strtotime(get_query_var('calendar_day')));
       } else {
           $options['month'] = date("m");
           $options['year'] = date("Y");
