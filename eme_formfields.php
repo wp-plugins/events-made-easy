@@ -381,11 +381,10 @@ function eme_replace_formfields_placeholders ($event, $readonly, $booked_places_
          $replacement = substr( $results[2][$resultKey], 1, strlen(trim($results[2][$resultKey]))-2 );
       }
 
-      if ($need_escape) {
+      if ($need_escape)
          $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-      } elseif ($need_urlencode) {
+      if ($need_urlencode)
          $replacement = rawurlencode($replacement);
-      }
       $format = str_replace($orig_result, $replacement ,$format );
    }
 
@@ -407,7 +406,6 @@ function eme_replace_formfields_placeholders ($event, $readonly, $booked_places_
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
    usort($placeholders[0],'sort_stringlenth');
-
    # we need 3 required fields: #_NAME, #_EMAIL and #_SEATS
    # if these are not present: we don't replace anything and the form is worthless
    foreach($placeholders[0] as $result) {
@@ -426,43 +424,42 @@ function eme_replace_formfields_placeholders ($event, $readonly, $booked_places_
          $result = str_replace("#_RESP","#_",$result);
       }
 
-      if (preg_match('/#_NAME$/', $result)) {
+      if (preg_match('/#_NAME/', $result)) {
          $replacement = "<input type='text' name='bookerName' value='$bookerName' $readonly />";
          $required_fields_count++;
          // #_NAME is always required
          $required=1;
-      } elseif (preg_match('/#_HTML5_EMAIL$/', $result)) {
+      } elseif (preg_match('/#_HTML5_EMAIL/', $result)) {
          $replacement = "<input type='email' name='bookerEmail' value='$bookerEmail' $readonly />";
          $required_fields_count++;
-      } elseif (preg_match('/#_EMAIL$/', $result)) {
+      } elseif (preg_match('/#_EMAIL/', $result)) {
          $replacement = "<input type='text' name='bookerEmail' value='$bookerEmail' $readonly />";
          $required_fields_count++;
          // #_EMAIL is always required
          $required=1;
-      } elseif (preg_match('/#_HTML5_PHONE$/', $result)) {
+      } elseif (preg_match('/#_HTML5_PHONE/', $result)) {
          $replacement = "<input type='tel' name='bookerPhone' value='$bookerPhone' />";
-      } elseif (preg_match('/#_PHONE$/', $result)) {
+      } elseif (preg_match('/#_PHONE/', $result)) {
          $replacement = "<input type='text' name='bookerPhone' value='$bookerPhone' />";
       } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
          $replacement = eme_ui_select($bookedSeats,"bookedSeats",$booked_places_options);
          $required_fields_count++;
-      } elseif (preg_match('/#_SEATS(\d+)$|#_SPACES(\d+)$/', $result, $matches)) {
-         $field_id = intval($matches[1]);
-         // in case of multi, $booked_places_options contains the options for seat bookings per multi
+      } elseif (preg_match('/#_(SEATS|SPACES)(\d+)/', $result, $matches)) {
+         $field_id = intval($matches[2]);
          if (eme_is_multi($event['event_seats']) || eme_is_multi($event['price']))
             $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options[$field_id-1]);
          else
             $replacement = eme_ui_select(0,"bookedSeats".$field_id,$booked_places_options);
          $required_fields_count++;
-      } elseif (preg_match('/#_COMMENT$/', $result)) {
+      } elseif (preg_match('/#_COMMENT/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
-      } elseif (preg_match('/#_CAPTCHA$/', $result) && get_option('eme_captcha_for_booking')) {
+      } elseif (preg_match('/#_CAPTCHA/', $result) && get_option('eme_captcha_for_booking')) {
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php'><br><input type='text' name='captcha_check' />";
-      } elseif (preg_match('/#_FIELDNAME(.+)/', $result, $matches)) {
+      } elseif (preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
-      } elseif (preg_match('/#_FIELD(.+)/', $result, $matches)) {
+      } elseif (preg_match('/#_FIELD(\d+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          if (isset($_POST['FIELD'.$field_id]))
             $entered_val = eme_trans_sanitize_html(eme_sanitize_request($_POST['FIELD'.$field_id]));

@@ -246,7 +246,6 @@ function eme_options_register() {
       register_setting ( 'eme-options', $opt, '' );
    }
 }
-add_action ( 'admin_init', 'eme_options_register' );
 
 function eme_handle_get() {
    global $plugin_page;
@@ -278,7 +277,6 @@ function eme_handle_get() {
       print "<div id=\"message\" class=\"updated\">".__('Conversion done, please check your events and restore from backup if you see any sign of troubles.')."</div>";
    }
 }
-add_action ( 'admin_init', 'eme_handle_get' );
 
 function eme_admin_tabs( $current = 'homepage' ) {
     $tabs = array( 'general' => 'General',

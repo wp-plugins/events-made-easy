@@ -280,10 +280,4 @@ wp_dropdown_users ( array ('id' => $this->get_field_id('authorid'), 'name' => $t
    } 
 }
 
-function eme_load_widgets() {
-   register_widget( 'WP_Widget_eme_list' );
-   register_widget( 'WP_Widget_eme_calendar' );
-}
-add_action( 'widgets_init', 'eme_load_widgets' );
-
 ?>

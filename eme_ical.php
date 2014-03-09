@@ -121,48 +121,36 @@ function eme_ical_link_shortcode($atts) {
    return $result;
 }
 
+function eme_ical_single() {
+   echo "BEGIN:VCALENDAR\r\n";
+   echo "METHOD:PUBLISH\r\n";
+   echo "VERSION:2.0\r\n";
+   echo "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n";
+   $event=eme_get_event(intval($_GET ['event_id']));
+   $title_format = get_option('eme_ical_title_format' );
+   $description_format = get_option('eme_ical_description_format');
+   echo eme_ical_single_event($event,$title_format,$description_format);
+   echo "END:VCALENDAR\r\n";
+}
+
 function eme_ical() {
-   if (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public_single' && isset ( $_GET ['event_id'] )) {
-      header("Content-type: text/calendar; charset=utf-8");
-      header("Content-Disposition: inline; filename=eme_single.ics");
-   } elseif (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public') {
-      header("Content-type: text/calendar; charset=utf-8");
-      header("Content-Disposition: inline; filename=eme_public.ics");
-   } else {
-      return;
-   }
-
-   // prevent caching
-   header("Expires: Wed, 1 Jan 1997 00:00:00 GMT");
-   header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-   header("Cache-Control: no-store, no-cache, must-revalidate");
-   header("Cache-Control: post-check=0, pre-check=0", false);
-   header("Pragma: no-cache");
-
    echo "BEGIN:VCALENDAR\r\n";
    echo "METHOD:PUBLISH\r\n";
    echo "VERSION:2.0\r\n";
    echo "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n";
    $title_format = get_option('eme_ical_title_format' );
    $description_format = get_option('eme_ical_description_format');
-   if (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public_single' && isset ( $_GET ['event_id'] )) {
-      $event=eme_get_event(intval($_GET ['event_id']));
+   $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
+   $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
+   $notcategory = isset( $_GET['notcategory'] ) ? urldecode($_GET['notcategory']) : '';
+   $scope = isset( $_GET['scope'] ) ? urldecode($_GET['scope']) : '';
+   $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
+   $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
+   $events = eme_get_events ( 0,$scope,"ASC",0,$location_id,$category, $author, $contact_person, 1, $notcategory);
+   foreach ( $events as $event ) {
       echo eme_ical_single_event($event,$title_format,$description_format);
-   } elseif (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public') {
-      $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
-      $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
-      $notcategory = isset( $_GET['notcategory'] ) ? urldecode($_GET['notcategory']) : '';
-      $scope = isset( $_GET['scope'] ) ? urldecode($_GET['scope']) : '';
-      $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
-      $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
-      $events = eme_get_events ( 0,$scope,"ASC",0,$location_id,$category, $author, $contact_person, 1, $notcategory);
-      foreach ( $events as $event ) {
-         echo eme_ical_single_event($event,$title_format,$description_format);
-      }
    }
    echo "END:VCALENDAR\r\n";
-   die ();
 }
-add_action ( 'init', 'eme_ical' );
 
 ?>

@@ -59,15 +59,6 @@ function eme_new_event() {
       "recurrence_byweekno" => '',
       "recurrence_byday" => '',
       "recurrence_specific_days" => '',
-      "location_name" => '',
-      "location_address" => '',
-      "location_town" => '',
-      "location_latitude" => '',
-      "location_longitude" => '',
-      "location_image_url" => '',
-      "location_image_id" => 0,
-      "location_slug" => '',
-      "location_url" => ''
    );
    $event['event_properties'] = eme_init_event_props($event['event_properties']);
    return $event;
@@ -858,8 +849,6 @@ function eme_template_redir() {
    // Enqueing jQuery script to make sure it's loaded
    wp_enqueue_script ( 'jquery' );
 }
-//add_action( 'parse_query', 'eme_redir_nonexisting' );
-add_action( 'template_redirect', 'eme_template_redir' );
 
 // filter out the events page in the get_pages call
 function eme_filter_get_pages($data) {
@@ -894,9 +883,6 @@ function exclude_this_page( $query ) {
       $query->set( 'post__not_in', array($events_page_id) );
    return $query;
 }
-// it works just fine, but then people can't disable comments on this page
-// TODO: until I figure this out, we put this in comment
-// add_action( 'pre_get_posts' ,'exclude_this_page' );
 
 // TEMPLATE TAGS
 
@@ -1909,10 +1895,6 @@ function eme_get_event_data($event) {
       $event['event_end_year'] = $event['event_start_year'];
    }
       
-   $location = eme_get_location ( $event['location_id'] );
-   // add all location info to the event
-   $event = array_merge($event,$location);
-
    $event['event_attributes'] = @unserialize($event['event_attributes']);
    $event['event_attributes'] = (!is_array($event['event_attributes'])) ?  array() : $event['event_attributes'] ;
 
@@ -2074,10 +2056,11 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
 
          $today = date ( "Y-m-d" );
          
-         if (isset($event['location_name']))
-            $location_summary = "<b>" . eme_trans_sanitize_html($event['location_name']) . "</b><br />" . eme_trans_sanitize_html($event['location_address']) . " - " . eme_trans_sanitize_html($event['location_town']);
-         else
-            $location_summary = "";
+         $location_summary = "";
+         if (isset($event['location_id']) && $event['location_id']) {
+            $location = eme_get_location ( $event['location_id'] );
+            $location_summary = "<b>" . eme_trans_sanitize_html($location['location_name']) . "</b><br />" . eme_trans_sanitize_html($location['location_address']) . " - " . eme_trans_sanitize_html($location['location_town']);
+         }
          
          $style = "";
          if ($event['event_start_date'] < $today)
@@ -3303,6 +3286,7 @@ function eme_meta_box_div_location_name($event) {
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
       $use_select_for_locations=1;
    }
+   $location = eme_get_location ( $event['location_id'] );
 ?>
                         <table id="eme-location-data">
                            <tr>
@@ -3317,11 +3301,10 @@ function eme_meta_box_div_location_name($event) {
          <option value="<?php echo $location_0['location_id'] ?>" ><?php echo eme_trans_sanitize_html($location_0['location_name']) ?></option>
                                  <?php 
                                  $selected_location=$location_0;
-                                 foreach($locations as $location) :
+                                 foreach($locations as $tmp_location) :
                                     $selected = "";
                                     if(isset($event['location_id']))  { 
-                                       $location_id =  $event['location_id'];
-                                       if ($location_id == $location['location_id']) {
+                                       if ($event['location_id'] == $tmp_location['location_id']) {
                                           $selected_location=$location;
                                           $selected = "selected='selected' ";
                                        }
@@ -3338,7 +3321,7 @@ function eme_meta_box_div_location_name($event) {
                               </td>
                            <?php } else { ?>
                               <th><?php _e ( 'Name','eme' )?>&nbsp;</th>
-                              <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /></td>
+                              <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($location['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($location['location_name'])?>" /></td>
                            <?php } ?>
                            <?php
                               $gmap_is_active = get_option('eme_gmap_is_active' );
@@ -3373,7 +3356,7 @@ function eme_meta_box_div_location_name($event) {
                            <?php if(!$use_select_for_locations) { ?> 
                            <tr>
                               <th><?php _e ( 'Address:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_address" type="text" name="location_address" value="<?php echo $event['location_address']; ?>" /></td>
+                              <td><input id="location_address" type="text" name="location_address" value="<?php echo $location['location_address']; ?>" /></td>
                            </tr>
                            <tr>
                               <td colspan='2'>
@@ -3382,7 +3365,7 @@ function eme_meta_box_div_location_name($event) {
                            </tr>
                            <tr>
                               <th><?php _e ( 'Town:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_town" type="text" name="location_town" value="<?php echo $event['location_town']?>" /></td>
+                              <td><input id="location_town" type="text" name="location_town" value="<?php echo $location['location_town']?>" /></td>
                            </tr>
                            <tr>
                               <td colspan='2'>
@@ -3391,11 +3374,11 @@ function eme_meta_box_div_location_name($event) {
                            </tr>
                            <tr>
                               <th><?php _e ( 'Latitude:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_latitude" type="text" name="location_latitude" value="<?php echo $event['location_latitude']?>" /></td>
+                              <td><input id="location_latitude" type="text" name="location_latitude" value="<?php echo $location['location_latitude']?>" /></td>
                            </tr>
                            <tr>
                               <th><?php _e ( 'Longitude:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_longitude" type="text" name="location_longitude" value="<?php echo $event['location_longitude']?>" /></td>
+                              <td><input id="location_longitude" type="text" name="location_longitude" value="<?php echo $location['location_longitude']?>" /></td>
                            </tr>
                            <tr>
                               <td colspan='2'>
@@ -3700,12 +3683,6 @@ function eme_admin_map_script() {
    }
 }
 
-$gmap_is_active = get_option('eme_gmap_is_active' );
-if ($gmap_is_active) {
-   add_action ( 'admin_head', 'eme_admin_map_script' );
-
-}
-
 function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5, $location_id='',$title='') {
    if (strpos ( $justurl, "=" )) {
       // allows the use of arguments without breaking the legacy code
@@ -3739,7 +3716,6 @@ function eme_rss_link_shortcode($atts) {
 }
 
 function eme_rss() {
-   if (isset ( $_GET['eme_rss'] ) && $_GET['eme_rss'] == 'main') {
       if (isset($_GET['limit'])) {
          $limit=intval($_GET['limit']);
       } else {
@@ -3780,7 +3756,6 @@ function eme_rss() {
       } else {
          $main_title=get_option('eme_rss_main_title' );
       }
-      header ( "Content-type: text/xml" );
       echo "<?xml version='1.0'?>\n";
       
       ?>
@@ -3842,10 +3817,8 @@ Weblog Editor 2.0
 </rss>
 
 <?php
-      die ();
-   }
 }
-add_action ( 'init', 'eme_rss' );
+
 function eme_general_head() {
    if (eme_is_single_event_page()) {
       $event=eme_get_event(get_query_var('event_id'));
@@ -3886,19 +3859,13 @@ function eme_general_head() {
    if ($gmap_is_active && $load_js_in_header) {
       echo "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_location_map.js'></script>\n";
    }
-   if ($load_js_in_header) {
-      eme_ajaxize_calendar();
-   }
 }
-add_action ( 'wp_head', 'eme_general_head' );
 
 function eme_change_canonical_url() {
    if (eme_is_single_event_page() || eme_is_single_location_page()) {
       remove_action( 'wp_head', 'rel_canonical' );
    }
 }
-add_action( 'template_redirect', 'eme_change_canonical_url' );
-
 
 function eme_general_css() {
    $eme_css_url= EME_PLUGIN_URL."events_manager.css";
@@ -3911,7 +3878,6 @@ function eme_general_css() {
       wp_register_style('eme_stylesheet_extra',$eme_css_url,'eme_stylesheet');
    wp_enqueue_style('eme_stylesheet_extra'); 
 }
-add_action('wp_enqueue_scripts','eme_general_css');
 
 function eme_general_footer() {
    global $eme_need_gmap_js;
@@ -3922,7 +3888,6 @@ function eme_general_footer() {
       echo "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_location_map.js'></script>\n";
    }
 }
-add_action('wp_footer', 'eme_general_footer');
 
 function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    global $wpdb;
@@ -4053,7 +4018,6 @@ function eme_alert_events_page() {
       echo $notice;
    }
 }
-add_action ( 'admin_notices', 'eme_alert_events_page' );
 
 function eme_handlepostbox(){
    global $plugin_page;
@@ -4065,7 +4029,6 @@ function eme_handlepostbox(){
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
    }
 }
-add_action ( 'admin_init', 'eme_handlepostbox' );
 
 # return number of days until next event or until the specified event
 function eme_countdown($atts) {

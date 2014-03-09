@@ -32,13 +32,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 /*************************************************/ 
 
-// Client clock usage, if wanted
-if (get_option('eme_use_client_clock')) {
-   // If needed, add high priority action to enable session variables.
-   if (!session_id()) add_action('init', 'session_start', 1);
-   add_action('wp_enqueue_scripts', 'eme_client_clock_enqueue_scripts');
-}
-
 function eme_client_clock_enqueue_scripts() {
    // Embed client-clock.js in webpage header.
    wp_enqueue_script('client_clock_submit', plugin_dir_url( __FILE__ ) . 'js/client-clock.js', array('jquery'));  
@@ -206,8 +199,6 @@ define("FDGG_SANDBOX_URL","https://connect.firstdataglobalgateway.com/IPGConnect
 // if you are hacking this plugin, set to TRUE, a log will show in admin pages
 define('DEBUG', false);
 
-add_action('init', 'nocache_headers');
-add_action('init', 'eme_load_textdomain');
 function eme_load_textdomain() {
    $thisDir = dirname( plugin_basename( __FILE__ ) );
    load_plugin_textdomain('eme', false, $thisDir.'/langs'); 
@@ -330,6 +321,7 @@ include("eme_ical.php");
 include("eme_cleanup.php");
 include("eme_formfields.php");
 include("eme_shortcodes.php");
+include("eme_actions.php");
 
 require_once("phpmailer/eme_phpmailer.php") ;
 //require_once("phpmailer/language/phpmailer.lang-en.php") ;
@@ -1036,11 +1028,11 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
                $replacement = apply_filters('eme_text', $replacement);
             }
          }
-         if ($need_escape) {
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-         }
-         if ($found)
+         if ($found) {
+            if ($need_escape)
+               $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
             $format = str_replace($orig_result, $replacement ,$format );
+         }
       }
    }
    return $format;
@@ -1054,6 +1046,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
    $current_userid=get_current_user_id();
    $person_id=eme_get_person_id_by_wp_id($current_userid);
    $eme_enable_notes_placeholders = get_option('eme_enable_notes_placeholders'); 
+   if (isset($event['location_id']) && $event['location_id'])
+      $location = eme_get_location ( $event['location_id'] );
+   else
+      $location = eme_new_location ();
 
    // first replace the notes sections, since these can contain other placeholders
    if ($eme_enable_notes_placeholders)
@@ -1085,11 +1081,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $replacement = substr( $results[2][$resultKey], 1, strlen(trim($results[2][$resultKey]))-2 );
       }
 
-      if ($need_escape) {
+      if ($need_escape)
          $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-      } elseif ($need_urlencode) {
+      if ($need_urlencode)
          $replacement = rawurlencode($replacement);
-      }
       $format = str_replace($orig_result, $replacement ,$format );
    }
 
@@ -1113,25 +1108,25 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       }
       $replacement = "";
       // matches all fields placeholder
-      if ($event && preg_match('/#_EDITEVENTLINK$/', $result)) { 
+      if ($event && preg_match('/#_EDITEVENTLINK/', $result)) { 
          if (current_user_can( get_option('eme_cap_edit_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
             $replacement = "<a href=' ".admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id'])."'>".__('Edit')."</a>";
          }
 
-      } elseif ($event && preg_match('/#_EDITEVENTURL$/', $result)) { 
+      } elseif ($event && preg_match('/#_EDITEVENTURL/', $result)) { 
          if (current_user_can( get_option('eme_cap_edit_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
             $replacement = admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id']);
          }
 
-      } elseif ($event && preg_match('/#_24HSTARTTIME$/', $result)) { 
+      } elseif ($event && preg_match('/#_24HSTARTTIME/', $result)) { 
          $replacement = substr($event['event_start_time'], 0,5);
 
-      } elseif ($event && preg_match('/#_24HENDTIME$/', $result)) { 
+      } elseif ($event && preg_match('/#_24HENDTIME/', $result)) { 
          $replacement = substr($event['event_end_time'], 0,5);
 
-      } elseif ($event && preg_match('/#_PAST_FUTURE_CLASS$/', $result)) { 
+      } elseif ($event && preg_match('/#_PAST_FUTURE_CLASS/', $result)) { 
          if (strtotime($event['event_start_date']." ".$event['event_start_time']) > time()) {
             $replacement="eme-future-event";
          } elseif (strtotime($event['event_end_date']." ".$event['event_end_time']) > time()) {
@@ -1140,7 +1135,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement="eme-past-event";
          }
 
-      } elseif ($event && preg_match('/#_12HSTARTTIME$/', $result)) {
+      } elseif ($event && preg_match('/#_12HSTARTTIME/', $result)) {
          $AMorPM = "AM"; 
          $hour = substr($event['event_start_time'], 0,2);
          $minute = substr($event['event_start_time'], 3,2);
@@ -1155,7 +1150,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if ($hour == 0) $hour=12;
          $replacement = "$hour:$minute $AMorPM";
 
-      } elseif ($event && preg_match('/#_12HENDTIME$/', $result)) {
+      } elseif ($event && preg_match('/#_12HENDTIME/', $result)) {
          $AMorPM = "AM"; 
          $hour = substr($event['event_end_time'], 0,2);
          $minute = substr($event['event_end_time'], 3,2);
@@ -1169,28 +1164,28 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if ($hour == 0) $hour=12;
          $replacement = "$hour:$minute $AMorPM";
 
-      } elseif ($event && preg_match('/#_MAP$/', $result)) {
+      } elseif ($event && preg_match('/#_MAP/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif (isset($event['location_id']) && $event['location_id']) {
-            $replacement = eme_single_location_map($event);
+            $replacement = eme_single_location_map($location);
          }
 
-      } elseif ($event && preg_match('/#_DIRECTIONS$/', $result)) {
+      } elseif ($event && preg_match('/#_DIRECTIONS/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif (isset($event['location_id']) && $event['location_id']) {
-            $replacement = eme_add_directions_form($event);
+            $replacement = eme_add_directions_form($location);
          }
 
-      } elseif ($event && preg_match('/#_EVENTS_FILTERFORM$/', $result)) {
+      } elseif ($event && preg_match('/#_EVENTS_FILTERFORM/', $result)) {
          if ($target == "rss" || $target == "text" || eme_is_single_event_page()) {
             $replacement = "";
          } else {
             $replacement = eme_filter_form();
          }
 
-      } elseif ($event && preg_match('/#_ADDBOOKINGFORM$/', $result)) {
+      } elseif ($event && preg_match('/#_ADDBOOKINGFORM/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
@@ -1200,7 +1195,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = eme_add_booking_form($event['event_id']);
          }
 
-      } elseif ($event && preg_match('/#_ADDBOOKINGFORM_IF_NOT_REGISTERED$/', $result)) {
+      } elseif ($event && preg_match('/#_ADDBOOKINGFORM_IF_NOT_REGISTERED/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif (is_user_logged_in() ) {
@@ -1211,7 +1206,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = eme_add_booking_form($event['event_id']);
          }
 
-      } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM$/', $result)) {
+      } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
@@ -1222,7 +1217,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = eme_delete_booking_form($event['event_id']);
          }
 
-      } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM_IF_REGISTERED$/', $result)) {
+      } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM_IF_REGISTERED/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } elseif (is_user_logged_in() ) {
@@ -1236,7 +1231,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)$/', $result)) {
          $replacement = eme_get_available_seats($event['event_id']);
 
-      } elseif (preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(.+)/', $result, $matches)) {
+      } elseif (preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_available_multiseats($event['event_id']);
@@ -1247,7 +1242,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(TOTALSPACES|TOTALSEATS)$/', $result)) {
          $replacement = $event['event_seats'];
 
-      } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)(.+)/', $result, $matches)) {
+      } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats = eme_convert_multi2array($event['event_seats']);
@@ -1258,7 +1253,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          $replacement = eme_get_booked_seats($event['event_id']);
 
-      } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(.+)/', $result, $matches)) {
+      } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_booked_multiseats($event['event_id']);
@@ -1271,7 +1266,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = eme_get_booked_seats_by_wp_event_id($current_userid,$event['event_id']);
          }
 
-      } elseif ($event && preg_match('/#_LINKEDNAME$/', $result)) {
+      } elseif ($event && preg_match('/#_LINKEDNAME/', $result)) {
          $event_link = eme_event_url($event);
          $replacement="<a href='$event_link' title='".eme_trans_sanitize_html($event['event_name'])."'>".eme_trans_sanitize_html($event['event_name'])."</a>";
          if ($target == "html") {
@@ -1282,7 +1277,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_ICALLINK$/', $result)) {
+      } elseif ($event && preg_match('/#_ICALLINK/', $result)) {
          $url = site_url ("/?eme_ical=public_single&amp;event_id=".$event['event_id']);
          $replacement = "<a href='$url'>ICAL</a>";
          if ($target == "html") {
@@ -1293,10 +1288,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_ICALURL$/', $result)) {
+      } elseif ($event && preg_match('/#_ICALURL/', $result)) {
          $replacement = site_url ("/?eme_ical=public_single&amp;event_id=".$event['event_id']);
 
-      } elseif ($event && preg_match('/#_EVENTIMAGE$/', $result)) {
+      } elseif ($event && preg_match('/#_EVENTIMAGE/', $result)) {
          if (!empty($event['event_image_id']))
             $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
          if($event['event_image_url'] != '') {
@@ -1310,7 +1305,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
-      } elseif ($event && preg_match('/#_EVENTIMAGEURL$/', $result)) {
+      } elseif ($event && preg_match('/#_EVENTIMAGEURL/', $result)) {
          if (!empty($event['event_image_id']))
             $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
          if($event['event_image_url'] != '') {
@@ -1338,7 +1333,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = $thumb_url;
          }
 
-      } elseif ($event && preg_match('/#_EVENTIMAGETHUMB\[(.+)\]$/', $result, $matches)) {
+      } elseif ($event && preg_match('/#_EVENTIMAGETHUMB\[(.+)\]/', $result, $matches)) {
          if (!empty($event['event_image_id'])) {
             $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
             $thumb_url = $thumb_array[0];
@@ -1352,7 +1347,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
-      } elseif ($event && preg_match('/#_EVENTIMAGETHUMBURL\[(.+)\]$/', $result, $matches)) {
+      } elseif ($event && preg_match('/#_EVENTIMAGETHUMBURL\[(.+)\]/', $result, $matches)) {
          if (!empty($event['event_image_id'])) {
             $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
             $thumb_url = $thumb_array[0];
@@ -1366,7 +1361,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_EVENTPAGEURL/', $result)) {
          $replacement = eme_event_url($event);
 
-      } elseif ($event && preg_match('/#_(NAME|EVENTNAME)$/', $result)) {
+      } elseif ($event && preg_match('/#_(NAME|EVENTNAME)/', $result)) {
          $field = "event_name";
          if (isset($event[$field]))  $replacement = $event[$field];
          if ($target == "html") {
@@ -1380,7 +1375,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_EVENTID$/', $result)) {
+      } elseif ($event && preg_match('/#_EVENTID/', $result)) {
          $field = "event_id";
          $replacement = $event[$field];
          if ($target == "html") {
@@ -1391,11 +1386,11 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_DAYS_TILL_START$/', $result)) {
+      } elseif ($event && preg_match('/#_DAYS_TILL_START/', $result)) {
          $now = date("Y-m-d");
          $replacement = eme_daydifference($now,$event['event_start_date']);
 
-      } elseif ($event && preg_match('/#_DAYS_TILL_END$/', $result)) {
+      } elseif ($event && preg_match('/#_DAYS_TILL_END/', $result)) {
          $now = date("Y-m-d");
          $replacement = eme_daydifference($now,$event['event_end_date']);
 
@@ -1411,7 +1406,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_(EVENT)?PRICE(\d+)$/', $result, $matches)) {
+      } elseif ($event && preg_match('/#_(EVENT)?PRICE(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2]-1);
          if ($event["price"] && eme_is_multi($event["price"])) {
             $prices = eme_convert_multi2array($event["price"]);
@@ -1439,7 +1434,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_ATTENDEES$/', $result)) {
+      } elseif ($event && preg_match('/#_ATTENDEES/', $result)) {
          $replacement=eme_get_attendees_list_for($event);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
@@ -1449,7 +1444,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_BOOKINGS$/', $result)) {
+      } elseif ($event && preg_match('/#_BOOKINGS/', $result)) {
          $replacement=eme_get_bookings_list_for($event);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
@@ -1459,7 +1454,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_(CONTACTNAME|CONTACTPERSON)$/', $result)) {
+      } elseif ($event && preg_match('/#_(CONTACTNAME|CONTACTPERSON)/', $result)) {
          $contact = eme_get_contact($event);
          if ($contact)
             $replacement = $contact->display_name;
@@ -1472,7 +1467,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_(CONTACTEMAIL|PLAIN_CONTACTEMAIL)$/', $result)) {
+      } elseif ($event && preg_match('/#_(CONTACTEMAIL|PLAIN_CONTACTEMAIL)/', $result)) {
          $contact = eme_get_contact($event);
          if ($contact) {
             $replacement = $contact->user_email;
@@ -1487,7 +1482,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
-      } elseif ($event && preg_match('/#_CONTACTPHONE$/', $result)) {
+      } elseif ($event && preg_match('/#_CONTACTPHONE/', $result)) {
          $contact = eme_get_contact($event);
          if ($contact) {
             $phone = eme_get_user_phone($contact->ID);
@@ -1502,21 +1497,21 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/^#[A-Za-z]$/', $result)) {
+      } elseif ($event && preg_match('/#[A-Za-z]$/', $result)) {
          // matches all PHP date placeholders for startdate-time
          $replacement=date_i18n( ltrim($result,"#"), strtotime( $event['event_start_date']." ".$event['event_start_time']));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#i") {
             $replacement=ltrim($replacement,"0");
          }
 
-      } elseif ($event && preg_match('/^#@[A-Za-z]$/', $result)) {
+      } elseif ($event && preg_match('/#@[A-Za-z]$/', $result)) {
          // matches all PHP time placeholders for enddate-time
          $replacement=date_i18n( ltrim($result,"#@"), strtotime( $event['event_end_date']." ".$event['event_end_time']));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#@i") {
             $replacement=ltrim($replacement,"0");
          }
 
-      } elseif ($event && preg_match('/^#_(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
+      } elseif ($event && preg_match('/#_(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_categories($event['event_id']);
          if ($target == "html") {
             $replacement = eme_trans_sanitize_html(join(", ",$categories));
@@ -1550,7 +1545,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/^#_(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]$/', $result, $matches) && get_option('eme_categories_enabled')) {
+      } elseif ($event && preg_match('/^#_(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]/', $result, $matches) && get_option('eme_categories_enabled')) {
          $include_cats=$matches[2];
          $exclude_cats=$matches[3];
          $extra_conditions_arr = array();
@@ -1571,7 +1566,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_LINKED(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]$/', $result, $matches) && get_option('eme_categories_enabled')) {
+      } elseif ($event && preg_match('/#_LINKED(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]/', $result, $matches) && get_option('eme_categories_enabled')) {
          $include_cats=$matches[2];
          $exclude_cats=$matches[3];
          $extra_conditions_arr = array();
@@ -1725,20 +1720,20 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $found = 0;
       }
 
-      if ($need_escape) {
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-      } elseif ($need_urlencode) {
-         $replacement = rawurlencode($replacement);
-      }
-      if ($found)
+      if ($found) {
+         if ($need_escape)
+            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         if ($need_urlencode)
+            $replacement = rawurlencode($replacement);
          $format = str_replace($orig_result, $replacement ,$format );
+      }
    }
 
    # now handle all possible location placeholders
    # but the eme_replace_locations_placeholders can't do "do_shortcode" at the end, because
    # this would cause [eme_if] tags to be replaced here already, while some placeholders of the
    # event haven't been replaced yet (like time placeholders, and event details)
-   $format = eme_replace_locations_placeholders ( $format, $event, $target, 0 );
+   $format = eme_replace_locations_placeholders ( $format, $location, $target, 0 );
 
   // for extra date formatting, eg. #_{d/m/Y}
    preg_match_all("/#(ESC|URL)?@?_\{.*?\}/", $format, $results);
@@ -1769,11 +1764,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       $replacement = date_i18n(substr($result, $offset, (strlen($result)-($offset+1)) ), strtotime($event[$my_date]." ".$event[$my_time]));
 
-      if ($need_escape) {
+      if ($need_escape)
          $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-      } elseif ($need_urlencode) {
+      if ($need_urlencode)
          $replacement = rawurlencode($replacement);
-      }
       $format = str_replace($orig_result, $replacement ,$format );
    }
 

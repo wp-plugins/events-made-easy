@@ -1,12 +1,8 @@
 <?php
 function eme_people_page() {
    $message="";
-   // Managing AJAX booking removal
    if (!current_user_can( get_option('eme_cap_people')) && isset($_REQUEST['action'])) {
       $message = __('You have no right to update people!','eme');
-   } elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == 'remove_booking') {
-      if(isset($_REQUEST['booking_id']))
-         eme_delete_booking(intval($_REQUEST['booking_id']));
    } elseif (isset ($_REQUEST['persons']) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_people') {
          $persons = $_REQUEST['persons'];
          if(is_array($persons)){
@@ -42,36 +38,6 @@ function eme_people_page() {
    </div> 
 
    <?php
-}
-
-add_action('init','eme_ajax_actions'); 
-function eme_ajax_actions() {
-   if (isset($_GET['eme_ajax_action']) && $_GET['eme_ajax_action'] == 'booking_data') {
-      if (isset($_GET['event_id'])) {
-         echo "[ {bookedSeats:".eme_get_booked_seats(intval($_GET['event_id'])).", availableSeats:".eme_get_available_seats(intval($_GET['event_id']))."}]"; 
-      }
-      die();
-   }
-   if (isset($_POST['eme_ajax_action']) && $_POST['eme_ajax_action'] == 'client_clock_submit') {
-      eme_client_clock_callback();
-      exit();
-   }
-   if (isset($_GET['action']) && $_GET['action'] == 'booking_printable') {
-      if (is_admin() && isset($_GET['event_id']))
-         eme_printable_booking_report(intval($_GET['event_id']));
-   }
-   if (isset($_GET['action']) && $_GET['action'] == 'booking_csv') {
-      if (is_admin() && isset($_GET['event_id']))
-         eme_csv_booking_report(intval($_GET['event_id']));
-   }
-   if (isset($_GET['query']) && $_GET['query'] == 'GlobalMapData') { 
-      $eventful = isset($_GET['eventful'])?$_GET['eventful']:false;
-      $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
-      $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
-
-      eme_global_map_json((bool)$eventful,$_GET['scope'],$_GET['category']);
-      die();
-   }
 }
 
 function eme_global_map_json($eventful = false, $scope = "all", $category = '', $offset = 0) {
@@ -495,11 +461,6 @@ function eme_add_person($name, $email, $phone, $wp_id) {
    return ($person);
 }
 
-// when editing other profiles then your own
-add_action('edit_user_profile', 'eme_user_profile') ;
-// when editing your own profile
-add_action('show_user_profile', 'eme_user_profile') ;
-
 function eme_user_profile($user) {
    //$eme_phone=get_user_meta($user,'eme_phone',true);
    $eme_phone=$user->eme_phone;
@@ -523,11 +484,6 @@ function eme_user_profile($user) {
    </table>
    <?php
 }
-
-// when editing other profiles then your own
-add_action('edit_user_profile_update','eme_update_user_profile');
-// when editing your own profile
-add_action('personal_options_update','eme_update_user_profile');
 
 function eme_update_user_profile($wp_user_ID) {
    if(isset($_POST['eme_phone'])) {

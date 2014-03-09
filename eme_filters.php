@@ -95,7 +95,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
       $found = 1;
       $orig_result = $result;
 
-      if (preg_match('/^#_(EVENTFUL_)?FILTER_CATS$/', $result) && get_option('eme_categories_enabled')) {
+      if (preg_match('/#_(EVENTFUL_)?FILTER_CATS/', $result) && get_option('eme_categories_enabled')) {
          if (strstr($result,'#_EVENTFUL')) {
             $eventful=1;
          }
@@ -117,7 +117,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             }
          }
 
-      } elseif (preg_match('/^#_(EVENTFUL_)?FILTER_LOCS$/', $result)) {
+      } elseif (preg_match('/#_(EVENTFUL_)?FILTER_LOCS/', $result)) {
          if (strstr($result,'#_EVENTFUL')) {
             $eventful=1;
          }
@@ -139,7 +139,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             }
          }
 
-      } elseif (preg_match('/^#_(EVENTFUL_)?FILTER_TOWNS$/', $result)) {
+      } elseif (preg_match('/#_(EVENTFUL_)?FILTER_TOWNS/', $result)) {
          if (strstr($result,'#_EVENTFUL')) {
             $eventful=1;
          }
@@ -160,13 +160,13 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             }
          }
 
-      } elseif (preg_match('/^#_FILTER_WEEKS$/', $result)) {
+      } elseif (preg_match('/#_FILTER_WEEKS/', $result)) {
          if (strstr($fields,'weeks'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_week_scope($scope_count));
-      } elseif (preg_match('/^#_FILTER_MONTHS$/', $result)) {
+      } elseif (preg_match('/#_FILTER_MONTHS/', $result)) {
          if (strstr($fields,'months'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_month_scope($scope_count));
-      } elseif (preg_match('/^#_FILTER_YEARS$/', $result)) {
+      } elseif (preg_match('/#_FILTER_YEARS/', $result)) {
          if (strstr($fields,'years'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_year_scope($scope_count));
       } else {

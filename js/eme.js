@@ -27,8 +27,8 @@ function remove_booking() {
  
 function update_booking_data () {
   	$j_eme.getJSON("admin.php?page=eme-people&eme_ajax_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
-  	  	booked = data[0].bookedSeats;
-		available = data[0].availableSeats; 
+  	  	booked = data.bookedSeats;
+		available = data.availableSeats; 
 		$j_eme('td#booked-seats').text(booked);
 		$j_eme('td#available-seats').text(available);
  	});

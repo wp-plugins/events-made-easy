@@ -501,34 +501,19 @@ function eme_ajaxize_calendar() {
 <?php
    }
 }
-add_action('wp_footer', 'eme_ajaxize_calendar');
 
 function eme_filter_calendar_ajax() {
-   if(isset($_POST['eme_ajaxCalendar']) && $_POST['eme_ajaxCalendar'] == true) {
-      (isset($_POST['full']) && $_POST['full']) ? $full = 1 : $full = 0;
-      (isset($_POST['long_events']) && $_POST['long_events']) ? $long_events = 1 : $long_events = 0;
-      (isset($_POST['category'])) ? $category = $_POST['category'] : $category = 0;
-      (isset($_POST['notcategory'])) ? $notcategory = $_POST['notcategory'] : $notcategory = 0;
-      (isset($_POST['calmonth'])) ? $month = eme_sanitize_request($_POST['calmonth']) : $month = ''; 
-      (isset($_POST['calyear'])) ? $year = eme_sanitize_request($_POST['calyear']) : $year = ''; 
-      (isset($_POST['author'])) ? $author = eme_sanitize_request($_POST['author']) : $author = ''; 
-      (isset($_POST['contact_person'])) ? $contact_person = eme_sanitize_request($_POST['contact_person']) : $contact_person = ''; 
-      (isset($_POST['location_id'])) ? $location_id = eme_sanitize_request($_POST['location_id']) : $location_id = '';
+   (isset($_POST['full']) && $_POST['full']) ? $full = 1 : $full = 0;
+   (isset($_POST['long_events']) && $_POST['long_events']) ? $long_events = 1 : $long_events = 0;
+   (isset($_POST['category'])) ? $category = $_POST['category'] : $category = 0;
+   (isset($_POST['notcategory'])) ? $notcategory = $_POST['notcategory'] : $notcategory = 0;
+   (isset($_POST['calmonth'])) ? $month = eme_sanitize_request($_POST['calmonth']) : $month = ''; 
+   (isset($_POST['calyear'])) ? $year = eme_sanitize_request($_POST['calyear']) : $year = ''; 
+   (isset($_POST['author'])) ? $author = eme_sanitize_request($_POST['author']) : $author = ''; 
+   (isset($_POST['contact_person'])) ? $contact_person = eme_sanitize_request($_POST['contact_person']) : $contact_person = ''; 
+   (isset($_POST['location_id'])) ? $location_id = eme_sanitize_request($_POST['location_id']) : $location_id = '';
 
-      // make sure we use the correct charset in the return
-      header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
-
-      // prevent caching
-      header("Expires: Wed, 1 Jan 1997 00:00:00 GMT");
-      header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-      header("Cache-Control: no-store, no-cache, must-revalidate");
-      header("Cache-Control: post-check=0, pre-check=0", false);
-      header("Pragma: no-cache");
-
-      eme_get_calendar('echo=1&full='.$full.'&long_events='.$long_events.'&category='.$category.'&month='.$month.'&year='.$year.'&author='.$author.'&contact_person='.$contact_person.'&location_id='.$location_id.'&notcategory='.$notcategory);
-      die();
-   }
+   eme_get_calendar('echo=1&full='.$full.'&long_events='.$long_events.'&category='.$category.'&month='.$month.'&year='.$year.'&author='.$author.'&contact_person='.$contact_person.'&location_id='.$location_id.'&notcategory='.$notcategory);
 }
-add_action('init','eme_filter_calendar_ajax');
 
 ?>
