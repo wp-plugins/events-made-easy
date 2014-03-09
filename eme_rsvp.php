@@ -1,9 +1,6 @@
 <?php
-$form_result_message = "";
 
-function eme_payment_form($event,$booking_id) {
-   // we only show the payment form after succesfull registration, so the $form_result_message is there
-   global $form_result_message;
+function eme_payment_form($event,$booking_id,$form_result_message) {
 
    $ret_string = "<div id='eme-rsvp-message'>";
    if(!empty($form_result_message))
@@ -62,20 +59,12 @@ function eme_payment_form($event,$booking_id) {
 }
 
 function eme_add_booking_form($event_id) {
-   global $form_result_message;
-   global $booking_id_done;
-
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
    if (!eme_is_event_rsvp($event)) {
       return;
    }
    
-   // you did a successfull registration, so now we decide wether to show the form again, or the payment form
-   if($booking_id_done && eme_event_needs_payment($event)) {
-      return eme_payment_form($event,$booking_id_done);
-   }
-
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only) {
       // we require a user to be WP registered to be able to book
@@ -86,6 +75,47 @@ function eme_add_booking_form($event_id) {
    } else {
       $readonly="";
    }
+
+   // after the add or delete booking, we do a redirect to the same page using javascript
+   // this has 2 advantages: you can give arguments in the GET url, and refreshing the page won't repeat the booking action, just the redirect
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking' && isset($_POST['event_id'])) {
+      $event_id = intval($_POST['event_id']);
+      $event = eme_get_event($event_id);
+      $booking_res = eme_book_seats($event);
+      $form_result_message = $booking_res[0];
+      $booking_id_done=$booking_res[1];
+      $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
+      if($booking_id_done && eme_event_needs_payment($event)) {
+         // you did a successfull registration, so now we decide wether to show the form again, or the payment form
+         // but to make sure people don't mess with the booking id in the url, we use wp_nonce
+         // by default the nonce is valid for 24 hours
+         $redir_url=wp_nonce_url( $current_url, 'eme_booking_id_'.$booking_id_done, 'eme_nonce' );
+         $redir_url=add_query_arg(array('eme_eventAction'=>'pay_booking','eme_message'=>urlencode($form_result_message),'booking_id'=>$booking_id_done),$redir_url);
+      } else {
+         // redirect to a page showing the result of the booking
+         $redir_url=add_query_arg(array('eme_eventAction'=>'message','eme_message'=>urlencode($form_result_message)),$current_url);
+      }
+      ?>
+      <script type="text/javascript">
+      window.location.replace("<?php echo $redir_url;?>");
+      </script>
+      <?php
+   }
+
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction'] == 'pay_booking' && isset($_GET['eme_message']) && isset($_GET['booking_id'])) {
+      $booking_id = intval($_GET['booking_id']);
+      // verify the nonce, to make sure people didn't mess with the booking id
+      if (wp_verify_nonce($_REQUEST['eme_nonce'], 'eme_booking_id_'.$booking_id)) {
+         $form_result_message = eme_sanitize_html($_GET['eme_message']);
+         return eme_payment_form($event,$booking_id,$form_result_message);
+      } else {
+         return;
+      }
+   }
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction'] == 'message' && isset($_GET['eme_message'])) {
+      $form_result_message = eme_sanitize_html($_GET['eme_message']);
+   }
+
    #$destination = eme_event_url($event)."#eme-rsvp-message";
    $destination = "#eme-rsvp-message";
    $ret_string = "<div id='eme-rsvp-message'>";
@@ -223,7 +253,7 @@ function eme_attendee_list_shortcode($atts) {
 }
 
 function eme_delete_booking_form($event_id) {
-   global $form_result_message, $current_user;
+   global $current_user;
    
    if (is_user_logged_in()) {
       get_currentuserinfo();
@@ -249,6 +279,22 @@ function eme_delete_booking_form($event_id) {
    } else {
       $readonly="";
    }
+
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'delete_booking' && isset($_POST['event_id'])) {
+      $form_result_message = eme_cancel_seats($event);
+      // redirect to a page showing the result of the booking
+      $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+      $redir_url=add_query_arg(array('eme_eventAction'=>'message','eme_message'=>urlencode($form_result_message)),$current_url);
+      ?>
+      <script type="text/javascript">
+      window.location.replace("<?php echo $redir_url;?>");
+      </script>
+      <?php
+   }
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction'] == 'message' && isset($_GET['eme_message'])) {
+      $form_result_message = eme_sanitize_html($_GET['eme_message']);
+   }
+
    #$destination = eme_event_url($event)."#eme-rsvp-message";
    $destination = "#eme-rsvp-message";
    
