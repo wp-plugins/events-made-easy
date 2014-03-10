@@ -76,8 +76,9 @@ function eme_add_booking_form($event_id) {
       $readonly="";
    }
 
-   // after the add or delete booking, we do a redirect to the same page using javascript
-   // this has 2 advantages: you can give arguments in the GET url, and refreshing the page won't repeat the booking action, just the redirect
+   // after the add or delete booking, we do a POST to the same page using javascript to show just the result
+   // this has 2 advantages: you can give arguments in the post, and refreshing the page won't repeat the booking action, just the post showing the result
+   // a javascript redir using window.replace + GET would work too, but that leaves an ugly GET url
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking' && isset($_POST['event_id'])) {
       $event_id = intval($_POST['event_id']);
       $event = eme_get_event($event_id);
@@ -85,35 +86,55 @@ function eme_add_booking_form($event_id) {
       $form_result_message = $booking_res[0];
       $booking_id_done=$booking_res[1];
       $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
+      $post_string="{";
       if($booking_id_done && eme_event_needs_payment($event)) {
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
          // by default the nonce is valid for 24 hours
-         $redir_url=wp_nonce_url( $current_url, 'eme_booking_id_'.$booking_id_done, 'eme_nonce' );
-         $redir_url=add_query_arg(array('eme_eventAction'=>'pay_booking','eme_message'=>urlencode($form_result_message),'booking_id'=>$booking_id_done),$redir_url);
+         $eme_nonce=wp_create_nonce('eme_booking_id_'.$booking_id_done);
+         // create the JS array that will be used to post
+         $post_string="{eme_eventAction: 'pay_booking', eme_message: '$form_result_message', booking_id: '$booking_id_done', eme_nonce: '$eme_nonce'}";
       } else {
-         // redirect to a page showing the result of the booking
-         $redir_url=add_query_arg(array('eme_eventAction'=>'message','eme_message'=>urlencode($form_result_message)),$current_url);
+         // create the JS array that will be used to post
+         $post_string="{eme_eventAction: 'message', eme_message: '$form_result_message'}";
       }
       ?>
       <script type="text/javascript">
-      window.location.replace("<?php echo $redir_url;?>");
+      function postwith (to,p) {
+         var myForm = document.createElement("form");
+         myForm.method="post" ;
+         myForm.action = to ;
+         for (var k in p) {
+            var myInput = document.createElement("input") ;
+            myInput.setAttribute("name", k) ;
+            myInput.setAttribute("value", p[k]);
+            myForm.appendChild(myInput) ;
+         }
+         document.body.appendChild(myForm) ;
+         myForm.submit() ;
+         document.body.removeChild(myForm) ;
+      }
+      <?php echo "postwith('$current_url',$post_string);"; ?>
       </script>
       <?php
    }
 
-   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction'] == 'pay_booking' && isset($_GET['eme_message']) && isset($_GET['booking_id'])) {
-      $booking_id = intval($_GET['booking_id']);
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_booking' && isset($_POST['eme_message']) && isset($_POST['booking_id'])) {
+      $booking_id = intval($_POST['booking_id']);
       // verify the nonce, to make sure people didn't mess with the booking id
-      if (wp_verify_nonce($_REQUEST['eme_nonce'], 'eme_booking_id_'.$booking_id)) {
-         $form_result_message = eme_sanitize_html($_GET['eme_message']);
+      if (wp_verify_nonce($_POST['eme_nonce'], 'eme_booking_id_'.$booking_id)) {
+         $form_result_message = eme_sanitize_html($_POST['eme_message']);
+         // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
+         unset($_POST['eme_message']);
          return eme_payment_form($event,$booking_id,$form_result_message);
       } else {
          return;
       }
    }
-   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction'] == 'message' && isset($_GET['eme_message'])) {
-      $form_result_message = eme_sanitize_html($_GET['eme_message']);
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
+      $form_result_message = eme_sanitize_html($_POST['eme_message']);
+      // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
+      unset($_POST['eme_message']);
    }
 
    #$destination = eme_event_url($event)."#eme-rsvp-message";
@@ -282,17 +303,34 @@ function eme_delete_booking_form($event_id) {
 
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'delete_booking' && isset($_POST['event_id'])) {
       $form_result_message = eme_cancel_seats($event);
-      // redirect to a page showing the result of the booking
-      $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-      $redir_url=add_query_arg(array('eme_eventAction'=>'message','eme_message'=>urlencode($form_result_message)),$current_url);
+      // post to a page showing the result of the booking
+      $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
+      // create the JS array that will be used to post
+      $post_string="{eme_eventAction: 'message', eme_message: '$form_result_message'}";
       ?>
       <script type="text/javascript">
-      window.location.replace("<?php echo $redir_url;?>");
+      function postwith (to,p) {
+         var myForm = document.createElement("form");
+         myForm.method="post" ;
+         myForm.action = to ;
+         for (var k in p) {
+            var myInput = document.createElement("input") ;
+            myInput.setAttribute("name", k) ;
+            myInput.setAttribute("value", p[k]);
+            myForm.appendChild(myInput) ;
+         }
+         document.body.appendChild(myForm) ;
+         myForm.submit() ;
+         document.body.removeChild(myForm) ;
+      }
+      <?php echo "postwith('$current_url',$post_string);"; ?>
       </script>
       <?php
    }
-   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction'] == 'message' && isset($_GET['eme_message'])) {
-      $form_result_message = eme_sanitize_html($_GET['eme_message']);
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
+      $form_result_message = eme_sanitize_html($_POST['eme_message']);
+      // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
+      unset($_POST['eme_message']);
    }
 
    #$destination = eme_event_url($event)."#eme-rsvp-message";
