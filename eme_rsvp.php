@@ -93,10 +93,10 @@ function eme_add_booking_form($event_id) {
          // by default the nonce is valid for 24 hours
          $eme_nonce=wp_create_nonce('eme_booking_id_'.$booking_id_done);
          // create the JS array that will be used to post
-         $post_string="{eme_eventAction: 'pay_booking', eme_message: '$form_result_message', booking_id: '$booking_id_done', eme_nonce: '$eme_nonce'}";
+         $post_string="{eme_eventAction: 'pay_booking', eme_message: '".json_encode($form_result_message)."', booking_id: '$booking_id_done', eme_nonce: '$eme_nonce'}";
       } else {
          // create the JS array that will be used to post
-         $post_string="{eme_eventAction: 'message', eme_message: '$form_result_message'}";
+         $post_string="{eme_eventAction: 'message', eme_message: '".json_encode($form_result_message)."'}";
       }
       ?>
       <script type="text/javascript">
@@ -117,6 +117,7 @@ function eme_add_booking_form($event_id) {
       <?php echo "postwith('$current_url',$post_string);"; ?>
       </script>
       <?php
+      return;
    }
 
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_booking' && isset($_POST['eme_message']) && isset($_POST['booking_id'])) {
@@ -306,7 +307,7 @@ function eme_delete_booking_form($event_id) {
       // post to a page showing the result of the booking
       $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
       // create the JS array that will be used to post
-      $post_string="{eme_eventAction: 'message', eme_message: '$form_result_message'}";
+      $post_string="{eme_eventAction: 'message', eme_message: '".json_encode($form_result_message)."'}";
       ?>
       <script type="text/javascript">
       function postwith (to,p) {
@@ -326,6 +327,7 @@ function eme_delete_booking_form($event_id) {
       <?php echo "postwith('$current_url',$post_string);"; ?>
       </script>
       <?php
+      return;
    }
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
       $form_result_message = eme_sanitize_html($_POST['eme_message']);
