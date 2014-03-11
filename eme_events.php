@@ -7,19 +7,9 @@ function eme_new_event() {
       "event_name" => '',
       "event_status" => get_option('eme_event_initial_state'),
       "event_start_date" => '',
-      "event_start_day" => '',
-      "event_start_month" => '',
-      "event_start_year" => '',
       "event_start_time" => '',
-      "event_start_12h_time" => '',
-      "event_start_24h_time" => '',
       "event_end_date" => '',
-      "event_end_day" => '',
-      "event_end_month" => '',
-      "event_end_year" => '',
       "event_end_time" => '',
-      "event_end_12h_time" => '',
-      "event_end_24h_time" => '',
       "event_notes" => '',
       "event_rsvp" => get_option('eme_rsvp_reg_for_new_events')? 1:0,
       "use_paypal" => get_option('eme_paypal_business')? 1:0,
@@ -1787,29 +1777,26 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    }
    
    $where = implode ( " AND ", $conditions );
-   if ($where != "")
-      $where = " WHERE " . $where;
-   
-   $sql = "SELECT *, 
-         DATE_FORMAT(event_start_date, '%e') AS 'event_start_day',
-         DATE_FORMAT(event_start_date, '%m') AS 'event_start_month',
-         DATE_FORMAT(event_start_date, '%Y') AS 'event_start_year',
-         DATE_FORMAT(event_start_time, '%k') AS 'event_start_hh',
-         DATE_FORMAT(event_start_time, '%i') AS 'event_start_mm',
-         DATE_FORMAT(event_start_time, '%h:%i%p') AS 'event_start_12h_time', 
-         DATE_FORMAT(event_start_time, '%H:%i') AS 'event_start_24h_time', 
-         DATE_FORMAT(event_end_date, '%e') AS 'event_end_day',
-         DATE_FORMAT(event_end_date, '%m') AS 'event_end_month',
-         DATE_FORMAT(event_end_date, '%Y') AS 'event_end_year',
-         DATE_FORMAT(event_end_time, '%k') AS 'event_end_hh',
-         DATE_FORMAT(event_end_time, '%i') AS 'event_end_mm',
-         DATE_FORMAT(event_end_time, '%h:%i%p') AS 'event_end_12h_time',
-         DATE_FORMAT(event_end_time, '%H:%i') AS 'event_end_24h_time'
-         FROM $events_table
+   if (get_option('eme_show_recurrent_events_once')) {
+      if ($where != "")
+         $where = " AND " . $where;
+       $sql = "SELECT * FROM $events_table
+         WHERE (recurrence_id>0 $where)
+         group by recurrence_id union all
+         SELECT * FROM $events_table
+         WHERE (recurrence_id=0 $where)
+         ORDER BY event_start_date $order , event_start_time $order
+         $limit 
+         $offset";
+   } else {
+      if ($where != "")
+         $where = " WHERE " . $where;
+      $sql = "SELECT * FROM $events_table
          $where
          ORDER BY event_start_date $order , event_start_time $order
          $limit 
          $offset";
+   }
    $wpdb->show_errors = true;
    $events = $wpdb->get_results ( $sql, ARRAY_A );
    $inflated_events = array ();
@@ -1858,22 +1845,7 @@ function eme_get_event($event_id) {
    $where = implode ( " AND ", $conditions );
    if ($where != "")
       $where = " WHERE " . $where;
-   $sql = "SELECT *, 
-         DATE_FORMAT(event_start_date, '%e') AS 'event_start_day',
-         DATE_FORMAT(event_start_date, '%m') AS 'event_start_month',
-         DATE_FORMAT(event_start_date, '%Y') AS 'event_start_year',
-         DATE_FORMAT(event_start_time, '%k') AS 'event_start_hh',
-         DATE_FORMAT(event_start_time, '%i') AS 'event_start_mm',
-         DATE_FORMAT(event_start_time, '%h:%i%p') AS 'event_start_12h_time', 
-         DATE_FORMAT(event_start_time, '%H:%i') AS 'event_start_24h_time', 
-         DATE_FORMAT(event_end_date, '%e') AS 'event_end_day',
-         DATE_FORMAT(event_end_date, '%m') AS 'event_end_month',
-         DATE_FORMAT(event_end_date, '%Y') AS 'event_end_year',
-         DATE_FORMAT(event_end_time, '%k') AS 'event_end_hh',
-         DATE_FORMAT(event_end_time, '%i') AS 'event_end_mm',
-         DATE_FORMAT(event_end_time, '%h:%i%p') AS 'event_end_12h_time',
-         DATE_FORMAT(event_end_time, '%H:%i') AS 'event_end_24h_time'
-      FROM $events_table
+   $sql = "SELECT * FROM $events_table
       $where";
    
    //$wpdb->show_errors(true);
@@ -1890,9 +1862,6 @@ function eme_get_event($event_id) {
 function eme_get_event_data($event) {
    if ($event['event_end_date'] == "") {
       $event['event_end_date'] = $event['event_start_date'];
-      $event['event_end_day'] = $event['event_start_day'];
-      $event['event_end_month'] = $event['event_start_month'];
-      $event['event_end_year'] = $event['event_start_year'];
    }
       
    $event['event_attributes'] = @unserialize($event['event_attributes']);
