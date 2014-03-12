@@ -2198,15 +2198,6 @@ function eme_event_form($event, $title, $element) {
       }
    }
    
-   if ($event['event_start_12h_time'] == "")
-         $event['event_start_12h_time'] = date('h:iA');
-   if ($event['event_start_24h_time'] == "")
-         $event['event_start_24h_time'] = date('H:i');
-   if ($event['event_end_12h_time'] == "")
-         $event['event_end_12h_time'] = date('h:iA',time()+3600);
-   if ($event['event_end_24h_time'] == "")
-         $event['event_end_24h_time'] = date('H:i',time()+3600);
-   
    if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
 
@@ -2702,7 +2693,7 @@ function eme_admin_general_script() {
    // check if the user wants AM/PM or 24 hour notation
    $time_format = get_option('time_format');
    $show24Hours = 'true';
-   if (preg_match ( "/a/i", $time_format ))
+   if (preg_match ( "/g|h/", $time_format ))
       $show24Hours = 'false';
    
    // jquery ui locales are with dashes, not underscores
@@ -3170,13 +3161,18 @@ function eme_meta_box_div_event_time($event) {
    // check if the user wants AM/PM or 24 hour notation
    $time_format = get_option('time_format');
    $hours_locale = '24';
-   if (preg_match ( "/a/i", $time_format ))
-      $hours_locale = '12';
+   if (preg_match ( "/g|h/", $time_format )) {
+      $event_start_time = date("h:iA", strtotime($event['event_start_time']));
+      $event_end_time = date("h:iA", strtotime($event['event_end_time']));
+   } else {
+      $event_start_time = $event['event_start_time'];
+      $event_end_time = $event['event_end_time'];
+   }
 
 ?>
-                        <input id="start-time" type="text" size="8" maxlength="8" name="event_start_time" value="<?php echo $event['event_start_' . $hours_locale . "h_time"]; ?>" />
+                        <input id="start-time" type="text" size="8" maxlength="8" name="event_start_time" value="<?php echo $event_start_time; ?>" />
                         -
-                        <input id="end-time" type="text" size="8" maxlength="8" name="event_end_time" value="<?php echo $event['event_end_' . $hours_locale . "h_time"]; ?>" />
+                        <input id="end-time" type="text" size="8" maxlength="8" name="event_end_time" value="<?php echo $event_end_time; ?>" />
                         <br />
                         <?php _e ( 'The time of the event beginning and end', 'eme' )?>
                         .

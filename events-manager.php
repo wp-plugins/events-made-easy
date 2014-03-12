@@ -1121,10 +1121,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_24HSTARTTIME/', $result)) { 
-         $replacement = substr($event['event_start_time'], 0,5);
+         $replacement = $event['event_start_time'];
 
       } elseif ($event && preg_match('/#_24HENDTIME/', $result)) { 
-         $replacement = substr($event['event_end_time'], 0,5);
+         $replacement = $event['event_end_time'];
 
       } elseif ($event && preg_match('/#_PAST_FUTURE_CLASS/', $result)) { 
          if (strtotime($event['event_start_date']." ".$event['event_start_time']) > time()) {
@@ -1136,33 +1136,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_12HSTARTTIME/', $result)) {
-         $AMorPM = "AM"; 
-         $hour = substr($event['event_start_time'], 0,2);
-         $minute = substr($event['event_start_time'], 3,2);
-         // 12:00 in 24H time = 12:00PM
-         // 13:01 in 24H time = 01:01PM
-         // 00:00 in 24H time = 12:00AM
-         if ($hour >= 12) {
-            $hour = $hour-12;
-            $AMorPM = "PM";
-         }
-         // hour 0 does not exist in AM/PM notation
-         if ($hour == 0) $hour=12;
-         $replacement = "$hour:$minute $AMorPM";
+         $replacement = date("h:i A", strtotime($event['event_start_time']));
 
       } elseif ($event && preg_match('/#_12HENDTIME/', $result)) {
-         $AMorPM = "AM"; 
-         $hour = substr($event['event_end_time'], 0,2);
-         $minute = substr($event['event_end_time'], 3,2);
-         // 12:00 in 24H time = 12:00PM
-         // 13:01 in 24H time = 01:01PM
-         // 00:00 in 24H time = 12:00AM
-         if ($hour >= 12) {
-            $hour = $hour-12;
-            $AMorPM = "PM";
-         }
-         if ($hour == 0) $hour=12;
-         $replacement = "$hour:$minute $AMorPM";
+         $replacement = date("h:i A", strtotime($event['event_end_time']));
 
       } elseif ($event && preg_match('/#_MAP/', $result)) {
          if ($target == "rss" || $target == "text") {
