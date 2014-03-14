@@ -22,7 +22,7 @@ function eme_new_location() {
  
 function eme_locations_page() {
    $current_userid=get_current_user_id();
-   if (isset($_GET['action']) && $_GET['action'] == "edit") { 
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edit") { 
       $location_id = intval($_GET['location_ID']);
       $location = eme_get_location($location_id);
       if (current_user_can( get_option('eme_cap_edit_locations')) ||
@@ -34,7 +34,7 @@ function eme_locations_page() {
          $locations = eme_get_locations();
          eme_locations_table_layout($locations, null, $message);
       }
-   } elseif (isset($_POST['action']) && $_POST['action'] == "delete") { 
+   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "delete") { 
       $locations = $_POST['locations'];
       foreach($locations as $location_id) {
          $location = eme_get_location(intval($location_id));
@@ -45,7 +45,7 @@ function eme_locations_page() {
       }
       $locations = eme_get_locations();
       eme_locations_table_layout($locations, null, "");
-   } elseif (isset($_POST['action']) && $_POST['action'] == "editedlocation") { 
+   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "editedlocation") { 
       $orig_location=eme_get_location(intval($_POST['location_ID']));
       if (current_user_can( get_option('eme_cap_edit_locations')) ||
             (current_user_can( get_option('eme_cap_author_locations')) && ($orig_location['location_author']==$current_userid))) {
@@ -113,7 +113,7 @@ function eme_locations_page() {
          $locations = eme_get_locations();
          eme_locations_table_layout($locations, null, $message);
       }
-   } elseif(isset($_POST['action']) && $_POST['action'] == "addlocation") {
+   } elseif(isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "addlocation") {
       if (current_user_can( get_option('eme_cap_add_locations'))) {
          $location = eme_new_location();
          $location['location_name'] = trim(stripslashes($_POST['location_name']));
@@ -199,7 +199,7 @@ function eme_locations_edit_layout($location, $message = "") {
          <div id="ajax-response"></div>
    
          <form enctype="multipart/form-data" name="editcat" id="editcat" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>" class="validate">
-         <input type="hidden" name="action" value="editedlocation" />
+         <input type="hidden" name="eme_admin_action" value="editedlocation" />
          <input type="hidden" name="location_ID" value="<?php echo $location['location_id'] ?>"/>
          
          <!-- we need titlediv and title for qtranslate as ID -->
@@ -406,7 +406,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
             <div id="col-right">
              <div class="col-wrap">
                 <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
-                  <input type="hidden" name="action" value="delete"/>
+                  <input type="hidden" name="eme_admin_action" value="delete"/>
                   <?php if (count($locations)>0) : ?>
                   <table class="widefat">
                      <thead>
@@ -432,7 +432,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                         <tr>
                            <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id']; ?>" name="locations[]"/></td>
                            <td><?php echo $this_location['location_id']; ?></td>
-                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;action=edit&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_town']); ?></td>
                         </tr>
@@ -461,7 +461,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                      <div id="ajax-response"/>
                   <h3><?php _e('Add location', 'eme') ?></h3>
                       <form enctype="multipart/form-data" name="addlocation" id="addlocation" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>" class="add:the-list: validate">
-                        <input type="hidden" name="action" value="addlocation" />
+                        <input type="hidden" name="eme_admin_action" value="addlocation" />
                         <div id="titlediv" class="form-field form-required">
                           <label><?php _e('Location name', 'eme') ?></label>
                           <input name="location_name" id="title" type="text" value="<?php echo eme_sanitize_html($new_location['location_name']); ?>" size="40" />
@@ -1538,7 +1538,7 @@ function eme_locations_autocomplete() {
       $use_select_for_locations=1;
    }
 
-   if ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) {
+   if ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) {
       ?>
       <link rel="stylesheet" href="<?php echo EME_PLUGIN_URL; ?>js/jquery-autocomplete/jquery.autocomplete.css" type="text/css"/>
 

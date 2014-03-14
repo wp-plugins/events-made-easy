@@ -71,9 +71,6 @@ function eme_add_booking_form($event_id) {
       if (!is_user_logged_in()) {
          return;
       }
-      $readonly="disabled='disabled'";
-   } else {
-      $readonly="";
    }
 
    // after the add or delete booking, we do a POST to the same page using javascript to show just the result
@@ -151,84 +148,8 @@ function eme_add_booking_form($event_id) {
 
    // you can book the available number of seats, with a max of x per time
    $min_allowed = $event['event_properties']['min_allowed'];
-   $max_allowed = $event['event_properties']['max_allowed'];
-   $booked_places_options = array();
    // the next gives the number of available seats, even for multiprice
    $avail_seats = eme_get_available_seats($event_id);
-   if (eme_is_multi($max_allowed)) {
-      $multi_max_allowed=eme_convert_multi2array($max_allowed);
-      $max_allowed_is_multi=1;
-   } else {
-      $max_allowed_is_multi=0;
-   }
-   if (eme_is_multi($min_allowed)) {
-      $multi_min_allowed=eme_convert_multi2array($min_allowed);
-      $min_allowed_is_multi=1;
-   } else {
-      $min_allowed_is_multi=0;
-   }
-   if (eme_is_multi($event['event_seats'])) {
-      $multi_avail = eme_get_available_multiseats($event_id);
-      foreach ($multi_avail as $key => $avail_seats) {
-         $booked_places_options[$key] = array();
-         if ($max_allowed_is_multi)
-            $real_max_allowed=$multi_max_allowed[$key];
-         else
-            $real_max_allowed=$max_allowed;
-         
-         // don't let people choose more seats than available
-         if ($real_max_allowed>$avail_seats || $real_max_allowed==0)
-            $real_max_allowed=$avail_seats;
-
-         if ($min_allowed_is_multi)
-            $real_min_allowed=$multi_min_allowed[$key];
-         else
-            // it's no use to have a non-multi minimum for multiseats
-            $real_min_allowed=0;
-         
-         for ( $i = $real_min_allowed; $i <= $real_max_allowed; $i++) 
-            $booked_places_options[$key][$i]=$i;
-      }
-   } elseif (eme_is_multi($event['price'])) {
-      // we just need to loop through the same amount of seats as there are prices
-      foreach (eme_convert_multi2array($event['price']) as $key => $value) {
-         $booked_places_options[$key] = array();
-         if ($max_allowed_is_multi)
-            $real_max_allowed=$multi_max_allowed[$key];
-         else
-            $real_max_allowed=$max_allowed;
-
-         // don't let people choose more seats than available
-         if ($real_max_allowed>$avail_seats || $real_max_allowed==0)
-            $real_max_allowed=$avail_seats;
-
-         if ($min_allowed_is_multi)
-            $real_min_allowed=$multi_min_allowed[$key];
-         else
-            // it's no use to have a non-multi minimum for multiseats/multiprice
-            $real_min_allowed=0;
-
-         for ( $i = $real_min_allowed; $i <= $real_max_allowed; $i++)
-            $booked_places_options[$key][$i]=$i;
-      }
-   } else {
-      if ($max_allowed_is_multi)
-         $real_max_allowed=$multi_max_allowed[0];
-      else
-         $real_max_allowed=$max_allowed;
-
-      // don't let people choose more seats than available
-      if ($real_max_allowed > $avail_seats || $real_max_allowed==0)
-         $real_max_allowed = $avail_seats;
-
-      if ($min_allowed_is_multi)
-         $real_min_allowed=$multi_min_allowed[0];
-      else
-         $real_min_allowed=$min_allowed;
-
-      for ( $i = $real_min_allowed; $i <= $real_max_allowed; $i++) 
-         $booked_places_options[$i]=$i;
-   }
    // no seats anymore? No booking form then ... but only if it is required that the min number of
    // bookings should be >0 (it can be=0 for attendance bookings)
    if (eme_is_multi($min_allowed))
@@ -241,12 +162,12 @@ function eme_add_booking_form($event_id) {
    }
 
    $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
-   $ret_string .= eme_replace_formfields_placeholders ($event, $readonly, $booked_places_options);
+   $ret_string .= eme_replace_formfields_placeholders ($event);
    // also add a honeypot field: if it gets completed with data, 
    // it's a bot, since a humand can't see this (using CSS to render it invisible)
    $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
       <p>".__('(* marks a required field)', 'eme')."</p>
-      <input type='hidden' name='eme_eventAction' value='add_booking'/>
+      <input type='hidden' name='eme_admin_action' value='add_booking'/>
       <input type='hidden' name='event_id' value='$event_id'/>
    </form></div>";
  
@@ -435,32 +356,11 @@ function eme_book_seats($event, $send_mail=1) {
       foreach ($booking_prices_mp as $key=>$value) {
          $bookedSeats_mp[$key] = 0;
       }
-      if (!is_admin()) {
-         foreach($_POST as $key=>$value) {
-            if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
-               $field_id = intval($matches[1])-1;
-               $bookedSeats += $value;
-               $bookedSeats_mp[$field_id]=$value;
-            }
-         }
-      } else {
-         if (isset($_POST['bookedSeats_mp'])) {
-            $bookedSeats_mp = eme_convert_multi2array($_POST['bookedSeats_mp']);
-            $count1=count($booking_prices_mp);
-            $count2=count($bookedSeats_mp);
-            if ($count1 != $count2) {
-               $result = sprintf(__("'%s' is a multiprice event, please fill in %d sets of spaces to reserve in the '%s' field.",'eme'),$event['event_name'],$count1,__('Seats (Multiprice)', 'eme'));
-               $res = array(0=>$result,1=>$booking_id);
-               return $res;
-            } else {
-               foreach($bookedSeats_mp as $value) {
-                  $bookedSeats += $value;
-               }
-            }
-         } else {
-            $result = sprintf(__("'%s' is a multiprice event, please fill in %d sets of spaces to reserve in the '%s' field.",'eme'),$event['event_name'],$count1,__('Seats (Multiprice)', 'eme'));
-            $res = array(0=>$result,1=>$booking_id);
-            return $res;
+      foreach($_POST as $key=>$value) {
+         if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
+            $field_id = intval($matches[1])-1;
+            $bookedSeats += $value;
+            $bookedSeats_mp[$field_id]=$value;
          }
       }
    }
@@ -751,7 +651,7 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment = ""
    $booking['person_id']=$person_id;
    $booking['wp_id']=get_current_user_id();
    $booking['booking_seats']=$seats;
-   $booking['booking_seats_mp']=join("||",$seats_mp);
+   $booking['booking_seats_mp']=eme_convert_array2multi($seats_mp);
    $booking['booking_price']=$event['price'];
    $booking['booking_comment']=$comment;
    $booking['creation_date']=current_time('mysql', false);
@@ -909,7 +809,7 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
             $booking_seats_mp[$key] = 0;
          $fields['booking_seats'] += intval($booking_seats_mp[$key]);
       }
-      $fields['booking_seats_mp'] = join("||",$booking_seats_mp);
+      $fields['booking_seats_mp'] = eme_convert_array2multi($booking_seats_mp);
    } else {
       $fields['booking_seats'] = intval($seats);
    }
@@ -1070,7 +970,7 @@ function eme_bookings_table($event_id) {
    $result = "<form id='bookings-filter' name='bookings-filter' method='get' action='$destination'>
                   <input type='hidden' name='page' value='eme_registration_seats_page'/>
                   <input type='hidden' name='event_id' value='$event_id'/>
-                  <input type='hidden' name='action' value='delete_bookings'/>
+                  <input type='hidden' name='eme_admin_action' value='delete_bookings'/>
                   <div class='wrap'>
                      <h2>Bookings</h2>
                   <table id='eme-bookings-table' class='widefat post fixed'>";
@@ -1099,7 +999,7 @@ function eme_bookings_table($event_id) {
                      </table></div>
                      <div class='tablenav'>
                         <div class='alignleft actions'>
-                         <input class=button-secondary action' type='submit' name='doaction' value='Delete'/>
+                         <input class=button-secondary action' type='submit' value='Delete'/>
                            <br class='clear'/>
                         </div>
                         <br class='clear'/>
@@ -1116,10 +1016,10 @@ function eme_bookings_compact_table($event_id) {
    $pending_seats = eme_get_pending_seats($event_id);
    $booked_seats = eme_get_booked_seats($event_id);
    if (eme_is_event_multiseats($event_id)) {
-	   $available_seats_ms=join('||',eme_get_available_multiseats($event_id));
-	   $approved_seats_ms=join('||',eme_get_approved_multiseats($event_id));
-	   $booked_seats_ms=join('||',eme_get_booked_multiseats($event_id));
-	   $pending_seats_ms=join('||',eme_get_pending_multiseats($event_id));
+	   $available_seats_ms=eme_convert_array2multi(eme_get_available_multiseats($event_id));
+	   $approved_seats_ms=eme_convert_array2multi(eme_get_approved_multiseats($event_id));
+	   $booked_seats_ms=eme_convert_array2multi(eme_get_booked_multiseats($event_id));
+	   $pending_seats_ms=eme_convert_array2multi(eme_get_pending_multiseats($event_id));
 	   if ($pending_seats>0) {
 		   $booked_seats_info="$booked_seats: $booked_seats_ms ($approved_seats_ms ".__('approved','eme').", $pending_seats_ms ".__('pending','eme');
 	   } else {
@@ -1136,8 +1036,8 @@ function eme_bookings_compact_table($event_id) {
    }
    $count_bookings=count($bookings);
    if ($count_bookings>0) { 
-      $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=$event_id");
-      $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=$event_id");
+      $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=$event_id");
+      $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=$event_id");
       $table = 
       "<div class='wrap'>
             <h4>$count_bookings ".__('bookings so far','eme').":</h4>
@@ -1549,21 +1449,45 @@ function eme_registration_seats_page() {
 
    if (current_user_can( get_option('eme_cap_registrations'))) {
       // do the actions if required
-      if (isset($_GET['action']) && $_GET['action'] == "delete_bookings" && isset($_GET['bookings'])) {
+      if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "delete_bookings" && isset($_GET['bookings'])) {
          $bookings = $_GET['bookings'];
          if (is_array($bookings)) {
             foreach($bookings as $booking_id) {
                eme_delete_booking(intval($booking_id));
             }
          }
+      } elseif (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editRegistration" && isset($_GET['booking_id'])) {
+            $booking_id = intval($_GET['booking_id']);
+            $booking = eme_get_booking($booking_id);
+            $event_id = $booking['event_id'];
+            $event = eme_get_event($event_id);
+            $ret_string = "<form id='eme-rsvp-form' name='booking-form' method='post' action='".admin_url("admin.php?page=eme-registration-seats")."'>";
+            $ret_string.= __('Send mails for changed registration?','eme') . eme_ui_select_binary(1,"send_mail");
+            $ret_string.= eme_replace_formfields_placeholders ($event,$booking);
+            $ret_string .= "
+                           <input type='hidden' name='eme_admin_action' value='updateBooking'/>
+                           <input type='hidden' name='booking_id' value='$booking_id'/>
+                           </form></div>";
+            print $ret_string;
+            return;
       } else {
-         if (isset($_POST ['doaction']))
-            $action = isset($_POST ['action']) ? $_POST ['action'] : '';
-         else
-            $action = '';
+         $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
          $send_mail = isset($_POST ['send_mail']) ? intval($_POST ['send_mail']) : 1;
 
-         if ($action == 'addRegistration') {
+         if ($action == 'newRegistration') {
+            $event_id = intval($_POST['event_id']);
+            $event = eme_get_event($event_id);
+            $ret_string = "<form id='eme-rsvp-form' name='booking-form' method='post' action=''>";
+            $ret_string.= __('Send mails for new registration?','eme') . eme_ui_select_binary(1,"send_mail");
+            $ret_string.= eme_replace_formfields_placeholders ($event);
+            $ret_string .= "
+                           <input type='hidden' name='eme_admin_action' value='addRegistration'/>
+                           <input type='hidden' name='event_id' value='$event_id'/>
+                           </form></div>";
+            print $ret_string;
+            return;
+
+         } elseif ($action == 'addRegistration') {
             $event_id = intval($_POST['event_id']);
             $booking_payed = isset($_POST ['booking_payed']) ? intval($_POST ['booking_payed']) : 0;
             $event = eme_get_event($event_id);
@@ -1576,6 +1500,50 @@ function eme_registration_seats_page() {
                print "<div id='message' class='updated'><p>$result</p></div>";
                eme_update_booking_payed($booking_id_done,$booking_payed);
             }
+         } elseif ($action == 'updateBooking') {
+            $booking_id = intval($_POST['booking_id']);
+            $booking = eme_get_booking ($booking_id);
+            $event_id = $booking['event_id'];
+            $event = eme_get_event($event_id);
+
+            if (isset($_POST['bookedSeats']))
+               $bookedSeats = intval($_POST['bookedSeats']);
+            else
+               $bookedSeats = 0;
+
+            // for multiple prices, we have multiple booked Seats as well
+            // the next foreach is only valid when called from the frontend
+            $bookedSeats_mp = array();
+            if (eme_is_multi($event['price'])) {
+               // make sure the array contains the correct keys already, since
+               // later on in the function eme_record_booking we do a join
+               $booking_prices_mp=eme_convert_multi2array($event['price']);
+               foreach ($booking_prices_mp as $key=>$value) {
+                  $bookedSeats_mp[$key] = 0;
+               }
+               foreach($_POST as $key=>$value) {
+                  if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
+                     $field_id = intval($matches[1])-1;
+                     $bookedSeats += $value;
+                     $bookedSeats_mp[$field_id]=$value;
+                  }
+               }
+               eme_update_booking_seats($booking_id,$booking['event_id'],eme_convert_array2multi($bookedSeats_mp),$booking['booking_price']);
+            } else {
+               eme_update_booking_seats($booking_id,$booking['event_id'],$bookedSeats,$booking['booking_price']);
+            }
+
+            if (isset($_POST['bookerPhone'])) {
+               $bookerPhone = eme_strip_tags($_POST['bookerPhone']);
+               $booker=eme_get_person($booking['person_id']);
+               if ($booker['person_phone'] != $bookerPhone)
+                  eme_update_phone($booker,$bookerPhone);
+            }
+
+            eme_delete_answers($booking_id);
+            eme_record_answers($booking_id);
+            print "<div id='message' class='updated'><p>".__("Booking updated","eme")."</p></div>";
+
          } elseif ($action == 'approveRegistration' || $action == 'denyRegistration') {
             $bookings = isset($_POST ['bookings']) ? $_POST ['bookings'] : array();
             $selected_bookings = isset($_POST ['selected_bookings']) ? $_POST ['selected_bookings'] : array();
@@ -1614,17 +1582,16 @@ function eme_registration_seats_form_table($event_id=0) {
 <div class="wrap">
 <div id="icon-events" class="icon32"><br />
 </div>
-<h2><?php _e ('Change reserved spaces or cancel registrations','eme'); ?></h2>
+<h2><?php _e ('Add a registration for an event','eme'); ?></h2>
+<div class="wrap">
+<br />
 <?php admin_show_warnings();?>
    <form id='add-booking' name='add-booking' action="" method="post">
    <input type='hidden' name='page' value='eme-registration-seats' />
-   <input type='hidden' name='action' value='addRegistration' />
+   <input type='hidden' name='eme_admin_action' value='newRegistration' />
    <table class="widefat">
    <tbody>
-            <tr><th scope='row'><?php _e('Name', 'eme'); ?>*:</th><td><input type='text' name='bookerName' value='' /></td></tr>
-            <tr><th scope='row'><?php _e('E-Mail', 'eme'); ?>*:</th><td><input type='text' name='bookerEmail' value='' /></td></tr>
-            <tr><th scope='row'><?php _e('Phone number', 'eme'); ?>:</th><td><input type='text' name='bookerPhone' value='' /></td></tr>
-            <tr><th scope='row'><?php _e('Event', 'eme'); ?>*:</th><td>
+            <tr><th scope='row'><?php _e('Event', 'eme'); ?>:</th><td>
    <select name="event_id">
    <?php
    $all_events=eme_get_events(0,"future");
@@ -1639,29 +1606,27 @@ function eme_registration_seats_form_table($event_id=0) {
    </select>
                 </td>
             </tr>
-            <tr><th scope='row'><?php _e('Seats', 'eme'); ?>*:</th><td><input type='text' name='bookedSeats' value='' /></td></tr>
-            <tr><th scope='row'><?php _e('Seats (Multiprice)', 'eme'); ?>*:</th><td><input title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" type='text' name='bookedSeats_mp' value='' /></td></tr>
-            <tr><th scope='row'><?php _e('Paid', 'eme'); ?>:</th><td><?php echo eme_ui_select_binary(0,"booking_payed"); ?></td></tr>
    </tbody>
    </table>
-   <p>
-   <?php _e('Send mails for new registration?','eme'); echo eme_ui_select_binary(1,"send_mail"); ?>
-   </p>
-   <input type="submit" name="doaction" id="doaction" class="button-secondary action" value="<?php _e ( 'Register booking','eme' )?>" />
+   <input type="submit" class="button-secondary action" value="<?php _e ( 'Register new booking','eme' )?>" />
    </form>
-
-   <div class="clear"></div>
+<br />
+</div>
+<div class="clear"></div>
+<h2><?php _e ('Change reserved spaces or cancel registrations','eme'); ?></h2>
+<div class="wrap">
+<br />
 
    <form id="eme-admin-changeregform" name="eme-admin-changeregform" action="" method="post">
    <input type='hidden' name='page' value='eme-registration-seats' />
    <div class="tablenav">
    <div class="alignleft actions">
-   <select name="action">
+   <select name="eme_admin_action">
    <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
    <option value="approveRegistration"><?php _e ( 'Update registration','eme' ); ?></option>
    <option value="denyRegistration"><?php _e ( 'Deny registration','eme' ); ?></option>
    </select>
-   <input type="submit" name="doaction" id="doaction" class="button-secondary action" value="<?php _e ( 'Apply' )?>" />
+   <input type="submit" class="button-secondary action" value="<?php _e ( 'Apply' )?>" />
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
@@ -1727,9 +1692,9 @@ function eme_registration_seats_form_table($event_id=0) {
       <tr <?php echo "$class $style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
-         <td><?php echo $event_booking ['booking_id']; ?></td>
+         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=eme-registration-seats&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>"><?php echo $event_booking ['booking_id']; ?></a>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>
          <?php
              $approved_seats = eme_get_approved_seats($event['event_id']);
@@ -1737,8 +1702,8 @@ function eme_registration_seats_form_table($event_id=0) {
              $total_seats = $event ['event_seats'];
              echo "<br />".__('Approved: ','eme' ).$approved_seats.", ".__('Pending: ','eme').$pending_seats.", ".__('Max: ','eme').$total_seats;
              if ($approved_seats>0) {
-                $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
-                $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
+                $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
+                $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
                 echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
                 echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
              }
@@ -1792,6 +1757,7 @@ function eme_registration_seats_form_table($event_id=0) {
    </div>
    </form>
 </div>
+</div>
 <?php
 }
 function eme_registration_approval_page() {
@@ -1799,10 +1765,7 @@ function eme_registration_approval_page() {
 
    if (current_user_can( get_option('eme_cap_approve'))) {
       // do the actions if required
-      if (isset($_POST ['doaction']))
-         $action = isset($_POST ['action']) ? $_POST ['action'] : '';
-      else
-         $action='';
+      $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
       $pending_bookings = isset($_POST ['pending_bookings']) ? $_POST ['pending_bookings'] : array();
       $selected_bookings = isset($_POST ['selected_bookings']) ? $_POST ['selected_bookings'] : array();
       $bookings_seats = isset($_POST ['bookings_seats']) ? $_POST ['bookings_seats'] : array();
@@ -1844,12 +1807,12 @@ function eme_registration_approval_form_table($event_id=0) {
    <input type='hidden' name='page' value='eme-registration-approval' />
    <div class="tablenav">
    <div class="alignleft actions">
-   <select name="action">
+   <select name="eme_admin_action">
    <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
    <option value="approveRegistration"><?php _e ( 'Approve registration','eme' ); ?></option>
    <option value="denyRegistration"><?php _e ( 'Deny registration','eme' ); ?></option>
    </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
+   <input type="submit" value="<?php _e ( 'Apply' ); ?>" class="button-secondary action" />
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
@@ -1917,7 +1880,7 @@ function eme_registration_approval_form_table($event_id=0) {
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='pending_bookings[]' /></td>
          <td><?php echo $event_booking ['booking_id']; ?></td>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_sanitize_html($event ['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_sanitize_html($event ['event_name']); ?></a>
          </strong>
          <?php
              $approved_seats = eme_get_approved_seats($event['event_id']);
@@ -1982,10 +1945,7 @@ function eme_send_mails_page() {
    global $wpdb;
 
    $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
-   if (isset($_POST ['doaction']))
-      $action = isset($_POST ['action']) ? $_POST ['action'] : '';
-   else
-      $action = '';
+   $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
    $message = isset($_POST ['message']) ? $_POST ['message'] : '';
    $subject = isset($_POST ['subject']) ? $_POST ['subject'] : '';
 
@@ -2060,7 +2020,7 @@ function eme_send_mail_form($event_id=0) {
    </p></div>
    <form id='send-mail' name='send-mail' action="" method="post">
    <input type='hidden' name='page' value='eme-send-mails' />
-   <input type='hidden' name='action' value='send_mail' />
+   <input type='hidden' name='eme_admin_action' value='send_mail' />
    <select name="event_id" onchange="this.form.submit()">
    <?php
    $all_events=eme_get_events(0,"future");
@@ -2125,11 +2085,11 @@ function eme_send_mail_form($event_id=0) {
 	   ?>
 	   </div>
       <br />
-	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" name="doaction" id="doaction" class="button-secondary action" />
+	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" class="button-secondary action" />
 	   </form>
 
    <?php
-	   $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
+	   $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
 	   $available_seats = eme_get_available_seats($event['event_id']);
 	   $total_seats = $event ['event_seats'];
 	   if ($total_seats!=$available_seats)
@@ -2702,6 +2662,10 @@ function eme_is_multi($price) {
 
 function eme_convert_multi2array($multistring) {
    return preg_split("/\|\|/",$multistring);
+}
+
+function eme_convert_array2multi($multiarr) {
+   return join("||",$multiarr);
 }
 
 function eme_is_event_multiseats($event_id) {

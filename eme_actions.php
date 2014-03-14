@@ -37,17 +37,17 @@ function eme_actions_init() {
       eme_client_clock_callback();
       exit();
    }
-   if (isset($_GET['action']) && $_GET['action'] == 'booking_printable' && is_admin() && isset($_GET['event_id'])) {
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'booking_printable' && is_admin() && isset($_GET['event_id'])) {
       eme_printable_booking_report(intval($_GET['event_id']));
       exit();
    }
-   if (isset($_GET['action']) && $_GET['action'] == 'booking_csv' && is_admin() && isset($_GET['event_id'])) {
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'booking_csv' && is_admin() && isset($_GET['event_id'])) {
       eme_csv_booking_report(intval($_GET['event_id']));
       exit();
    }
 
-   if (is_admin() && current_user_can( get_option('eme_cap_registrations')) && isset($_REQUEST['action']) &&
-       $_REQUEST['action'] == 'remove_booking' && isset($_REQUEST['booking_id'])) {
+   if (is_admin() && current_user_can( get_option('eme_cap_registrations')) && isset($_REQUEST['eme_admin_action']) &&
+       $_REQUEST['eme_admin_action'] == 'remove_booking' && isset($_REQUEST['booking_id'])) {
       eme_delete_booking(intval($_REQUEST['booking_id']));
       exit();
    }

@@ -77,7 +77,7 @@ function eme_new_event_page() {
    $title = __ ( "Insert New Event", 'eme' );
    $event = eme_new_event();
 
-   if (isset($_GET['action']) && $_GET['action'] == "insert_event") {
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "insert_event") {
       eme_events_page();
    } else {
       eme_event_form ($event, $title, '');
@@ -88,7 +88,7 @@ function eme_events_page() {
    global $wpdb;
 
    $extra_conditions = array();
-   $action = isset($_GET['action']) ? $_GET['action'] : '';
+   $action = isset($_GET['eme_admin_action']) ? $_GET['eme_admin_action'] : '';
    $event_ID = isset($_GET['event_id']) ? intval($_GET['event_id']) : '';
    $recurrence_ID = isset($_GET['recurrence_id']) ? intval($_GET['recurrence_id']) : '';
    $scope = isset($_GET['scope']) ? $_GET['scope'] : '';
@@ -256,7 +256,7 @@ function eme_events_page() {
          foreach ($multiseat as $key=>$value) {
             if (!is_numeric($value)) $multiseat[$key]=0;
          }
-         $event['event_seats'] = join("||",$multiseat);
+         $event['event_seats'] = eme_convert_array2multi($multiseat);
       } else {
          if (!is_numeric($event['event_seats'])) $event['event_seats'] = 0;
       }
@@ -271,7 +271,7 @@ function eme_events_page() {
          foreach ($multiprice as $key=>$value) {
             if (!is_numeric($value)) $multiprice[$key]=0;
          }
-         $event['price'] = join("||",$multiprice);
+         $event['price'] = eme_convert_array2multi($multiprice);
       } else {
          if (!is_numeric($event['price'])) $event['price'] = 0;
       }
@@ -1927,7 +1927,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
       admin_show_warnings();
    ?>
    <!--<div id='new-event' class='switch-tab'><a href="<?php
-   echo admin_url("admin.php?page=events-manager&amp;action=edit_event")?>><?php
+   echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event")?>><?php
    _e ( 'New Event ...', 'eme' );
    ?></a></div>-->
    <?php
@@ -1950,7 +1950,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    <div class="tablenav">
 
    <div class="alignleft actions">
-   <select name="action">
+   <select name="eme_admin_action">
    <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
    <option value="deleteEvents"><?php _e ( 'Delete selected events','eme' ); ?></option>
    <option value="deleteRecurrence"><?php _e ( 'Delete selected recurrent events','eme' ); ?></option>
@@ -2040,7 +2040,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          <td><input type='checkbox' class='row-selector' value='<?php echo $event['event_id']; ?>' name='events[]' /></td>
          <td><?php echo $event['event_id']; ?></td>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id']); ?>"><?php echo eme_trans_sanitize_html($event['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event['event_id']); ?>"><?php echo eme_trans_sanitize_html($event['event_name']); ?></a>
          </strong>
          <?php
          $categories = explode(',', $event['event_category_ids']);
@@ -2055,8 +2055,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             $pending_seats = eme_get_pending_seats($event['event_id']);
             $total_seats = $event['event_seats'];
             if (eme_is_multi($event['event_seats'])) {
-               $available_seats_string = $available_seats.' ('.join('||',eme_get_available_multiseats($event['event_id'])).')';
-               $pending_seats_string = $pending_seats.' ('.join('||',eme_get_pending_multiseats($event['event_id'])).')';
+               $available_seats_string = $available_seats.' ('.eme_convert_array2multi(eme_get_available_multiseats($event['event_id'])).')';
+               $pending_seats_string = $pending_seats.' ('.eme_convert_array2multi(eme_get_pending_multiseats($event['event_id'])).')';
                $total_seats_string = eme_get_multitotal($total_seats) .' ('.$event['event_seats'].')';
             } else {
                $available_seats_string = $available_seats;
@@ -2068,8 +2068,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             else
                echo "<br />".__('RSVP Info: ','eme').__('Free: ','eme' ).$available_seats_string.", ".__('Max: ','eme').$total_seats_string;
             if ($booked_seats>0) {
-               $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
-               $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
+               $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
+               $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
                echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
                echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
             }
@@ -2090,7 +2090,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          ?> 
          </td>
          <td>
-         <a href="<?php echo admin_url("admin.php?page=events-manager&amp;action=duplicate_event&amp;event_id=".$event['event_id']); ?>" title="<?php _e ( 'Duplicate this event', 'eme' ); ?>"><strong>+</strong></a>
+         <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=duplicate_event&amp;event_id=".$event['event_id']); ?>" title="<?php _e ( 'Duplicate this event', 'eme' ); ?>"><strong>+</strong></a>
          </td>
          <td>
              <?php echo $location_summary; ?>
@@ -2109,7 +2109,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             ?>
                <b><?php echo $recurrence_desc; ?>
             <br />
-            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php _e ( 'Reschedule', 'eme' ); ?></a></b>
+            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php _e ( 'Reschedule', 'eme' ); ?></a></b>
             <?php
             }
             ?>
@@ -2168,17 +2168,17 @@ function eme_event_form($event, $title, $element) {
    }
 
    $show_recurrent_form = 0;
-   if (isset($_GET['action']) && $_GET['action'] == "edit_recurrence") {
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edit_recurrence") {
       $pref = "recurrence";
-      $form_destination = "admin.php?page=events-manager&amp;action=update_recurrence&amp;recurrence_id=" . $element;
+      $form_destination = "admin.php?page=events-manager&amp;eme_admin_action=update_recurrence&amp;recurrence_id=" . $element;
       $saved_bydays = explode ( ",", $event['recurrence_byday'] );
       $show_recurrent_form = 1;
    } else {
       $pref = "event";
       if ($is_new_event)
-         $form_destination = "admin.php?page=eme-new_event&amp;action=insert_event";
+         $form_destination = "admin.php?page=eme-new_event&amp;eme_admin_action=insert_event";
       else
-         $form_destination = "admin.php?page=events-manager&amp;action=update_event&amp;event_id=" . $element;
+         $form_destination = "admin.php?page=events-manager&amp;eme_admin_action=update_event&amp;event_id=" . $element;
 
       if (isset($event['recurrence_id']) && $event['recurrence_id']) {
          # editing a single event of an recurrence: don't show the recurrence form
@@ -2257,7 +2257,7 @@ function eme_event_form($event, $title, $element) {
             ?>
          <p id='recurrence_warning'>
             <?php
-               if (isset ( $_GET['action'] ) && ($_GET['action'] == 'edit_recurrence')) {
+               if (isset ( $_GET['eme_admin_action'] ) && ($_GET['eme_admin_action'] == 'edit_recurrence')) {
                   _e ( 'WARNING: This is a recurrence.', 'eme' )?>
             <br />
             <?php
@@ -3441,13 +3441,13 @@ function eme_meta_box_div_event_url($event) {
 function eme_admin_map_script() {
    global $plugin_page;
    // when the action is the POST of a new event, don't do the javascript
-   if ($plugin_page == 'eme-new_event' && isset ( $_REQUEST['action'] ) && $_REQUEST['action'] == 'insert_event') {
+   if ($plugin_page == 'eme-new_event' && isset ( $_REQUEST['eme_admin_action'] ) && $_REQUEST['eme_admin_action'] == 'insert_event') {
       return;
    }
 
    # we also do this for locations, since the locations page also needs the loadMap javascript function
    if (( ($plugin_page == 'eme-locations' || $plugin_page == 'eme-new_event')) ||
-       (isset ( $_REQUEST['action'] ) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence'))) {
+       (isset ( $_REQUEST['eme_admin_action'] ) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) {
          if (isset($_REQUEST['event_id']))
             $event_ID = intval($_REQUEST['event_id']);
          else
@@ -3554,7 +3554,7 @@ function eme_admin_map_script() {
             // We check on the new/edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             if (
-               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
+               ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
                      (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE'))) { ?>
             eventLocation = $j_eme_admin("input[name='location-select-name']").val(); 
             eventTown = $j_eme_admin("input[name='location-select-town']").val();
@@ -3977,7 +3977,7 @@ function eme_favorite_menu($actions) {
 function eme_alert_events_page() {
    global $pagenow;
    $events_page_id = get_option('eme_events_page' );
-   if ($pagenow == 'post.php' && ( get_query_var('post_type') && 'page' == get_query_var('post_type') ) && isset ( $_GET['action'] ) && $_GET['action'] == 'edit' && isset ( $_GET['post'] ) && $_GET['post'] == "$events_page_id") {
+   if ($pagenow == 'post.php' && ( get_query_var('post_type') && 'page' == get_query_var('post_type') ) && isset ( $_GET['eme_admin_action'] ) && $_GET['eme_admin_action'] == 'edit' && isset ( $_GET['post'] ) && $_GET['post'] == "$events_page_id") {
       $message = sprintf ( __ ( "This page corresponds to <strong>Events Made Easy</strong> events page. Its content will be overriden by <strong>Events Made Easy</strong>. If you want to display your content, you can can assign another page to <strong>Events Made Easy</strong> in the the <a href='%s'>Settings</a>. ", 'eme' ), 'admin.php?page=eme-options' );
       $notice = "<div class='error'><p>$message</p></div>";
       echo $notice;

@@ -3,27 +3,27 @@ function eme_categories_page() {
    global $wpdb;
    
    admin_show_warnings();
-   if (!current_user_can( get_option('eme_cap_categories')) && (isset($_GET['action']) || isset($_POST['action']))) {
+   if (!current_user_can( get_option('eme_cap_categories')) && (isset($_GET['eme_admin_action']) || isset($_POST['eme_admin_action']))) {
       $message = __('You have no right to update categories!','eme');
       eme_categories_table_layout($message);
-   } elseif (isset($_GET['action']) && $_GET['action'] == "editcat") { 
+   } elseif (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editcat") { 
       // edit category  
       eme_categories_edit_layout();
    } else {
       // Insert/Update/Delete Record
       $categories_table = $wpdb->prefix.CATEGORIES_TBNAME;
       $validation_result = '';
-      if (isset($_POST['action']) && $_POST['action'] == "edit" ) {
+      if (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "edit" ) {
          // category update required  
          $category = array();
          $category['category_name'] = trim(stripslashes($_POST['category_name']));
          $validation_result = $wpdb->update( $categories_table, $category, array('category_id' => intval($_POST['category_ID'])) );
-      } elseif ( isset($_POST['action']) && $_POST['action'] == "add" ) {
+      } elseif ( isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "add" ) {
          // Add a new category
          $category = array();
          $category['category_name'] = trim(stripslashes($_POST['category_name']));
          $validation_result = $wpdb->insert($categories_table, $category);
-      } elseif ( isset($_POST['action']) && $_POST['action'] == "delete" ) {
+      } elseif ( isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "delete" ) {
          // Delete category or multiple
          $categories = $_POST['categories'];
          if (is_array($categories)) {
@@ -49,10 +49,10 @@ function eme_categories_page() {
       }
       //die(print_r($_POST));
       if (is_numeric($validation_result) ) {
-         $message = (isset($message)) ? $message : __("Successfully {$_POST['action']}ed category", "eme");
+         $message = (isset($message)) ? $message : __("Successfully {$_POST['eme_admin_action']}ed category", "eme");
          eme_categories_table_layout($message);
       } elseif ( $validation_result === false ) {
-         $message = (isset($message)) ? $message : __("There was a problem {$_POST['action']}ing your category, please try again.");
+         $message = (isset($message)) ? $message : __("There was a problem {$_POST['eme_admin_action']}ing your category, please try again.");
          eme_categories_table_layout($message);
       } else {
          // no action, just a categories list
@@ -85,7 +85,7 @@ function eme_categories_table_layout($message = "") {
             <div id='col-right'>
              <div class='col-wrap'>
                 <form id='bookings-filter' method='post' action='".$destination."'>
-                  <input type='hidden' name='action' value='delete'/>";
+                  <input type='hidden' name='eme_admin_action' value='delete'/>";
                   if (count($categories)>0) {
                      $table .= "<table class='widefat'>
                         <thead>
@@ -107,8 +107,8 @@ function eme_categories_table_layout($message = "") {
                         $table .= "    
                            <tr>
                            <td><input type='checkbox' class ='row-selector' value='".$this_category['category_id']."' name='categories[]'/></td>
-                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_id']."</a></td>
-                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_name']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;eme_admin_action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_id']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;eme_admin_action=editcat&amp;category_ID=".$this_category['category_id'])."'>".$this_category['category_name']."</a></td>
                            </tr>
                         ";
                      }
@@ -139,7 +139,7 @@ function eme_categories_table_layout($message = "") {
                      <div id='ajax-response'/>
                   <h3>".__('Add category', 'eme')."</h3>
                       <form name='add' id='add' method='post' action='".$destination."' class='add:the-list: validate'>
-                        <input type='hidden' name='action' value='add' />
+                        <input type='hidden' name='eme_admin_action' value='add' />
                          <div class='form-field form-required'>
                            <label for='category_name'>".__('Category name', 'eme')."</label>
                            <input name='category_name' id='category_name' type='text' value='' size='40' />
@@ -177,7 +177,7 @@ function eme_categories_edit_layout($message = "") {
       <div id='ajax-response'></div>
 
       <form name='editcat' id='editcat' method='post' action='".admin_url("admin.php?page=eme-categories")."' class='validate'>
-      <input type='hidden' name='action' value='edit' />
+      <input type='hidden' name='eme_admin_action' value='edit' />
       <input type='hidden' name='category_ID' value='".$category['category_id']."'/>";
       
       $layout .= "

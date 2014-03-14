@@ -1,9 +1,9 @@
 <?php
 function eme_people_page() {
    $message="";
-   if (!current_user_can( get_option('eme_cap_people')) && isset($_REQUEST['action'])) {
+   if (!current_user_can( get_option('eme_cap_people')) && isset($_REQUEST['eme_admin_action'])) {
       $message = __('You have no right to update people!','eme');
-   } elseif (isset ($_REQUEST['persons']) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_people') {
+   } elseif (isset ($_REQUEST['persons']) && isset($_REQUEST['eme_admin_action']) && $_REQUEST['eme_admin_action'] == 'delete_people') {
          $persons = $_REQUEST['persons'];
          if(is_array($persons)){
             //Make sure the array is only numbers
@@ -187,9 +187,9 @@ function eme_printable_booking_report($event_id) {
    $booked_seats = eme_get_booked_seats($event_id);
    $pending_seats = eme_get_pending_seats($event_id);
    if ($is_multiseat) {
-      $available_seats_ms=join('||',eme_get_available_multiseats($event_id));
-      $booked_seats_ms=join('||',eme_get_booked_multiseats($event_id));
-      $pending_seats_ms=join('||',eme_get_pending_multiseats($event_id));
+      $available_seats_ms=eme_convert_array2multi(eme_get_available_multiseats($event_id));
+      $booked_seats_ms=eme_convert_array2multi(eme_get_booked_multiseats($event_id));
+      $pending_seats_ms=eme_convert_array2multi(eme_get_pending_multiseats($event_id));
    }
 
    $stylesheet = EME_PLUGIN_URL."events_manager.css";
@@ -323,7 +323,7 @@ function eme_people_table($message="") {
       }
 
       $result .= "<form id='people-filter' method='post' action='".$destination."'>
-                  <input type='hidden' name='action' value='delete_people'/>";
+                  <input type='hidden' name='eme_admin_action' value='delete_people'/>";
       $result .=" <table id='eme-people-table' class='widefat post fixed'>
             <thead>
             <tr>

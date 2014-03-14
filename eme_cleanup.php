@@ -10,7 +10,7 @@ function eme_cleanup_page() {
    $message="";
    if (current_user_can( get_option('eme_cap_cleanup'))) {
       // do the actions if required
-      if (isset($_POST['eme_action']) && $_POST['eme_action'] == "eme_cleanup" && isset($_POST['eme_number']) && isset($_POST['eme_period'])) {
+      if (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "eme_cleanup" && isset($_POST['eme_number']) && isset($_POST['eme_period'])) {
          $eme_number = intval($_POST['eme_number']);
          $eme_period = $_POST['eme_period'];
          if ( !in_array( $eme_period, array( 'day', 'week', 'month' ) ) ) 
@@ -42,7 +42,7 @@ function eme_cleanup_form($message = "") {
    <form id="posts-filter" action="" method="post">
 <?php _e('Remove events older than','eme'); ?>
    <input type='hidden' name='page' value='eme-cleanup' />
-   <input type='hidden' name='eme_action' value='eme_cleanup' />
+   <input type='hidden' name='eme_admin_action' value='eme_cleanup' />
    <div class="tablenav">
 
    <div class="alignleft actions">

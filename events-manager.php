@@ -1111,13 +1111,13 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       if ($event && preg_match('/#_EDITEVENTLINK/', $result)) { 
          if (current_user_can( get_option('eme_cap_edit_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
-            $replacement = "<a href=' ".admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id'])."'>".__('Edit')."</a>";
+            $replacement = "<a href=' ".admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event['event_id'])."'>".__('Edit')."</a>";
          }
 
       } elseif ($event && preg_match('/#_EDITEVENTURL/', $result)) { 
          if (current_user_can( get_option('eme_cap_edit_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
-            $replacement = admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id']);
+            $replacement = admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_24HSTARTTIME/', $result)) { 
