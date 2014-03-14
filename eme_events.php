@@ -3263,19 +3263,19 @@ function eme_meta_box_div_location_name($event) {
                               <th><?php _e('Location','eme') ?></th>
                               <td> 
                                  <select name="location-select-id" id='location-select-id' size="1">
-         <option value="<?php echo $location_0['location_id'] ?>" ><?php echo eme_trans_sanitize_html($location_0['location_name']) ?></option>
+                                 <option value="<?php echo $location_0['location_id'] ?>" ><?php echo eme_trans_sanitize_html($location_0['location_name']) ?></option>
                                  <?php 
                                  $selected_location=$location_0;
                                  foreach($locations as $tmp_location) :
                                     $selected = "";
                                     if(isset($event['location_id']))  { 
                                        if ($event['location_id'] == $tmp_location['location_id']) {
-                                          $selected_location=$location;
+                                          $selected_location=$tmp_location;
                                           $selected = "selected='selected' ";
                                        }
                                     }
                                  ?>
-         <option value="<?php echo $location['location_id'] ?>" <?php echo $selected ?>><?php echo eme_trans_sanitize_html($location['location_name']) ?></option>
+                                    <option value="<?php echo $tmp_location['location_id'] ?>" <?php echo $selected ?>><?php echo eme_trans_sanitize_html($tmp_location['location_name']) ?></option>
                                  <?php endforeach; ?>
                                  </select>
                                  <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>'/>
