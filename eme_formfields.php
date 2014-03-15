@@ -451,7 +451,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       $bookerEmail=$current_user->user_email;
    }
 
-   if ($booking) {
+   if (is_admin() && $booking) {
       $person = eme_get_person ($booking['person_id']);
       // when editing a booking
       $bookerName = eme_sanitize_html($person['person_name']);
@@ -606,7 +606,10 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
          }
          $replacement = eme_get_formfield_html($field_id,$entered_val);
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
-         $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."'/>";
+         if (is_admin() && $booking)
+            $replacement = "<input type='submit' value='".__('Update booking','eme')."'/>";
+         else
+            $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."'/>";
          $required_fields_count++;
       } else {
          $found = 0;

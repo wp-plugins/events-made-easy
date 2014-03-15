@@ -64,7 +64,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.2.10 =
 * Feature: add/edit booking is now all possible from the backend, and when editing all custom fields show as well
 * Feature: added template functionality to the filter form as well (new option template_id to the shortcode eme_filterform)
-* Feature: added an option to show recurrent events only once in lists. Remember that people will only see a normal event unless you add recurrent info to it using the placeholder #_RECURRENCEDESC
+* Feature: added option 'show_recurrent_events_once' to the shortcode eme_events to show recurrent events only once. Remember that people will only see a normal event unless you add recurrent info to it using the placeholder #_RECURRENCEDESC
 * Bugfix: cleanup function shouldn't change recurrences with specific days, since those "end date" is 0
 * Improvement: doing a javascript post after a booking add/delete to prevent double actions when refreshing the page, also avoids using global variables
 * Major code rewrite in progress
