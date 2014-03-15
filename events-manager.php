@@ -1488,6 +1488,19 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement=ltrim($replacement,"0");
          }
 
+      } elseif ($event && preg_match('/#_EVENTCATEGORYIDS$/', $result) && get_option('eme_categories_enabled')) {
+         $categories = $event['event_category_ids'];
+         if ($target == "html") {
+            $replacement = eme_trans_sanitize_html($categories);
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = eme_trans_sanitize_html($categories);
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = eme_trans_sanitize_html($categories);
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
       } elseif ($event && preg_match('/#_(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_categories($event['event_id']);
          if ($target == "html") {
