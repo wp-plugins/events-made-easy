@@ -84,17 +84,30 @@ function eme_add_booking_form($event_id) {
       $booking_id_done=$booking_res[1];
       $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
       $post_string="{";
-      if($booking_id_done && eme_event_needs_payment($event)) {
+      if ($booking_id_done && eme_event_needs_payment($event)) {
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
          // by default the nonce is valid for 24 hours
          $eme_nonce=wp_create_nonce('eme_booking_id_'.$booking_id_done);
          // create the JS array that will be used to post
-         $post_string="{eme_eventAction: 'pay_booking', eme_message: '".json_encode($form_result_message)."', booking_id: '$booking_id_done', eme_nonce: '$eme_nonce'}";
+         $post_arr = array (
+               "eme_eventAction" => 'pay_booking',
+               "eme_message" => $form_result_message,
+               "booking_id" => $booking_id_done,
+               "eme_nonce" => $eme_nonce
+               );
+      } elseif ($booking_id_done) {
+         $post_arr = array (
+               "eme_eventAction" => 'message',
+               "eme_message" => $form_result_message,
+               );
       } else {
-         // create the JS array that will be used to post
-         $post_string="{eme_eventAction: 'message', eme_message: '".json_encode($form_result_message)."'}";
+         // booking failed: we add $_POST to the json, so we can pre-fill the form so the user can just correct the mistake
+         $post_arr = stripslashes_deep($_POST);
+         $post_arr['eme_eventAction'] = 'message';
+         $post_arr['eme_message'] = $form_result_message;
       }
+      $post_string=json_encode($post_arr);
       ?>
       <script type="text/javascript">
       function postwith (to,p) {
@@ -167,7 +180,7 @@ function eme_add_booking_form($event_id) {
    // it's a bot, since a humand can't see this (using CSS to render it invisible)
    $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
       <p>".__('(* marks a required field)', 'eme')."</p>
-      <input type='hidden' name='eme_admin_action' value='add_booking'/>
+      <input type='hidden' name='eme_eventAction' value='add_booking'/>
       <input type='hidden' name='event_id' value='$event_id'/>
    </form></div>";
  
@@ -228,7 +241,11 @@ function eme_delete_booking_form($event_id) {
       // post to a page showing the result of the booking
       $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
       // create the JS array that will be used to post
-      $post_string="{eme_eventAction: 'message', eme_message: '".json_encode($form_result_message)."'}";
+      $post_arr = array (
+            "eme_eventAction" => 'message',
+            "eme_message" => $form_result_message,
+            );
+      $post_string=json_encode($post_arr);
       ?>
       <script type="text/javascript">
       function postwith (to,p) {
@@ -646,7 +663,8 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment = ""
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $person_id = intval($person_id);
    $seats = intval($seats);
-   $comment = eme_sanitize_request($comment);
+   // sanitize not needed: wpdb->insert does it already
+   //$comment = eme_sanitize_request($comment);
    $booking['event_id']=$event['event_id'];
    $booking['person_id']=$person_id;
    $booking['wp_id']=get_current_user_id();
@@ -705,8 +723,9 @@ function eme_record_answers($booking_id) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          // for multivalue fields like checkbox, the value is in fact an array
-         // to store it, we make it a simple string
-         if (is_array($value)) $item=join(', ',$value);
+         // to store it, we make it a simple "multi" string using eme_convert_array2multi, so later on when we need to parse the values 
+         // (when editing a booking), we can re-convert it to an array with eme_convert_multi2array (see eme_formfields.php)
+         if (is_array($value)) $value=eme_convert_array2multi($value);
          $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
          $wpdb->query($sql);
       }
@@ -791,7 +810,8 @@ function eme_approve_booking($booking_id) {
    //$wpdb->query($sql);
    //return __('Booking approved', 'eme');
 }
-function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
+
+function eme_update_booking($booking_id,$event_id,$seats,$booking_price,$comment="") {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    $where = array();
@@ -813,6 +833,7 @@ function eme_update_booking_seats($booking_id,$event_id,$seats,$booking_price) {
    } else {
       $fields['booking_seats'] = intval($seats);
    }
+   $fields['booking_comment']=$comment;
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
    $returncode=$wpdb->update($bookings_table, $fields, $where);
@@ -1503,8 +1524,13 @@ function eme_registration_seats_page() {
          } elseif ($action == 'updateBooking') {
             $booking_id = intval($_POST['booking_id']);
             $booking = eme_get_booking ($booking_id);
-            $event_id = $booking['event_id'];
-            $event = eme_get_event($event_id);
+            //$event_id = $booking['event_id'];
+            //$event = eme_get_event($event_id);
+
+            if (isset($_POST['bookerComment']))
+               $bookerComment = eme_strip_tags($_POST['bookerComment']);
+            else
+               $bookerComment = "";
 
             if (isset($_POST['bookedSeats']))
                $bookedSeats = intval($_POST['bookedSeats']);
@@ -1514,10 +1540,12 @@ function eme_registration_seats_page() {
             // for multiple prices, we have multiple booked Seats as well
             // the next foreach is only valid when called from the frontend
             $bookedSeats_mp = array();
-            if (eme_is_multi($event['price'])) {
+            //if (eme_is_multi($event['price'])) {
+            if (eme_is_multi($booking['booking_price'])) {
                // make sure the array contains the correct keys already, since
                // later on in the function eme_record_booking we do a join
-               $booking_prices_mp=eme_convert_multi2array($event['price']);
+               //$booking_prices_mp=eme_convert_multi2array($event['price']);
+               $booking_prices_mp=eme_convert_multi2array($booking['booking_price']);
                foreach ($booking_prices_mp as $key=>$value) {
                   $bookedSeats_mp[$key] = 0;
                }
@@ -1528,9 +1556,9 @@ function eme_registration_seats_page() {
                      $bookedSeats_mp[$field_id]=$value;
                   }
                }
-               eme_update_booking_seats($booking_id,$booking['event_id'],eme_convert_array2multi($bookedSeats_mp),$booking['booking_price']);
+               eme_update_booking($booking_id,$booking['event_id'],eme_convert_array2multi($bookedSeats_mp),$booking['booking_price'],$bookerComment);
             } else {
-               eme_update_booking_seats($booking_id,$booking['event_id'],$bookedSeats,$booking['booking_price']);
+               eme_update_booking($booking_id,$booking['event_id'],$bookedSeats,$booking['booking_price'],$bookerComment);
             }
 
             if (isset($_POST['bookerPhone'])) {
@@ -1560,7 +1588,7 @@ function eme_registration_seats_page() {
                   if ($booking['booking_payed']!= intval($bookings_payed[$key]))
                      eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
                   if ($booking['booking_seats']!= $bookings_seats[$key]) {
-                     eme_update_booking_seats($booking_id,$booking['event_id'],$bookings_seats[$key],$booking['booking_price']);
+                     eme_update_booking($booking_id,$booking['event_id'],$bookings_seats[$key],$booking['booking_price']);
                      if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
                   }
                } elseif ($action == 'denyRegistration') {
@@ -1782,7 +1810,7 @@ function eme_registration_approval_page() {
             if ($booking['booking_payed']!= intval($bookings_payed[$key]))
                eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
             if ($booking['booking_seats']!= $bookings_seats[$key]) {
-               eme_update_booking_seats($booking_id,$booking['event_id'],$bookings_seats[$key],$booking['booking_price']);
+               eme_update_booking($booking_id,$booking['event_id'],$bookings_seats[$key],$booking['booking_price']);
             }
             if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
          } elseif ($action == 'denyRegistration') {

@@ -454,26 +454,26 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    if ($booking) {
       $person = eme_get_person ($booking['person_id']);
       // when editing a booking
-      $bookerName = eme_sanitize_html(eme_sanitize_request($person['person_name']));
-      $bookerEmail = eme_sanitize_html(eme_sanitize_request($person['person_email']));
-      $bookerPhone = eme_sanitize_html(eme_sanitize_request($person['person_phone']));
-      $bookerComment = eme_sanitize_html(eme_sanitize_request($booking['booking_comment']));
-      $bookedSeats = eme_sanitize_html(eme_sanitize_request($booking['booking_seats']));
+      $bookerName = eme_sanitize_html($person['person_name']);
+      $bookerEmail = eme_sanitize_html($person['person_email']);
+      $bookerPhone = eme_sanitize_html($person['person_phone']);
+      $bookerComment = eme_sanitize_html($booking['booking_comment']);
+      $bookedSeats = eme_sanitize_html($booking['booking_seats']);
       if ($booking['booking_seats_mp']) {
          $booking_seats_mp=eme_convert_multi2array($booking['booking_seats_mp']);
          foreach ($booking_seats_mp as $key=>$val) {
             $field_index=$key+1;
-            ${"bookedSeats".$field_index}=$val;
+            ${"bookedSeats".$field_index}=eme_sanitize_html($val);
          }
       }
    } else {
       // check for previously filled in data
       // this in case people entered a wrong captcha
-      if (isset($_POST['bookerName'])) $bookerName = eme_sanitize_html(eme_sanitize_request($_POST['bookerName']));
-      if (isset($_POST['bookerEmail'])) $bookerEmail = eme_sanitize_html(eme_sanitize_request($_POST['bookerEmail']));
-      if (isset($_POST['bookerPhone'])) $bookerPhone = eme_sanitize_html(eme_sanitize_request($_POST['bookerPhone']));
-      if (isset($_POST['bookerComment'])) $bookerComment = eme_sanitize_html(eme_sanitize_request($_POST['bookerComment']));
-      if (isset($_POST['bookedSeats'])) $bookedSeats = eme_sanitize_html(eme_sanitize_request($_POST['bookedSeats']));
+      if (isset($_POST['bookerName'])) $bookerName = eme_sanitize_html(stripslashes_deep($_POST['bookerName']));
+      if (isset($_POST['bookerEmail'])) $bookerEmail = eme_sanitize_html(stripslashes_deep($_POST['bookerEmail']));
+      if (isset($_POST['bookerPhone'])) $bookerPhone = eme_sanitize_html(stripslashes_deep($_POST['bookerPhone']));
+      if (isset($_POST['bookerComment'])) $bookerComment = eme_sanitize_html(stripslashes_deep($_POST['bookerComment']));
+      if (isset($_POST['bookedSeats'])) $bookedSeats = eme_sanitize_html(stripslashes_deep($_POST['bookedSeats']));
    }
 
    // first we do the custom attributes, since these can contain other placeholders
@@ -587,14 +587,20 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       } elseif (preg_match('/#_FIELD(\d+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          if ($booking) {
+            $answers = eme_get_answers($booking['booking_id']);
             $formfield = eme_get_formfield_byid($field_id);
             foreach ($answers as $answer) {
-               if ($answer['field_name'] == $formfield['field_name'])
+               if ($answer['field_name'] == $formfield['field_name']) {
+                  // the entered value for the function eme_get_formfield_html needs to be an array for multiple values
+                  // since we store them with "||", we can use the good old eme_is_multi function and split in an array then
                   $entered_val = $answer['answer'];
+                  if (eme_is_multi($entered_val)) {
+                     $entered_val = eme_convert_multi2array($entered_val);
+                  }
+               }
             }
-
          } elseif (isset($_POST['FIELD'.$field_id])) {
-            $entered_val = eme_trans_sanitize_html(eme_sanitize_request($_POST['FIELD'.$field_id]));
+            $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST['FIELD'.$field_id]));
          } else {
             $entered_val = "";
          }
