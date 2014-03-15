@@ -114,10 +114,12 @@ function eme_events_page() {
       update_option('eme_events_admin_limit',$list_limit);
    }
 
+   // if the delete event button is pushed while editing an event, set the action
    if (isset($_POST['event_delete_button'])) {
       $selectedEvents=array($event_ID);
       $action = "deleteEvents";
    }
+   // if the delete recurrence button is pushed while editing a recurrence, set the action
    if (isset($_POST['event_deleteRecurrence_button'])) {
       $recurrence=eme_get_recurrence($recurrence_ID);
       $selectedEvents=array($recurrence['event_id']);
@@ -129,7 +131,7 @@ function eme_events_page() {
       $action ="";
    }
    
-   // DELETE action
+   // DELETE action (either from the event list, or when the delete button is pushed while editing an event)
    if ($action == 'deleteEvents') {
       if (current_user_can( get_option('eme_cap_edit_events')) ||
          (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
@@ -159,6 +161,7 @@ function eme_events_page() {
       return;
    }
 
+   // DELETE action (either from the event list, or when the delete button is pushed while editing a recurrence)
    if ($action == 'deleteRecurrence') {
       foreach ( $selectedEvents as $event_ID ) {
          $tmp_event = array();
