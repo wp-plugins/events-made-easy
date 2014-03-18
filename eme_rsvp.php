@@ -1616,6 +1616,10 @@ function eme_registration_seats_page($pending=0) {
 function eme_registration_seats_form_table($event_id=0,$pending=0) {
 
    $all_events=eme_get_events(0,"future");
+   if ($pending)
+      $eme_page = "eme-registration-approval";
+   else
+      $eme_page = "eme-registration-seats";
 
 ?>
 <div class="wrap">
@@ -1626,7 +1630,6 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
 <br />
 <?php admin_show_warnings();?>
    <form id='add-booking' name='add-booking' action="" method="post">
-   <input type='hidden' name='page' value='eme-registration-seats' />
    <input type='hidden' name='eme_admin_action' value='newRegistration' />
    <table class="widefat">
    <tbody>
@@ -1748,7 +1751,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
       <tr <?php echo "$class $style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
-         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=eme-registration-seats&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>"><?php echo $event_booking ['booking_id']; ?></a>
+         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$eme_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see the details and/or edit the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
          <td><strong>
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>

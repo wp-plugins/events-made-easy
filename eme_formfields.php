@@ -567,7 +567,9 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
          $required_fields_count++;
       } elseif (preg_match('/#_(SEATS|SPACES)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2]);
-         if (isset($_POST['bookedSeats'.$field_id]))
+         if ($booking && isset(${"bookedSeats".$field_id}))
+            $entered_val=${"bookedSeats".$field_id};
+         elseif (isset($_POST['bookedSeats'.$field_id]))
             $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST['bookedSeats'.$field_id]));
          else
             $entered_val=0;
