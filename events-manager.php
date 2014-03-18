@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 47);
+define('EME_DB_VERSION', 48);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -531,6 +531,7 @@ function eme_create_events_table($charset,$collate) {
          event_respondent_email_body text NULL, 
          event_registration_recorded_ok_html text NULL, 
          event_registration_pending_email_body text NULL, 
+         event_registration_updated_email_body text NULL, 
          event_registration_form_format text NULL, 
          registration_requires_approval bool DEFAULT 0,
          registration_wp_users_only bool DEFAULT 0,
@@ -595,6 +596,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'event_contactperson_email_body', "alter table $table_name add event_contactperson_email_body text NULL;"); 
       maybe_add_column($table_name, 'event_respondent_email_body', "alter table $table_name add event_respondent_email_body text NULL;"); 
       maybe_add_column($table_name, 'event_registration_pending_email_body', "alter table $table_name add event_registration_pending_email_body text NULL;"); 
+      maybe_add_column($table_name, 'event_registration_updated_email_body', "alter table $table_name add event_registration_updated_email_body text NULL;"); 
       maybe_add_column($table_name, 'event_registration_recorded_ok_html', "alter table $table_name add event_registration_recorded_ok_html text NULL;"); 
       maybe_add_column($table_name, 'registration_requires_approval', "alter table $table_name add registration_requires_approval bool DEFAULT 0;"); 
       $registration_wp_users_only=get_option('eme_rsvp_registered_users_only');

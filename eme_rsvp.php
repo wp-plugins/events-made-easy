@@ -1426,6 +1426,9 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $denied_body = get_option('eme_registration_denied_email_body' );
    $denied_body = eme_replace_placeholders($denied_body, $event, "text",0);
    $denied_body = eme_replace_booking_placeholders($denied_body, $event, $booking, "text");
+   $updated_body = get_option('eme_registration_updated_email_body' );
+   $updated_body = eme_replace_placeholders($updated_body, $event, "text",0);
+   $updated_body = eme_replace_booking_placeholders($updated_body, $event, $booking, "text");
    $cancelled_body = get_option('eme_registration_cancelled_email_body' );
    $cancelled_body = eme_replace_placeholders($cancelled_body, $event, "text",0);
    $cancelled_body = eme_replace_booking_placeholders($cancelled_body, $event, $booking, "text");
@@ -1441,6 +1444,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $contact_cancelled_body = eme_translate($contact_cancelled_body); 
    $contact_pending_body = eme_translate($contact_pending_body); 
    $confirmed_body = eme_translate($confirmed_body); 
+   $updated_body = eme_translate($updated_body); 
    $pending_body = eme_translate($pending_body); 
    $denied_body = eme_translate($denied_body); 
    $cancelled_body = eme_translate($cancelled_body);  
@@ -1450,6 +1454,8 @@ function eme_email_rsvp_booking($booking_id,$action="") {
       eme_send_mail(sprintf(__("Reservation for '%s' confirmed",'eme'),$event_name),$confirmed_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
    } elseif ($action == 'denyRegistration') {
       eme_send_mail(sprintf(__("Reservation for '%s' denied",'eme'),$event_name),$denied_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
+   } elseif ($action == 'updateRegistration') {
+      eme_send_mail(sprintf(__("Reservation for '%s' updated",'eme'),$event_name),$updated_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
    } elseif ($action == 'cancelRegistration') {
       eme_send_mail(sprintf(__("Reservation for '%s' cancelled",'eme'),$event_name),$cancelled_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
       eme_send_mail(sprintf(__("A reservation has been cancelled for '%s'",'eme'),$event_name), $contact_cancelled_body, $contact_email, $contact_name, $contact_email, $contact_name);
@@ -1494,7 +1500,7 @@ function eme_registration_seats_page($pending=0) {
             $ret_string.= __('Send mails for changed registration?','eme') . eme_ui_select_binary(1,"send_mail");
             $ret_string.= eme_replace_formfields_placeholders ($event,$booking);
             $ret_string .= "
-                           <input type='hidden' name='eme_admin_action' value='updateBooking'/>
+                           <input type='hidden' name='eme_admin_action' value='updateRegistration'/>
                            <input type='hidden' name='booking_id' value='$booking_id'/>
                            </form></div>";
             print $ret_string;
@@ -1529,7 +1535,7 @@ function eme_registration_seats_page($pending=0) {
                print "<div id='message' class='updated'><p>$result</p></div>";
                eme_update_booking_payed($booking_id_done,$booking_payed);
             }
-         } elseif ($action == 'updateBooking') {
+         } elseif ($action == 'updateRegistration') {
             $booking_id = intval($_POST['booking_id']);
             $booking = eme_get_booking ($booking_id);
             //$event_id = $booking['event_id'];
@@ -1578,6 +1584,7 @@ function eme_registration_seats_page($pending=0) {
 
             eme_delete_answers($booking_id);
             eme_record_answers($booking_id);
+            if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
             print "<div id='message' class='updated'><p>".__("Booking updated","eme")."</p></div>";
 
          } elseif ($action == 'approveRegistration' || $action == 'denyRegistration' || $action == 'updatePayedStatus') {
@@ -1596,10 +1603,10 @@ function eme_registration_seats_page($pending=0) {
                   if ($booking['booking_payed']!= intval($bookings_payed[$key]))
                      eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
                } elseif ($action == 'approveRegistration') {
-		  eme_approve_booking($booking_id);
-		  if ($booking['booking_payed']!= intval($bookings_payed[$key]))
-		     eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
-		  if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
+                  eme_approve_booking($booking_id);
+                  if ($booking['booking_payed']!= intval($bookings_payed[$key]))
+                     eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
+                  if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
                } elseif ($action == 'denyRegistration') {
                   eme_delete_booking($booking_id);
                   if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
