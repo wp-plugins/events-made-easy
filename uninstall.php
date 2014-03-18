@@ -4,7 +4,6 @@ if( !defined( 'ABSPATH') && !defined('WP_UNINSTALL_PLUGIN') )
     exit();
 
 include("events-manager.php");
-include("eme_settings.php");
 
 eme_drop_table(EVENTS_TBNAME);
 eme_drop_table(RECURRENCE_TBNAME);

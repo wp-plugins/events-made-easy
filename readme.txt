@@ -80,6 +80,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: make location attributes actually work
 * Bugfix: also deal with RESPNAME, RESPEMAIL, ... in the registration form format
 * Bugfix: the payment page was not shown for the placeholder #_ADDBOOKINGFORM_IF_NOT_REGISTERED after booking was done
+* Bugfix: fix double inclusion of eme_settings.php in uninstall.php, so uninstall works now
 
 = 1.2.8 =
 * Feature: added new filter eme_categories_filter, executed when searching for the categories (e.g. when creating an event). With this, you can e.g. limit the categories shown when creating an event or location or ... . Has one parameter: array of categories.
