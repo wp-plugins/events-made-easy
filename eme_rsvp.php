@@ -1426,7 +1426,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $denied_body = get_option('eme_registration_denied_email_body' );
    $denied_body = eme_replace_placeholders($denied_body, $event, "text",0);
    $denied_body = eme_replace_booking_placeholders($denied_body, $event, $booking, "text");
-   $updated_body = get_option('eme_registration_updated_email_body' );
+   $updated_body = ( $event['event_registration_updated_email_body'] != '' ) ? $event['event_registration_updated_email_body'] : get_option('eme_registration_updated_email_body' );
    $updated_body = eme_replace_placeholders($updated_body, $event, "text",0);
    $updated_body = eme_replace_booking_placeholders($updated_body, $event, $booking, "text");
    $cancelled_body = get_option('eme_registration_cancelled_email_body' );
