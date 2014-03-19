@@ -984,51 +984,6 @@ function eme_are_multiseats_available_for($event_id, $multiseats) {
    return 1;
 } 
  
-function eme_bookings_table($event_id) {
-   $bookings =  eme_get_bookings_for($event_id);
-   $event =  eme_get_event($event_id);
-   $destination = admin_url("edit.php"); 
-   $result = "<form id='bookings-filter' name='bookings-filter' method='get' action='$destination'>
-                  <input type='hidden' name='page' value='eme_registration_seats_page'/>
-                  <input type='hidden' name='event_id' value='$event_id'/>
-                  <input type='hidden' name='eme_admin_action' value='delete_bookings'/>
-                  <div class='wrap'>
-                     <h2>Bookings</h2>
-                  <table id='eme-bookings-table' class='widefat post fixed'>";
-   $result .="<thead>
-                     <tr><th class='manage-column column-cb check-column' scope='col'>&nbsp;</th><th class='manage-column ' scope='col'>".__('Booker','eme')."</th><th scope='col'>".__('E-mail','eme')."</th><th scope='col'>".__('Phone number','eme')."</th><th scope='col'>".__('Seats','eme')."</th><th scope='col'>".__('Unique nbr','eme')."</th></tr>
-                  </thead>" ;
-   foreach ($bookings as $booking) {
-      $person  = eme_get_person ($booking['person_id']);
-      $result .= "<tr> <td><input type='checkbox' value='".$booking['booking_id']."' name='bookings[]'/></td>
-                              <td>".eme_sanitize_html($person['person_name'])."</td>
-                              <td>".eme_sanitize_html($person['person_email'])."</td>
-                              <td>".eme_sanitize_html($person['person_phone'])."</td>
-                 ";
-      if (eme_is_multi(eme_get_booking_price($event,$booking))) {
-         $result .= "<td>".$booking['booking_seats_mp']."</td>";
-      } else {
-         $result .= "<td>".$booking['booking_seats']."</td>";
-      }
-      $result .= "<td>".eme_sanitize_html($booking['transfer_nbr_be97'])."</td>
-                  </tr>";
-   }
-   $available_seats = eme_get_available_seats($event_id);
-   $booked_seats = eme_get_booked_seats($event_id);
-   $result .= "<tfoot><tr><th scope='row' colspan='4'>".__('Booked spaces','eme').":</th><td class='booking-result' id='booked-seats'>$booked_seats</td></tr>
-                   <tr><th scope='row' colspan='4'>".__('Available spaces','eme').":</th><td class='booking-result' id='available-seats'>$available_seats</td></tr></tfoot>
-                     </table></div>
-                     <div class='tablenav'>
-                        <div class='alignleft actions'>
-                         <input class=button-secondary action' type='submit' value='Delete'/>
-                           <br class='clear'/>
-                        </div>
-                        <br class='clear'/>
-                     </div>
-                  </form>";
-   echo $result;
-}
-
 function eme_bookings_compact_table($event_id) {
    $bookings =  eme_get_bookings_for($event_id);
    $destination = admin_url("edit.php"); 
