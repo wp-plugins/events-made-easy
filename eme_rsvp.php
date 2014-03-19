@@ -1624,32 +1624,33 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
 <div class="wrap">
 <br />
 
-   <form id="eme-admin-regform" name="eme-admin-regform" action="" method="post">
+   <form id="eme-admin-regsearchform" name="eme-admin-regsearchform" action="" method="post">
    <div class="tablenav">
    <div class="alignleft">
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
    $events_with_bookings=array();
-   $events_with_pending_bookings=array();
    $selected = "";
    foreach ( $all_events as $event ) {
       if ($event_id && ($event['event_id'] == $event_id))
          $selected = "selected='selected'";
 
-      if (eme_get_approved_seats($event['event_id'])>0) {
+      if ($pending && eme_get_pending_bookings($event['event_id'])>0) {
          $events_with_bookings[]=$event['event_id'];
          echo "<option value='".$event['event_id']."' $selected>".$event['event_name']."</option>  ";
-      } elseif ($pending && eme_get_pending_bookings($event['event_id'])>0) {
-         $events_with_pending_bookings[]=$event['event_id'];
+      } elseif (eme_get_approved_seats($event['event_id'])>0) {
+         $events_with_bookings[]=$event['event_id'];
          echo "<option value='".$event['event_id']."' $selected>".$event['event_name']."</option>  ";
       }
    }
    ?>
    </select>
    <input class="button-secondary" type="submit" value="<?php _e ( 'Filter' )?>" />
+   </form>
    <br />
    <br />
+   <form id="eme-admin-regform" name="eme-admin-regform" action="" method="post">
    <select name="eme_admin_action">
    <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
 <?php if ($pending) { ?>
