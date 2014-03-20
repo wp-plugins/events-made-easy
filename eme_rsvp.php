@@ -1431,7 +1431,7 @@ function eme_registration_approval_page() {
 }
 
 function eme_registration_seats_page($pending=0) {
-   global $wpdb;
+   global $wpdb,$plugin_page;
 
       // do the actions if required
       if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "delete_bookings" && isset($_GET['bookings'])) {
@@ -1447,10 +1447,7 @@ function eme_registration_seats_page($pending=0) {
             $event_id = $booking['event_id'];
             $event = eme_get_event($event_id);
             // we need to set the action url, otherwise the GET parameters stay and we will fall in this if-statement all over again
-            if ($pending)
-               $action_url = admin_url("admin.php?page=eme-registration-approval");
-            else
-               $action_url = admin_url("admin.php?page=eme-registration-seats");
+            $action_url = admin_url("admin.php?page=$plugin_page");
             $ret_string = "<form id='eme-rsvp-form' name='booking-form' method='post' action='$action_url'>";
             $ret_string.= __('Send mails for changed registration?','eme') . eme_ui_select_binary(1,"send_mail");
             $ret_string.= eme_replace_formfields_placeholders ($event,$booking);
@@ -1576,12 +1573,9 @@ function eme_registration_seats_page($pending=0) {
 }
 
 function eme_registration_seats_form_table($event_id=0,$pending=0) {
+   global $plugin_page;
 
    $all_events=eme_get_events(0,"future");
-   if ($pending)
-      $eme_page = "eme-registration-approval";
-   else
-      $eme_page = "eme-registration-seats";
 
 ?>
 <div class="wrap">
@@ -1624,15 +1618,15 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
 <div class="wrap">
 <br />
 
-   <form id="eme-admin-regsearchform" name="eme-admin-regsearchform" action="" method="post">
    <div class="tablenav">
    <div class="alignleft">
+   <form id="eme-admin-regsearchform" name="eme-admin-regsearchform" action="" method="post">
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
    $events_with_bookings=array();
-   $selected = "";
    foreach ( $all_events as $event ) {
+      $selected = "";
       if ($event_id && ($event['event_id'] == $event_id))
          $selected = "selected='selected'";
 
@@ -1648,6 +1642,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
    </select>
    <input class="button-secondary" type="submit" value="<?php _e ( 'Filter' )?>" />
    </form>
+   </div>
    <br />
    <br />
    <form id="eme-admin-regform" name="eme-admin-regform" action="" method="post">
@@ -1660,12 +1655,23 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
    <option value="denyRegistration"><?php _e ( 'Deny registration','eme' ); ?></option>
    </select>
    <input type="submit" class="button-secondary" value="<?php _e ( 'Apply' )?>" />
-   </div>
 
    <div class="clear"><p>
    <?php _e('Send mails to attendees upon changes being made?','eme'); echo eme_ui_select_binary(1,"send_mail"); ?>
    </p></div>
-   <table class="widefat">
+<?php 
+      if ($pending)
+         $booking_status=1;
+      else
+         $booking_status=2;
+
+      if ($event_id)
+         $bookings = eme_get_bookings_for($event_id,$booking_status);
+      else
+         $bookings = eme_get_bookings_for($events_with_bookings,$booking_status);
+      if (!empty($bookings)) {
+?>
+   <table class="widefat" id="bookings">
    <thead>
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
@@ -1684,21 +1690,9 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
    </thead>
    <tbody>
      <?php
-      $i = 1;
-      if ($pending)
-         $booking_status=1;
-      else
-         $booking_status=2;
-
-      if ($event_id)
-         $bookings = eme_get_bookings_for($event_id,$booking_status);
-      else
-         $bookings = eme_get_bookings_for($events_with_bookings,$booking_status);
-      
       foreach ( $bookings as $event_booking ) {
          $person = eme_get_person ($event_booking['person_id']);
          $event = eme_get_event($event_booking['event_id']);
-         $class = ($i % 2) ? ' class="alternate"' : '';
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
@@ -1711,10 +1705,10 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
          if ($event['event_start_date'] < $today)
             $style = "style ='background-color: #FADDB7;'";
          ?>
-      <tr <?php echo "$class $style"; ?>>
+      <tr <?php echo "$style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
-         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$eme_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see the details and/or edit the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
+         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$plugin_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see the details and/or edit the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
          <td><strong>
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>
@@ -1764,11 +1758,23 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
          </td>
       </tr>
       <?php
-         $i++;
       }
       ?>
    </tbody>
    </table>
+<script type="text/javascript">
+   jQuery(document).ready( function() {
+	jQuery('#bookings').dataTable( {
+		"bStateSave": true,
+		"aoColumnDefs": [
+			{ "bSortable": false, "aTargets": [ 0 ] },
+			{ "sType": 'num-html', "aTargets": [ 1 ] }
+		]
+	} );
+   } );
+</script>
+
+<?php } ?>
 
    <div class='tablenav'>
    <div class="alignleft actions"><br class='clear' />

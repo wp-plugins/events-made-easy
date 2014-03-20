@@ -80,7 +80,7 @@ function eme_actions_init() {
 add_action('init','eme_actions_init');
 
 function eme_actions_admin_init() {
-   eme_handlepostbox();
+   eme_enqueue_js();
    eme_options_register();
    eme_handle_get();
 }

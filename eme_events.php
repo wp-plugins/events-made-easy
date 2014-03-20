@@ -2681,6 +2681,7 @@ function eme_admin_general_css() {
    if (file_exists($file_name)) {
       echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme.css' type='text/css'/>\n";
    }
+   echo "<link rel='stylesheet' href='".EME_PLUGIN_URL."js/jquery-datatables/css/jquery.dataTables.css' type='text/css'/>\n";
 }
 
 // General script to make sure hidden fields are shown when containing data
@@ -4024,7 +4025,7 @@ function eme_alert_events_page() {
    }
 }
 
-function eme_handlepostbox(){
+function eme_enqueue_js(){
    global $plugin_page;
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
@@ -4032,6 +4033,10 @@ function eme_handlepostbox(){
    }
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
+   }
+   if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats') ) ) {
+      wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js");
+      wp_enqueue_script('jquery-datatables-numsort',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_numeric_html_sort.js");
    }
 }
 
