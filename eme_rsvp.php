@@ -1671,7 +1671,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
          $bookings = eme_get_bookings_for($events_with_bookings,$booking_status);
       if (!empty($bookings)) {
 ?>
-   <table class="widefat" id="bookings">
+   <table class="widefat" id="eme_admin_bookings">
    <thead>
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
@@ -1764,13 +1764,13 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
    </table>
 <script type="text/javascript">
    jQuery(document).ready( function() {
-	jQuery('#bookings').dataTable( {
-		"bStateSave": true,
-		"aoColumnDefs": [
-			{ "bSortable": false, "aTargets": [ 0 ] },
-			{ "sType": 'num-html', "aTargets": [ 1 ] }
-		]
-	} );
+         jQuery('#eme_admin_bookings').dataTable( {
+            "bStateSave": true,
+            "aoColumnDefs": [
+            { "bSortable": false, "aTargets": [ 0 ] },
+            { "sType": 'num-html', "aTargets": [ 1 ] }
+            ]
+         } );
    } );
 </script>
 

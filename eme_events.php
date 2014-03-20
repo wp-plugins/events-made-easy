@@ -2002,7 +2002,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    }
    ?>
       
-   <table class="widefat">
+   <table class="widefat" id="eme_admin_events">
    <thead>
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
@@ -2012,7 +2012,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          <th><?php _e ( 'Status', 'eme' ); ?></th>
          <th></th>
          <th><?php _e ( 'Location', 'eme' ); ?></th>
-         <th colspan="2"><?php _e ( 'Date and time', 'eme' ); ?></th>
+         <th><?php _e ( 'Date and time', 'eme' ); ?></th>
+         <th><?php _e ( 'Recurrence desc', 'eme' ); ?></th>
       </tr>
    </thead>
    <tbody>
@@ -2129,6 +2130,18 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    </table>
 
    </form>
+   <script type="text/javascript">
+   jQuery(document).ready( function() {
+         jQuery('#eme_admin_events').dataTable( {
+            "bStateSave": true,
+            "aoColumnDefs": [
+               { "bSortable": false, "aTargets": [ 0,4 ] },
+               { "sType": 'num-html', "aTargets": [ 1 ] }
+            ]
+         } );
+   } );
+   </script>
+
 
 <?php
    if ($events_count > $limit) {
@@ -4034,7 +4047,7 @@ function eme_enqueue_js(){
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
    }
-   if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats') ) ) {
+   if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager') ) ) {
       wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js");
       wp_enqueue_script('jquery-datatables-numsort',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_numeric_html_sort.js");
    }
