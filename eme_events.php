@@ -157,8 +157,8 @@ function eme_events_page() {
       }
       
       echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      $events = eme_get_events ( $list_limit+1, "future", $order, $offset );
-      eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      $events = eme_get_events ( 0, "future", $order, $offset );
+      eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
       return;
    }
 
@@ -174,8 +174,8 @@ function eme_events_page() {
             }
          }
       }
-      $events = eme_get_events ( $list_limit+1, "future", $order, $offset );
-      eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      $events = eme_get_events ( 0, "future", $order, $offset );
+      eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
       return;
    }
 
@@ -184,8 +184,8 @@ function eme_events_page() {
       if ( ! (current_user_can( get_option('eme_cap_add_event')) || current_user_can( get_option('eme_cap_edit_events'))) ) {
          $feedback_message = __('You have no right to insert or update events','eme');
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( $list_limit+1, "future" );
-         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         $events = eme_get_events ( 0, "future" );
+         eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
          return;
       }
 
@@ -447,8 +447,8 @@ function eme_events_page() {
          
       //$wpdb->query($sql); 
       echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      $events = eme_get_events ( $list_limit+1, "future" );
-      eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      $events = eme_get_events ( 0, "future" );
+      eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
       return;
    }
 
@@ -460,8 +460,8 @@ function eme_events_page() {
          } else {
             $feedback_message = __('You have no right to add events!','eme');
             echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            $events = eme_get_events ( $list_limit+1, "future" );
-            eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+            $events = eme_get_events ( 0, "future" );
+            eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
          }
       } else {
          $event = eme_get_event ( $event_ID );
@@ -473,8 +473,8 @@ function eme_events_page() {
          } else {
             $feedback_message = __('You have no right to update','eme'). " '" . $event['event_name'] . "' !";
             echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            $events = eme_get_events ( $list_limit+1, "future" );
-            eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+            $events = eme_get_events ( 0, "future" );
+            eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
          }
       }
       return;
@@ -489,8 +489,8 @@ function eme_events_page() {
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $event['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( $list_limit+1, "future" );
-         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         $events = eme_get_events ( 0, "future" );
+         eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
       }
       return;
    }
@@ -504,8 +504,8 @@ function eme_events_page() {
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $recurrence['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( $list_limit+1, "future" );
-         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         $events = eme_get_events ( 0, "future" );
+         eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
       }
       return;
    }
@@ -530,8 +530,8 @@ function eme_events_page() {
          $extra_conditions = '';
       }
  
-      $events = eme_get_events ( $list_limit+1, $scope, $order, $offset, "", $category, '', '', 1, '', 0, $extra_conditions);
-      eme_events_table ( $events, $list_limit, $title, $scope, $offset, $category );
+      $events = eme_get_events ( 0, $scope, $order, $offset, "", $category, '', '', 1, '', 0, $extra_conditions);
+      eme_events_table ( $events, 0, $title, $scope, $offset, $category );
       return;
    }
 }
@@ -2001,10 +2001,11 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
       return;
    }
    ?>
-      
+
    <table class="widefat" id="eme_admin_events">
    <thead>
       <tr>
+         <th>hidden start timestamp</th>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
          <th><?php _e ('ID','eme'); ?></th>
@@ -2013,21 +2014,17 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          <th></th>
          <th><?php _e ( 'Location', 'eme' ); ?></th>
          <th><?php _e ( 'Date and time', 'eme' ); ?></th>
-         <th><?php _e ( 'Recurrence desc', 'eme' ); ?></th>
+         <th></th>
       </tr>
    </thead>
    <tbody>
    <?php
-      $i = 1;
       foreach ( $events as $event ) {
-         if ($limit && $i>$limit)
-            break;
-         $class = ($i % 2) ? ' class="alternate"' : '';
-
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
          $localised_end_time = eme_localised_time($event['event_end_time']);
+         $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
 
          $today = date ( "Y-m-d" );
          
@@ -2042,7 +2039,8 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             $style = "style ='background-color: #FADDB7;'";
          
      ?>
-     <tr <?php echo "$class $style"; ?>>
+     <tr <?php echo "$style"; ?>>
+         <td><?php echo $startstring; ?></td>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event['event_id']; ?>' name='events[]' /></td>
          <td><?php echo $event['event_id']; ?></td>
          <td><strong>
@@ -2122,7 +2120,6 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          </td>
    </tr>
    <?php
-      $i++;
    }
    ?>
    
@@ -2133,34 +2130,16 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#eme_admin_events').dataTable( {
-            "bStateSave": true,
-            "aoColumnDefs": [
-               { "bSortable": false, "aTargets": [ 0,4 ] },
-               { "sType": 'num-html', "aTargets": [ 1 ] }
+            "stateSave": true,
+            "pagingType": "full",
+            "columnDefs": [
+               { "visible": false, "targets": 0 },
+               { "sortable": false, "targets": [1,5,8] },
+               { "dataSort": 0, "targets": 7 } 
             ]
          } );
    } );
    </script>
-
-
-<?php
-   if ($events_count > $limit) {
-      $forward = $offset + $limit;
-      $backward = $offset - $limit;
-      echo "<div id='events-pagination'> ";
-      echo "<a style='float: right' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$forward")."'>&gt;&gt;</a>";
-      if ($backward >= 0)
-         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
-      echo "</div>";
-   }
-   if ($events_count <= $limit && $offset>0) {
-      $backward = $offset - $limit;
-      echo "<div id='events-pagination'> ";
-      if ($backward >= 0)
-         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
-      echo "</div>";
-   }
-   ?>
 
 </div>
 <?php
@@ -2889,7 +2868,6 @@ $j_eme_event(document).ready( function() {
    $j_eme_event("#div_recurrence_date").hide();
    $j_eme_event("#localised-start-date").show();
    $j_eme_event("#localised-end-date").show();
-
    $j_eme_event("#start-date-to-submit").hide();
    $j_eme_event("#end-date-to-submit").hide(); 
    $j_eme_event("#rec-start-date-to-submit").hide();

@@ -1765,10 +1765,11 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
 <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#eme_admin_bookings').dataTable( {
-            "bStateSave": true,
-            "aoColumnDefs": [
-            { "bSortable": false, "aTargets": [ 0 ] },
-            { "sType": 'num-html', "aTargets": [ 1 ] }
+            "stateSave": true,
+            "pagingType": "full",
+            "columnDefs": [
+               { "sortable": false, "targets": 0 },
+               { "type": "num-html", "targets": 1 }      
             ]
          } );
    } );
