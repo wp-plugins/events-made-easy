@@ -1891,7 +1891,7 @@ function eme_events_table($scope="future") {
    //}
    //$offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
    //$events = eme_get_events ( $limit+1, "future", "ASC", $offset );
-   $category = isset($_GET['category']) ? intval($_GET['category']) : 0;
+   $o_category = isset($_GET['category']) ? intval($_GET['category']) : 0;
    $status = isset($_GET['event_status']) ? intval($_GET['event_status']) : '';
    if(!empty($status)) {
       $extra_conditions = 'event_status = '.$status;
@@ -1899,8 +1899,8 @@ function eme_events_table($scope="future") {
          $extra_conditions = '';
    }
  
-   //$events = eme_get_events ( 0, $scope, "ASC", $offset, "", $category, '', '', 1, '', 0, $extra_conditions);
-   $events = eme_get_events ( 0, $scope, "ASC", 0, "", $category, '', '', 1, '', 0, $extra_conditions);
+   //$events = eme_get_events ( 0, $scope, "ASC", $offset, "", $o_category, '', '', 1, '', 0, $extra_conditions);
+   $events = eme_get_events ( 0, $scope, "ASC", 0, "", $o_category, '', '', 1, '', 0, $extra_conditions);
    $events_count = count ( $events );
    $scope_names = array ();
    $scope_names['past'] = __ ( 'Past events', 'eme' );
