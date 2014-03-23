@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 48);
+define('EME_DB_VERSION', 49);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -361,6 +361,9 @@ function _eme_install() {
    }
    if ($db_version>0 && $db_version<20) {
       eme_rename_tables();
+   }
+   if ($db_version>0 && $db_version<49) {
+      delete_option('eme_events_admin_limit');
    }
 
    // Creates the events table if necessary

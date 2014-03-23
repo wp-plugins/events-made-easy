@@ -92,28 +92,9 @@ function eme_events_page() {
    $action = isset($_GET['eme_admin_action']) ? $_GET['eme_admin_action'] : '';
    $event_ID = isset($_GET['event_id']) ? intval($_GET['event_id']) : '';
    $recurrence_ID = isset($_GET['recurrence_id']) ? intval($_GET['recurrence_id']) : '';
-   $scope = isset($_GET['scope']) ? $_GET['scope'] : '';
-   $offset = isset($_GET['offset']) ? intval($_GET['offset']) : '';
-   $category = isset($_GET['category']) ? intval($_GET['category']) : 0;
-   $order = isset($_GET['order']) ? $_GET['order'] : '';
    $selectedEvents = isset($_GET['events']) ? $_GET['events'] : '';
-   $status = isset($_GET['event_status']) ? intval($_GET['event_status']) : '';
-   if(!empty($status)) {
-      $extra_conditions[] = 'event_status = '.$status;
-   }
 
    $current_userid=get_current_user_id();
-
-   if ($order != "DESC")
-      $order = "ASC";
-   if ($offset == "")
-      $offset = "0";
-
-   $list_limit = get_option('eme_events_admin_limit');
-   if ($list_limit<5 || $list_limit>200) {
-      $list_limit=20;
-      update_option('eme_events_admin_limit',$list_limit);
-   }
 
    // if the delete event button is pushed while editing an event, set the action
    if (isset($_POST['event_delete_button'])) {
@@ -157,8 +138,7 @@ function eme_events_page() {
       }
       
       echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      $events = eme_get_events ( 0, "future", $order, $offset );
-      eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+      eme_events_table ();
       return;
    }
 
@@ -174,8 +154,7 @@ function eme_events_page() {
             }
          }
       }
-      $events = eme_get_events ( 0, "future", $order, $offset );
-      eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+      eme_events_table ();
       return;
    }
 
@@ -184,8 +163,7 @@ function eme_events_page() {
       if ( ! (current_user_can( get_option('eme_cap_add_event')) || current_user_can( get_option('eme_cap_edit_events'))) ) {
          $feedback_message = __('You have no right to insert or update events','eme');
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( 0, "future" );
-         eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+         eme_events_table ();
          return;
       }
 
@@ -447,8 +425,7 @@ function eme_events_page() {
          
       //$wpdb->query($sql); 
       echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      $events = eme_get_events ( 0, "future" );
-      eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+      eme_events_table ();
       return;
    }
 
@@ -460,8 +437,7 @@ function eme_events_page() {
          } else {
             $feedback_message = __('You have no right to add events!','eme');
             echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            $events = eme_get_events ( 0, "future" );
-            eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+            eme_events_table ();
          }
       } else {
          $event = eme_get_event ( $event_ID );
@@ -473,8 +449,7 @@ function eme_events_page() {
          } else {
             $feedback_message = __('You have no right to update','eme'). " '" . $event['event_name'] . "' !";
             echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            $events = eme_get_events ( 0, "future" );
-            eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+            eme_events_table ();
          }
       }
       return;
@@ -489,8 +464,7 @@ function eme_events_page() {
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $event['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( 0, "future" );
-         eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+         eme_events_table ();
       }
       return;
    }
@@ -504,14 +478,14 @@ function eme_events_page() {
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $recurrence['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( 0, "future" );
-         eme_events_table ( $events, 0, __ ( 'Future events', 'eme' ), "future", $offset );
+         eme_events_table ();
       }
       return;
    }
    
    if ($action == "-1" || $action == "") {
       // No action, only showing the events list
+      $scope = isset($_GET['scope']) ? $_GET['scope'] : '';
       switch ($scope) {
          case "past" :
             $title = __ ( 'Past Events', 'eme' );
@@ -524,14 +498,7 @@ function eme_events_page() {
             $scope = "future";
       }
 
-      if (count($extra_conditions) > 0) {
-         $extra_conditions = implode(' AND ', $extra_conditions);
-      } else {
-         $extra_conditions = '';
-      }
- 
-      $events = eme_get_events ( 0, $scope, $order, $offset, "", $category, '', '', 1, '', 0, $extra_conditions);
-      eme_events_table ( $events, 0, $title, $scope, $offset, $category );
+      eme_events_table ( $scope );
       return;
    }
 }
@@ -1911,23 +1878,40 @@ function eme_duplicate_event($event_id) {
          echo "<p>{$errorArray['error_str']}</p>";
       }  
       echo "</div>";
-      $scope = $_GET['scope'];
-      $offset = intval($_GET['offset']);
-      $order = $_GET['order'];
-      $events = eme_get_events ( $list_limit+1, $scope, $order, $offset );
-      eme_events_table ( $events, $list_limit, $title, $scope, $offset );
+      eme_events_table ();
    }
 }
 
-function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $o_category=0) {
+function eme_events_table($scope="future") {
 
+   //$list_limit = get_option('eme_events_admin_limit');
+   //if ($list_limit<5 || $list_limit>200) {
+   //   $list_limit=20;
+   //   update_option('eme_events_admin_limit',$list_limit);
+   //}
+   //$offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
+   //$events = eme_get_events ( $limit+1, "future", "ASC", $offset );
+   $category = isset($_GET['category']) ? intval($_GET['category']) : 0;
+   $status = isset($_GET['event_status']) ? intval($_GET['event_status']) : '';
+   if(!empty($status)) {
+      $extra_conditions = 'event_status = '.$status;
+   } else {
+         $extra_conditions = '';
+   }
+ 
+   //$events = eme_get_events ( 0, $scope, "ASC", $offset, "", $category, '', '', 1, '', 0, $extra_conditions);
+   $events = eme_get_events ( 0, $scope, "ASC", 0, "", $category, '', '', 1, '', 0, $extra_conditions);
    $events_count = count ( $events );
+   $scope_names = array ();
+   $scope_names['past'] = __ ( 'Past events', 'eme' );
+   $scope_names['all'] = __ ( 'All events', 'eme' );
+   $scope_names['future'] = __ ( 'Future events', 'eme' );
    ?>
 
 <div class="wrap">
 <div id="icon-events" class="icon32"><br />
 </div>
-<h2><?php echo $title; ?></h2>
+<h2><?php echo $scope_names[$scope]; ?></h2>
    <?php
       admin_show_warnings();
    ?>
@@ -1937,30 +1921,14 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    ?></a></div>-->
    <?php
    
-   $scope_names = array ();
-   $scope_names['past'] = __ ( 'Past events', 'eme' );
-   $scope_names['all'] = __ ( 'All events', 'eme' );
-   $scope_names['future'] = __ ( 'Future events', 'eme' );
 
    $event_status_array = eme_status_array ();
 
    ?> 
       
+   <div class="tablenav">
    <form id="posts-filter" action="" method="get">
    <input type='hidden' name='page' value='events-manager' />
-   <ul class="subsubsub">
-      <li><?php _e ( 'Total', 'eme' ); ?> <span class="count">(<?php if ($events_count>$limit) echo $limit; else echo count($events); echo " ". __('Events','eme'); ?>)</span></li>
-   </ul>
-
-   <div class="tablenav">
-
-   <div class="alignleft actions">
-   <select name="eme_admin_action">
-   <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
-   <option value="deleteEvents"><?php _e ( 'Delete selected events','eme' ); ?></option>
-   <option value="deleteRecurrence"><?php _e ( 'Delete selected recurrent events','eme' ); ?></option>
-   </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
    <select name="scope">
    <?php
    foreach ( $scope_names as $key => $value ) {
@@ -1989,12 +1957,20 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    }
    ?>
    </select>
-
    <input id="post-query-submit" class="button-secondary" type="submit" value="<?php _e ( 'Filter' )?>" />
-   </div>
+   <br />
+   <br />
+
+   <form id="eme_events_actions" action="" method="get">
+   <input type='hidden' name='page' value='events-manager' />
+   <select name="eme_admin_action">
+   <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
+   <option value="deleteEvents"><?php _e ( 'Delete selected events','eme' ); ?></option>
+   <option value="deleteRecurrence"><?php _e ( 'Delete selected recurrent events','eme' ); ?></option>
+   </select>
+   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
    <div class="clear"></div>
 
-   </div>
    <?php
    if (empty ( $events )) {
       echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div>";
@@ -2127,6 +2103,28 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    </table>
 
    </form>
+
+<?php
+   if (0) {
+   if ($events_count > $limit) {
+      $forward = $offset + $limit;
+      $backward = $offset - $limit;
+      echo "<div id='events-pagination'> ";
+      echo "<a style='float: right' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$forward")."'>&gt;&gt;</a>";
+      if ($backward >= 0)
+         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
+      echo "</div>";
+   }
+   if ($events_count <= $limit && $offset>0) {
+      $backward = $offset - $limit;
+      echo "<div id='events-pagination'> ";
+      if ($backward >= 0)
+         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
+      echo "</div>";
+   }
+   }
+?>
+
    <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#eme_admin_events').dataTable( {
@@ -2141,6 +2139,7 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    } );
    </script>
 
+   </div>
 </div>
 <?php
 }
