@@ -353,7 +353,7 @@ function eme_people_table($message="") {
                      <div class='tablenav'>
                         <div class='alignleft actions'>
                         <input type='checkbox' name='delete_assoc_bookings' value='1'>".__('Also delete associated bookings','eme')."
-                        <input class='button-secondary action' type='submit' name='doaction' value='Delete'/>
+                        <input class='button-primary action' type='submit' name='doaction' value='Delete'/>
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>

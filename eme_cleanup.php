@@ -52,7 +52,7 @@ function eme_cleanup_form($message = "") {
    <option value="week"><?php _e ( 'Week(s)','eme' ); ?></option>
    <option value="month"><?php _e ( 'Month(s)','eme' ); ?></option>
    </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="eme_doaction" class="button-secondary action" />
+   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="eme_doaction" class="button-primary action" />
    </div>
 
    <div class="clear"></div>

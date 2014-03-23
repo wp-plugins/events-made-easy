@@ -120,7 +120,7 @@ function eme_templates_table_layout($message = "") {
    
                      <div class='tablenav'>
                         <div class='alignleft actions'>
-                        <input class='button-secondary action' type='submit' name='doaction2' value='Delete'/>
+                        <input class='button-primary action' type='submit' name='doaction2' value='Delete'/>
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>
@@ -149,7 +149,7 @@ function eme_templates_table_layout($message = "") {
                            <textarea name='format' id='format' value='' rows='5' ></textarea>
                             <p>".__('The format of the template', 'eme').".</p>
                          </div>
-                         <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add template', 'eme')."' /></p>
+                         <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Add template', 'eme')."' /></p>
                       </form>
                  </div>
                </div>

@@ -1604,7 +1604,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
             </tr>
    </tbody>
    </table>
-   <input type="submit" class="button-secondary action" value="<?php _e ( 'Register new booking','eme' )?>" />
+   <input type="submit" class="button-primary action" value="<?php _e ( 'Register new booking','eme' )?>" />
    </form>
 <br />
 </div>
@@ -1934,7 +1934,7 @@ function eme_send_mail_form($event_id=0) {
 	   ?>
 	   </div>
       <br />
-	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" class="button-secondary action" />
+	   <input type="submit" value="<?php _e ( 'Send Mail', 'eme' ); ?>" class="button-primary action" />
 	   </form>
 
    <?php

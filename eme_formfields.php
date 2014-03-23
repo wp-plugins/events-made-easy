@@ -121,7 +121,7 @@ function eme_formfields_table_layout($message = "") {
    
                      <div class='tablenav'>
                         <div class='alignleft actions'>
-                        <input class='button-secondary action' type='submit' name='doaction2' value='Delete'/>
+                        <input class='button-primary action' type='submit' name='doaction2' value='Delete'/>
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>
@@ -153,7 +153,7 @@ function eme_formfields_table_layout($message = "") {
                            <input id='field-info' name='field_info' id='field_info' type='text' value='' size='40' />
                            <br />".__('Tip: for multivalue field types (like Drop Down), use "||" to seperate the different values (e.g.: a1||a2||a3)','eme')."
                          </div>
-                         <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add field', 'eme')."' /></p>
+                         <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Add field', 'eme')."' /></p>
                       </form>
                  </div>
                  <p>".__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme')."</a></p>

@@ -443,7 +443,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
 
                   <div class="tablenav">
                      <div class="alignleft actions">
-                     <input class="button-secondary action" type="submit" name="doaction" value="Delete"/>
+                     <input class="button-primary action" type="submit" name="doaction" value="Delete"/>
                      <br class="clear"/> 
                      </div>
                      <br class="clear"/>
@@ -580,7 +580,7 @@ jQuery(document).ready(function($){
             <input name="location_url" id="location_url" type="text" value="<?php echo eme_sanitize_html($new_location['location_url']); ?>" size="40"  />
             <p><?php _e ( 'If this is filled in, the single event URL will point to this url instead of the standard event page.', 'eme' )?></p>
          </div>
-                         <p class="submit"><input type="submit" class="button" name="submit" value="<?php _e('Add location', 'eme') ?>" /></p>
+                         <p class="submit"><input type="submit" class="button-primary" name="submit" value="<?php _e('Add location', 'eme') ?>" /></p>
                       </form>
 
                  </div>

@@ -672,7 +672,7 @@ function eme_options_page() {
 ?>
 
 
-<p class="submit"><input type="submit" id="eme_options_submit" name="Submit" value="<?php _e ( 'Save Changes' )?>" /></p>
+<p class="submit"><input type="submit" class="button-primary" id="eme_options_submit" name="Submit" value="<?php _e ( 'Save Changes' )?>" /></p>
 </form>
 </div>
 <?php

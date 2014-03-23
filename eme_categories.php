@@ -118,7 +118,7 @@ function eme_categories_table_layout($message = "") {
    
                      <div class='tablenav'>
                         <div class='alignleft actions'>
-                        <input class='button-secondary action' type='submit' name='doaction2' value='Delete'/>
+                        <input class='button-primary action' type='submit' name='doaction2' value='Delete'/>
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>
@@ -145,7 +145,7 @@ function eme_categories_table_layout($message = "") {
                            <input name='category_name' id='category_name' type='text' value='' size='40' />
                             <p>".__('The name of the category', 'eme').".</p>
                          </div>
-                         <p class='submit'><input type='submit' class='button' name='submit' value='".__('Add category', 'eme')."' /></p>
+                         <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Add category', 'eme')."' /></p>
                       </form>
                  </div>
                </div>
