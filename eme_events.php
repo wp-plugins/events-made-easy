@@ -1961,6 +1961,13 @@ function eme_events_table($scope="future") {
    <br />
    <br />
 
+   <?php
+   if ($events_count==0) {
+      echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div></div>";
+      return;
+   }
+   ?>
+
    <form id="eme_events_actions" action="" method="get">
    <input type='hidden' name='page' value='events-manager' />
    <select name="eme_admin_action">
@@ -1970,13 +1977,7 @@ function eme_events_table($scope="future") {
    </select>
    <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
    <div class="clear"></div>
-
-   <?php
-   if (empty ( $events )) {
-      echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div>";
-      return;
-   }
-   ?>
+   <br />
 
    <table class="widefat" id="eme_admin_events">
    <thead>
