@@ -67,8 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added option 'show_recurrent_events_once' to the shortcode eme_events to show recurrent events only once. Remember that people will only see a normal event unless you add recurrent info to it using the placeholder #_RECURRENCEDESC
 * Feature: added placeholder #_EVENTCATEGORYIDS, returning the different category id's for an event. Not really usefull, unless you use the shortcode [eme_events category=#_EVENTCATEGORYIDS] inside a single event format, resulting in a list of events in the same categories as the one being viewed.
 * Feature: use jquery datatables in the backend for event and bookings, makes it easier to search, sort, ... 
-* Bugfix: cleanup function shouldn't change recurrences with specific days, since those "end date" is 0
 * Improvement: doing a javascript post after a booking add/delete to prevent double actions when refreshing the page, also avoids using global variables
+* Improvement: German language updates, thanks to Wolfgang Löster
+* Bugfix: cleanup function shouldn't change recurrences with specific days, since those "end date" is 0
 * Major code rewrite in progress
 
 = 1.2.9 =
