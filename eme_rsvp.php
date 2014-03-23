@@ -1762,9 +1762,23 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
       ?>
    </tbody>
    </table>
+
 <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#eme_admin_bookings').dataTable( {
+            <?php
+            // jquery datatables locale loading
+            $locale_code = get_locale();
+            $locale_file = EME_PLUGIN_DIR. "/js/jquery-datatables/i18n/$locale_code.json";
+            $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datatables/i18n/$locale_code.json";
+            if ($locale_code != "en_US" && file_exists($locale_file)) {
+            ?>
+            "language": {
+               "url": "<?php echo $locale_file_url; ?>"
+               },
+            <?php
+            }
+            ?> 
             "stateSave": true,
             "pagingType": "full",
             "columnDefs": [

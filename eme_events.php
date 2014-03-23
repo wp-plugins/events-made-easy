@@ -2129,6 +2129,18 @@ function eme_events_table($scope="future") {
    <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#eme_admin_events').dataTable( {
+<?php
+   $locale_code = get_locale();
+   $locale_file = EME_PLUGIN_DIR. "/js/jquery-datatables/i18n/$locale_code.json";
+   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datatables/i18n/$locale_code.json";
+   if ($locale_code != "en_US" && file_exists($locale_file)) {
+?>
+            "language": {
+                            "url": "<?php echo $locale_file_url; ?>"
+                        },
+<?php
+   }
+?>
             "stateSave": true,
             "pagingType": "full",
             "columnDefs": [
