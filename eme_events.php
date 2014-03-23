@@ -1982,7 +1982,6 @@ function eme_events_table($scope="future") {
    <table class="widefat" id="eme_admin_events">
    <thead>
       <tr>
-         <th>hidden start timestamp</th>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
          <th><?php _e ('ID','eme'); ?></th>
@@ -2017,7 +2016,6 @@ function eme_events_table($scope="future") {
          
      ?>
      <tr <?php echo "$style"; ?>>
-         <td><?php echo $startstring; ?></td>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event['event_id']; ?>' name='events[]' /></td>
          <td><?php echo $event['event_id']; ?></td>
          <td><strong>
@@ -2076,7 +2074,7 @@ function eme_events_table($scope="future") {
          <td>
              <?php echo $location_summary; ?>
          </td>
-         <td>
+         <td data-sort="<?php echo $startstring; ?>">
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date!=$localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php if ($event['event_properties']['all_day']==1)
                      _e('All day','eme');
@@ -2144,9 +2142,7 @@ function eme_events_table($scope="future") {
             "stateSave": true,
             "pagingType": "full",
             "columnDefs": [
-               { "visible": false, "targets": 0 },
-               { "sortable": false, "targets": [1,5,8] },
-               { "dataSort": 0, "targets": 7 } 
+               { "sortable": false, "targets": [0,4,7] },
             ]
          } );
    } );
@@ -4039,7 +4035,6 @@ function eme_enqueue_js(){
    }
    if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager') ) ) {
       wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js");
-      wp_enqueue_script('jquery-datatables-numsort',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_numeric_html_sort.js");
    }
 }
 

@@ -1782,8 +1782,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
             "stateSave": true,
             "pagingType": "full",
             "columnDefs": [
-               { "sortable": false, "targets": 0 },
-               { "type": "num-html", "targets": 1 }      
+               { "sortable": false, "targets": 0 }
             ]
          } );
    } );
