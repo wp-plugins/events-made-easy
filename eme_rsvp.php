@@ -1699,6 +1699,8 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
          $localised_end_time = eme_localised_time($event['event_end_time']);
          $localised_booking_date = eme_localised_date($event_booking['creation_date']);
          $localised_booking_time = eme_localised_time($event_booking['creation_date']);
+         $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
+         $bookingtimestamp=strtotime($event_booking['creation_date']);
          $style = "";
          $today = date ( "Y-m-d" );
          
@@ -1725,14 +1727,14 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
              }
          ?>
          </td>
-         <td>
+         <td data-sort="<?php echo $startstring; ?>">
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
          <td>
             <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
          </td>
-         <td>
+         <td data-sort="<?php echo $bookingtimestamp; ?>">
             <?php echo $localised_booking_date ." ". $localised_booking_time;?>
          </td>
          <?php if (eme_is_multi(eme_get_booking_price($event,$event_booking))) { ?>
