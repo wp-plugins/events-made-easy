@@ -360,7 +360,7 @@ function eme_book_seats($event, $send_mail=1) {
    // check for spammers as early as possible
    if (isset($_POST['honeypot_check'])) {
       $honeypot_check = stripslashes($_POST['honeypot_check']);
-   } elseif (!isset($_POST['honeypot_check'])) {
+   } elseif (!is_admin() && !isset($_POST['honeypot_check'])) {
       $honeypot_check = "bad boy";
    } else {
       $honeypot_check = "";
@@ -372,11 +372,8 @@ function eme_book_seats($event, $send_mail=1) {
       $captcha_err = "";
    }
 
-   if (!is_admin() && ! isset( $_POST['eme_rsvp_nonce'] ) ||
-       ! wp_verify_nonce( $_POST['eme_rsvp_nonce'], 'add_booking' )) {
-      $nonce_err = "bad boy";
-    } elseif (is_admin() && ! isset( $_POST['eme_rsvp_nonce'] ) ||
-       ! check_admin_referer('add_booking', $_POST['eme_rsvp_nonce'])) {
+   if (!is_admin() && (! isset( $_POST['eme_rsvp_nonce'] ) ||
+       ! wp_verify_nonce( $_POST['eme_rsvp_nonce'], 'add_booking' ))) {
       $nonce_err = "bad boy";
    } else {
       $nonce_err = "";
