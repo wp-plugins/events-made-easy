@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: use jquery datatables in the backend for event and bookings, makes it easier to search, sort, ... 
 * Improvement: doing a javascript post after a booking add/delete to prevent double actions when refreshing the page, also avoids using global variables
 * Improvement: German language updates, thanks to Wolfgang Löster
+* Improvement: extra antispam measurements
 * Bugfix: cleanup function shouldn't change recurrences with specific days, since those "end date" is 0
 * Major code rewrite in progress
 

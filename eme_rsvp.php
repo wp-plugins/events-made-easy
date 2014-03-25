@@ -88,13 +88,13 @@ function eme_add_booking_form($event_id) {
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
          // by default the nonce is valid for 24 hours
-         $eme_nonce=wp_create_nonce('eme_booking_id_'.$booking_id_done);
+         $eme_payment_nonce=wp_create_nonce('eme_booking_id_'.$booking_id_done);
          // create the JS array that will be used to post
          $post_arr = array (
                "eme_eventAction" => 'pay_booking',
                "eme_message" => $form_result_message,
                "booking_id" => $booking_id_done,
-               "eme_nonce" => $eme_nonce
+               "eme_payment_nonce" => $eme_payment_nonce
                );
       } elseif ($booking_id_done) {
          $post_arr = array (
@@ -133,13 +133,13 @@ function eme_add_booking_form($event_id) {
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_booking' && isset($_POST['eme_message']) && isset($_POST['booking_id'])) {
       $booking_id = intval($_POST['booking_id']);
       // verify the nonce, to make sure people didn't mess with the booking id
-      if (wp_verify_nonce($_POST['eme_nonce'], 'eme_booking_id_'.$booking_id)) {
+      if (!isset($_POST['eme_payment_nonce']) || !wp_verify_nonce($_POST['eme_payment_nonce'], 'eme_booking_id_'.$booking_id)) {
+         return;
+      } else {
          $form_result_message = eme_sanitize_html($_POST['eme_message']);
          // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
          unset($_POST['eme_message']);
          return eme_payment_form($event,$booking_id,$form_result_message);
-      } else {
-         return;
       }
    }
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
@@ -176,6 +176,8 @@ function eme_add_booking_form($event_id) {
 
    $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
    $ret_string .= eme_replace_formfields_placeholders ($event);
+   // add a nonce for extra security
+   $ret_string .= wp_nonce_field('add_booking','eme_rsvp_nonce');
    // also add a honeypot field: if it gets completed with data, 
    // it's a bot, since a humand can't see this (using CSS to render it invisible)
    $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
@@ -354,6 +356,45 @@ function eme_cancel_seats($event) {
 function eme_book_seats($event, $send_mail=1) {
    global $current_user;
    $booking_id = 0;
+
+   // check for spammers as early as possible
+   if (isset($_POST['honeypot_check'])) {
+      $honeypot_check = stripslashes($_POST['honeypot_check']);
+   } elseif (!isset($_POST['honeypot_check'])) {
+      $honeypot_check = "bad boy";
+   } else {
+      $honeypot_check = "";
+   }
+
+   if (!is_admin() && get_option('eme_captcha_for_booking')) {
+      $captcha_err = response_check_captcha("captcha_check",1);
+   } else {
+      $captcha_err = "";
+   }
+
+   if (!is_admin() && ! isset( $_POST['eme_rsvp_nonce'] ) ||
+       ! wp_verify_nonce( $_POST['eme_rsvp_nonce'], 'add_booking' )) {
+      $nonce_err = "bad boy";
+    } elseif (is_admin() && ! isset( $_POST['eme_rsvp_nonce'] ) ||
+       ! check_admin_referer('add_booking', $_POST['eme_rsvp_nonce'])) {
+      $nonce_err = "bad boy";
+   } else {
+      $nonce_err = "";
+   }
+
+   if(!empty($captcha_err)) {
+      $result = __('You entered an incorrect code','eme');
+      return array(0=>$result,1=>$booking_id);
+   } elseif (!empty($honeypot_check) ||  !empty($nonce_err)) {
+      // a bot fills this in, but a human never will, since it's
+      // a hidden field
+      $result = __('You are a bad boy','eme');
+      return array(0=>$result,1=>$booking_id);
+   } 
+
+
+   // now do regular checks
+
    $all_required_fields=eme_find_required_formfields($event['event_registration_form_format']);
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];
@@ -391,11 +432,6 @@ function eme_book_seats($event, $send_mail=1) {
       $bookerComment = eme_strip_tags($_POST['bookerComment']);
    else
       $bookerComment = "";
-
-   if (isset($_POST['honeypot_check']))
-      $honeypot_check = stripslashes($_POST['honeypot_check']);
-   else
-      $honeypot_check = "";
 
    $missing_required_fields=array();
    // check all required fields
@@ -444,24 +480,12 @@ function eme_book_seats($event, $send_mail=1) {
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    }
    
-   if (!is_admin() && get_option('eme_captcha_for_booking')) {
-      $captcha_err = response_check_captcha("captcha_check",1);
-   } else {
-      $captcha_err = "";
-   }
-
    if (has_filter('eme_eval_booking_form_filter'))
       $eval_filter_return=apply_filters('eme_eval_booking_form_filter',$event,$booker);
    else
       $eval_filter_return=array(0=>1,1=>'');
 
-   if(!empty($captcha_err)) {
-      $result = __('You entered an incorrect code','eme');
-   } elseif ($honeypot_check != "") {
-      // a bot fills this in, but a human never will, since it's
-      // a hidden field
-      $result = __('You are a bad boy','eme');
-   } elseif (!$bookerName) {
+   if (!$bookerName) {
       // if any required field is empty: return an error
       $result = __('Please fill out your name','eme');
    } elseif (!$bookerEmail) {
