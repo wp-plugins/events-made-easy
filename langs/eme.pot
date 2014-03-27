@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
-"POT-Creation-Date: 2014-03-27 20:14:03+00:00\n"
+"POT-Creation-Date: 2014-03-27 20:17:42+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -3724,7 +3724,7 @@ msgstr ""
 #: events-manager.php:1866
 msgid ""
 "Error: the special events page is not set or no longer exist, please set the "
-"option '%s' it to an existing page or EME will not work correctly!"
+"option '%s' to an existing page or EME will not work correctly!"
 msgstr ""
 
 #: events-manager.php:1876
