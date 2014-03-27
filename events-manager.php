@@ -1863,7 +1863,7 @@ function eme_explain_deactivation_needed() {
 }
 
 function eme_explain_events_page_missing() {
-   $advice = sprintf(__("Error: the special events page is not set or no longer exist, please set the option '%s' it to an existing page or EME will not work correctly!",'eme'),__ ( 'Events page', 'eme' ));
+   $advice = sprintf(__("Error: the special events page is not set or no longer exist, please set the option '%s' to an existing page or EME will not work correctly!",'eme'),__ ( 'Events page', 'eme' ));
    ?>
 <div id="message" class="error"><p> <?php echo $advice; ?> </p></div>
 <?php
