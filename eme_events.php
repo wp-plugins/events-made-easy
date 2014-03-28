@@ -1958,6 +1958,7 @@ function eme_events_table($scope="future") {
    ?>
    </select>
    <input id="post-query-submit" class="button-secondary" type="submit" value="<?php _e ( 'Filter' )?>" />
+   </form>
    <br />
    <br />
 
@@ -2180,8 +2181,10 @@ function eme_event_form($event, $title, $element) {
       $show_recurrent_form = 1;
    } else {
       $pref = "event";
+      // even for new events, after the 'save' button is clicked, we want to go to the list of events
+      // so we use page=events-manager too, not page=eme-new_event
       if ($is_new_event)
-         $form_destination = "admin.php?page=eme-new_event&amp;eme_admin_action=insert_event";
+         $form_destination = "admin.php?page=events-manager&amp;eme_admin_action=insert_event";
       else
          $form_destination = "admin.php?page=events-manager&amp;eme_admin_action=update_event&amp;event_id=" . $element;
 
