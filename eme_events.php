@@ -1963,10 +1963,7 @@ function eme_events_table($scope="future") {
    <br />
 
    <?php
-   if ($events_count==0) {
-      echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div></div>";
-      return;
-   }
+   if ($events_count>0) {
    ?>
 
    <form id="eme_events_actions" action="" method="get">
@@ -2106,22 +2103,25 @@ function eme_events_table($scope="future") {
 
 <?php
    if (0) {
-   if ($events_count > $limit) {
-      $forward = $offset + $limit;
-      $backward = $offset - $limit;
-      echo "<div id='events-pagination'> ";
-      echo "<a style='float: right' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$forward")."'>&gt;&gt;</a>";
-      if ($backward >= 0)
-         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
-      echo "</div>";
+      if ($events_count > $limit) {
+         $forward = $offset + $limit;
+         $backward = $offset - $limit;
+         echo "<div id='events-pagination'> ";
+         echo "<a style='float: right' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$forward")."'>&gt;&gt;</a>";
+         if ($backward >= 0)
+            echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
+         echo "</div>";
+      }
+      if ($events_count <= $limit && $offset>0) {
+         $backward = $offset - $limit;
+         echo "<div id='events-pagination'> ";
+         if ($backward >= 0)
+            echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
+         echo "</div>";
+      }
    }
-   if ($events_count <= $limit && $offset>0) {
-      $backward = $offset - $limit;
-      echo "<div id='events-pagination'> ";
-      if ($backward >= 0)
-         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
-      echo "</div>";
-   }
+   } else {
+      echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div></div>";
    }
 ?>
 
