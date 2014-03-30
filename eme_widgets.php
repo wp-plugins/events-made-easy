@@ -17,20 +17,22 @@ class WP_Widget_eme_list extends WP_Widget {
       $order = empty( $instance['order'] ) ? 'ASC' : $instance['order'];
       $header = empty( $instance['header'] ) ? '<ul>' : $instance['header'];
       $footer = empty( $instance['footer'] ) ? '</ul>' : $instance['footer'];
+      $category = empty( $instance['category'] ) ? '' : $instance['category'];
+      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
+      $recurrence_only_once = empty( $instance['recurrence_only_once'] ) ? false : $instance['recurrence_only_once'];
+      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
+
       if ($instance['authorid']==-1 ) {
          $author='';
       } else {
          $authinfo=get_userdata($instance['authorid']);
          $author=$authinfo->user_login;
       }
-      $category = empty( $instance['category'] ) ? '' : $instance['category'];
-      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
-      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
       echo $before_widget;
       if ( $title)
          echo $before_title . $title . $after_title;
 
-      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,0,$notcategory);
+      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,0,$notcategory,$recurrence_only_once);
       if ($events_list == get_option('eme_no_events_message' ))
          echo $events_list;
       else
@@ -55,6 +57,7 @@ class WP_Widget_eme_list extends WP_Widget {
       $instance['show_ongoing'] = $new_instance['show_ongoing'];
       $instance['category'] = $new_instance['category'];
       $instance['notcategory'] = $new_instance['notcategory'];
+      $instance['recurrence_only_once'] = $new_instance['recurrence_only_once'];
       $instance['format'] = $new_instance['format'];
       $instance['authorid'] = $new_instance['authorid'];
       $instance['header'] = $new_instance['header'];
@@ -77,6 +80,7 @@ class WP_Widget_eme_list extends WP_Widget {
       $footer = empty( $instance['footer'] ) ? '</ul>' : eme_sanitize_html($instance['footer']);
       $category = empty( $instance['category'] ) ? '' : eme_sanitize_html($instance['category']);
       $notcategory = empty( $instance['notcategory'] ) ? '' : eme_sanitize_html($instance['notcategory']);
+      $recurrence_only_once = empty( $instance['recurrence_only_once'] ) ? '' : eme_sanitize_html($instance['recurrence_only_once']);
       $authorid = empty( $instance['authorid'] ) ? '' : eme_sanitize_html($instance['authorid']);
       $categories = eme_get_categories();
       $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
@@ -146,6 +150,10 @@ class WP_Widget_eme_list extends WP_Widget {
     <input type="checkbox" id="<?php echo $this->get_field_id('show_ongoing'); ?>" name="<?php echo $this->get_field_name('show_ongoing'); ?>" value="1" <?php echo ($show_ongoing) ? 'checked="checked"':'' ;?> />
   </p>
   <p>
+    <label for="<?php echo $this->get_field_id('recurrence_only_once'); ?>"><?php _e('Show Recurrent Events Only Once?', 'eme'); ?>:</label>
+    <input type="checkbox" id="<?php echo $this->get_field_id('recurrence_only_once'); ?>" name="<?php echo $this->get_field_name('recurrence_only_once'); ?>" value="1" <?php echo ($recurrence_only_once) ? 'checked="checked"':'' ;?> />
+  </p>
+  <p>
     <label for="<?php echo $this->get_field_id('authorid'); ?>"><?php _e('Author','eme'); ?>:</label><br />
 <?php
 wp_dropdown_users ( array ('id' => $this->get_field_id('authorid'), 'name' => $this->get_field_name('authorid'), 'show_option_none' => __ ( "Select...", 'eme' ), 'selected' => $authorid ) );
@@ -197,9 +205,9 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $options['category'] = $category;
       $options['notcategory'] = $notcategory;
       // the month shown depends on the calendar day clicked
-      if (isset ( $wp_query->query_vars ['calendar_day'] ) && $wp_query->query_vars ['calendar_day'] != '') {
-          $options['month'] = date("m", strtotime( $wp_query->query_vars ['calendar_day']) );
-          $options['year'] = date("Y", strtotime( $wp_query->query_vars ['calendar_day']) );
+      if (get_query_var('calendar_day')) {
+          $options['month'] = date("m", strtotime(get_query_var('calendar_day')));
+          $options['year'] = date("Y", strtotime(get_query_var('calendar_day')));
       } else {
           $options['month'] = date("m");
           $options['year'] = date("Y");
@@ -278,11 +286,5 @@ wp_dropdown_users ( array ('id' => $this->get_field_id('authorid'), 'name' => $t
 <?php
    } 
 }
-
-function eme_load_widgets() {
-   register_widget( 'WP_Widget_eme_list' );
-   register_widget( 'WP_Widget_eme_calendar' );
-}
-add_action( 'widgets_init', 'eme_load_widgets' );
 
 ?>
