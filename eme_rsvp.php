@@ -1760,7 +1760,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
          </td>
          <?php if (eme_is_multi(eme_get_booking_price($event,$event_booking))) { ?>
          <td>
-            <?php echo $event_booking['booking_seats_mp']; _e('(Multiprice)','eme');?>
+            <?php echo $event_booking['booking_seats_mp'] .'<br />'. __('(Multiprice)','eme');?>
          </td>
          <?php } else { ?>
          <td>
