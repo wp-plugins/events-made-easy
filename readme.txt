@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 1.2.9
+Stable tag: 1.3.0
 
 Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal and other payment gateways support. SEO compatible.
              
@@ -61,7 +61,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.2.10 =
+= 1.3.0 =
 * Feature: add/edit booking is now all possible from the backend, and when editing all custom fields show as well
 * Feature: added template functionality to the filter form as well (new option template_id to the shortcode eme_filterform)
 * Feature: added option 'show_recurrent_events_once' to the shortcode eme_events to show recurrent events only once. Remember that people will only see a normal event unless you add recurrent info to it using the placeholder #_RECURRENCEDESC
