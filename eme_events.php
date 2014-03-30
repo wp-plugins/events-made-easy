@@ -1980,7 +1980,7 @@ function eme_events_table($scope="future") {
    <div class="clear"></div>
    <br />
 
-   <table class="widefat" id="eme_admin_events">
+   <table class="widefat hover stripe" id="eme_admin_events">
    <thead>
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input

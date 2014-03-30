@@ -1692,7 +1692,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
          $bookings = eme_get_bookings_for($events_with_bookings,$booking_status);
       if (!empty($bookings)) {
 ?>
-   <table class="widefat" id="eme_admin_bookings">
+   <table class="widefat hover stripe" id="eme_admin_bookings">
    <thead>
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
