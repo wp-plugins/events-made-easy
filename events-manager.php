@@ -1273,7 +1273,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_ICALURL/', $result)) {
          $replacement = site_url ("/?eme_ical=public_single&amp;event_id=".$event['event_id']);
 
-      } elseif ($event && preg_match('/#_EVENTIMAGE/', $result)) {
+      } elseif ($event && preg_match('/#_EVENTIMAGE$/', $result)) {
          if (!empty($event['event_image_id']))
             $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
          if($event['event_image_url'] != '') {
@@ -1287,7 +1287,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
-      } elseif ($event && preg_match('/#_EVENTIMAGEURL/', $result)) {
+      } elseif ($event && preg_match('/#_EVENTIMAGEURL$/', $result)) {
          if (!empty($event['event_image_id']))
             $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
          if($event['event_image_url'] != '') {
@@ -1298,8 +1298,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (!empty($event['event_image_id'])) {
             $thumb_array = image_downsize( $event['event_image_id'], get_option('eme_thumbnail_size') );
             $thumb_url = $thumb_array[0];
-            $thumb_width = $thumb_array[0];
-            $thumb_height = $thumb_array[0];
+            $thumb_width = $thumb_array[1];
+            $thumb_height = $thumb_array[2];
             $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement); 
@@ -1321,8 +1321,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (!empty($event['event_image_id'])) {
             $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
             $thumb_url = $thumb_array[0];
-            $thumb_width = $thumb_array[0];
-            $thumb_height = $thumb_array[0];
+            $thumb_width = $thumb_array[1];
+            $thumb_height = $thumb_array[2];
             $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement); 
@@ -1344,10 +1344,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $events_page_link = eme_get_events_page(true, false);
          $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
 
-      } elseif ($event && preg_match('/#_EVENTPAGEURL/', $result)) {
+      } elseif ($event && preg_match('/#_EVENTPAGEURL$/', $result)) {
          $replacement = eme_event_url($event);
 
-      } elseif ($event && preg_match('/#_(NAME|EVENTNAME)/', $result)) {
+      } elseif ($event && preg_match('/#_(NAME|EVENTNAME)$/', $result)) {
          $field = "event_name";
          if (isset($event[$field]))  $replacement = $event[$field];
          if ($target == "html") {

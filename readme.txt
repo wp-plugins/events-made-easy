@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.3.2 =
+* Bugfix: remove some abiguous placeholder matching and correct the newly introduced image dimensions
+
 = 1.3.1 =
 * Improvement: add width and height to thumb images, just in case the resized versions don't exist
 * Bugfix: make #_LOCATIONNAME work again
