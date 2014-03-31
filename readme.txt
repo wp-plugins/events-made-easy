@@ -63,6 +63,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.3.1 =
 * Bugfix: make #_LOCATIONNAME work again
+* Bugfix: calendar days with a single digit didn't show the events
 
 = 1.3.0 =
 * Feature: add/edit booking is now all possible from the backend, and when editing all custom fields show as well

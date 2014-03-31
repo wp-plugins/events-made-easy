@@ -256,9 +256,12 @@ function eme_get_calendar($args="") {
 	   $sCalTblRows .= "<tr>";
 	   for ($j = 0; $j < 7; $j++) { // 7 days a week
 
-		   if ($isPreviousMonth) $calstring="$iPrevYear-$iPrevMonth-$iCalendarDay";
-		   elseif ($isNextMonth) $calstring="$iNextYear-$iNextMonth-$iCalendarDay";
-		   else $calstring="$iSelectedYear-$iSelectedMonth-$iCalendarDay";
+         // we need the calendar day with 2 digits for the planned events
+         $iCalendarDay_padded = sprintf("%02d",$iCalendarDay);
+         if ($isPreviousMonth) $calstring="$iPrevYear-$iPrevMonth-$iCalendarDay_padded";
+         elseif ($isNextMonth) $calstring="$iNextYear-$iNextMonth-$iCalendarDay_padded";
+         else $calstring="$iSelectedYear-$iSelectedMonth-$iCalendarDay_padded";
+
 		   // each day in the calendar has the name of the day as a class by default
 		   $sClass = date('D', strtotime($calstring));
 
