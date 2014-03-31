@@ -61,6 +61,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.3.1 =
+* Bugfix: make #_LOCATIONNAME work again
+
 = 1.3.0 =
 * Feature: add/edit booking is now all possible from the backend, and when editing all custom fields show as well
 * Feature: added template functionality to the filter form as well (new option template_id to the shortcode eme_filterform)

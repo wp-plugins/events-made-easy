@@ -1230,7 +1230,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif (preg_match('/#_(NAME|LOCATIONNAME|LOCATION)/', $result)) {
+      } elseif (preg_match('/#_(NAME|LOCATIONNAME|LOCATION)$/', $result)) {
          $field = "location_name";
          if (isset($location[$field]))
             $replacement = $location[$field];
