@@ -136,14 +136,18 @@ function eme_add_booking_form($event_id) {
       if (!isset($_POST['eme_payment_nonce']) || !wp_verify_nonce($_POST['eme_payment_nonce'], 'eme_booking_id_'.$booking_id)) {
          return;
       } else {
-         $form_result_message = eme_sanitize_html($_POST['eme_message']);
+         // due to the double POST javascript, the eme_message is escaped again, so we need stripslashes
+         // but the message may contain html, so no html sanitize
+         $form_result_message = eme_translate(stripslashes_deep($_POST['eme_message']));
          // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
          unset($_POST['eme_message']);
          return eme_payment_form($event,$booking_id,$form_result_message);
       }
    }
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
-      $form_result_message = eme_sanitize_html($_POST['eme_message']);
+      // due to the double POST javascript, the eme_message is escaped again, so we need stripslashes
+      // but the message may contain html, so no html sanitize
+      $form_result_message = eme_translate(stripslashes_deep($_POST['eme_message']));
       // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
       unset($_POST['eme_message']);
    }

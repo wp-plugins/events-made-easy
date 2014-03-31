@@ -65,6 +65,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: add width and height to thumb images, just in case the resized versions don't exist
 * Bugfix: make #_LOCATIONNAME work again
 * Bugfix: calendar days with a single digit didn't show the events
+* Bugfix: the booking recorded format may contain html, but was being sanitized
 
 = 1.3.0 =
 * Feature: add/edit booking is now all possible from the backend, and when editing all custom fields show as well
