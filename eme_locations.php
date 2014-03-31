@@ -1287,7 +1287,9 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          if (!empty($location['location_image_id'])) {
             $thumb_array = image_downsize( $location['location_image_id'], get_option('eme_thumbnail_size') );
             $thumb_url = $thumb_array[0];
-            $replacement = "<img src='".$thumb_url."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+            $thumb_width = $thumb_array[0];
+            $thumb_height = $thumb_array[0];
+            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement);
             } elseif ($target == "rss")  {

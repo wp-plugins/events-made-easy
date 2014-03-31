@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.3.1 =
+* Improvement: add width and height to thumb images, just in case the resized versions don't exist
 * Bugfix: make #_LOCATIONNAME work again
 * Bugfix: calendar days with a single digit didn't show the events
 
