@@ -28,13 +28,13 @@ function eme_actions_init() {
       eme_rss();
       exit;
    }
-   if (isset($_GET['eme_ajax_action']) && $_GET['eme_ajax_action'] == 'booking_data' && is_admin() && isset($_GET['event_id'])) {
-      header("Content-type: application/json; charset=utf-8");
-      echo '{"bookedSeats":'.eme_get_booked_seats(intval($_GET['event_id'])).',"availableSeats":'.eme_get_available_seats(intval($_GET['event_id'])).'}';
-      exit();
-   }
    if (isset($_POST['eme_ajax_action']) && $_POST['eme_ajax_action'] == 'client_clock_submit') {
       eme_client_clock_callback();
+      exit();
+   }
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'booking_data' && is_admin() && isset($_GET['event_id'])) {
+      header("Content-type: application/json; charset=utf-8");
+      echo '{"bookedSeats":'.eme_get_booked_seats(intval($_GET['event_id'])).',"availableSeats":'.eme_get_available_seats(intval($_GET['event_id'])).'}';
       exit();
    }
    if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'booking_printable' && is_admin() && isset($_GET['event_id'])) {
