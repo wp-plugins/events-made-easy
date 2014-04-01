@@ -42,7 +42,7 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
          $mail->From = $fromMail;
          $mail->FromName = $fromName;
          if(get_option('eme_rsvp_send_html') == '1')
-            $mail->MsgHTML = $body;
+            $mail->MsgHTML($body);
          else
             $mail->Body = $body;
          $mail->Subject = $subject;
