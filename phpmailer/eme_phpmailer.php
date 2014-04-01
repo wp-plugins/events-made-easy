@@ -41,7 +41,10 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
          $mail->Password = get_option('eme_smtp_password');
          $mail->From = $fromMail;
          $mail->FromName = $fromName;
-         $mail->Body = $body;
+         if(get_option('eme_rsvp_send_html') == '1')
+            $mail->MsgHTML = $body;
+         else
+            $mail->Body = $body;
          $mail->Subject = $subject;
          if ($replytoemail != "")
             $mail->AddReplyTo($replytoemail,$replytoname);
