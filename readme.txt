@@ -64,6 +64,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.3.3 =
 * Feature: you can now send html-mails for RSVP messages if wanted
 * Bugfix: make the booking removal work again when in the event edit-window
+* Bugfix: make start of month correct again in new calendar code
 
 = 1.3.2 =
 * Bugfix: remove some abiguous placeholder matching and correct the newly introduced image dimensions

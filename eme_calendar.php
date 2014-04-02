@@ -156,11 +156,13 @@ function eme_get_calendar($args="") {
 
    // Get numeric representation of the day of the week of the first day of specified (current) month
    // remember: first day of week is a Sunday
-   $iFirstDayDow = (int)date('w', mktime(0, 0, 0, $iSelectedMonth, 1, $iSelectedYear));
+   // if you want the day of the week to begin on Monday: start_of_week=1, Tuesday: start_of_week=2, etc ...
+   // So, if e.g. the month starts on a Sunday and start_of_week=1 (Monday), then $iFirstDayDow is 6
+   $iFirstDayDow = (int)date('w', mktime(0, 0, 0, $iSelectedMonth, 1, $iSelectedYear)) - $start_of_week;
+   if ($iFirstDayDow<0) $iFirstDayDow+=7;
 
    // On what day the previous month begins
-   // if you want the day of the week to begin on Monday: start_of_week=1, Tuesday: start_of_week=2, etc ...
-   $iPrevShowFrom = $iPrevDaysInMonth - $iFirstDayDow + 1 + $start_of_week;
+   $iPrevShowFrom = $iPrevDaysInMonth - $iFirstDayDow + 1;
 
   // we'll look for events in the requested month and 7 days before and after
    $calbegin="$iPrevYear-$iPrevMonth-$iPrevShowFrom";
