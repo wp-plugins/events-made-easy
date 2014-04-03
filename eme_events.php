@@ -2143,7 +2143,7 @@ function eme_events_table($scope="future") {
             "stateSave": true,
             "pagingType": "full",
             "columnDefs": [
-               { "sortable": false, "targets": [0,4,7] },
+               { "sortable": false, "targets": [0,4,7] }
             ]
          } );
    } );
