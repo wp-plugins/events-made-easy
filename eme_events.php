@@ -2242,7 +2242,7 @@ function eme_event_form($event, $title, $element) {
    var loc_end_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_end_date']); ?>);
    $j_eme_event("#localised-end-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, loc_end_date));
    <?php if ($pref == "recurrence" && $event['recurrence_freq'] == 'specific') { ?>
-      var mydates = new Array();
+      var mydates = [];
       <?php foreach (explode(',',$event['recurrence_specific_days']) as $specific_day) { ?>
 	      mydates.push($j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$specific_day); ?>));
       <?php } ?>
@@ -2737,13 +2737,14 @@ function areyousure(message) {
    }
 }
  
-$j_eme_event=jQuery.noConflict();
+$j_eme_event = jQuery.noConflict();
 
 function updateIntervalDescriptor () { 
    $j_eme_event(".interval-desc").hide();
    var number = "-plural";
-   if ($j_eme_event('input#recurrence-interval').val() == 1 || $j_eme_event('input#recurrence-interval').val() == "")
-   number = "-singular"
+   if ($j_eme_event('input#recurrence-interval').val() == 1 || $j_eme_event('input#recurrence-interval').val() == "") {
+      number = "-singular";
+   }
    var descriptor = "span#interval-"+$j_eme_event("select#recurrence-frequency").val()+number;
    $j_eme_event(descriptor).show();
 }
@@ -2874,8 +2875,6 @@ function updateShowHideRsvpMailSMTPAuth () {
 }
 
 $j_eme_event(document).ready( function() {
-   locale_format = "ciao";
- 
    $j_eme_event("#div_recurrence_date").hide();
    $j_eme_event("#localised-start-date").show();
    $j_eme_event("#localised-end-date").show();
@@ -2887,7 +2886,7 @@ $j_eme_event(document).ready( function() {
    $j_eme_event.datepick.setDefaults( $j_eme_event.datepick.regional["<?php echo $locale_code; ?>"] );
    $j_eme_event.datepick.setDefaults({
       changeMonth: true,
-      changeYear: true,
+      changeYear: true
    });
    $j_eme_event("#localised-start-date").datepick({ altField: "#start-date-to-submit", altFormat: "yyyy-mm-dd" });
    $j_eme_event("#localised-end-date").datepick({ altField: "#end-date-to-submit", altFormat: "yyyy-mm-dd" });
@@ -2903,98 +2902,114 @@ $j_eme_event(document).ready( function() {
    $j_eme_event('textarea#event_page_title_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    }); 
    $j_eme_event('textarea#event_page_title_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    }); 
    $j_eme_event('textarea#event_single_event_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    }); 
    $j_eme_event('textarea#event_single_event_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    }); 
    $j_eme_event('textarea#event_contactperson_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    });
    $j_eme_event('textarea#event_contactperson_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    }); 
    $j_eme_event('textarea#event_respondent_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    }); 
    $j_eme_event('textarea#event_respondent_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    }); 
    $j_eme_event('textarea#event_registration_recorded_ok_html').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    });
    $j_eme_event('textarea#event_registration_recorded_ok_html').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    });
    $j_eme_event('textarea#event_registration_pending_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    });
    $j_eme_event('textarea#event_registration_pending_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    });
    $j_eme_event('textarea#event_registration_updated_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    });
    $j_eme_event('textarea#event_registration_updated_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    });
    $j_eme_event('textarea#event_registration_form_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
+      if ($j_eme_event(this).val() == '') {
          $j_eme_event(this).val(tmp_value);
+      }
    }); 
    $j_eme_event('textarea#event_registration_form_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
+      if ($j_eme_event(this).val() == tmp_value) {
          $j_eme_event(this).val('');
+      }
    }); 
 
    updateIntervalDescriptor(); 
@@ -3037,16 +3052,17 @@ $j_eme_event(document).ready( function() {
 
    // users cannot submit the event form unless some fields are filled
    function validateEventForm() {
-      errors = "";
+      var errors = "";
       var recurring = $j_eme_event("input[name=repeated_event]:checked").val();
       //requiredFields= new Array('event_name', 'localised_event_start_date', 'location_name','location_address','location_town');
-      requiredFields= new Array('event_name', 'localised_event_start_date');
+      var requiredFields = ['event_name', 'localised_event_start_date'];
       var localisedRequiredFields = {'event_name':"<?php _e ( 'Name', 'eme' )?>",
                       'localised_event_start_date':"<?php _e ( 'Date', 'eme' )?>"
                      };
       
-      missingFields = new Array;
-      for (var i in requiredFields) {
+      var missingFields = [];
+      var i;
+      for (i in requiredFields) {
          if ($j_eme_event("input[name=" + requiredFields[i]+ "]").val() == 0) {
             missingFields.push(localisedRequiredFields[requiredFields[i]]);
             $j_eme_event("input[name=" + requiredFields[i]+ "]").css('border','2px solid red');
@@ -3058,13 +3074,13 @@ $j_eme_event(document).ready( function() {
       if (missingFields.length > 0) {
          errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
       }
-      if(recurring && $j_eme_event("input#localised-rec-end-date").val() == "" && $j_eme_event("select#recurrence-frequency").val() != "specific") {
+      if (recurring && $j_eme_event("input#localised-rec-end-date").val() == "" && $j_eme_event("select#recurrence-frequency").val() != "specific") {
          errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
          $j_eme_event("input#localised-rec-end-date").css('border','2px solid red');
       } else {
          $j_eme_event("input#localised-rec-end-date").css('border','1px solid #DFDFDF');
       }
-      if(errors != "") {
+      if (errors != "") {
          alert(errors);
          return false;
       }

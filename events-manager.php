@@ -1167,7 +1167,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = eme_filter_form();
          }
 
-      } elseif ($event && preg_match('/#_ADDBOOKINGFORM/', $result)) {
+      } elseif ($event && preg_match('/#_ADDBOOKINGFORM$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
@@ -1188,7 +1188,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = eme_add_booking_form($event['event_id']);
          }
 
-      } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM/', $result)) {
+      } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM$/', $result)) {
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
