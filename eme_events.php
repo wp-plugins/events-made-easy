@@ -2047,8 +2047,8 @@ function eme_events_table($scope="future") {
             if ($booked_seats>0) {
                $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
                $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
-               echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
-               echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
+               echo " (<a id='booking_printable_".$event['event_id']."' href='$printable_address'>".__('Printable view','eme')."</a>)";
+               echo " (<a id='booking_csv_".$event['event_id']."' href='$csv_address'>".__('CSV export','eme')."</a>)";
             }
          }
 
@@ -2060,9 +2060,9 @@ function eme_events_table($scope="future") {
             echo $event_status_array[$event['event_status']];
             $event_url = eme_event_url($event);
             if ($event['event_status'] == STATUS_DRAFT)
-               echo "<br /> <a target='' href='$event_url'>".__('Preview event','eme')."</a>";
+               echo "<br /> <a href='$event_url'>".__('Preview event','eme')."</a>";
             else
-               echo "<br /> <a target='' href='$event_url'>".__('View event','eme')."</a>";
+               echo "<br /> <a href='$event_url'>".__('View event','eme')."</a>";
          }
          ?> 
          </td>
