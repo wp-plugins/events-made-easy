@@ -222,6 +222,7 @@ table.dataTable td {
 .dataTables_wrapper {
   position: relative;
   clear: both;
+  float: left;
   *zoom: 1;
   zoom: 1;
 }
