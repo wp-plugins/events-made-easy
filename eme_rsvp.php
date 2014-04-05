@@ -1585,8 +1585,10 @@ function eme_registration_seats_page($pending=0) {
                      eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
                   if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
                } elseif ($action == 'denyRegistration') {
-                  eme_delete_booking($booking_id);
+                  // deny registration: this means the booking id will be deleted, so
+                  // if we want to sent a mail, we need to do that first
                   if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
+                  eme_delete_booking($booking_id);
                }
             }
          }
