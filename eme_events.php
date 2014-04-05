@@ -3853,9 +3853,9 @@ function eme_general_head() {
       if ($extra_headers_format != "") {
          $extra_headers_lines = explode ("\n",$extra_headers_format);
          foreach ($extra_headers_lines as $extra_header_format) {
-            # the RSS format already removes most of html code, so let's use that
-            $extra_header = eme_replace_placeholders ($extra_header_format, $event, "rss" );
-            # the RSS format converts \n to \r\n but we want one line only
+            # the text format already removes most of html code, so let's use that
+            $extra_header = strip_shortcodes(eme_replace_placeholders ($extra_header_format, $event, "text",0 ));
+            # the text format converts \n to \r\n but we want one line only
             $extra_header = trim(preg_replace('/\r\n/', "", $extra_header));
             if ($extra_header != "")
                echo $extra_header."\n";
@@ -3869,9 +3869,9 @@ function eme_general_head() {
       if ($extra_headers_format != "") {
          $extra_headers_lines = explode ("\n",$extra_headers_format);
          foreach ($extra_headers_lines as $extra_header_format) {
-            # the RSS format already removes most of html code, so let's use that
-            $extra_header = eme_replace_locations_placeholders ($extra_header_format, $location, "rss" );
-            # the RSS format converts \n to \r\n but we want one line only
+            # the text format already removes most of html code, so let's use that
+            $extra_header = strip_shortcodes(eme_replace_locations_placeholders ($extra_header_format, $location, "text", 0 ));
+            # the text format converts \n to \r\n but we want one line only
             $extra_header = trim(preg_replace('/\r\n/', "", $extra_header));
             if ($extra_header != "")
                echo $extra_header."\n";

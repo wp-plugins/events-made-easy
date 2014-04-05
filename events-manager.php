@@ -1787,7 +1787,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
 function eme_sanitize_request( $value ) {
    global $wpdb;
-   $value = esc_sql($value);
+   $value = esc_sql(strip_shortcodes($value));
    return $value;
 }
 

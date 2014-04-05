@@ -64,6 +64,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.3.4 =
 * Bugfix: make #_ADDBOOKINGFORM_IF_NOT_REGISTERED and #_REMOVEBOOKINGFORM_IF_REGISTERED work again
 * Bugfix: added a CSS to the datatables when showing events, so the footer div following it is moved when the table grows or shrinks
+* Bugfix: adding shortcodes to event details resulted in bad headers when using the setting "extra html headers" with placeholders like #_EXCERPT, and also gave problems for conditional tags
 
 = 1.3.3 =
 * Feature: you can now send html-mails for RSVP messages if wanted
