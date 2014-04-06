@@ -1,4 +1,3 @@
-$j_eme=jQuery.noConflict();
 
 function isoStringToDate(s) {
   var b = s.split(/[-t:+]/ig);
@@ -12,30 +11,30 @@ function isoStringToDate(s) {
 }
 
 function remove_booking() {
-	eventId = ($j_eme(this).parents('table:first').attr('id').split("-"))[3]; 
-	idToRemove = ($j_eme(this).parents('tr:first').attr('id').split("-"))[1];
-	$j_eme.ajax({
+	eventId = (jQuery(this).parents('table:first').attr('id').split("-"))[3]; 
+	idToRemove = (jQuery(this).parents('tr:first').attr('id').split("-"))[1];
+	jQuery.ajax({
   	  type: "POST",
 	    url: "admin.php?page=eme-people&eme_admin_action=remove_booking",
 	    data: "booking_id="+ idToRemove,
 	    success: function(){
-				$j_eme('tr#booking-' + idToRemove).fadeOut('slow');
+				jQuery('tr#booking-' + idToRemove).fadeOut('slow');
 				update_booking_data();
 	   		}
 	});
 }
  
 function update_booking_data () {
-  	$j_eme.getJSON("admin.php?page=eme-people&eme_admin_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
+  	jQuery.getJSON("admin.php?page=eme-people&eme_admin_action=booking_data",{event_id: eventId, ajax: 'true'}, function(data){
   	  	booked = data.bookedSeats;
 		available = data.availableSeats; 
-		$j_eme('td#booked-seats').text(booked);
-		$j_eme('td#available-seats').text(available);
+		jQuery('td#booked-seats').text(booked);
+		jQuery('td#available-seats').text(available);
  	});
 }
 
 function areyousuretodeny() {
-   if ($j_eme("select[name=action]").val() == "denyRegistration") {
+   if (jQuery("select[name=action]").val() == "denyRegistration") {
       if (!confirm("Are you sure you want to deny registration for these bookings?")) {
          return false;
       } else {
@@ -45,22 +44,20 @@ function areyousuretodeny() {
    return true;
 }
 
-$j_eme(document).ready( function() {
-    // Managing bookings delete operations 
-      $j_eme('a.bookingdelbutton').click(remove_booking);
-      $j_eme('#eme-admin-pendingform').bind("submit", areyousuretodeny);
-      $j_eme('#eme-admin-changeregform').bind("submit", areyousuretodeny);
-
-      $j_eme('input.select-all').change(function() {
-         if ($j_eme(this).is(':checked')) {
-            $j_eme('input.row-selector').attr('checked', true);
-         } else {
-            $j_eme('input.row-selector').attr('checked', false);
-         }
-      });
-});
-
 jQuery(document).ready( function($) {
+    // Managing bookings delete operations 
+   jQuery('a.bookingdelbutton').click(remove_booking);
+   jQuery('#eme-admin-pendingform').bind("submit", areyousuretodeny);
+   jQuery('#eme-admin-changeregform').bind("submit", areyousuretodeny);
+
+   jQuery('input.select-all').change(function() {
+         if (jQuery(this).is(':checked')) {
+            jQuery('input.row-selector').attr('checked', true);
+         } else {
+            jQuery('input.row-selector').attr('checked', false);
+         }
+   });
+
 	jQuery('#mtm_add_tag').click( function(event) {
 		event.preventDefault();
 		//Get All meta rows

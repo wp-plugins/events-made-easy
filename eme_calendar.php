@@ -337,15 +337,14 @@ function eme_get_calendar($args="") {
    // we generate the onclick javascript per calendar div
    // this is important if more than one calendar exists on the page
    $calendar .= "<script type='text/javascript'>
-         \$j_eme_calendar=jQuery.noConflict();
-         \$j_eme_calendar('#eme-calendar-".$random." a.prev-month').click(function(e){
+         jQuery('#eme-calendar-".$random." a.prev-month').click(function(e){
             e.preventDefault();
-            tableDiv = \$j_eme_calendar('#eme-calendar-".$random."');
+            tableDiv = jQuery('#eme-calendar-".$random."');
             loadCalendar(tableDiv, '$full', '$long_events','$iPrevMonth','$iPrevYear','$category','$author','$contact_person','$location_id','$notcategory');
          } );
-         \$j_eme_calendar('#eme-calendar-".$random." a.next-month').click(function(e){
+         jQuery('#eme-calendar-".$random." a.next-month').click(function(e){
             e.preventDefault();
-            tableDiv = \$j_eme_calendar('#eme-calendar-".$random."');
+            tableDiv = jQuery('#eme-calendar-".$random."');
             loadCalendar(tableDiv, '$full', '$long_events','$iNextMonth','$iNextYear','$category','$author','$contact_person','$location_id','$notcategory');
          } );
          </script>";
@@ -389,8 +388,6 @@ function eme_ajaxize_calendar() {
    if ($eme_need_calendar_js || $load_js_in_header) {
 ?>
    <script type='text/javascript'>
-      $j_eme_calendar=jQuery.noConflict();
-
       function loadCalendar(tableDiv, fullcalendar, showlong_events, month, year, cat_chosen, author_chosen, contact_person_chosen, location_chosen, not_cat_chosen) {
          if (fullcalendar === undefined) {
              fullcalendar = 0;
@@ -407,7 +404,7 @@ function eme_ajaxize_calendar() {
          author_chosen = (typeof author_chosen == 'undefined')? '' : author_chosen;
          contact_person_chosen = (typeof contact_person_chosen == 'undefined')? '' : contact_person_chosen;
          location_chosen = (typeof location_chosen == 'undefined')? '' : location_chosen;
-         $j_eme_calendar.post(self.location.href, {
+         jQuery.post(self.location.href, {
             eme_ajaxCalendar: 'true',
             calmonth: parseInt(month,10),
             calyear: parseInt(year,10),

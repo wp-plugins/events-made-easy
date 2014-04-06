@@ -1,23 +1,22 @@
-var $j_eme_locations=jQuery.noConflict();
 // console.log("eventful: " + eventful + " scope " + scope);
 
-$j_eme_locations(document.body).unload(function() {
+jQuery(document.body).unload(function() {
 	GUnload();
 });
 
-$j_eme_locations(document).ready(function() {
+jQuery(document).ready(function() {
 	loadMapScript();
 });
 
 function htmlDecode(value){ 
-  return $j_eme_locations('<div/>').html(value).text(); 
+  return jQuery('<div/>').html(value).text(); 
 }
 
 function loadGMap() {
 	// first the global map (if present)
 	if (document.getElementById("eme_global_map")) {
 		var locations;
-		$j_eme_locations.getJSON(document.URL,{ajax: 'true', query:'GlobalMapData', eventful:eventful, scope:scope, category:category}, function(data) {
+		jQuery.getJSON(document.URL,{ajax: 'true', query:'GlobalMapData', eventful:eventful, scope:scope, category:category}, function(data) {
 			locations = data.locations;
 			var latitudes = new Array();
 			var longitudes = new Array();
@@ -48,7 +47,7 @@ function loadGMap() {
 			var map = new google.maps.Map(document.getElementById("eme_global_map"), myOptions);
 			var infowindow = new google.maps.InfoWindow();
 
-			$j_eme_locations.each(locations, function(i, item) {
+			jQuery.each(locations, function(i, item) {
 				latitudes.push(item.location_latitude);
 				longitudes.push(item.location_longitude);
 				if (parseFloat(item.location_latitude) > max_latitude) {
@@ -82,7 +81,7 @@ function loadGMap() {
 			map.fitBounds(locationsBound);
 			map.setCenter(new google.maps.LatLng(center_lat + vertical_compensation,center_lon)); 
 
-			$j_eme_locations.each(locations, function(index, item) {
+			jQuery.each(locations, function(index, item) {
 				var letter;
 				if (index>25) {
 					var rest=index%26;
@@ -106,10 +105,10 @@ function loadGMap() {
 					infowindowcontent: balloon_content
 				});
 				if (document.getElementById('location-'+item.location_id)) {
-				   $j_eme_locations('li#location-'+item.location_id+' a').click(function() {
+				   jQuery('li#location-'+item.location_id+' a').click(function() {
 				   	infowindow.setContent(balloon_content);
 				   	infowindow.open(map,marker);
-				   	$j_eme_locations(window).scrollTop($j_eme_locations('#eme_global_map').position().top);
+				   	jQuery(window).scrollTop(jQuery('#eme_global_map').position().top);
 				   });
 				}
 				google.maps.event.addListener(marker, "click", function() {

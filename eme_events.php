@@ -2233,26 +2233,26 @@ function eme_event_form($event, $title, $element) {
    ?>
 
 <script type="text/javascript">
-   $j_eme_event(document).ready( function() {
-   var dateFormat = $j_eme_event("#localised-start-date").datepick( "option", "dateFormat" );
+   jQuery(document).ready( function() {
+   var dateFormat = jQuery("#localised-start-date").datepick( "option", "dateFormat" );
 
-   var loc_start_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_start_date']); ?>);
-   $j_eme_event("#localised-start-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, loc_start_date));
+   var loc_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_start_date']); ?>);
+   jQuery("#localised-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_start_date));
 
-   var loc_end_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_end_date']); ?>);
-   $j_eme_event("#localised-end-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, loc_end_date));
+   var loc_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_end_date']); ?>);
+   jQuery("#localised-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_end_date));
    <?php if ($pref == "recurrence" && $event['recurrence_freq'] == 'specific') { ?>
       var mydates = [];
       <?php foreach (explode(',',$event['recurrence_specific_days']) as $specific_day) { ?>
-	      mydates.push($j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$specific_day); ?>));
+	      mydates.push(jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$specific_day); ?>));
       <?php } ?>
-      $j_eme_event("#localised-rec-start-date").datepick("setDate", mydates);
+      jQuery("#localised-rec-start-date").datepick("setDate", mydates);
    <?php } else { ?>
-      var rec_start_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_start_date']); ?>);
-      $j_eme_event("#localised-rec-start-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, rec_start_date));
+      var rec_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_start_date']); ?>);
+      jQuery("#localised-rec-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_start_date));
    <?php } ?>
-   var rec_end_date = $j_eme_event.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_end_date']); ?>);
-   $j_eme_event("#localised-rec-end-date").datepick("setDate", $j_eme_event.datepick.formatDate(dateFormat, rec_end_date));
+   var rec_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_end_date']); ?>);
+   jQuery("#localised-rec-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_end_date));
  });
 </script>
 
@@ -2737,278 +2737,276 @@ function areyousure(message) {
    }
 }
  
-$j_eme_event = jQuery.noConflict();
-
 function updateIntervalDescriptor () { 
-   $j_eme_event(".interval-desc").hide();
+   jQuery(".interval-desc").hide();
    var number = "-plural";
-   if ($j_eme_event('input#recurrence-interval').val() == 1 || $j_eme_event('input#recurrence-interval').val() == "") {
+   if (jQuery('input#recurrence-interval').val() == 1 || jQuery('input#recurrence-interval').val() == "") {
       number = "-singular";
    }
-   var descriptor = "span#interval-"+$j_eme_event("select#recurrence-frequency").val()+number;
-   $j_eme_event(descriptor).show();
+   var descriptor = "span#interval-"+jQuery("select#recurrence-frequency").val()+number;
+   jQuery(descriptor).show();
 }
 function updateIntervalSelectors () {
-   $j_eme_event('p.alternate-selector').hide();
-   $j_eme_event('p#'+ $j_eme_event('select#recurrence-frequency').val() + "-selector").show();
-   //$j_eme_event('p.recurrence-tip').hide();
-   //$j_eme_event('p#'+ $j_eme_event(this).val() + "-tip").show();
+   jQuery('p.alternate-selector').hide();
+   jQuery('p#'+ jQuery('select#recurrence-frequency').val() + "-selector").show();
+   //jQuery('p.recurrence-tip').hide();
+   //jQuery('p#'+ jQuery(this).val() + "-tip").show();
 }
 function updateShowHideRecurrence () {
-   if($j_eme_event('input#event-recurrence').attr("checked")) {
-      $j_eme_event("#event_recurrence_pattern").fadeIn();
-      $j_eme_event("span#event-date-recursive-explanation").show();
-      $j_eme_event("div#div_recurrence_date").show();
-      $j_eme_event("p#recurrence-tip").hide();
-      $j_eme_event("p#recurrence-tip-2").show();
+   if(jQuery('input#event-recurrence').attr("checked")) {
+      jQuery("#event_recurrence_pattern").fadeIn();
+      jQuery("span#event-date-recursive-explanation").show();
+      jQuery("div#div_recurrence_date").show();
+      jQuery("p#recurrence-tip").hide();
+      jQuery("p#recurrence-tip-2").show();
    } else {
-      $j_eme_event("#event_recurrence_pattern").hide();
-      $j_eme_event("span#event-date-recursive-explanation").hide();
-      $j_eme_event("div#div_recurrence_date").hide();
-      $j_eme_event("p#recurrence-tip").show();
-      $j_eme_event("p#recurrence-tip-2").hide();
+      jQuery("#event_recurrence_pattern").hide();
+      jQuery("span#event-date-recursive-explanation").hide();
+      jQuery("div#div_recurrence_date").hide();
+      jQuery("p#recurrence-tip").show();
+      jQuery("p#recurrence-tip-2").hide();
    }
 }
 
 function updateShowHideRecurrenceSpecificDays () {
-   if ($j_eme_event('select#recurrence-frequency').val() == "specific") {
-      $j_eme_event("div#recurrence-intervals").hide();
-      $j_eme_event("input#localised-rec-end-date").hide();
-      $j_eme_event("span#recurrence-dates-explanation").hide();
-      $j_eme_event("span#recurrence-dates-explanation-specificdates").show();
-      $j_eme_event("#localised-rec-start-date").datepick('option','multiSelect',999);
+   if (jQuery('select#recurrence-frequency').val() == "specific") {
+      jQuery("div#recurrence-intervals").hide();
+      jQuery("input#localised-rec-end-date").hide();
+      jQuery("span#recurrence-dates-explanation").hide();
+      jQuery("span#recurrence-dates-explanation-specificdates").show();
+      jQuery("#localised-rec-start-date").datepick('option','multiSelect',999);
    } else {
-      $j_eme_event("div#recurrence-intervals").show();
-      $j_eme_event("input#localised-rec-end-date").show();
-      $j_eme_event("span#recurrence-dates-explanation").show();
-      $j_eme_event("span#recurrence-dates-explanation-specificdates").hide();
-      $j_eme_event("#localised-rec-start-date").datepick('option','multiSelect',0);
+      jQuery("div#recurrence-intervals").show();
+      jQuery("input#localised-rec-end-date").show();
+      jQuery("span#recurrence-dates-explanation").show();
+      jQuery("span#recurrence-dates-explanation-specificdates").hide();
+      jQuery("#localised-rec-start-date").datepick('option','multiSelect',0);
    }
 }
 
 function updateShowHideRsvp () {
-   if ($j_eme_event('input#rsvp-checkbox').attr("checked")) {
-      $j_eme_event("div#rsvp-data").fadeIn();
-      $j_eme_event("div#div_event_contactperson_email_body").fadeIn();
-      $j_eme_event("div#div_event_registration_recorded_ok_html").fadeIn();
-      $j_eme_event("div#div_event_respondent_email_body").fadeIn();
-      $j_eme_event("div#div_event_registration_pending_email_body").fadeIn();
-      $j_eme_event("div#div_event_registration_updated_email_body").fadeIn();
-      $j_eme_event("div#div_event_registration_form_format").fadeIn();
+   if (jQuery('input#rsvp-checkbox').attr("checked")) {
+      jQuery("div#rsvp-data").fadeIn();
+      jQuery("div#div_event_contactperson_email_body").fadeIn();
+      jQuery("div#div_event_registration_recorded_ok_html").fadeIn();
+      jQuery("div#div_event_respondent_email_body").fadeIn();
+      jQuery("div#div_event_registration_pending_email_body").fadeIn();
+      jQuery("div#div_event_registration_updated_email_body").fadeIn();
+      jQuery("div#div_event_registration_form_format").fadeIn();
    } else {
-      $j_eme_event("div#rsvp-data").fadeOut();
-      $j_eme_event("div#div_event_contactperson_email_body").fadeOut();
-      $j_eme_event("div#div_event_registration_recorded_ok_html").fadeOut();
-      $j_eme_event("div#div_event_respondent_email_body").fadeOut();
-      $j_eme_event("div#div_event_registration_pending_email_body").fadeOut();
-      $j_eme_event("div#div_event_registration_updated_email_body").fadeOut();
-      $j_eme_event("div#div_event_registration_form_format").fadeOut();
+      jQuery("div#rsvp-data").fadeOut();
+      jQuery("div#div_event_contactperson_email_body").fadeOut();
+      jQuery("div#div_event_registration_recorded_ok_html").fadeOut();
+      jQuery("div#div_event_respondent_email_body").fadeOut();
+      jQuery("div#div_event_registration_pending_email_body").fadeOut();
+      jQuery("div#div_event_registration_updated_email_body").fadeOut();
+      jQuery("div#div_event_registration_form_format").fadeOut();
    }
 }
 
 function updateShowHideTime () {
-   if ($j_eme_event('input#eme_prop_all_day').attr("checked")) {
-      $j_eme_event("div#div_event_time").hide();
+   if (jQuery('input#eme_prop_all_day').attr("checked")) {
+      jQuery("div#div_event_time").hide();
    } else {
-      $j_eme_event("div#div_event_time").show();
+      jQuery("div#div_event_time").show();
    }
 }
 
 function updateShowHideCustomReturnPage () {
-   if ($j_eme_event('input[name=eme_payment_show_custom_return_page]').attr("checked")) {
-         $j_eme_event('tr#eme_payment_succes_format_row').show();
-         $j_eme_event('tr#eme_payment_fail_format_row').show();
-         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').show(); 
+   if (jQuery('input[name=eme_payment_show_custom_return_page]').attr("checked")) {
+         jQuery('tr#eme_payment_succes_format_row').show();
+         jQuery('tr#eme_payment_fail_format_row').show();
+         jQuery('tr#eme_payment_add_bookingid_to_return_row').show(); 
    } else {
-         $j_eme_event('tr#eme_payment_succes_format_row').hide();
-         $j_eme_event('tr#eme_payment_fail_format_row').hide();
-         $j_eme_event('tr#eme_payment_add_bookingid_to_return_row').hide(); 
+         jQuery('tr#eme_payment_succes_format_row').hide();
+         jQuery('tr#eme_payment_fail_format_row').hide();
+         jQuery('tr#eme_payment_add_bookingid_to_return_row').hide(); 
    }
 }
 
 function updateShowHidePaypalSEncrypt () {
-   if ($j_eme_event('input[name=eme_paypal_s_encrypt]').attr("checked")) {
-         $j_eme_event('tr#eme_paypal_s_pubcert_row').show(); 
-         $j_eme_event('tr#eme_paypal_s_privkey_row').show();
-         $j_eme_event('tr#eme_paypal_s_paypalcert_row').show();
-         $j_eme_event('tr#eme_paypal_s_certid_row').show();
+   if (jQuery('input[name=eme_paypal_s_encrypt]').attr("checked")) {
+         jQuery('tr#eme_paypal_s_pubcert_row').show(); 
+         jQuery('tr#eme_paypal_s_privkey_row').show();
+         jQuery('tr#eme_paypal_s_paypalcert_row').show();
+         jQuery('tr#eme_paypal_s_certid_row').show();
    } else {
-         $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
-         $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
-         $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
-         $j_eme_event('tr#eme_paypal_s_certid_row').hide();
+         jQuery('tr#eme_paypal_s_pubcert_row').hide(); 
+         jQuery('tr#eme_paypal_s_privkey_row').hide();
+         jQuery('tr#eme_paypal_s_paypalcert_row').hide();
+         jQuery('tr#eme_paypal_s_certid_row').hide();
    }
 }
 
 function updateShowHideRsvpMailNotify () {
-   if ($j_eme_event('input[name=eme_rsvp_mail_notify_is_active]').attr("checked")) {
-      $j_eme_event("table#rsvp_mail_notify-data").show();
+   if (jQuery('input[name=eme_rsvp_mail_notify_is_active]').attr("checked")) {
+      jQuery("table#rsvp_mail_notify-data").show();
    } else {
-      $j_eme_event("table#rsvp_mail_notify-data").hide();
+      jQuery("table#rsvp_mail_notify-data").hide();
    }
 }
 
 function updateShowHideRsvpMailSendMethod () {
-   if ($j_eme_event('select[name=eme_rsvp_mail_send_method]').val() == "smtp") {
-         $j_eme_event('tr#eme_smtp_host_row').show();
-         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').show();
-         $j_eme_event('tr#eme_smtp_username_row').show(); 
-         $j_eme_event('tr#eme_smtp_password_row').show(); 
-         $j_eme_event('tr#eme_rsvp_mail_port_row').show(); 
+   if (jQuery('select[name=eme_rsvp_mail_send_method]').val() == "smtp") {
+         jQuery('tr#eme_smtp_host_row').show();
+         jQuery('tr#eme_rsvp_mail_SMTPAuth_row').show();
+         jQuery('tr#eme_smtp_username_row').show(); 
+         jQuery('tr#eme_smtp_password_row').show(); 
+         jQuery('tr#eme_rsvp_mail_port_row').show(); 
    } else {
-         $j_eme_event('tr#eme_smtp_host_row').hide();
-         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').hide();
-         $j_eme_event('tr#eme_smtp_username_row').hide(); 
-         $j_eme_event('tr#eme_smtp_password_row').hide();
-         $j_eme_event('tr#eme_rsvp_mail_port_row').hide(); 
+         jQuery('tr#eme_smtp_host_row').hide();
+         jQuery('tr#eme_rsvp_mail_SMTPAuth_row').hide();
+         jQuery('tr#eme_smtp_username_row').hide(); 
+         jQuery('tr#eme_smtp_password_row').hide();
+         jQuery('tr#eme_rsvp_mail_port_row').hide(); 
    }
 }
 
 function updateShowHideRsvpMailSMTPAuth () {
-   if ($j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]').attr("checked")) {
-         $j_eme_event('tr#eme_smtp_username_row').show(); 
-         $j_eme_event('tr#eme_smtp_password_row').show(); 
+   if (jQuery('input[name=eme_rsvp_mail_SMTPAuth]').attr("checked")) {
+         jQuery('tr#eme_smtp_username_row').show(); 
+         jQuery('tr#eme_smtp_password_row').show(); 
    } else {
-         $j_eme_event('tr#eme_smtp_username_row').hide(); 
-         $j_eme_event('tr#eme_smtp_password_row').hide();
+         jQuery('tr#eme_smtp_username_row').hide(); 
+         jQuery('tr#eme_smtp_password_row').hide();
    }
 }
 
-$j_eme_event(document).ready( function() {
-   $j_eme_event("#div_recurrence_date").hide();
-   $j_eme_event("#localised-start-date").show();
-   $j_eme_event("#localised-end-date").show();
-   $j_eme_event("#start-date-to-submit").hide();
-   $j_eme_event("#end-date-to-submit").hide(); 
-   $j_eme_event("#rec-start-date-to-submit").hide();
-   $j_eme_event("#rec-end-date-to-submit").hide(); 
+jQuery(document).ready( function() {
+   jQuery("#div_recurrence_date").hide();
+   jQuery("#localised-start-date").show();
+   jQuery("#localised-end-date").show();
+   jQuery("#start-date-to-submit").hide();
+   jQuery("#end-date-to-submit").hide(); 
+   jQuery("#rec-start-date-to-submit").hide();
+   jQuery("#rec-end-date-to-submit").hide(); 
 
-   $j_eme_event.datepick.setDefaults( $j_eme_event.datepick.regional["<?php echo $locale_code; ?>"] );
-   $j_eme_event.datepick.setDefaults({
+   jQuery.datepick.setDefaults( jQuery.datepick.regional["<?php echo $locale_code; ?>"] );
+   jQuery.datepick.setDefaults({
       changeMonth: true,
       changeYear: true
    });
-   $j_eme_event("#localised-start-date").datepick({ altField: "#start-date-to-submit", altFormat: "yyyy-mm-dd" });
-   $j_eme_event("#localised-end-date").datepick({ altField: "#end-date-to-submit", altFormat: "yyyy-mm-dd" });
-   $j_eme_event("#localised-rec-start-date").datepick({ altField: "#rec-start-date-to-submit", altFormat: "yyyy-mm-dd" });
-   $j_eme_event("#localised-rec-end-date").datepick({ altField: "#rec-end-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-start-date").datepick({ altField: "#start-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-end-date").datepick({ altField: "#end-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-rec-start-date").datepick({ altField: "#rec-start-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-rec-end-date").datepick({ altField: "#rec-end-date-to-submit", altFormat: "yyyy-mm-dd" });
 
-   $j_eme_event("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
-   $j_eme_event("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
+   jQuery("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
+   jQuery("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
 
    // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_email_body, event_registration_form_format, event_registration_updated_email_body
    // is empty: display default value on focus, and if the value hasn't changed from the default: empty it on blur
 
-   $j_eme_event('textarea#event_page_title_format').focus(function(){
+   jQuery('textarea#event_page_title_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    }); 
-   $j_eme_event('textarea#event_page_title_format').blur(function(){
+   jQuery('textarea#event_page_title_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    }); 
-   $j_eme_event('textarea#event_single_event_format').focus(function(){
+   jQuery('textarea#event_single_event_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    }); 
-   $j_eme_event('textarea#event_single_event_format').blur(function(){
+   jQuery('textarea#event_single_event_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    }); 
-   $j_eme_event('textarea#event_contactperson_email_body').focus(function(){
+   jQuery('textarea#event_contactperson_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    });
-   $j_eme_event('textarea#event_contactperson_email_body').blur(function(){
+   jQuery('textarea#event_contactperson_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    }); 
-   $j_eme_event('textarea#event_respondent_email_body').focus(function(){
+   jQuery('textarea#event_respondent_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    }); 
-   $j_eme_event('textarea#event_respondent_email_body').blur(function(){
+   jQuery('textarea#event_respondent_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    }); 
-   $j_eme_event('textarea#event_registration_recorded_ok_html').focus(function(){
+   jQuery('textarea#event_registration_recorded_ok_html').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    });
-   $j_eme_event('textarea#event_registration_recorded_ok_html').blur(function(){
+   jQuery('textarea#event_registration_recorded_ok_html').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    });
-   $j_eme_event('textarea#event_registration_pending_email_body').focus(function(){
+   jQuery('textarea#event_registration_pending_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    });
-   $j_eme_event('textarea#event_registration_pending_email_body').blur(function(){
+   jQuery('textarea#event_registration_pending_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    });
-   $j_eme_event('textarea#event_registration_updated_email_body').focus(function(){
+   jQuery('textarea#event_registration_updated_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    });
-   $j_eme_event('textarea#event_registration_updated_email_body').blur(function(){
+   jQuery('textarea#event_registration_updated_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    });
-   $j_eme_event('textarea#event_registration_form_format').focus(function(){
+   jQuery('textarea#event_registration_form_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == '') {
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
       }
    }); 
-   $j_eme_event('textarea#event_registration_form_format').blur(function(){
+   jQuery('textarea#event_registration_form_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if ($j_eme_event(this).val() == tmp_value) {
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
       }
    }); 
 
@@ -3018,14 +3016,14 @@ $j_eme_event(document).ready( function() {
    updateShowHideRsvp();
    updateShowHideRecurrenceSpecificDays();
    updateShowHideTime();
-   $j_eme_event('input#event-recurrence').change(updateShowHideRecurrence);
-   $j_eme_event('input#rsvp-checkbox').change(updateShowHideRsvp);
-   $j_eme_event('input#eme_prop_all_day').change(updateShowHideTime);
+   jQuery('input#event-recurrence').change(updateShowHideRecurrence);
+   jQuery('input#rsvp-checkbox').change(updateShowHideRsvp);
+   jQuery('input#eme_prop_all_day').change(updateShowHideTime);
    // recurrency elements
-   $j_eme_event('input#recurrence-interval').keyup(updateIntervalDescriptor);
-   $j_eme_event('select#recurrence-frequency').change(updateIntervalDescriptor);
-   $j_eme_event('select#recurrence-frequency').change(updateIntervalSelectors);
-   $j_eme_event('select#recurrence-frequency').change(updateShowHideRecurrenceSpecificDays);
+   jQuery('input#recurrence-interval').keyup(updateIntervalDescriptor);
+   jQuery('select#recurrence-frequency').change(updateIntervalDescriptor);
+   jQuery('select#recurrence-frequency').change(updateIntervalSelectors);
+   jQuery('select#recurrence-frequency').change(updateShowHideRecurrenceSpecificDays);
 
    // for the eme-options pages
    updateShowHideCustomReturnPage();
@@ -3033,11 +3031,11 @@ $j_eme_event(document).ready( function() {
    updateShowHideRsvpMailNotify ();
    updateShowHideRsvpMailSendMethod ();
    updateShowHideRsvpMailSMTPAuth ();
-   $j_eme_event('input[name=eme_payment_show_custom_return_page]').change(updateShowHideCustomReturnPage);
-   $j_eme_event('input[name=eme_paypal_s_encrypt]').change(updateShowHidePaypalSEncrypt);
-   $j_eme_event('input[name=eme_rsvp_mail_notify_is_active]').change(updateShowHideRsvpMailNotify);
-   $j_eme_event('select[name=eme_rsvp_mail_send_method]').change(updateShowHideRsvpMailSendMethod);
-   $j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]').change(updateShowHideRsvpMailSMTPAuth);
+   jQuery('input[name=eme_payment_show_custom_return_page]').change(updateShowHideCustomReturnPage);
+   jQuery('input[name=eme_paypal_s_encrypt]').change(updateShowHidePaypalSEncrypt);
+   jQuery('input[name=eme_rsvp_mail_notify_is_active]').change(updateShowHideRsvpMailNotify);
+   jQuery('select[name=eme_rsvp_mail_send_method]').change(updateShowHideRsvpMailSendMethod);
+   jQuery('input[name=eme_rsvp_mail_SMTPAuth]').change(updateShowHideRsvpMailSMTPAuth);
 
    // Add a "+" to the collapsable postboxes
    //jQuery('.postbox h3').prepend('<a class="togbox">+</a> ');
@@ -3053,7 +3051,7 @@ $j_eme_event(document).ready( function() {
    // users cannot submit the event form unless some fields are filled
    function validateEventForm() {
       var errors = "";
-      var recurring = $j_eme_event("input[name=repeated_event]:checked").val();
+      var recurring = jQuery("input[name=repeated_event]:checked").val();
       //requiredFields= new Array('event_name', 'localised_event_start_date', 'location_name','location_address','location_town');
       var requiredFields = ['event_name', 'localised_event_start_date'];
       var localisedRequiredFields = {'event_name':"<?php _e ( 'Name', 'eme' )?>",
@@ -3063,22 +3061,22 @@ $j_eme_event(document).ready( function() {
       var missingFields = [];
       var i;
       for (i in requiredFields) {
-         if ($j_eme_event("input[name=" + requiredFields[i]+ "]").val() == 0) {
+         if (jQuery("input[name=" + requiredFields[i]+ "]").val() == 0) {
             missingFields.push(localisedRequiredFields[requiredFields[i]]);
-            $j_eme_event("input[name=" + requiredFields[i]+ "]").css('border','2px solid red');
+            jQuery("input[name=" + requiredFields[i]+ "]").css('border','2px solid red');
          } else {
-            $j_eme_event("input[name=" + requiredFields[i]+ "]").css('border','1px solid #DFDFDF');
+            jQuery("input[name=" + requiredFields[i]+ "]").css('border','1px solid #DFDFDF');
          }
       }
    
       if (missingFields.length > 0) {
          errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
       }
-      if (recurring && $j_eme_event("input#localised-rec-end-date").val() == "" && $j_eme_event("select#recurrence-frequency").val() != "specific") {
+      if (recurring && jQuery("input#localised-rec-end-date").val() == "" && jQuery("select#recurrence-frequency").val() != "specific") {
          errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
-         $j_eme_event("input#localised-rec-end-date").css('border','2px solid red');
+         jQuery("input#localised-rec-end-date").css('border','2px solid red');
       } else {
-         $j_eme_event("input#localised-rec-end-date").css('border','1px solid #DFDFDF');
+         jQuery("input#localised-rec-end-date").css('border','1px solid #DFDFDF');
       }
       if (errors != "") {
          alert(errors);
@@ -3087,7 +3085,7 @@ $j_eme_event(document).ready( function() {
       return true;
    }
 
-   $j_eme_event('#eventForm').bind("submit", validateEventForm);
+   jQuery('#eventForm').bind("submit", validateEventForm);
 });
 
 //]]>
@@ -3525,8 +3523,6 @@ function eme_admin_map_script() {
 <script src="//maps.google.com/maps/api/js?v=3.1&amp;sensor=false" type="text/javascript"></script>
 <script type="text/javascript">
          //<![CDATA[
-          $j_eme_admin=jQuery.noConflict();
-
           function loadMap(location, town, address) {
             var latlng = new google.maps.LatLng(-34.397, 150.644);
             var myOptions = {
@@ -3539,7 +3535,7 @@ function eme_admin_map_script() {
                },
                mapTypeId: google.maps.MapTypeId.ROADMAP
             }
-            $j_eme_admin("#eme-admin-location-map").show();
+            jQuery("#eme-admin-location-map").show();
             var map = new google.maps.Map(document.getElementById("eme-admin-location-map"), myOptions);
             var geocoder = new google.maps.Geocoder();
             if (address !="") {
@@ -3560,18 +3556,18 @@ function eme_admin_map_script() {
                         content: '<div class=\"eme-location-balloon\"><strong>' + location +'</strong><p>' + address + '</p><p>' + town + '</p></div>'
                      });
                      infowindow.open(map,marker);
-                     $j_eme_admin('input#location_latitude').val(results[0].geometry.location.lat());
-                     $j_eme_admin('input#location_longitude').val(results[0].geometry.location.lng());
-                     $j_eme_admin("#eme-admin-location-map").show();
-                     $j_eme_admin('#eme-admin-map-not-found').hide();
+                     jQuery('input#location_latitude').val(results[0].geometry.location.lat());
+                     jQuery('input#location_longitude').val(results[0].geometry.location.lng());
+                     jQuery("#eme-admin-location-map").show();
+                     jQuery('#eme-admin-map-not-found').hide();
                   } else {
-                     $j_eme_admin("#eme-admin-location-map").hide();
-                     $j_eme_admin('#eme-admin-map-not-found').show();
+                     jQuery("#eme-admin-location-map").hide();
+                     jQuery('#eme-admin-map-not-found').show();
                   }
                });
             } else {
-               $j_eme_admin("#eme-admin-location-map").hide();
-               $j_eme_admin('#eme-admin-map-not-found').show();
+               jQuery("#eme-admin-location-map").hide();
+               jQuery('#eme-admin-map-not-found').show();
             }
          }
       
@@ -3588,7 +3584,7 @@ function eme_admin_map_script() {
                   },
                   mapTypeId: google.maps.MapTypeId.ROADMAP
                }
-               $j_eme_admin("#eme-admin-location-map").show();
+               jQuery("#eme-admin-location-map").show();
                var map = new google.maps.Map(document.getElementById("eme-admin-location-map"), myOptions);
                var marker = new google.maps.Marker({
                   map: map, 
@@ -3598,14 +3594,14 @@ function eme_admin_map_script() {
                   content: '<div class=\"eme-location-balloon\"><strong>' + location +'</strong><p>' + address + '</p><p>' + town + '</p></div>'
                });
                infowindow.open(map,marker);
-               $j_eme_admin("#eme-admin-location-map").show();
-               $j_eme_admin('#eme-admin-map-not-found').hide();
+               jQuery("#eme-admin-location-map").show();
+               jQuery('#eme-admin-map-not-found').hide();
             } else {
                loadMap(location, town, address);
             }
          }
  
-         $j_eme_admin(document).ready(function() {
+         jQuery(document).ready(function() {
             <?php 
             // if we're creating a new event, or editing an event *AND*
             // the use_select_for_locations options is on or qtranslate is installed
@@ -3615,90 +3611,90 @@ function eme_admin_map_script() {
             if (
                ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
                      (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE'))) { ?>
-            eventLocation = $j_eme_admin("input[name='location-select-name']").val(); 
-            eventTown = $j_eme_admin("input[name='location-select-town']").val();
-            eventAddress = $j_eme_admin("input[name='location-select-address']").val(); 
-            eventLat = $j_eme_admin("input#location-select-latitude").val();
-            eventLong = $j_eme_admin("input#location-select-longitude").val();
+            eventLocation = jQuery("input[name='location-select-name']").val(); 
+            eventTown = jQuery("input[name='location-select-town']").val();
+            eventAddress = jQuery("input[name='location-select-address']").val(); 
+            eventLat = jQuery("input#location-select-latitude").val();
+            eventLong = jQuery("input#location-select-longitude").val();
    
                <?php } else { ?>
-            eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-            eventTown = $j_eme_admin("input#location_town").val(); 
-            eventAddress = $j_eme_admin("input#location_address").val();
-            eventLat = $j_eme_admin("input#location_latitude").val();
-            eventLong = $j_eme_admin("input#location_longitude").val();
+            eventLocation = jQuery("input[name='translated_location_name']").val(); 
+            eventTown = jQuery("input#location_town").val(); 
+            eventAddress = jQuery("input#location_address").val();
+            eventLat = jQuery("input#location_latitude").val();
+            eventLong = jQuery("input#location_longitude").val();
                <?php } ?>
 
             loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
          
-            $j_eme_admin("input[name='location_name']").focus(function(){
-               eventLocation = $j_eme_admin("input[name='location_name']").val();
+            jQuery("input[name='location_name']").focus(function(){
+               eventLocation = jQuery("input[name='location_name']").val();
             });
 
-            $j_eme_admin("input[name='location_name']").blur(function(){
-               newEventLocation = $j_eme_admin("input[name='location_name']").val();
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               eventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input[name='location_name']").blur(function(){
+               newEventLocation = jQuery("input[name='location_name']").val();
+               eventTown = jQuery("input#location_town").val(); 
+               eventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newEventLocation != eventLocation) {
                   loadMapLatLong(newEventLocation, eventTown, eventAddress, eventLat, eventLong); 
                }
             });
-            $j_eme_admin("input#location_town").focus(function(){
-               eventTown = $j_eme_admin("input#location_town").val(); 
+            jQuery("input#location_town").focus(function(){
+               eventTown = jQuery("input#location_town").val(); 
             });
-            $j_eme_admin("input#location_town").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               newEventTown = $j_eme_admin("input#location_town").val();
-               eventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_town").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               newEventTown = jQuery("input#location_town").val();
+               eventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newEventTown != eventTown) {
                   loadMap(eventLocation, newEventTown, eventAddress); 
                }
             });
-            $j_eme_admin("input#location_address").focus(function(){
-               eventAddress = $j_eme_admin("input#location_address").val();
+            jQuery("input#location_address").focus(function(){
+               eventAddress = jQuery("input#location_address").val();
             });
-            $j_eme_admin("input#location_address").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               newEventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_address").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               eventTown = jQuery("input#location_town").val(); 
+               newEventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newEventAddress != eventAddress) {
                   loadMap(eventLocation, eventTown, newEventAddress); 
                }
             });
-            $j_eme_admin("input#location_latitude").focus(function(){
-               eventLat = $j_eme_admin("input#location_latitude").val();
+            jQuery("input#location_latitude").focus(function(){
+               eventLat = jQuery("input#location_latitude").val();
             });
-            $j_eme_admin("input#location_latitude").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               eventAddress = $j_eme_admin("input#location_address").val();
-               newLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_latitude").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               eventTown = jQuery("input#location_town").val(); 
+               eventAddress = jQuery("input#location_address").val();
+               newLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newLat != eventLat) {
                   loadMapLatLong(eventLocation, eventTown, eventAddress, newLat, eventLong); 
                }
             });
-            $j_eme_admin("input#location_longitude").focus(function(){
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_longitude").focus(function(){
+               eventLong = jQuery("input#location_longitude").val();
             });
-            $j_eme_admin("input#location_longitude").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               eventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               newLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_longitude").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               eventTown = jQuery("input#location_town").val(); 
+               eventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               newLong = jQuery("input#location_longitude").val();
                if (newLong != eventLong) {
                   loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, newLong); 
                }
             });
             }); 
-            $j_eme_admin(document).unload(function() {
+            jQuery(document).unload(function() {
             GUnload();
          });
           //]]>
