@@ -1459,14 +1459,7 @@ function eme_registration_seats_page($pending=0) {
    global $wpdb,$plugin_page;
 
       // do the actions if required
-      if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "delete_bookings" && isset($_GET['bookings'])) {
-         $bookings = $_GET['bookings'];
-         if (is_array($bookings)) {
-            foreach($bookings as $booking_id) {
-               eme_delete_booking(intval($booking_id));
-            }
-         }
-      } elseif (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editRegistration" && isset($_GET['booking_id'])) {
+      if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editRegistration" && isset($_GET['booking_id'])) {
             $booking_id = intval($_GET['booking_id']);
             $booking = eme_get_booking($booking_id);
             $event_id = $booking['event_id'];

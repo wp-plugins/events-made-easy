@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.3.4 =
+* Feature: when doing the "quick" deny for registrations while editing an event, no mails were being sent. There's now a general option in the Mail section that allows you to change that.
 * Bugfix: make #_ADDBOOKINGFORM_IF_NOT_REGISTERED and #_REMOVEBOOKINGFORM_IF_REGISTERED work again
 * Bugfix: added a CSS to the datatables when showing events, so the footer div following it is moved when the table grows or shrinks
 * Bugfix: adding shortcodes to event details resulted in bad headers when using the setting "extra html headers" with placeholders like #_EXCERPT, and also gave problems for conditional tags

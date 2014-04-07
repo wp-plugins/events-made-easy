@@ -48,6 +48,9 @@ function eme_actions_init() {
 
    if (is_admin() && current_user_can( get_option('eme_cap_registrations')) && isset($_REQUEST['eme_admin_action']) &&
        $_REQUEST['eme_admin_action'] == 'remove_booking' && isset($_REQUEST['booking_id'])) {
+      if (get_option('eme_deny_mail_event_edit')) {
+         eme_email_rsvp_booking($booking_id,"denyRegistration");
+      }
       eme_delete_booking(intval($_REQUEST['booking_id']));
       exit();
    }
