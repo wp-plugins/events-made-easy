@@ -110,14 +110,7 @@ function eme_event_url($event) {
       $the_link = $event['event_url'];
    } else {
       $url_mode=1;
-      if (function_exists('qtrans_getLanguage')) {
-         $language=qtrans_getLanguage();
-         $url_mode=get_option('qtranslate_url_mode');
-      } elseif (defined('ICL_LANGUAGE_CODE')) {
-         $language=ICL_LANGUAGE_CODE;
-      } else {
-         $language="";
-      }
+      $language = eme_detect_lang();
       if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
          $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
          $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
@@ -155,14 +148,7 @@ function eme_location_url($location) {
       $the_link = $location['location_url'];
    } else {
       $url_mode=1;
-      if (function_exists('qtrans_getLanguage')) {
-         $language=qtrans_getLanguage();
-         $url_mode=get_option('qtranslate_url_mode');
-      } elseif (defined('ICL_LANGUAGE_CODE')) {
-         $language=ICL_LANGUAGE_CODE;
-      } else {
-         $language="";
-      }
+      $language = eme_detect_lang();
       if (isset($location['location_id']) && isset($location['location_name'])) {
          if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
             $locations_prefix=eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix'));
@@ -198,14 +184,7 @@ function eme_calendar_day_url($day) {
    global $wp_rewrite;
 
    $url_mode=1;
-   if (function_exists('qtrans_getLanguage')) {
-      $language=qtrans_getLanguage();
-      $url_mode=get_option('qtranslate_url_mode');
-   } elseif (defined('ICL_LANGUAGE_CODE')) {
-      $language=ICL_LANGUAGE_CODE;
-   } else {
-      $language="";
-   }
+   $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix.eme_permalink_convert($day);
@@ -237,14 +216,7 @@ function eme_payment_url($booking_id) {
    global $wp_rewrite;
 
    $url_mode=1;
-   if (function_exists('qtrans_getLanguage')) {
-      $language=qtrans_getLanguage();
-      $url_mode=get_option('qtranslate_url_mode');
-   } elseif (defined('ICL_LANGUAGE_CODE')) {
-      $language=ICL_LANGUAGE_CODE;
-   } else {
-      $language="";
-   }
+   $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix."p$booking_id";
@@ -276,14 +248,7 @@ function eme_event_category_url($cat_name) {
    global $wp_rewrite;
 
    $url_mode=1;
-   if (function_exists('qtrans_getLanguage')) {
-      $language=qtrans_getLanguage();
-      $url_mode=get_option('qtranslate_url_mode');
-   } elseif (defined('ICL_LANGUAGE_CODE')) {
-      $language=ICL_LANGUAGE_CODE;
-   } else {
-      $language="";
-   }
+   $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix."cat/".eme_permalink_convert($cat_name);
@@ -490,6 +455,23 @@ function eme_convert_date_format($format,$datestring) {
       return date($format);
    else
       return date($format, strtotime($datestring));
+}
+
+function eme_detect_lang() {
+   if (function_exists('qtrans_getLanguage')) {
+      // if permalinks are on, $_GET doesn't contain lang as a parameter
+      // so we get it like this to be sure
+      $language=qtrans_getLanguage();
+   } elseif (defined('ICL_LANGUAGE_CODE')) {
+      // if permalinks are on, $_GET doesn't contain lang as a parameter
+      // so we get it like this to be sure
+      $language=ICL_LANGUAGE_CODE;
+   } elseif (isset($_GET['lang'])) {
+      $language=eme_strip_tags($_GET['lang']);
+   } else {
+      $language="";
+   }
+   return $language;
 }
 
 # support older php version for array_replace_recursive

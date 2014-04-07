@@ -364,18 +364,9 @@ function eme_days_in_month($month, $year) {
 function eme_ajaxize_calendar() {
    global $eme_need_calendar_js;
 
-   if (function_exists('qtrans_getLanguage')) {
-      // if permalinks are on, $_GET doesn't contain lang as a parameter
-      // so we get it like this to be sure
-      $language=qtrans_getLanguage();
+   $language = eme_detect_lang();
+   if (!empty($language)) {
       $jquery_override_lang=", lang: '".$language."'";
-   } elseif (defined('ICL_LANGUAGE_CODE')) {
-      // if permalinks are on, $_GET doesn't contain lang as a parameter
-      // so we get it like this to be sure
-      $language=ICL_LANGUAGE_CODE;
-      $jquery_override_lang=", lang: '".$language."'";
-   } elseif (isset($_GET['lang'])) {
-      $jquery_override_lang=", lang: '".$_GET['lang']."'";
    } else {
       $jquery_override_lang="";
    }
