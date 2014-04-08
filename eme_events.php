@@ -7,46 +7,40 @@ function eme_new_event() {
       "event_name" => '',
       "event_status" => get_option('eme_event_initial_state'),
       "event_start_date" => '',
-      "event_start_day" => '',
-      "event_start_month" => '',
-      "event_start_year" => '',
       "event_start_time" => '',
-      "event_start_12h_time" => '',
-      "event_start_24h_time" => '',
       "event_end_date" => '',
-      "event_end_day" => '',
-      "event_end_month" => '',
-      "event_end_year" => '',
       "event_end_time" => '',
-      "event_end_12h_time" => '',
-      "event_end_24h_time" => '',
       "event_notes" => '',
-      "event_rsvp" => 0,
-      "use_paypal" => 0,
-      "use_google" => 0,
-      "use_2co" => 0,
-      "use_webmoney" => 0,
+      "event_rsvp" => get_option('eme_rsvp_reg_for_new_events')? 1:0,
+      "use_paypal" => get_option('eme_paypal_business')? 1:0,
+      "use_google" => get_option('eme_google_merchant_id')? 1:0,
+      "use_2co" => get_option('eme_2co_business')? 1:0,
+      "use_webmoney" => get_option('eme_webmoney_purse')? 1:0,
+      "use_fdgg" => get_option('eme_fdgg_store_name')? 1:0,
       "price" => get_option('eme_default_price'),
       "currency" => get_option('eme_default_currency'),
       "rsvp_number_days" => get_option('eme_rsvp_number_days'),
       "rsvp_number_hours" => get_option('eme_rsvp_number_hours'),
-      "registration_requires_approval" => 0,
-      "registration_wp_users_only" => 0,
-      "event_seats" => 0,
+      "registration_requires_approval" => get_option('eme_rsvp_require_approval')? 1:0,
+      "registration_wp_users_only" => get_option('eme_rsvp_registered_users_only')? 1:0,
+      "event_seats" => get_option('eme_rsvp_default_number_spaces'),
       "location_id" => 0,
       "event_author" => 0,
       "event_contactperson_id" => get_option('eme_default_contact_person'),
       "event_category_ids" => '',
-      "event_attributes" => '',
+      "event_attributes" => array(),
+      "event_properties" => array(),
       "event_page_title_format" => '',
       "event_single_event_format" => '',
       "event_contactperson_email_body" => '',
       "event_respondent_email_body" => '',
       "event_registration_pending_email_body" => '',
+      "event_registration_updated_email_body" => '',
       "event_registration_form_format" => '',
       "event_registration_recorded_ok_html" => '',
       "event_slug" => '',
       "event_image_url" => '',
+      "event_image_id" => 0,
       "event_url" => '',
       "recurrence_id" => 0,
       "recurrence_freq" => '',
@@ -55,16 +49,24 @@ function eme_new_event() {
       "recurrence_interval" => '',
       "recurrence_byweekno" => '',
       "recurrence_byday" => '',
-      "location_name" => '',
-      "location_address" => '',
-      "location_town" => '',
-      "location_latitude" => '',
-      "location_longitude" => '',
-      "location_image_url" => '',
-      "location_slug" => '',
-      "location_url" => ''
+      "recurrence_specific_days" => '',
    );
+   $event['event_properties'] = eme_init_event_props($event['event_properties']);
    return $event;
+}
+
+function eme_init_event_props($props) {
+   if (!isset($props['auto_approve']))
+      $props['auto_approve']=0;
+   if (!isset($props['ignore_pending']))
+      $props['ignore_pending']=0;
+   if (!isset($props['all_day']))
+      $props['all_day']=0;
+   if (!isset($props['min_allowed']))
+      $props['min_allowed']=get_option('eme_rsvp_addbooking_min_spaces');
+   if (!isset($props['max_allowed']))
+      $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
+   return $props;
 }
 
 function eme_new_event_page() {
@@ -76,7 +78,7 @@ function eme_new_event_page() {
    $title = __ ( "Insert New Event", 'eme' );
    $event = eme_new_event();
 
-   if (isset($_GET['action']) && $_GET['action'] == "insert_event") {
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "insert_event") {
       eme_events_page();
    } else {
       eme_event_form ($event, $title, '');
@@ -87,43 +89,31 @@ function eme_events_page() {
    global $wpdb;
 
    $extra_conditions = array();
-   $action = isset($_GET['action']) ? $_GET['action'] : '';
+   $action = isset($_GET['eme_admin_action']) ? $_GET['eme_admin_action'] : '';
    $event_ID = isset($_GET['event_id']) ? intval($_GET['event_id']) : '';
    $recurrence_ID = isset($_GET['recurrence_id']) ? intval($_GET['recurrence_id']) : '';
-   $scope = isset($_GET['scope']) ? $_GET['scope'] : '';
-   $offset = isset($_GET['offset']) ? intval($_GET['offset']) : '';
-   $category = isset($_GET['category']) ? intval($_GET['category']) : 0;
-   $order = isset($_GET['order']) ? $_GET['order'] : '';
    $selectedEvents = isset($_GET['events']) ? $_GET['events'] : '';
-   $status = isset($_GET['event_status']) ? intval($_GET['event_status']) : '';
-   if(!empty($status)) {
-      $extra_conditions[] = 'event_status = '.$status;
-   }
 
    $current_userid=get_current_user_id();
 
-   if ($order != "DESC")
-      $order = "ASC";
-   if ($offset == "")
-      $offset = "0";
-
-   $list_limit = get_option('eme_events_admin_limit');
-   if ($list_limit<5 || $list_limit>200) {
-      $list_limit=20;
-      update_option('eme_events_admin_limit',$list_limit);
-   }
-
+   // if the delete event button is pushed while editing an event, set the action
    if (isset($_POST['event_delete_button'])) {
       $selectedEvents=array($event_ID);
       $action = "deleteEvents";
    }
+   // if the delete recurrence button is pushed while editing a recurrence, set the action
    if (isset($_POST['event_deleteRecurrence_button'])) {
       $recurrence=eme_get_recurrence($recurrence_ID);
       $selectedEvents=array($recurrence['event_id']);
       $action = "deleteRecurrence";
    }
+
+   // in case some generic actions were taken (like disable hello or disable donate), ignore all other actions
+   if (isset ( $_GET ['disable_hello_to_user'] ) || isset ( $_GET ['disable_donate_message'] )) {
+      $action ="";
+   }
    
-   // DELETE action
+   // DELETE action (either from the event list, or when the delete button is pushed while editing an event)
    if ($action == 'deleteEvents') {
       if (current_user_can( get_option('eme_cap_edit_events')) ||
          (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
@@ -148,11 +138,11 @@ function eme_events_page() {
       }
       
       echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      $events = eme_get_events ( $list_limit+1, "future", $order, $offset );
-      eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      eme_events_table ();
       return;
    }
 
+   // DELETE action (either from the event list, or when the delete button is pushed while editing a recurrence)
    if ($action == 'deleteRecurrence') {
       foreach ( $selectedEvents as $event_ID ) {
          $tmp_event = array();
@@ -164,8 +154,7 @@ function eme_events_page() {
             }
          }
       }
-      $events = eme_get_events ( $list_limit+1, "future", $order, $offset );
-      eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      eme_events_table ();
       return;
    }
 
@@ -174,8 +163,7 @@ function eme_events_page() {
       if ( ! (current_user_can( get_option('eme_cap_add_event')) || current_user_can( get_option('eme_cap_edit_events'))) ) {
          $feedback_message = __('You have no right to insert or update events','eme');
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( $list_limit+1, "future" );
-         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         eme_events_table ();
          return;
       }
 
@@ -205,13 +193,22 @@ function eme_events_page() {
       } else {
          $event['event_end_time'] = "00:00:00";
       }
-      $recurrence['recurrence_start_date'] = isset($_POST['recurrence_start_date']) ? $_POST['recurrence_start_date'] : $event['event_start_date'];
-      $recurrence['recurrence_end_date'] = isset($_POST['recurrence_end_date']) ? $_POST['recurrence_end_date'] : $event['event_end_date'];
+      $recurrence['recurrence_freq'] = isset($_POST['recurrence_freq']) ? $_POST['recurrence_freq'] : '';
+      if ($recurrence['recurrence_freq'] == 'specific') {
+         $recurrence['recurrence_specific_days'] = isset($_POST['recurrence_start_date']) ? $_POST['recurrence_start_date'] : $event['event_start_date'];
+         $recurrence['recurrence_start_date'] = "";
+         $recurrence['recurrence_end_date'] = "";
+      } else {
+         $recurrence['recurrence_specific_days'] = "";
+         $recurrence['recurrence_start_date'] = isset($_POST['recurrence_start_date']) ? $_POST['recurrence_start_date'] : $event['event_start_date'];
+         $recurrence['recurrence_end_date'] = isset($_POST['recurrence_end_date']) ? $_POST['recurrence_end_date'] : $event['event_end_date'];
+      }
       if (!_eme_is_date_valid($recurrence['recurrence_start_date']))
           $recurrence['recurrence_start_date'] = "";
       if (!_eme_is_date_valid($recurrence['recurrence_end_date']))
-          $recurrence['recurrence_end_date'] = $recurrence['recurrence_end_date'];
-      $recurrence['recurrence_freq'] = isset($_POST['recurrence_freq']) ? $_POST['recurrence_freq'] : '';
+          $recurrence['recurrence_end_date'] = $recurrence['recurrence_start_date'];
+      if (!_eme_are_dates_valid($recurrence['recurrence_specific_days']))
+          $recurrence['recurrence_specific_days'] = "";
       if ($recurrence['recurrence_freq'] == 'weekly') {
          if (isset($_POST['recurrence_bydays'])) {
             $recurrence['recurrence_byday'] = implode ( ",", $_POST['recurrence_bydays']);
@@ -235,7 +232,16 @@ function eme_events_page() {
       $event['rsvp_number_hours'] = (isset ($_POST['rsvp_number_hours']) && is_numeric($_POST['rsvp_number_hours'])) ? $_POST['rsvp_number_hours']:0;
       $event['registration_requires_approval'] = (isset ($_POST['registration_requires_approval']) && is_numeric($_POST['registration_requires_approval'])) ? $_POST['registration_requires_approval']:0;
       $event['registration_wp_users_only'] = (isset ($_POST['registration_wp_users_only']) && is_numeric($_POST['registration_wp_users_only'])) ? $_POST['registration_wp_users_only']:0;
-      $event['event_seats'] = (isset ($_POST['event_seats']) && is_numeric($_POST['event_seats'])) ? $_POST['event_seats']:0;
+      $event['event_seats'] = isset ($_POST['event_seats']) ? $_POST['event_seats']:0;
+      if (preg_match("/\|\|/",$event['event_seats'])) {
+         $multiseat=preg_split("/\|\|/",$event['event_seats']);
+         foreach ($multiseat as $key=>$value) {
+            if (!is_numeric($value)) $multiseat[$key]=0;
+         }
+         $event['event_seats'] = eme_convert_array2multi($multiseat);
+      } else {
+         if (!is_numeric($event['event_seats'])) $event['event_seats'] = 0;
+      }
       
       $event['use_paypal'] = (isset ($_POST['use_paypal']) && is_numeric($_POST['use_paypal'])) ? $_POST['use_paypal']:0;
       $event['use_2co'] = (isset ($_POST['use_2co']) && is_numeric($_POST['use_2co'])) ? $_POST['use_2co']:0;
@@ -247,13 +253,12 @@ function eme_events_page() {
          foreach ($multiprice as $key=>$value) {
             if (!is_numeric($value)) $multiprice[$key]=0;
          }
-         $event['price'] = join("||",$multiprice);
+         $event['price'] = eme_convert_array2multi($multiprice);
       } else {
          if (!is_numeric($event['price'])) $event['price'] = 0;
       }
 
       $event['currency'] = isset ($_POST['currency']) ? $_POST['currency']:"";
-      $event['event_image_url'] = isset ($_POST['event_image_url']) ? $_POST['event_image_url']:"";
 
       if (isset ( $_POST['event_contactperson_id'] ) && $_POST['event_contactperson_id'] != '') {
          $event['event_contactperson_id'] = $_POST['event_contactperson_id'];
@@ -280,9 +285,11 @@ function eme_events_page() {
       $event['event_registration_recorded_ok_html'] = isset($_POST['event_registration_recorded_ok_html']) ? stripslashes ( $_POST['event_registration_recorded_ok_html'] ) : '';
       $event['event_respondent_email_body'] = isset($_POST['event_respondent_email_body']) ? stripslashes ( $_POST['event_respondent_email_body'] ) : '';
       $event['event_registration_pending_email_body'] = isset($_POST['event_registration_pending_email_body']) ? stripslashes ( $_POST['event_registration_pending_email_body'] ) : '';
+      $event['event_registration_updated_email_body'] = isset($_POST['event_registration_updated_email_body']) ? stripslashes ( $_POST['event_registration_updated_email_body'] ) : '';
       $event['event_registration_form_format'] = isset($_POST['event_registration_form_format']) ? stripslashes ( $_POST['event_registration_form_format'] ) : '';
       $event['event_url'] = isset($_POST['event_url']) ? eme_strip_tags ( $_POST['event_url'] ) : '';
       $event['event_image_url'] = isset($_POST['event_image_url']) ? eme_strip_tags ( $_POST['event_image_url'] ) : '';
+      $event['event_image_id'] = isset($_POST['event_image_id']) ? intval ( $_POST['event_image_id'] ) : 0;
       $event['event_slug'] = isset($_POST['event_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST['event_slug'] )) : eme_permalink_convert($event['event_name']);
       if (isset ($_POST['event_category_ids'])) {
          // the category id's need to begin and end with a comma
@@ -309,6 +316,15 @@ function eme_events_page() {
          }
       }
       $event['event_attributes'] = serialize($event_attributes);
+
+      $event_properties = array();
+      $event_properties = eme_init_event_props($event_properties);
+      foreach($_POST as $key=>$value) {
+         if (preg_match('/eme_prop_(.+)/', $key, $matches)) {
+            $event_properties[$matches[1]] = stripslashes($value);
+         }
+      }
+      $event['event_properties'] = serialize($event_properties);
       
       $validation_result = eme_validate_event ( $event );
       if ($validation_result != "OK") {
@@ -409,8 +425,7 @@ function eme_events_page() {
          
       //$wpdb->query($sql); 
       echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      $events = eme_get_events ( $list_limit+1, "future" );
-      eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+      eme_events_table ();
       return;
    }
 
@@ -422,8 +437,7 @@ function eme_events_page() {
          } else {
             $feedback_message = __('You have no right to add events!','eme');
             echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            $events = eme_get_events ( $list_limit+1, "future" );
-            eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+            eme_events_table ();
          }
       } else {
          $event = eme_get_event ( $event_ID );
@@ -435,8 +449,7 @@ function eme_events_page() {
          } else {
             $feedback_message = __('You have no right to update','eme'). " '" . $event['event_name'] . "' !";
             echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            $events = eme_get_events ( $list_limit+1, "future" );
-            eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+            eme_events_table ();
          }
       }
       return;
@@ -451,8 +464,7 @@ function eme_events_page() {
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $event['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( $list_limit+1, "future" );
-         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         eme_events_table ();
       }
       return;
    }
@@ -466,14 +478,14 @@ function eme_events_page() {
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $recurrence['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         $events = eme_get_events ( $list_limit+1, "future" );
-         eme_events_table ( $events, $list_limit, __ ( 'Future events', 'eme' ), "future", $offset );
+         eme_events_table ();
       }
       return;
    }
    
    if ($action == "-1" || $action == "") {
       // No action, only showing the events list
+      $scope = isset($_GET['scope']) ? $_GET['scope'] : '';
       switch ($scope) {
          case "past" :
             $title = __ ( 'Past Events', 'eme' );
@@ -486,14 +498,7 @@ function eme_events_page() {
             $scope = "future";
       }
 
-      if (count($extra_conditions) > 0) {
-         $extra_conditions = implode(' AND ', $extra_conditions);
-      } else {
-         $extra_conditions = '';
-      }
- 
-      $events = eme_get_events ( $list_limit+1, $scope, $order, $offset, "", $category, '', '', 1, '', $extra_conditions);
-      eme_events_table ( $events, $list_limit, $title, $scope, $offset, $category );
+      eme_events_table ( $scope );
       return;
    }
 }
@@ -516,42 +521,63 @@ function eme_get_all_pages() {
 
 //This is the content of the event page
 function eme_events_page_content() {
-   global $wpdb,$wp_query;
-   if (isset ( $wp_query->query_vars['eme_pmt_id'] ) && $wp_query->query_vars['eme_pmt_id'] != '') {
-      $page_body = eme_payment_form("",$wp_query->query_vars['eme_pmt_id']);
+   global $wpdb;
+
+   $format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
+   $format_header = ( $format_header != '' ) ?  $format_header : "<ul class='eme_events_list'>";
+   $format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
+   $format_footer = ( $format_footer != '' ) ?  $format_footer : "</ul>";
+
+   if (get_query_var('eme_pmt_result') && get_option('eme_payment_show_custom_return_page')) {
+      // show the result of a payment
+      $result=get_query_var('eme_pmt_result');
+      if ($result == 'succes') {
+         $format = get_option('eme_payment_succes_format');
+      } else {
+         $format = get_option('eme_payment_fail_format');
+      }
+      if (get_option('eme_payment_add_bookingid_to_return') && get_query_var('eme_pmt_id') && get_query_var('event_id')) {
+         $event = eme_get_event(intval(get_query_var('event_id')));
+         $booking = eme_get_booking(intval(get_query_var('eme_pmt_id')));
+         return eme_replace_booking_placeholders($format,$event,$booking);
+      } elseif (get_query_var('event_id')) {
+         $event = eme_get_event(intval(get_query_var('event_id')));
+         return eme_replace_placeholders($format,$event);
+      } else {
+         return $format;
+      }
+   } elseif (get_query_var('eme_pmt_id')) {
+      $page_body = eme_payment_form("",get_query_var('eme_pmt_id'));
       return $page_body;
    }
-   if (isset ( $wp_query->query_vars['eme_town'] ) && $wp_query->query_vars['eme_town'] != '') {
-      $eme_town=eme_sanitize_request($wp_query->query_vars['eme_town']);
+
+   if (get_query_var('eme_town')) {
+      $eme_town=eme_sanitize_request(get_query_var('eme_town'));
       $location_ids = join(',',eme_get_town_location_ids($eme_town));
       $stored_format = get_option('eme_event_list_item_format');
-      $event_list_format_header = get_option('eme_event_list_item_format_header' );
-      $event_list_format_header = ( $event_list_format_header != '' ) ?  $event_list_format_header : "<ul class='eme_events_list'>";
-      $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
-      $event_list_format_footer = ( $event_list_format_footer != '' ) ?  $event_list_format_footer : "</ul>";
       if (count($location_ids)>0) {
-         $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, '','',0,'','',0,$location_ids) .  $event_list_format_footer;
+         $format_header = eme_replace_placeholders(get_option('eme_location_list_item_format_header' ));
+         $format_header = ( $format_header != '' ) ?  $format_header : "<ul class='eme_events_list'>";
+         $format_footer = eme_replace_placeholders(get_option('eme_location_list_item_format_footer' ));
+         $format_footer = ( $format_footer != '' ) ?  $format_footer : "</ul>";
+         $page_body = $format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, '','',0,'','',0,$location_ids) .  $format_footer;
       } else {
          $page_body = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
       }
       return $page_body;
    }
-   if (isset ( $wp_query->query_vars['location_id'] ) && $wp_query->query_vars['location_id'] != '') {
-      $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+   if (get_query_var('location_id')) {
+      $location = eme_get_location ( intval(get_query_var('location_id')));
       $single_location_format = get_option('eme_single_location_format' );
       $page_body = eme_replace_locations_placeholders ( $single_location_format, $location );
       return $page_body;
    }
-   if (!isset ( $wp_query->query_vars['calendar_day'] ) && isset ( $wp_query->query_vars['eme_event_cat'] ) && $wp_query->query_vars['eme_event_cat'] != '') {
-      $eme_event_cat=eme_sanitize_request($wp_query->query_vars['eme_event_cat']);
+   if (!get_query_var('calendar_day') && get_query_var('eme_event_cat')) {
+      $eme_event_cat=eme_sanitize_request(get_query_var('eme_event_cat'));
       $cat_ids = join(',',eme_get_category_ids($eme_event_cat));
       $stored_format = get_option('eme_event_list_item_format');
-      $event_list_format_header = get_option('eme_event_list_item_format_header' );
-      $event_list_format_header = ( $event_list_format_header != '' ) ?  $event_list_format_header : "<ul class='eme_events_list'>";
-      $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
-      $event_list_format_footer = ( $event_list_format_footer != '' ) ?  $event_list_format_footer : "</ul>";
       if (!empty($cat_ids)) {
-         $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, $cat_ids) .  $event_list_format_footer;
+         $page_body = $format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, $cat_ids) .  $format_footer;
       } else {
          $page_body = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
       }
@@ -560,15 +586,15 @@ function eme_events_page_content() {
    //if (isset ( $_REQUEST['event_id'] ) && $_REQUEST['event_id'] != '') {
    if (eme_is_single_event_page()) {
       // single event page
-      $event_ID = intval($wp_query->query_vars['event_id']);
+      $event_ID = intval(get_query_var('event_id'));
       $event = eme_get_event ( $event_ID );
       $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
       //$page_body = eme_replace_placeholders ( $single_event_format, $event, 'stop' );
       if (count($event) > 0 && ($event['event_status'] == STATUS_PRIVATE && is_user_logged_in() || $event['event_status'] != STATUS_PRIVATE))
          $page_body = eme_replace_placeholders ( $single_event_format, $event );
       return $page_body;
-   } elseif (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
-      $scope = eme_sanitize_request($wp_query->query_vars['calendar_day']);
+   } elseif (get_query_var('calendar_day')) {
+      $scope = eme_sanitize_request(get_query_var('calendar_day'));
       $events_N = eme_events_count_for ( $scope );
       $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
       $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
@@ -579,11 +605,7 @@ function eme_events_page_content() {
       if ($events_N > 1) {
          $event_list_item_format = get_option('eme_event_list_item_format' );
          //Add headers and footers to the events list
-         $event_list_format_header = get_option('eme_event_list_item_format_header' );
-         $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
-         $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
-         $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
-         $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $event_list_format_footer;
+         $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
       } else {
          # there's only one event for that day, so we show that event, but only if the event doesn't point to an external url
          $events = eme_get_events ( 0, $scope);
@@ -591,11 +613,7 @@ function eme_events_page_content() {
          if ($event['event_url'] != '') {
             $event_list_item_format = get_option('eme_event_list_item_format' );
             //Add headers and footers to the events list
-            $event_list_format_header = get_option('eme_event_list_item_format_header' );
-            $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
-            $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
-            $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
-            $page_body = $event_list_format_header .  eme_get_events_list ( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $event_list_format_footer;
+            $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
          } else {
             $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
             $page_body = eme_replace_placeholders ( $single_event_format, $event );
@@ -609,11 +627,7 @@ function eme_events_page_content() {
       if (get_option('eme_display_calendar_in_events_page' )){
          $page_body = eme_get_calendar ('full=1');
       }else{
-         $event_list_format_header = get_option('eme_event_list_item_format_header' );
-         $event_list_format_header = ( $event_list_format_header != '' ) ? $event_list_format_header : "<ul class='eme_events_list'>";
-         $event_list_format_footer = get_option('eme_event_list_item_format_footer' );
-         $event_list_format_footer = ( $event_list_format_footer != '' ) ? $event_list_format_footer : "</ul>";
-         $page_body = $event_list_format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), $scope, "ASC", $stored_format, 0 ) . $event_list_format_footer;
+         $page_body = $format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), $scope, "ASC", $stored_format, 0 ) . $format_footer;
       }
       return $page_body;
    }
@@ -651,10 +665,21 @@ function eme_filter_events_page($data) {
    // in the $wp_current_filter array), we can then skip it
    //print_r($wp_current_filter);
    $eme_count_arr=array_count_values($wp_current_filter);
-   if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content' && $eme_count_arr['the_content']>1) {
-      $eme_event_parsed=1;
-   } else {
-      $eme_event_parsed=0;
+   $eme_event_parsed=0;
+   $eme_loop_protection=get_option('eme_loop_protection');
+   switch ($eme_loop_protection) {
+      case "default":
+         if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content')
+            $eme_event_parsed=1;
+         break;
+      case "older":
+         if (count($wp_current_filter)>1 && end($wp_current_filter)=='the_content' && $eme_count_arr['the_content']>1)
+            $eme_event_parsed=1;
+         break;
+      case "desperate":
+         if ((count($wp_current_filter)>1 && end($wp_current_filter)=='the_content') || $eme_count_arr['the_content']>1)
+            $eme_event_parsed=1;
+         break;
    }
    // we change the content of the page only if we're "in the loop",
    // otherwise this filter also gets applied if e.g. a widget calls
@@ -668,7 +693,6 @@ function eme_filter_events_page($data) {
 add_filter ( 'the_content', 'eme_filter_events_page' );
 
 function eme_page_title($data) {
-   global $wp_query;
    $events_page_id = get_option('eme_events_page' );
    $events_page = get_page ( $events_page_id );
    $events_page_title = $events_page->post_title;
@@ -676,13 +700,13 @@ function eme_page_title($data) {
    // make sure we only replace the title for the events page, not anything
    // from the menu (which is also in the loop ...)
    if (($data == $events_page_title) && in_the_loop() && eme_is_events_page()) {
-      if (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
+      if (get_query_var('calendar_day')) {
          
-         $date = eme_sanitize_request($wp_query->query_vars['calendar_day']);
+         $date = eme_sanitize_request(get_query_var('calendar_day'));
          $events_N = eme_events_count_for ( $date );
          
          if ($events_N == 1) {
-            $events = eme_get_events ( 0, eme_sanitize_request($wp_query->query_vars['calendar_day']));
+            $events = eme_get_events ( 0, eme_sanitize_request(get_query_var('calendar_day')));
             $event = $events[0];
             $stored_page_title_format = ( $event['event_page_title_format'] != '' ) ? $event['event_page_title_format'] : get_option('eme_event_page_title_format' );
             $page_title = eme_replace_placeholders ( $stored_page_title_format, $event );
@@ -692,7 +716,7 @@ function eme_page_title($data) {
       
       if (eme_is_single_event_page()) {
          // single event page
-         $event_ID = intval($wp_query->query_vars['event_id']);
+         $event_ID = intval(get_query_var('event_id'));
          $event = eme_get_event ( $event_ID );
          if (isset( $event['event_page_title_format']) && ( $event['event_page_title_format'] != '' )) {
             $stored_page_title_format = $event['event_page_title_format'];
@@ -702,7 +726,7 @@ function eme_page_title($data) {
          $page_title = eme_replace_placeholders ( $stored_page_title_format, $event );
          return $page_title;
       } elseif (eme_is_single_location_page()) {
-         $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+         $location = eme_get_location ( intval(get_query_var('location_id')));
          $stored_page_title_format = get_option('eme_location_page_title_format' );
          $page_title = eme_replace_locations_placeholders ( $stored_page_title_format, $location );
          return $page_title;
@@ -717,17 +741,15 @@ function eme_page_title($data) {
 }
 
 function eme_html_title($data) {
-   global $wp_query;
-
    //$events_page_id = get_option('eme_events_page' );
    if (eme_is_events_page()) {
-      if (isset ( $wp_query->query_vars['calendar_day'] ) && $wp_query->query_vars['calendar_day'] != '') {
+      if (get_query_var('calendar_day')) {
          
-         $date = eme_sanitize_request($wp_query->query_vars['calendar_day']);
+         $date = eme_sanitize_request(get_query_var('calendar_day'));
          $events_N = eme_events_count_for ( $date );
          
          if ($events_N == 1) {
-            $events = eme_get_events ( 0, eme_sanitize_request($wp_query->query_vars['calendar_day']));
+            $events = eme_get_events ( 0, eme_sanitize_request(get_query_var('calendar_day')));
             $event = $events[0];
             $stored_html_title_format = get_option('eme_event_html_title_format' );
             $html_title = eme_strip_tags(eme_replace_placeholders ( $stored_html_title_format, $event ));
@@ -736,13 +758,13 @@ function eme_html_title($data) {
       }
       if (eme_is_single_event_page()) {
          // single event page
-         $event_ID = intval($wp_query->query_vars['event_id']);
+         $event_ID = intval(get_query_var('event_id'));
          $event = eme_get_event ( $event_ID );
          $stored_html_title_format = get_option('eme_event_html_title_format' );
          $html_title = eme_strip_tags(eme_replace_placeholders ( $stored_html_title_format, $event ));
          return $html_title;
       } elseif (eme_is_single_location_page()) {
-         $location = eme_get_location ( intval($wp_query->query_vars['location_id']));
+         $location = eme_get_location ( intval(get_query_var('location_id')));
          $stored_html_title_format = get_option('eme_location_html_title_format' );
          $html_title = eme_strip_tags(eme_replace_locations_placeholders ( $stored_html_title_format, $location ));
          return $html_title;
@@ -762,12 +784,11 @@ add_filter ( 'single_post_title', 'eme_html_title' );
 add_filter ( 'the_title', 'eme_page_title' );
 
 function eme_template_redir() {
-   global $wp_query;
 # We need to catch the request as early as possible, but
 # since it needs to be working for both permalinks and normal,
 # I can't use just any action hook. parse_query seems to do just fine
-   if (isset ( $wp_query->query_vars['event_id'])) {
-      $event_id = intval($wp_query->query_vars['event_id']);
+   if (get_query_var('event_id')) {
+      $event_id = intval(get_query_var('event_id'));
       if (!eme_check_event_exists($event_id)) {
 //         header('Location: '.home_url('404.php'));
          status_header(404);
@@ -776,8 +797,8 @@ function eme_template_redir() {
          exit;
       }
    }
-   if (isset ( $wp_query->query_vars['location_id'])) {
-      $location_id = intval($wp_query->query_vars['location_id']);
+   if (get_query_var('location_id')) {
+      $location_id = intval(get_query_var('location_id'));
       if (!eme_check_location_exists($location_id)) {
 //         header('Location: '.home_url('404.php'));
          status_header(404);
@@ -790,26 +811,25 @@ function eme_template_redir() {
    // Enqueing jQuery script to make sure it's loaded
    wp_enqueue_script ( 'jquery' );
 }
-//add_action( 'parse_query', 'eme_redir_nonexisting' );
-add_action( 'template_redirect', 'eme_template_redir' );
 
 // filter out the events page in the get_pages call
 function eme_filter_get_pages($data) {
-   $output = array ();
+   //$output = array ();
    $events_page_id = get_option('eme_events_page' );
-   for($i = 0; $i < count ( $data ); ++ $i) {
-      if(isset($data[$i])) {
-         if ($data[$i]->ID == $events_page_id) {
-            $list_events_page = get_option('eme_list_events_page' );
-            if ($list_events_page) {
-               $output[] = $data[$i];
-            }
-         } else {
-            $output[] = $data[$i];
+   $list_events_page = get_option('eme_list_events_page' );
+   // if we want the page to be shown, just return everything unfiltered
+   if ($list_events_page) {
+      return $data;
+   } else {
+      foreach ($data as $key => $item) {
+         if ($item->ID == $events_page_id) {
+            //$output[] = $item;
+            unset($data[$key]);
          }
       }
+      //return $output;
+      return $data;
    }
-   return $output;
 }
 add_filter ( 'get_pages', 'eme_filter_get_pages' );
 
@@ -825,15 +845,12 @@ function exclude_this_page( $query ) {
       $query->set( 'post__not_in', array($events_page_id) );
    return $query;
 }
-// it works just fine, but then people can't disable comments on this page
-// TODO: until I figure this out, we put this in comment
-// add_action( 'pre_get_posts' ,'exclude_this_page' );
 
 // TEMPLATE TAGS
 
 // exposed function, for theme  makers
    //Added a category option to the get events list method and shortcode
-function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format = '', $echo = 1, $category = '',$showperiod = '', $long_events = 0, $author = '', $contact_person='', $paging=0, $location_id = "", $user_registered_only = 0, $show_ongoing=1, $link_showperiod=0, $notcategory = '') {
+function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format = '', $echo = 1, $category = '',$showperiod = '', $long_events = 0, $author = '', $contact_person='', $paging=0, $location_id = "", $user_registered_only = 0, $show_ongoing=1, $link_showperiod=0, $notcategory = '', $show_recurrent_events_once= 0, $template_id = 0, $template_id_header=0, $template_id_footer=0) {
    global $post;
    if ($limit === "") {
       $limit = get_option('eme_event_list_number_items' );
@@ -841,7 +858,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    if (strpos ( $limit, "=" )) {
       // allows the use of arguments without breaking the legacy code
       $eme_event_list_number_events=get_option('eme_event_list_number_items' );
-      $defaults = array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'echo' => 1 , 'category' => '', 'showperiod' => '', $author => '', $contact_person => '', 'paging'=>0, 'long_events' => 0, 'location_id' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '');
+      $defaults = array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'echo' => 1 , 'category' => '', 'showperiod' => '', $author => '', $contact_person => '', 'paging'=>0, 'long_events' => 0, 'location_id' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '', 'show_recurrent_events_once' => 0, 'template_id' => 0, 'template_id_header' => 0, 'template_id_footer' => 0);
       $r = wp_parse_args ( $limit, $defaults );
       extract ( $r );
       // for AND categories: the user enters "+" and this gets translated to " " by wp_parse_args
@@ -861,12 +878,33 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    if ($order != "DESC")
       $order = "ASC";
 
-   if ($format == '') {
-      // if the format is empty, we use the configured list format and add the configured headers and footers
-      $add_header_footer = true;
+   $eme_format_header="";
+   $eme_format_footer="";
+
+   if ($template_id) {
+      $format_arr = eme_get_template($template_id);
+      $format=$format_arr['format'];
+   }
+   if ($template_id_header) {
+      $format_arr = eme_get_template($template_id_header);
+      $format_header = $format_arr['format'];
+      $eme_format_header=eme_replace_placeholders($format_header);
+   }
+   if ($template_id_footer) {
+      $format_arr = eme_get_template($template_id_footer);
+      $format_footer = $format_arr['format'];
+      $eme_format_footer=eme_replace_placeholders($format_footer);
+   }
+   if (empty($format)) {
       $format = get_option('eme_event_list_item_format' );
-   } else {
-      $add_header_footer = false;
+      if (empty($eme_format_header)) {
+	      $eme_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
+	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : "<ul class='eme_events_list'>";
+      }
+      if (empty($eme_format_footer)) {
+	      $eme_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
+	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : "</ul>";
+      }
    }
 
    if ($limit>0 && $paging==1 && isset($_GET['eme_offset'])) {
@@ -969,9 +1007,9 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    }
    // We request $limit+1 events, so we know if we need to show the pagination link or not.
    if ($limit==0) {
-      $events = eme_get_events ( 0, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $extra_conditions );
+      $events = eme_get_events ( 0, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
    } else {
-      $events = eme_get_events ( $limit+1, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $extra_conditions );
+      $events = eme_get_events ( $limit+1, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
    }
    $events_count=count($events);
 
@@ -981,7 +1019,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       // for normal paging and there're no events, we go back to offset=0 and try again
       if ($events_count==0) {
          $offset=0;
-         $events = eme_get_events ( $limit+1, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $extra_conditions );
+         $events = eme_get_events ( $limit+1, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
          $events_count=count($events);
       }
       $prev_text=__('Previous page','eme');
@@ -990,13 +1028,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $this_page_url=get_permalink($post->ID);
       //$this_page_url=$_SERVER['REQUEST_URI'];
       // remove the offset info
-      $this_page_url= preg_replace("/\&eme_offset=-?\d+/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+$/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+\&(.*)/","?$1",$this_page_url);
-      if (stristr($this_page_url, "?"))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
+      $this_page_url= remove_query_arg('eme_offset',$this_page_url);
 
       // we add possible fields from the filter section
       $eme_filters["eme_eventAction"]=1;
@@ -1008,8 +1040,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          if (isset($eme_filters[$key])) {
             # if you selected multiple items, $item is an array, but rawurlencode needs a string
             if (is_array($item)) $item=join(',',eme_sanitize_request($item));
-            $this_page_url.=$joiner.rawurlencode($key)."=".rawurlencode($item);
-            $joiner = "&amp;";
+            $this_page_url=add_query_arg(array($key=>$item),$this_page_url);
          }
       }
 
@@ -1020,8 +1051,8 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $backward = $offset - $limit;
          if ($backward < 0)
             $left_nav_hidden_class="style='visibility:hidden;'";
-         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$backward'>&lt;&lt; $prev_text</a>";
-         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$forward'>$next_text &gt;&gt;</a>";
+         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url)."'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url)."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
       if ($events_count <= $limit && $offset>0) {
@@ -1030,25 +1061,19 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          if ($backward < 0)
             $left_nav_hidden_class="style='visibility:hidden;'";
          $right_nav_hidden_class="style='visibility:hidden;'";
-         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$backward'>&lt;&lt; $prev_text</a>";
-         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='" . $this_page_url.$joiner."eme_offset=$forward'>$next_text &gt;&gt;</a>";
+         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url) ."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
    }
    if ($paging==1 && $limit==0) {
       $this_page_url=$_SERVER['REQUEST_URI'];
       // remove the offset info
-      $this_page_url= preg_replace("/\&eme_offset=-?\d+/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+$/","",$this_page_url);
-      $this_page_url= preg_replace("/\?eme_offset=-?\d+\&(.*)/","?$1",$this_page_url);
-      if (stristr($this_page_url, "?"))
-         $joiner = "&amp;";
-      else
-         $joiner = "?";
+      $this_page_url= remove_query_arg('eme_offset',$this_page_url);
       if ($prev_text != "")
-         $pagination_top.= "<a class='eme_nav_left' href='" . $this_page_url.$joiner."eme_offset=$prev_offset'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$prev_offset),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
       if ($next_text != "")
-         $pagination_top.= "<a class='eme_nav_right' href='" . $this_page_url.$joiner."eme_offset=$next_offset'>$next_text &gt;&gt;</a>";
+         $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$next_offset),$this_page_url) ."'>$next_text &gt;&gt;</a>";
       $pagination_top.= "<span class='eme_nav_center'>$scope_text</span>";
    }
    $pagination_top.= "</div>";
@@ -1132,19 +1157,9 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       } // end if (! empty ( $showperiod )) {
 
       //Add headers and footers to output
-      if( $add_header_footer ){
-         $eme_event_list_item_format_header = get_option('eme_event_list_item_format_header' );
-         $eme_event_list_item_format_header = ( $eme_event_list_item_format_header != '' ) ? $eme_event_list_item_format_header : "<ul class='eme_events_list'>";
-         $eme_event_list_item_format_footer = get_option('eme_event_list_item_format_footer' );
-         $eme_event_list_item_format_footer = ( $eme_event_list_item_format_footer != '' ) ? $eme_event_list_item_format_footer : "</ul>";
-         $output =  $eme_event_list_item_format_header .  $output . $eme_event_list_item_format_footer;
-      }
+      $output =  $eme_format_header .  $output . $eme_format_footer;
    } else {
-      if( $add_header_footer ){
-         $output = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
-      } else {
-         $output = get_option('eme_no_events_message');
-      }
+      $output = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
    }
 
    // add the pagination if needed
@@ -1160,7 +1175,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
 
 function eme_get_events_list_shortcode($atts) {
    $eme_event_list_number_events=get_option('eme_event_list_number_items' );
-   extract ( shortcode_atts ( array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'category' => '', 'showperiod' => '', 'author' => '', 'contact_person' => '', 'paging' => 0, 'long_events' => 0, 'location_id' => 0, 'user_registered_only' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '' ), $atts ) );
+   extract ( shortcode_atts ( array ('limit' => $eme_event_list_number_events, 'scope' => 'future', 'order' => 'ASC', 'format' => '', 'category' => '', 'showperiod' => '', 'author' => '', 'contact_person' => '', 'paging' => 0, 'long_events' => 0, 'location_id' => 0, 'user_registered_only' => 0, 'show_ongoing' => 1, 'link_showperiod' => 0, 'notcategory' => '', 'show_recurrent_events_once' => 0, 'template_id' => 0, 'template_id_header' => 0, 'template_id_footer' => 0 ), $atts ) );
 
    // the filter list overrides the settings
    if (isset($_REQUEST['eme_eventAction']) && $_REQUEST['eme_eventAction'] == 'filter') {
@@ -1189,29 +1204,34 @@ function eme_get_events_list_shortcode($atts) {
       }
    }
 
+   // if format is given as argument, sometimes people need url-encoded strings inside so wordpress doesn't get confused, so we decode them here again
+   $format = urldecode($format);
    // for format: sometimes people want to give placeholders as options, but when using the shortcode inside
-   // another (e.g. when putting[events_list format="#_EVENTNAME"] inside the "display single event" setting,
+   // another (e.g. when putting[eme_events format="#_EVENTNAME"] inside the "display single event" setting,
    // the replacement of the placeholders happens too soon (placeholders get replaced first, before any other
    // shortcode is interpreted). So we add the option that people can use "#OTHER_", and we replace this with
    // "#_" here
    $format = preg_replace('/#OTHER/', "#", $format);
-   $result = eme_get_events_list ( $limit,$scope,$order,$format,0,$category,$showperiod,$long_events,$author,$contact_person,$paging,$location_id,$user_registered_only,$show_ongoing,$link_showperiod,$notcategory );
+   $result = eme_get_events_list ( $limit,$scope,$order,$format,0,$category,$showperiod,$long_events,$author,$contact_person,$paging,$location_id,$user_registered_only,$show_ongoing,$link_showperiod,$notcategory,$show_recurrent_events_once,$template_id,$template_id_header,$template_id_footer);
    return $result;
 }
-add_shortcode ( 'events_list', 'eme_get_events_list_shortcode' );
 
-function eme_display_single_event($event_id) {
+function eme_display_single_event($event_id,$template_id=0) {
    $event = eme_get_event ( intval($event_id) );
-   $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+   if ($template_id) {
+      $format_arr = eme_get_template($template_id);
+      $single_event_format=$format_arr['format'];
+   } else {
+      $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+   }
    $page_body = eme_replace_placeholders ($single_event_format, $event);
    return $page_body;
 }
 
 function eme_display_single_event_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id'=>''), $atts ) );
-   return eme_display_single_event($id);
+   extract ( shortcode_atts ( array ('id'=>'','template_id'=>0), $atts ) );
+   return eme_display_single_event($id,$template_id);
 }
-add_shortcode('display_single_event', 'eme_display_single_event_shortcode');
 
 function eme_get_events_page($justurl = 0, $echo = 1, $text = '') {
    if (strpos ( $justurl, "=" )) {
@@ -1245,7 +1265,6 @@ function eme_get_events_page_shortcode($atts) {
    $result = eme_get_events_page ( "justurl=$justurl&text=$text&echo=0" );
    return $result;
 }
-add_shortcode ( 'events_page', 'eme_get_events_page_shortcode' );
 
 // API function
 function eme_are_events_available($scope = "future",$order = "ASC", $location_id = "", $category = '', $author = '', $contact_person = '') {
@@ -1274,8 +1293,8 @@ function eme_count_events_newer_than($scope) {
 }
 
 // main function querying the database event table
-function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset = 0, $location_id = "", $category = "", $author = "", $contact_person = "",  $show_ongoing=1, $notcategory = "", $extra_conditions = "") {
-   global $wpdb, $wp_query;
+function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset = 0, $location_id = "", $category = "", $author = "", $contact_person = "",  $show_ongoing=1, $notcategory = "", $show_recurrent_events_once=0, $extra_conditions = "") {
+   global $wpdb;
 
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
@@ -1591,8 +1610,8 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    }
    
    // when used inside a location description, you can use this_location to indicate the current location being viewed
-   if ($location_id == "this_location" && isset($wp_query->query_vars['location_id'])) {
-      $location_id = $wp_query->query_vars['location_id'];
+   if ($location_id == "this_location" && get_query_var('location_id')) {
+      $location_id = get_query_var('location_id');
    }
 
    if (is_numeric($location_id)) {
@@ -1730,29 +1749,26 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    }
    
    $where = implode ( " AND ", $conditions );
-   if ($where != "")
-      $where = " WHERE " . $where;
-   
-   $sql = "SELECT *, 
-         DATE_FORMAT(event_start_date, '%e') AS 'event_start_day',
-         DATE_FORMAT(event_start_date, '%m') AS 'event_start_month',
-         DATE_FORMAT(event_start_date, '%Y') AS 'event_start_year',
-         DATE_FORMAT(event_start_time, '%k') AS 'event_start_hh',
-         DATE_FORMAT(event_start_time, '%i') AS 'event_start_mm',
-         DATE_FORMAT(event_start_time, '%h:%i%p') AS 'event_start_12h_time', 
-         DATE_FORMAT(event_start_time, '%H:%i') AS 'event_start_24h_time', 
-         DATE_FORMAT(event_end_date, '%e') AS 'event_end_day',
-         DATE_FORMAT(event_end_date, '%m') AS 'event_end_month',
-         DATE_FORMAT(event_end_date, '%Y') AS 'event_end_year',
-         DATE_FORMAT(event_end_time, '%k') AS 'event_end_hh',
-         DATE_FORMAT(event_end_time, '%i') AS 'event_end_mm',
-         DATE_FORMAT(event_end_time, '%h:%i%p') AS 'event_end_12h_time',
-         DATE_FORMAT(event_end_time, '%H:%i') AS 'event_end_24h_time'
-         FROM $events_table
+   if ($show_recurrent_events_once) {
+      if ($where != "")
+         $where = " AND " . $where;
+       $sql = "SELECT * FROM $events_table
+         WHERE (recurrence_id>0 $where)
+         group by recurrence_id union all
+         SELECT * FROM $events_table
+         WHERE (recurrence_id=0 $where)
+         ORDER BY event_start_date $order , event_start_time $order
+         $limit 
+         $offset";
+   } else {
+      if ($where != "")
+         $where = " WHERE " . $where;
+      $sql = "SELECT * FROM $events_table
          $where
          ORDER BY event_start_date $order , event_start_time $order
          $limit 
          $offset";
+   }
    $wpdb->show_errors = true;
    $events = $wpdb->get_results ( $sql, ARRAY_A );
    $inflated_events = array ();
@@ -1767,19 +1783,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
             continue;
          }
          
-         if ($this_event['location_id'] ) {
-            $this_location = eme_get_location ( $this_event['location_id'] );
-            // add all location info to the event
-            foreach ($this_location as $key => $value) {
-               $this_event[$key] = $value;
-            }
-         }
-
-         $this_event['event_attributes'] = @unserialize($this_event['event_attributes']);
-         $this_event['event_attributes'] = (!is_array($this_event['event_attributes'])) ?  array() : $this_event['event_attributes'] ;
-         // don't forget the images (for the older events that didn't use the wp gallery)
-         if (empty($this_event['event_image_url']))
-            $this_event['event_image_url'] = eme_image_url_for_event($this_event);
+         $this_event = eme_get_event_data($this_event);
          array_push ( $inflated_events, $this_event );
       }
       if (has_filter('eme_event_list_filter')) $inflated_events=apply_filters('eme_event_list_filter',$inflated_events);
@@ -1813,22 +1817,7 @@ function eme_get_event($event_id) {
    $where = implode ( " AND ", $conditions );
    if ($where != "")
       $where = " WHERE " . $where;
-   $sql = "SELECT *, 
-         DATE_FORMAT(event_start_date, '%e') AS 'event_start_day',
-         DATE_FORMAT(event_start_date, '%m') AS 'event_start_month',
-         DATE_FORMAT(event_start_date, '%Y') AS 'event_start_year',
-         DATE_FORMAT(event_start_time, '%k') AS 'event_start_hh',
-         DATE_FORMAT(event_start_time, '%i') AS 'event_start_mm',
-         DATE_FORMAT(event_start_time, '%h:%i%p') AS 'event_start_12h_time', 
-         DATE_FORMAT(event_start_time, '%H:%i') AS 'event_start_24h_time', 
-         DATE_FORMAT(event_end_date, '%e') AS 'event_end_day',
-         DATE_FORMAT(event_end_date, '%m') AS 'event_end_month',
-         DATE_FORMAT(event_end_date, '%Y') AS 'event_end_year',
-         DATE_FORMAT(event_end_time, '%k') AS 'event_end_hh',
-         DATE_FORMAT(event_end_time, '%i') AS 'event_end_mm',
-         DATE_FORMAT(event_end_time, '%h:%i%p') AS 'event_end_12h_time',
-         DATE_FORMAT(event_end_time, '%H:%i') AS 'event_end_24h_time'
-      FROM $events_table
+   $sql = "SELECT * FROM $events_table
       $where";
    
    //$wpdb->show_errors(true);
@@ -1838,24 +1827,24 @@ function eme_get_event($event_id) {
       return eme_new_event();
    }
 
+   $event = eme_get_event_data($event);
+   return $event;
+}
+
+function eme_get_event_data($event) {
    if ($event['event_end_date'] == "") {
       $event['event_end_date'] = $event['event_start_date'];
-      $event['event_end_day'] = $event['event_start_day'];
-      $event['event_end_month'] = $event['event_start_month'];
-      $event['event_end_year'] = $event['event_start_year'];
    }
       
-   $location = eme_get_location ( $event['location_id'] );
-   // add all location info to the event
-   foreach ($location as $key => $value) {
-      $event[$key] = $value;
-   }
-
    $event['event_attributes'] = @unserialize($event['event_attributes']);
    $event['event_attributes'] = (!is_array($event['event_attributes'])) ?  array() : $event['event_attributes'] ;
 
+   $event['event_properties'] = @unserialize($event['event_properties']);
+   $event['event_properties'] = (!is_array($event['event_properties'])) ?  array() : $event['event_properties'] ;
+   $event['event_properties'] = eme_init_event_props($event['event_properties']);
+
    // don't forget the images (for the older events that didn't use the wp gallery)
-   if (empty($event['event_image_url']))
+   if (empty($event['event_image_id']) && empty($event['event_image_url']))
       $event['event_image_url'] = eme_image_url_for_event($event);
    if (has_filter('eme_event_filter')) $event=apply_filters('eme_event_filter',$event);
    return $event;
@@ -1889,56 +1878,57 @@ function eme_duplicate_event($event_id) {
          echo "<p>{$errorArray['error_str']}</p>";
       }  
       echo "</div>";
-      $scope = $_GET['scope'];
-      $offset = intval($_GET['offset']);
-      $order = $_GET['order'];
-      $events = eme_get_events ( $list_limit+1, $scope, $order, $offset );
-      eme_events_table ( $events, $list_limit, $title, $scope, $offset );
+      eme_events_table ();
    }
 }
 
-function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $o_category=0) {
+function eme_events_table($scope="future") {
 
+   //$list_limit = get_option('eme_events_admin_limit');
+   //if ($list_limit<5 || $list_limit>200) {
+   //   $list_limit=20;
+   //   update_option('eme_events_admin_limit',$list_limit);
+   //}
+   //$offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
+   //$events = eme_get_events ( $limit+1, "future", "ASC", $offset );
+   $o_category = isset($_GET['category']) ? intval($_GET['category']) : 0;
+   $status = isset($_GET['event_status']) ? intval($_GET['event_status']) : '';
+   if(!empty($status)) {
+      $extra_conditions = 'event_status = '.$status;
+   } else {
+         $extra_conditions = '';
+   }
+ 
+   //$events = eme_get_events ( 0, $scope, "ASC", $offset, "", $o_category, '', '', 1, '', 0, $extra_conditions);
+   $events = eme_get_events ( 0, $scope, "ASC", 0, "", $o_category, '', '', 1, '', 0, $extra_conditions);
    $events_count = count ( $events );
+   $scope_names = array ();
+   $scope_names['past'] = __ ( 'Past events', 'eme' );
+   $scope_names['all'] = __ ( 'All events', 'eme' );
+   $scope_names['future'] = __ ( 'Future events', 'eme' );
    ?>
 
 <div class="wrap">
 <div id="icon-events" class="icon32"><br />
 </div>
-<h2><?php echo $title; ?></h2>
+<h2><?php echo $scope_names[$scope]; ?></h2>
    <?php
       admin_show_warnings();
    ?>
    <!--<div id='new-event' class='switch-tab'><a href="<?php
-   echo admin_url("admin.php?page=events-manager&amp;action=edit_event")?>><?php
+   echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event")?>><?php
    _e ( 'New Event ...', 'eme' );
    ?></a></div>-->
    <?php
    
-   $scope_names = array ();
-   $scope_names['past'] = __ ( 'Past events', 'eme' );
-   $scope_names['all'] = __ ( 'All events', 'eme' );
-   $scope_names['future'] = __ ( 'Future events', 'eme' );
 
    $event_status_array = eme_status_array ();
 
    ?> 
       
+   <div class="tablenav">
    <form id="posts-filter" action="" method="get">
    <input type='hidden' name='page' value='events-manager' />
-   <ul class="subsubsub">
-      <li><?php _e ( 'Total', 'eme' ); ?> <span class="count">(<?php if ($events_count>$limit) echo $limit; else echo count($events); echo " ". __('Events','eme'); ?>)</span></li>
-   </ul>
-
-   <div class="tablenav">
-
-   <div class="alignleft actions">
-   <select name="action">
-   <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
-   <option value="deleteEvents"><?php _e ( 'Delete selected events','eme' ); ?></option>
-   <option value="deleteRecurrence"><?php _e ( 'Delete selected recurrent events','eme' ); ?></option>
-   </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
    <select name="scope">
    <?php
    foreach ( $scope_names as $key => $value ) {
@@ -1967,20 +1957,27 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    }
    ?>
    </select>
-
    <input id="post-query-submit" class="button-secondary" type="submit" value="<?php _e ( 'Filter' )?>" />
-   </div>
-   <div class="clear"></div>
+   </form>
+   <br />
+   <br />
 
-   </div>
    <?php
-   if (empty ( $events )) {
-      echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div>";
-      return;
-   }
+   if ($events_count>0) {
    ?>
-      
-   <table class="widefat">
+
+   <form id="eme_events_actions" action="" method="get">
+   <input type='hidden' name='page' value='events-manager' />
+   <select name="eme_admin_action">
+   <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
+   <option value="deleteEvents"><?php _e ( 'Delete selected events','eme' ); ?></option>
+   <option value="deleteRecurrence"><?php _e ( 'Delete selected recurrent events','eme' ); ?></option>
+   </select>
+   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
+   <div class="clear"></div>
+   <br />
+
+   <table class="widefat hover stripe" id="eme_admin_events">
    <thead>
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
@@ -1990,37 +1987,37 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
          <th><?php _e ( 'Status', 'eme' ); ?></th>
          <th></th>
          <th><?php _e ( 'Location', 'eme' ); ?></th>
-         <th colspan="2"><?php _e ( 'Date and time', 'eme' ); ?></th>
+         <th><?php _e ( 'Date and time', 'eme' ); ?></th>
+         <th></th>
       </tr>
    </thead>
    <tbody>
    <?php
-      $i = 1;
       foreach ( $events as $event ) {
-         if ($limit && $i>$limit)
-            break;
-         $class = ($i % 2) ? ' class="alternate"' : '';
-
          $localised_start_date = eme_localised_date($event['event_start_date']);
+         $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
+         $localised_end_time = eme_localised_time($event['event_end_time']);
+         $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
 
          $today = date ( "Y-m-d" );
          
-         if (isset($event['location_name']))
-            $location_summary = "<b>" . eme_trans_sanitize_html($event['location_name']) . "</b><br />" . eme_trans_sanitize_html($event['location_address']) . " - " . eme_trans_sanitize_html($event['location_town']);
-         else
-            $location_summary = "";
+         $location_summary = "";
+         if (isset($event['location_id']) && $event['location_id']) {
+            $location = eme_get_location ( $event['location_id'] );
+            $location_summary = "<b>" . eme_trans_sanitize_html($location['location_name']) . "</b><br />" . eme_trans_sanitize_html($location['location_address']) . " - " . eme_trans_sanitize_html($location['location_town']);
+         }
          
          $style = "";
          if ($event['event_start_date'] < $today)
             $style = "style ='background-color: #FADDB7;'";
          
      ?>
-     <tr <?php echo "$class $style"; ?>>
+     <tr <?php echo "$style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event['event_id']; ?>' name='events[]' /></td>
          <td><?php echo $event['event_id']; ?></td>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_event&amp;event_id=".$event['event_id']); ?>"><?php echo eme_trans_sanitize_html($event['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event['event_id']); ?>"><?php echo eme_trans_sanitize_html($event['event_name']); ?></a>
          </strong>
          <?php
          $categories = explode(',', $event['event_category_ids']);
@@ -2030,18 +2027,28 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
                echo "<br /><span title='".__('Category','eme').": ".eme_trans_sanitize_html($category['category_name'])."'>".eme_trans_sanitize_html($category['category_name'])."</span>";
          }
          if ($event['event_rsvp']) {
-            $printable_address = admin_url("/admin.php?page=eme-people&amp;action=booking_printable&amp;event_id=".$event['event_id']);
-            $csv_address = admin_url("/admin.php?page=eme-people&amp;action=booking_csv&amp;event_id=".$event['event_id']);
+            $booked_seats = eme_get_booked_seats($event['event_id']);
             $available_seats = eme_get_available_seats($event['event_id']);
             $pending_seats = eme_get_pending_seats($event['event_id']);
             $total_seats = $event['event_seats'];
+            if (eme_is_multi($event['event_seats'])) {
+               $available_seats_string = $available_seats.' ('.eme_convert_array2multi(eme_get_available_multiseats($event['event_id'])).')';
+               $pending_seats_string = $pending_seats.' ('.eme_convert_array2multi(eme_get_pending_multiseats($event['event_id'])).')';
+               $total_seats_string = eme_get_multitotal($total_seats) .' ('.$event['event_seats'].')';
+            } else {
+               $available_seats_string = $available_seats;
+               $pending_seats_string = $pending_seats;
+               $total_seats_string = $total_seats;
+            }
             if ($pending_seats >0)
-               echo "<br />".__('RSVP Info: ','eme').__('Free: ','eme' ).$available_seats.", ".__('Pending: ','eme').$pending_seats.", ".__('Max: ','eme').$total_seats;
+               echo "<br />".__('RSVP Info: ','eme').__('Free: ','eme' ).$available_seats_string.", ".__('Pending: ','eme').$pending_seats_string.", ".__('Max: ','eme').$total_seats_string;
             else
-               echo "<br />".__('RSVP Info: ','eme').__('Free: ','eme' ).$available_seats.", ".__('Max: ','eme').$total_seats;
-            if ($total_seats!=$available_seats) {
-               echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
-               echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
+               echo "<br />".__('RSVP Info: ','eme').__('Free: ','eme' ).$available_seats_string.", ".__('Max: ','eme').$total_seats_string;
+            if ($booked_seats>0) {
+               $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
+               $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
+               echo " (<a id='booking_printable_".$event['event_id']."' href='$printable_address'>".__('Printable view','eme')."</a>)";
+               echo " (<a id='booking_csv_".$event['event_id']."' href='$csv_address'>".__('CSV export','eme')."</a>)";
             }
          }
 
@@ -2053,21 +2060,24 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             echo $event_status_array[$event['event_status']];
             $event_url = eme_event_url($event);
             if ($event['event_status'] == STATUS_DRAFT)
-               echo "<br /> <a target='' href='$event_url'>".__('Preview event','eme')."</a>";
+               echo "<br /> <a href='$event_url'>".__('Preview event','eme')."</a>";
             else
-               echo "<br /> <a target='' href='$event_url'>".__('View event','eme')."</a>";
+               echo "<br /> <a href='$event_url'>".__('View event','eme')."</a>";
          }
          ?> 
          </td>
          <td>
-         <a href="<?php echo admin_url("admin.php?page=events-manager&amp;action=duplicate_event&amp;event_id=".$event['event_id']); ?>" title="<?php _e ( 'Duplicate this event', 'eme' ); ?>"><strong>+</strong></a>
+         <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=duplicate_event&amp;event_id=".$event['event_id']); ?>" title="<?php _e ( 'Duplicate this event', 'eme' ); ?>"><strong>+</strong></a>
          </td>
          <td>
              <?php echo $location_summary; ?>
          </td>
-         <td>
+         <td data-sort="<?php echo $startstring; ?>">
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date!=$localised_start_date) echo " - " . $localised_end_date; ?><br />
-            <?php echo substr ( $event['event_start_time'], 0, 5 ) . " - " . substr ( $event['event_end_time'], 0, 5 ); ?>
+            <?php if ($event['event_properties']['all_day']==1)
+                     _e('All day','eme');
+                  else
+                     echo "$localised_start_time - $localised_end_time"; ?>
          </td>
          <td>
              <?php
@@ -2076,14 +2086,13 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
             ?>
                <b><?php echo $recurrence_desc; ?>
             <br />
-            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php _e ( 'Reschedule', 'eme' ); ?></a></b>
+            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php _e ( 'Reschedule', 'eme' ); ?></a></b>
             <?php
             }
             ?>
          </td>
    </tr>
    <?php
-      $i++;
    }
    ?>
    
@@ -2093,24 +2102,54 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
    </form>
 
 <?php
-   if ($events_count > $limit) {
-      $forward = $offset + $limit;
-      $backward = $offset - $limit;
-      echo "<div id='events-pagination'> ";
-      echo "<a style='float: right' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$forward")."'>&gt;&gt;</a>";
-      if ($backward >= 0)
-         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
-      echo "</div>";
+   if (0) {
+      if ($events_count > $limit) {
+         $forward = $offset + $limit;
+         $backward = $offset - $limit;
+         echo "<div id='events-pagination'> ";
+         echo "<a style='float: right' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$forward")."'>&gt;&gt;</a>";
+         if ($backward >= 0)
+            echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
+         echo "</div>";
+      }
+      if ($events_count <= $limit && $offset>0) {
+         $backward = $offset - $limit;
+         echo "<div id='events-pagination'> ";
+         if ($backward >= 0)
+            echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
+         echo "</div>";
+      }
    }
-   if ($events_count <= $limit && $offset>0) {
-      $backward = $offset - $limit;
-      echo "<div id='events-pagination'> ";
-      if ($backward >= 0)
-         echo "<a style='float: left' href='" . admin_url("admin.php?page=events-manager&amp;scope=$scope&amp;category=$o_category&amp;offset=$backward")."'>&lt;&lt;</a>";
-      echo "</div>";
+   } else {
+      echo "<div id='events-admin-no-events'>" . get_option('eme_no_events_message') . "</div></div>";
    }
-   ?>
+?>
 
+   <script type="text/javascript">
+   jQuery(document).ready( function() {
+         jQuery('#eme_admin_events').dataTable( {
+<?php
+   $locale_code = get_locale();
+   $locale_file = EME_PLUGIN_DIR. "/js/jquery-datatables/i18n/$locale_code.json";
+   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datatables/i18n/$locale_code.json";
+   if ($locale_code != "en_US" && file_exists($locale_file)) {
+?>
+            "language": {
+                            "url": "<?php echo $locale_file_url; ?>"
+                        },
+<?php
+   }
+?>
+            "stateSave": true,
+            "pagingType": "full",
+            "columnDefs": [
+               { "sortable": false, "targets": [0,4,7] }
+            ]
+         } );
+   } );
+   </script>
+
+   </div>
 </div>
 <?php
 }
@@ -2118,32 +2157,38 @@ function eme_events_table($events, $limit, $title, $scope="future", $offset=0, $
 function eme_event_form($event, $title, $element) {
    
    admin_show_warnings();
-
+   global $plugin_page;
    $event_status_array = eme_status_array ();
    $saved_bydays = array();
    $currency_array = eme_currency_array();
 
    // let's determine if it is a new event, handy
+   // or, in case of validation errors, $event can already contain info, but no $element (=event id)
+   // so we create a new event and copy over the info into $event for the elements that do not exist
    if (! $element) {
       $is_new_event=1;
+      $new_event=eme_new_event();
+      $event = array_replace_recursive($new_event,$event);
    } else {
       $is_new_event=0;
    }
 
    $show_recurrent_form = 0;
-   if (isset($_GET['action']) && $_GET['action'] == "edit_recurrence") {
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edit_recurrence") {
       $pref = "recurrence";
-      $form_destination = "admin.php?page=events-manager&amp;action=update_recurrence&amp;recurrence_id=" . $element;
+      $form_destination = "admin.php?page=events-manager&amp;eme_admin_action=update_recurrence&amp;recurrence_id=" . $element;
       $saved_bydays = explode ( ",", $event['recurrence_byday'] );
       $show_recurrent_form = 1;
    } else {
       $pref = "event";
+      // even for new events, after the 'save' button is clicked, we want to go to the list of events
+      // so we use page=events-manager too, not page=eme-new_event
       if ($is_new_event)
-         $form_destination = "admin.php?page=eme-new_event&amp;action=insert_event";
+         $form_destination = "admin.php?page=events-manager&amp;eme_admin_action=insert_event";
       else
-         $form_destination = "admin.php?page=events-manager&amp;action=update_event&amp;event_id=" . $element;
+         $form_destination = "admin.php?page=events-manager&amp;eme_admin_action=update_event&amp;event_id=" . $element;
 
-      if ($event['recurrence_id']) {
+      if (isset($event['recurrence_id']) && $event['recurrence_id']) {
          # editing a single event of an recurrence: don't show the recurrence form
          $show_recurrent_form = 0;
       } else {
@@ -2157,68 +2202,57 @@ function eme_event_form($event, $title, $element) {
          $event["recurrence_interval"] = '';
          $event["recurrence_byweekno"] = '';
          $event["recurrence_byday"] = '';
+         $event["recurrence_specific_days"] = '';
       }
    }
-   
-   if ($event['event_start_12h_time'] == "")
-         $event['event_start_12h_time'] = date('h:iA');
-   if ($event['event_start_24h_time'] == "")
-         $event['event_start_24h_time'] = date('H:i');
-   if ($event['event_end_12h_time'] == "")
-         $event['event_end_12h_time'] = date('h:iA',time()+3600);
-   if ($event['event_end_24h_time'] == "")
-         $event['event_end_24h_time'] = date('H:i',time()+3600);
    
    if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
    if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
 
-   $freq_options = array ("daily" => __ ( 'Daily', 'eme' ), "weekly" => __ ( 'Weekly', 'eme' ), "monthly" => __ ( 'Monthly', 'eme' ) );
+   $freq_options = array ("daily" => __ ( 'Daily', 'eme' ), "weekly" => __ ( 'Weekly', 'eme' ), "monthly" => __ ( 'Monthly', 'eme' ), "specific" => __('Specific days', 'eme' ) );
    $days_names = array (1 => __ ( 'Mon' ), 2 => __ ( 'Tue' ), 3 => __ ( 'Wed' ), 4 => __ ( 'Thu' ), 5 => __ ( 'Fri' ), 6 => __ ( 'Sat' ), 7 => __ ( 'Sun' ) );
    $weekno_options = array ("1" => __ ( 'first', 'eme' ), '2' => __ ( 'second', 'eme' ), '3' => __ ( 'third', 'eme' ), '4' => __ ( 'fourth', 'eme' ), '5' => __ ( 'fifth', 'eme' ), '-1' => __ ( 'last', 'eme' ), "none" => __('Start day') );
    
-   // for new events, check the setting wether or not to enable RSVP
-   if ($is_new_event) {
-      $event_number_spaces=intval(get_option('eme_rsvp_default_number_spaces'));
-      $event_RSVP_checked = (get_option('eme_rsvp_reg_for_new_events')) ? "checked='checked'" : "";
-      $registration_wp_users_only = (get_option('eme_rsvp_registered_users_only')) ? "checked='checked'" : "";
-      $registration_requires_approval = (get_option('eme_rsvp_require_approval')) ? "checked='checked'" : "";
+   $event_RSVP_checked = ($event['event_rsvp']) ? "checked='checked'" : "";
+   $event_number_spaces=$event['event_seats'];
+   $registration_wp_users_only = ($event['registration_wp_users_only']) ? "checked='checked'" : "";
+   $registration_requires_approval = ($event['registration_requires_approval']) ? "checked='checked'" : "";
 
-      $use_paypal_checked = (get_option('eme_paypal_business')) ? "checked='checked'" : '';
-      $use_google_checked = (get_option('eme_google_merchant_id')) ? "checked='checked'" : '';
-      $use_2co_checked = (get_option('eme_2co_business')) ? "checked='checked'" : '';
-      $use_webmoney_checked = (get_option('eme_webmoney_purse')) ? "checked='checked'" : '';
+   $use_paypal_checked = ($event['use_paypal']) ? "checked='checked'" : "";
+   $use_google_checked = ($event['use_google']) ? "checked='checked'" : "";
+   $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : "";
+   $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : "";
+   $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : "";
 
-   } else {
-      $event['event_rsvp'] ? $event_RSVP_checked = "checked='checked'" : $event_RSVP_checked = '';
-      $event_number_spaces=$event['event_seats'];
-      $event['registration_wp_users_only'] ? $registration_wp_users_only = "checked='checked'" : $registration_wp_users_only = '';
-      $event['registration_requires_approval'] ? $registration_requires_approval = "checked='checked'" : $registration_requires_approval = '';
+   // all properties
+   $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
+   $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
+   $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 
-      $use_paypal_checked = ($event['use_paypal']) ? "checked='checked'" : '';
-      $use_google_checked = ($event['use_google']) ? "checked='checked'" : '';
-      $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : '';
-      $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : '';
-   }
-   
-   ob_start();
-// the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepicker will fill in also to "to_submit" form fields
+// the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
    ?>
 
 <script type="text/javascript">
- $j_eme_event(document).ready( function() {
-   var dateFormat = $j_eme_event("#localised-start-date").datepicker( "option", "dateFormat" );
-   $j_eme_event("#localised-start-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-end-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-rec-start-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-rec-end-date").datepicker("option", "dateFormat", "yy-mm-dd" );
-   $j_eme_event("#localised-start-date").datepicker("setDate", "<?php echo $event['event_start_date']; ?>");
-   $j_eme_event("#localised-end-date").datepicker("setDate", "<?php echo $event['event_end_date']; ?>");
-   $j_eme_event("#localised-rec-start-date").datepicker("setDate", "<?php echo $event['recurrence_start_date']; ?>");
-   $j_eme_event("#localised-rec-end-date").datepicker("setDate", "<?php echo $event['recurrence_end_date']; ?>");
-   $j_eme_event("#localised-start-date").datepicker("option", "dateFormat", dateFormat );
-   $j_eme_event("#localised-end-date").datepicker("option", "dateFormat", dateFormat );
-   $j_eme_event("#localised-rec-start-date").datepicker("option", "dateFormat",dateFormat );
-   $j_eme_event("#localised-rec-end-date").datepicker("option", "dateFormat", dateFormat );
+   jQuery(document).ready( function() {
+   var dateFormat = jQuery("#localised-start-date").datepick( "option", "dateFormat" );
+
+   var loc_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_start_date']); ?>);
+   jQuery("#localised-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_start_date));
+
+   var loc_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_end_date']); ?>);
+   jQuery("#localised-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_end_date));
+   <?php if ($pref == "recurrence" && $event['recurrence_freq'] == 'specific') { ?>
+      var mydates = [];
+      <?php foreach (explode(',',$event['recurrence_specific_days']) as $specific_day) { ?>
+	      mydates.push(jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$specific_day); ?>));
+      <?php } ?>
+      jQuery("#localised-rec-start-date").datepick("setDate", mydates);
+   <?php } else { ?>
+      var rec_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_start_date']); ?>);
+      jQuery("#localised-rec-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_start_date));
+   <?php } ?>
+   var rec_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_end_date']); ?>);
+   jQuery("#localised-rec-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_end_date));
  });
 </script>
 
@@ -2231,7 +2265,7 @@ function eme_event_form($event, $title, $element) {
             ?>
          <p id='recurrence_warning'>
             <?php
-               if (isset ( $_GET['action'] ) && ($_GET['action'] == 'edit_recurrence')) {
+               if (isset ( $_GET['eme_admin_action'] ) && ($_GET['eme_admin_action'] == 'edit_recurrence')) {
                   _e ( 'WARNING: This is a recurrence.', 'eme' )?>
             <br />
             <?php
@@ -2303,6 +2337,7 @@ function eme_event_form($event, $title, $element) {
                                  <?php eme_option_items ( $freq_options, $event['recurrence_freq'] ); ?>
                               </select>
                            </p>
+			   <div id="recurrence-intervals">
                            <p>
                               <?php _e ( 'Every', 'eme' )?>
                               <input id="recurrence-interval" name='recurrence_interval'
@@ -2336,10 +2371,12 @@ function eme_event_form($event, $title, $element) {
                               <?php _e ( 'Day of month', 'eme' )?>
                               <br />
                               <?php _e ( 'If you use "Start day" as day of the month, the event start date will be used as a reference.', 'eme' )?>
-                              &nbsp;</p>
+                              &nbsp;
+                           </p>
+                           </div>
                         </div>
                         <p id="recurrence-tip">
-                           <?php _e ( 'Check if your event happens more than once according to a regular pattern', 'eme' )?>
+                           <?php _e ( 'Check if your event happens more than once.', 'eme' )?>
                         </p>
                         <p id="recurrence-tip-2">
                            <?php _e ( 'The event start and end date only define the duration of an event in case of a recurrence.', 'eme' )?>
@@ -2395,16 +2432,22 @@ function eme_event_form($event, $title, $element) {
                               <input id="approval_required-checkbox" name='registration_requires_approval' value='1' type='checkbox' <?php echo $registration_requires_approval; ?> />
                               <?php _e ( 'Require approval for registration','eme' ); ?>
                            <br />
+                              <input id="eme_prop_auto_approve" name='eme_prop_auto_approve' value='1' type='checkbox' <?php echo $eme_prop_auto_approve_checked; ?> />
+                              <?php _e ( 'Auto-approve registration upon payment','eme' ); ?>
+                           <br />
+                              <input id="eme_prop_ignore_pending" name='eme_prop_ignore_pending' value='1' type='checkbox' <?php echo $eme_prop_ignore_pending_checked; ?> />
+                              <?php _e ( 'Consider pending registrations as available seats for new bookings','eme' ); ?>
+                           <br />
                               <input id="wp_member_required-checkbox" name='registration_wp_users_only' value='1' type='checkbox' <?php echo $registration_wp_users_only; ?> />
                               <?php _e ( 'Require WP membership for registration','eme' ); ?>
                            <br /><table>
                               <tr>
                               <td><?php _e ( 'Spaces','eme' ); ?> :</td>
-                              <td><input id="seats-input" type="text" name="event_seats" size='5' value="<?php echo $event_number_spaces; ?>" /></td>
+                              <td><input id="seats-input" type="text" name="event_seats" maxlength='125' title="<?php _e('For multiseat events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event_number_spaces; ?>" /></td>
                               </tr>
                               <tr>
                               <td><?php _e ( 'Price: ','eme' ); ?></td>
-                              <td><input id="price" type="text" name="price" maxlength='25' title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" /></td>
+                              <td><input id="price" type="text" name="price" maxlength='125' title="<?php _e('For multiprice events, seperate the values by \'||\'','eme'); ?>" value="<?php echo $event['price']; ?>" /></td>
                               </tr>
                               <tr>
                               <td><?php _e ( 'Currency: ','eme' ); ?></td>
@@ -2422,6 +2465,14 @@ function eme_event_form($event, $title, $element) {
                                  }
                               ?>
                               </select></td>
+                              </tr>
+                              <tr>
+                              <td><?php _e ( 'Max number of spaces to book','eme' ); ?></td>
+                              <td><input id="eme_prop_max_allowed" type="text" name="eme_prop_max_allowed" maxlength='125' title="<?php echo __('The maximum number of spaces a person can book in one go.','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['max_allowed']; ?>" /></td>
+                              </tr>
+                              <tr>
+                              <td><?php _e ( 'Min number of spaces to book','eme' ); ?></td>
+                              <td><input id="eme_prop_min_allowed" type="text" name="eme_prop_min_allowed" maxlength='125' title="<?php echo __('The minimum number of spaces a person can book in one go (it can be 0, for e.g. just an attendee list).','eme').' '.__('(is multi-compatible)','eme'); ?>" value="<?php echo $event['event_properties']['min_allowed']; ?>" /></td>
                               </tr></table>
                            <br />
                               <?php _e ( 'Allow RSVP until ','eme' ); ?>
@@ -2438,6 +2489,7 @@ function eme_event_form($event, $title, $element) {
                               <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout','eme' ); ?><br />
                               <input id="webmoney-checkbox" name='use_webmoney' value='1' type='checkbox' <?php echo $use_webmoney_checked; ?> /><?php _e ( 'Webmoney','eme' ); ?><br />
                               <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout','eme' ); ?><br />
+                              <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'First Data','eme' ); ?><br />
                            </p>
                            <?php if ($event['event_rsvp']) {
                                  eme_bookings_compact_table ( $event['event_id'] );
@@ -2464,7 +2516,7 @@ function eme_event_form($event, $title, $element) {
                            $selected = "";
                         }
                      ?>
-<input type="checkbox" name="event_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo $category['category_name']; ?><br />
+            <input type="checkbox" name="event_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo $category['category_name']; ?><br />
                      <?php
                      }
                      ?>
@@ -2476,6 +2528,56 @@ function eme_event_form($event, $title, $element) {
             <!-- END OF SIDEBAR -->
             <div id="post-body">
                <div id="post-body-content" class="meta-box-sortables">
+               <?php  if($plugin_page === 'eme-new_event' && get_option("eme_fb_app_id")) { ?>
+                  <div id="fb-root"></div>
+                  <script>
+                    window.fbAsyncInit = function() {
+                      // init the FB JS SDK
+                      FB.init({
+                        appId      : '<?php echo get_option("eme_fb_app_id");?>',// App ID from the app dashboard
+                        channelUrl : '<?php echo plugins_url( "eme_fb_channel.php", __FILE__ )?>', // Channel file for x-domain comms
+                        status     : true,  // Check Facebook Login status
+                        xfbml      : true   // Look for social plugins on the page
+                      });
+
+                      // Additional initialization code such as adding Event Listeners goes here
+                     FB.Event.subscribe('auth.authResponseChange', function(response) {
+                        if (response.status === 'connected') {
+                           jQuery('#fb-import-box').show();
+                         } else if (response.status === 'not_authorized') {
+                           jQuery('#fb-import-box').hide();
+                         } else {
+                           jQuery('#fb-import-box').hide();
+                         }
+                        });
+                     };
+
+
+                     // Load the SDK asynchronously
+                     (function(d, s, id){
+                       var js, fjs = d.getElementsByTagName(s)[0];
+                       if (d.getElementById(id)) {return;}
+                       js = d.createElement(s); js.id = id;
+                       js.src = "//connect.facebook.net/en_US/all.js";
+                       fjs.parentNode.insertBefore(js, fjs);
+                     }(document, 'script', 'facebook-jssdk'));
+
+                  </script>
+                  <fb:login-button id="fb-login-button" width="200" autologoutlink="true" scope="user_events" max-rows="1"></fb:login-button>
+                  <br>
+                  <br>
+                  <div id='fb-import-box' style='display:none'>
+                     Facebook event url : <input type='text' id='fb-event-url' class='widefat' /> 
+                     <br>
+                     <br>
+
+                     <input type='button' class='button' value='Import' id='import-fb-event-btn' />
+
+                     <br>
+                     <br>
+                  </div>
+               <?php } ?>
+
                <?php 
                $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
                foreach ($screens as $screen) {
@@ -2489,8 +2591,10 @@ function eme_event_form($event, $title, $element) {
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_recorded_ok_html','eme_closed');
                   if ($event['event_respondent_email_body']=="")
                      add_filter('postbox_classes_'.$screen.'_div_event_respondent_email_body','eme_closed');
-                  if ($event['event_registration_recorded_ok_html']=="")
+                  if ($event['event_registration_pending_email_body']=="")
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_pending_email_body','eme_closed');
+                  if ($event['event_registration_updated_email_body']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_registration_updated_email_body','eme_closed');
                   if ($event['event_registration_form_format']=="")
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_form_format','eme_closed');
                }
@@ -2504,19 +2608,19 @@ function eme_event_form($event, $title, $element) {
                </div>
                <p class="submit">
                   <?php if ($is_new_event) { ?>
-                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Save' ); ?> &raquo;" />
+                     <input type="submit" class="button-primary" id="event_update_button" name="event_update_button" value="<?php _e ( 'Save' ); ?> &raquo;" />
                   <?php } else { 
                      $delete_button_text=__ ( 'Are you sure you want to delete this event?', 'eme' );
                      $deleteRecurrence_button_text=__ ( 'Are you sure you want to delete this recurrence?', 'eme' );
                   ?>
                      <?php if ($pref == "recurrence") { ?>
-                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Update' ); ?> &raquo;" />
+                     <input type="submit" class="button-primary" id="event_update_button" name="event_update_button" value="<?php _e ( 'Update' ); ?> &raquo;" />
                      <?php } else { ?>
-                     <input type="submit" id="event_update_button" name="event_update_button" value="<?php _e ( 'Update' ); ?> &raquo;" />
+                     <input type="submit" class="button-primary" id="event_update_button" name="event_update_button" value="<?php _e ( 'Update' ); ?> &raquo;" />
                      <?php } ?>
-                     <input type="submit" id="event_delete_button" name="event_delete_button" value="<?php _e ( 'Delete Event', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $delete_button_text; ?>');" />
+                     <input type="submit" class="button-primary" id="event_delete_button" name="event_delete_button" value="<?php _e ( 'Delete Event', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $delete_button_text; ?>');" />
                      <?php if ($event['recurrence_id']) { ?>
-                     <input type="submit" id="event_deleteRecurrence_button" name="event_deleteRecurrence_button" value="<?php _e ( 'Delete Recurrence', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $deleteRecurrence_button_text; ?>');" />
+                     <input type="submit" class="button-primary" id="event_deleteRecurrence_button" name="event_deleteRecurrence_button" value="<?php _e ( 'Delete Recurrence', 'eme' ); ?> &raquo;" onclick="return areyousure('<?php echo $deleteRecurrence_button_text; ?>');" />
                      <?php } ?> 
                   <?php } ?>
                </p>
@@ -2527,45 +2631,46 @@ function eme_event_form($event, $title, $element) {
       <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
    </form>
 <?php
-   echo ob_get_clean();
 }
 
 function eme_validate_event($event) {
-   global $required_fields;
-   $errors = array ();
-   foreach ( $required_fields as $field ) {
-      if ($event[$field] == "") {
-         $errors[] = $field;
-      }
-   }
-   $error_message = "";
-   if (count ( $errors ) > 0)
-      $error_message = __ ( 'Missing fields: ','eme' ) . implode ( ", ", $errors ) . ". ";
+   $required_fields = array("event_name" => __('The event name', 'eme'));
+   $troubles = "";
+   if (empty($event['event_name'])) {
+      $troubles .= "<li>".$required_fields['event_name'].__(" is missing!", "eme")."</li>";
+   }  
    if (isset($_POST['repeated_event']) && $_POST['repeated_event'] == "1" && (!isset($_POST['recurrence_end_date']) || $_POST['recurrence_end_date'] == ""))
-      $error_message .= __ ( 'Since the event is repeated, you must specify an event date for the recurrence.', 'eme' );
-   if (isset($_FILES['event_image']) && ($_FILES['event_image']['size'] > 0) ) {
-      if (is_uploaded_file($_FILES['event_image']['tmp_name'])) {
-         $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
-         $maximum_size = get_option('eme_image_max_size');
-         if ($_FILES['event_image']['size'] > $maximum_size)
-               $error_message .= "<li>".__('The image file is too big! Maximum size:', 'eme')." $maximum_size</li>";
-         list($width, $height, $type, $attr) = getimagesize($_FILES['event_image']['tmp_name']);
-         $maximum_width = get_option('eme_image_max_width');
-         $maximum_height = get_option('eme_image_max_height');
-         if (($width > $maximum_width) || ($height > $maximum_height))
-               $error_message .= "<li>". __('The image is too big! Maximum size allowed:', 'eme')." $maximum_width x $maximum_height</li>";
-         if (($type!=1) && ($type!=2) && ($type!=3))
-                  $error_message .= "<li>".__('The image is in a wrong format!', 'eme')."</li>";
-      } else {
-	 $error_message .= "<li>".__('The image upload failed!', 'eme')."</li>";
-      }
+      $troubles .= "<li>".__ ( 'Since the event is repeated, you must specify an event date for the recurrence.', 'eme' )."</li>";
+
+   if (eme_is_multi($event['event_seats']) && !eme_is_multi($event['price']))
+      $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the price per category (multiprice) as well.', 'eme' )."</li>";
+   if (eme_is_multi($event['event_seats']) && eme_is_multi($event['price'])) {
+      $count1=count(eme_convert_multi2array($event['event_seats']));
+      $count2=count(eme_convert_multi2array($event['price']));
+      if ($count1 != $count2)
+         $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the exact same amount of prices (multiprice) as well.', 'eme' )."</li>";
    }
 
-   if ($error_message != "")
-      return $error_message;
-   else
-      return "OK";
+   $event_properties = unserialize($event['event_properties']);
+   if (eme_is_multi($event_properties['max_allowed']) && eme_is_multi($event['price'])) {
+      $count1=count(eme_convert_multi2array($event_properties['max_allowed']));
+      $count2=count(eme_convert_multi2array($event['price']));
+      if ($count1 != $count2)
+         $troubles .= "<li>".__ ( 'Since this is a multiprice event and you decided to limit the max amount of seats to book (for one booking) per price category, you must specify the exact same amount of "max seats to book" as you did for the prices.', 'eme' )."</li>";
+   }
+   if (eme_is_multi($event_properties['min_allowed']) && eme_is_multi($event['price'])) {
+      $count1=count(eme_convert_multi2array($event_properties['min_allowed']));
+      $count2=count(eme_convert_multi2array($event['price']));
+      if ($count1 != $count2)
+         $troubles .= "<li>".__ ( 'Since this is a multiprice event and you decided to limit the min amount of seats to book (for one booking) per price category, you must specify the exact same amount of "min seats to book" as you did for the prices.', 'eme' )."</li>";
+   }
 
+   if (empty($troubles)) {
+      return "OK";
+   } else {
+      $message = __('Ach, some problems here:', 'eme')."<ul>\n$troubles</ul>";
+      return $message; 
+   }
 }
 
 function eme_closed($data) {
@@ -2579,7 +2684,9 @@ function eme_admin_general_css() {
    if (file_exists($file_name)) {
       echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme.css' type='text/css'/>\n";
    }
+   echo "<link rel='stylesheet' href='".EME_PLUGIN_URL."js/jquery-datatables/css/jquery.dataTables.css' type='text/css'/>\n";
 }
+
 // General script to make sure hidden fields are shown when containing data
 function eme_admin_general_script() {
    eme_admin_general_css();
@@ -2588,22 +2695,28 @@ function eme_admin_general_script() {
 <script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.js" type="text/javascript"></script>
 <?php
    
+   // all the rest below is needed on 3 pages only (for now), so we return if not there
+   global $plugin_page;
+   if ( !in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
+      return;
+   }
+
    // check if the user wants AM/PM or 24 hour notation
    $time_format = get_option('time_format');
    $show24Hours = 'true';
-   if (preg_match ( "/a/i", $time_format ))
+   if (preg_match ( "/g|h/", $time_format ))
       $show24Hours = 'false';
    
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
    $locale_code = preg_replace( "/_/","-", $locale_code );
-   $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
-   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
+   $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
    // for english, no translation code is needed
    if (!file_exists($locale_file)) {
       $locale_code = substr ( $locale_code, 0, 2 );
-      $locale_file = EME_PLUGIN_DIR. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
-      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-ui-datepicker/i18n/jquery.ui.datepicker-$locale_code.js";
+      $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
    }
    if ($locale_code != "en_US" && file_exists($locale_file)) {
 ?>
@@ -2612,9 +2725,7 @@ function eme_admin_general_script() {
    }
 ?>
 <style type='text/css' media='all'>
-@import
-   "<?php echo EME_PLUGIN_URL; ?>js/jquery-ui-datepicker/ui.datepicker.css"
-   ;
+   @import "<?php echo EME_PLUGIN_URL; ?>js/jquery-datepick/jquery.datepick.css";
 </style>
 <script type="text/javascript">
    //<![CDATA[
@@ -2626,227 +2737,305 @@ function areyousure(message) {
    }
 }
  
-$j_eme_event=jQuery.noConflict();
-
 function updateIntervalDescriptor () { 
-   $j_eme_event(".interval-desc").hide();
+   jQuery(".interval-desc").hide();
    var number = "-plural";
-   if ($j_eme_event('input#recurrence-interval').val() == 1 || $j_eme_event('input#recurrence-interval').val() == "")
-   number = "-singular"
-   var descriptor = "span#interval-"+$j_eme_event("select#recurrence-frequency").val()+number;
-   $j_eme_event(descriptor).show();
+   if (jQuery('input#recurrence-interval').val() == 1 || jQuery('input#recurrence-interval').val() == "") {
+      number = "-singular";
+   }
+   var descriptor = "span#interval-"+jQuery("select#recurrence-frequency").val()+number;
+   jQuery(descriptor).show();
 }
 function updateIntervalSelectors () {
-   $j_eme_event('p.alternate-selector').hide();
-   $j_eme_event('p#'+ $j_eme_event('select#recurrence-frequency').val() + "-selector").show();
-   //$j_eme_event('p.recurrence-tip').hide();
-   //$j_eme_event('p#'+ $j_eme_event(this).val() + "-tip").show();
+   jQuery('p.alternate-selector').hide();
+   jQuery('p#'+ jQuery('select#recurrence-frequency').val() + "-selector").show();
+   //jQuery('p.recurrence-tip').hide();
+   //jQuery('p#'+ jQuery(this).val() + "-tip").show();
 }
 function updateShowHideRecurrence () {
-   if($j_eme_event('input#event-recurrence').attr("checked")) {
-      $j_eme_event("#event_recurrence_pattern").fadeIn();
-      $j_eme_event("div#div_recurrence_date").show();
-      $j_eme_event("p#recurrence-tip").hide();
-      $j_eme_event("p#recurrence-tip-2").show();
+   if(jQuery('input#event-recurrence').attr("checked")) {
+      jQuery("#event_recurrence_pattern").fadeIn();
+      jQuery("span#event-date-recursive-explanation").show();
+      jQuery("div#div_recurrence_date").show();
+      jQuery("p#recurrence-tip").hide();
+      jQuery("p#recurrence-tip-2").show();
    } else {
-      $j_eme_event("#event_recurrence_pattern").hide();
-      $j_eme_event("div#div_recurrence_date").hide();
-      $j_eme_event("p#recurrence-tip").show();
-      $j_eme_event("p#recurrence-tip-2").hide();
+      jQuery("#event_recurrence_pattern").hide();
+      jQuery("span#event-date-recursive-explanation").hide();
+      jQuery("div#div_recurrence_date").hide();
+      jQuery("p#recurrence-tip").show();
+      jQuery("p#recurrence-tip-2").hide();
+   }
+}
+
+function updateShowHideRecurrenceSpecificDays () {
+   if (jQuery('select#recurrence-frequency').val() == "specific") {
+      jQuery("div#recurrence-intervals").hide();
+      jQuery("input#localised-rec-end-date").hide();
+      jQuery("span#recurrence-dates-explanation").hide();
+      jQuery("span#recurrence-dates-explanation-specificdates").show();
+      jQuery("#localised-rec-start-date").datepick('option','multiSelect',999);
+   } else {
+      jQuery("div#recurrence-intervals").show();
+      jQuery("input#localised-rec-end-date").show();
+      jQuery("span#recurrence-dates-explanation").show();
+      jQuery("span#recurrence-dates-explanation-specificdates").hide();
+      jQuery("#localised-rec-start-date").datepick('option','multiSelect',0);
    }
 }
 
 function updateShowHideRsvp () {
-   if($j_eme_event('input#rsvp-checkbox').attr("checked")) {
-      $j_eme_event("div#rsvp-data").fadeIn();
+   if (jQuery('input#rsvp-checkbox').attr("checked")) {
+      jQuery("div#rsvp-data").fadeIn();
+      jQuery("div#div_event_contactperson_email_body").fadeIn();
+      jQuery("div#div_event_registration_recorded_ok_html").fadeIn();
+      jQuery("div#div_event_respondent_email_body").fadeIn();
+      jQuery("div#div_event_registration_pending_email_body").fadeIn();
+      jQuery("div#div_event_registration_updated_email_body").fadeIn();
+      jQuery("div#div_event_registration_form_format").fadeIn();
    } else {
-      $j_eme_event("div#rsvp-data").hide();
+      jQuery("div#rsvp-data").fadeOut();
+      jQuery("div#div_event_contactperson_email_body").fadeOut();
+      jQuery("div#div_event_registration_recorded_ok_html").fadeOut();
+      jQuery("div#div_event_respondent_email_body").fadeOut();
+      jQuery("div#div_event_registration_pending_email_body").fadeOut();
+      jQuery("div#div_event_registration_updated_email_body").fadeOut();
+      jQuery("div#div_event_registration_form_format").fadeOut();
    }
 }
 
-$j_eme_event(document).ready( function() {
-   locale_format = "ciao";
- 
-   $j_eme_event("#div_recurrence_date").hide();
-   $j_eme_event("#localised-start-date").show();
-   $j_eme_event("#localised-end-date").show();
+function updateShowHideTime () {
+   if (jQuery('input#eme_prop_all_day').attr("checked")) {
+      jQuery("div#div_event_time").hide();
+   } else {
+      jQuery("div#div_event_time").show();
+   }
+}
 
-   $j_eme_event("#start-date-to-submit").hide();
-   $j_eme_event("#end-date-to-submit").hide(); 
-   $j_eme_event("#rec-start-date-to-submit").hide();
-   $j_eme_event("#rec-end-date-to-submit").hide(); 
+function updateShowHideCustomReturnPage () {
+   if (jQuery('input[name=eme_payment_show_custom_return_page]').attr("checked")) {
+         jQuery('tr#eme_payment_succes_format_row').show();
+         jQuery('tr#eme_payment_fail_format_row').show();
+         jQuery('tr#eme_payment_add_bookingid_to_return_row').show(); 
+   } else {
+         jQuery('tr#eme_payment_succes_format_row').hide();
+         jQuery('tr#eme_payment_fail_format_row').hide();
+         jQuery('tr#eme_payment_add_bookingid_to_return_row').hide(); 
+   }
+}
 
-   $j_eme_event.datepicker.setDefaults( $j_eme_event.datepicker.regional["<?php echo $locale_code; ?>"] );
-   $j_eme_event.datepicker.setDefaults({
+function updateShowHidePaypalSEncrypt () {
+   if (jQuery('input[name=eme_paypal_s_encrypt]').attr("checked")) {
+         jQuery('tr#eme_paypal_s_pubcert_row').show(); 
+         jQuery('tr#eme_paypal_s_privkey_row').show();
+         jQuery('tr#eme_paypal_s_paypalcert_row').show();
+         jQuery('tr#eme_paypal_s_certid_row').show();
+   } else {
+         jQuery('tr#eme_paypal_s_pubcert_row').hide(); 
+         jQuery('tr#eme_paypal_s_privkey_row').hide();
+         jQuery('tr#eme_paypal_s_paypalcert_row').hide();
+         jQuery('tr#eme_paypal_s_certid_row').hide();
+   }
+}
+
+function updateShowHideRsvpMailNotify () {
+   if (jQuery('input[name=eme_rsvp_mail_notify_is_active]').attr("checked")) {
+      jQuery("table#rsvp_mail_notify-data").show();
+   } else {
+      jQuery("table#rsvp_mail_notify-data").hide();
+   }
+}
+
+function updateShowHideRsvpMailSendMethod () {
+   if (jQuery('select[name=eme_rsvp_mail_send_method]').val() == "smtp") {
+         jQuery('tr#eme_smtp_host_row').show();
+         jQuery('tr#eme_rsvp_mail_SMTPAuth_row').show();
+         jQuery('tr#eme_smtp_username_row').show(); 
+         jQuery('tr#eme_smtp_password_row').show(); 
+         jQuery('tr#eme_rsvp_mail_port_row').show(); 
+   } else {
+         jQuery('tr#eme_smtp_host_row').hide();
+         jQuery('tr#eme_rsvp_mail_SMTPAuth_row').hide();
+         jQuery('tr#eme_smtp_username_row').hide(); 
+         jQuery('tr#eme_smtp_password_row').hide();
+         jQuery('tr#eme_rsvp_mail_port_row').hide(); 
+   }
+}
+
+function updateShowHideRsvpMailSMTPAuth () {
+   if (jQuery('input[name=eme_rsvp_mail_SMTPAuth]').attr("checked")) {
+         jQuery('tr#eme_smtp_username_row').show(); 
+         jQuery('tr#eme_smtp_password_row').show(); 
+   } else {
+         jQuery('tr#eme_smtp_username_row').hide(); 
+         jQuery('tr#eme_smtp_password_row').hide();
+   }
+}
+
+jQuery(document).ready( function() {
+   jQuery("#div_recurrence_date").hide();
+   jQuery("#localised-start-date").show();
+   jQuery("#localised-end-date").show();
+   jQuery("#start-date-to-submit").hide();
+   jQuery("#end-date-to-submit").hide(); 
+   jQuery("#rec-start-date-to-submit").hide();
+   jQuery("#rec-end-date-to-submit").hide(); 
+
+   jQuery.datepick.setDefaults( jQuery.datepick.regional["<?php echo $locale_code; ?>"] );
+   jQuery.datepick.setDefaults({
       changeMonth: true,
-      changeYear: true,
+      changeYear: true
    });
-   $j_eme_event("#localised-start-date").datepicker({ altField: "#start-date-to-submit", altFormat: "yy-mm-dd" });
-   $j_eme_event("#localised-end-date").datepicker({ altField: "#end-date-to-submit", altFormat: "yy-mm-dd" });
-   $j_eme_event("#localised-rec-start-date").datepicker({ altField: "#rec-start-date-to-submit", altFormat: "yy-mm-dd" });
-   $j_eme_event("#localised-rec-end-date").datepicker({ altField: "#rec-end-date-to-submit", altFormat: "yy-mm-dd" });
+   jQuery("#localised-start-date").datepick({ altField: "#start-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-end-date").datepick({ altField: "#end-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-rec-start-date").datepick({ altField: "#rec-start-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-rec-end-date").datepick({ altField: "#rec-end-date-to-submit", altFormat: "yyyy-mm-dd" });
 
-   $j_eme_event("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
-   $j_eme_event("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
+   jQuery("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
+   jQuery("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
 
-   $j_eme_event('input.select-all').change(function(){
-      if($j_eme_event(this).is(':checked'))
-         $j_eme_event('input.row-selector').attr('checked', true);
-      else
-         $j_eme_event('input.row-selector').attr('checked', false);
-   });
-
-   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_email_body, event_registration_form_format
+   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_email_body, event_registration_form_format, event_registration_updated_email_body
    // is empty: display default value on focus, and if the value hasn't changed from the default: empty it on blur
 
-   $j_eme_event('textarea#event_page_title_format').focus(function(){
+   jQuery('textarea#event_page_title_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
    }); 
-   $j_eme_event('textarea#event_page_title_format').blur(function(){
+   jQuery('textarea#event_page_title_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
    }); 
-   $j_eme_event('textarea#event_single_event_format').focus(function(){
+   jQuery('textarea#event_single_event_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
    }); 
-   $j_eme_event('textarea#event_single_event_format').blur(function(){
+   jQuery('textarea#event_single_event_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
    }); 
-   $j_eme_event('textarea#event_contactperson_email_body').focus(function(){
+   jQuery('textarea#event_contactperson_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
    });
-   $j_eme_event('textarea#event_contactperson_email_body').blur(function(){
+   jQuery('textarea#event_contactperson_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
    }); 
-   $j_eme_event('textarea#event_respondent_email_body').focus(function(){
+   jQuery('textarea#event_respondent_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
    }); 
-   $j_eme_event('textarea#event_respondent_email_body').blur(function(){
+   jQuery('textarea#event_respondent_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
    }); 
-   $j_eme_event('textarea#event_registration_recorded_ok_html').focus(function(){
+   jQuery('textarea#event_registration_recorded_ok_html').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
    });
-   $j_eme_event('textarea#event_registration_recorded_ok_html').blur(function(){
+   jQuery('textarea#event_registration_recorded_ok_html').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
    });
-   $j_eme_event('textarea#event_registration_pending_email_body').focus(function(){
+   jQuery('textarea#event_registration_pending_email_body').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
    });
-   $j_eme_event('textarea#event_registration_pending_email_body').blur(function(){
+   jQuery('textarea#event_registration_pending_email_body').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
    });
-   $j_eme_event('textarea#event_registration_form_format').focus(function(){
+   jQuery('textarea#event_registration_updated_email_body').focus(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
+   });
+   jQuery('textarea#event_registration_updated_email_body').blur(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
+   });
+   jQuery('textarea#event_registration_form_format').focus(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == '')
-         $j_eme_event(this).val(tmp_value);
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
    }); 
-   $j_eme_event('textarea#event_registration_form_format').blur(function(){
+   jQuery('textarea#event_registration_form_format').blur(function(){
       var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
       tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if($j_eme_event(this).val() == tmp_value)
-         $j_eme_event(this).val('');
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
    }); 
 
-   if ($j_eme_event('[name=eme_rsvp_mail_send_method]').val() != "smtp") {
-      $j_eme_event('tr#eme_smtp_host_row').hide();
-      $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').hide();
-      $j_eme_event('tr#eme_smtp_username_row').hide(); 
-      $j_eme_event('tr#eme_smtp_password_row').hide();
-   }
-   $j_eme_event('[name=eme_rsvp_mail_send_method]').change(function() {
-      if($j_eme_event(this).val() == "smtp") {
-         $j_eme_event('tr#eme_smtp_host_row').show();
-         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').show();
-         $j_eme_event('tr#eme_smtp_username_row').show(); 
-         $j_eme_event('tr#eme_smtp_password_row').show(); 
-         $j_eme_event('tr#eme_rsvp_mail_port_row').show(); 
-      } else {
-         $j_eme_event('tr#eme_smtp_host_row').hide();
-         $j_eme_event('tr#eme_rsvp_mail_SMTPAuth_row').hide();
-         $j_eme_event('tr#eme_smtp_username_row').hide(); 
-         $j_eme_event('tr#eme_smtp_password_row').hide();
-         $j_eme_event('tr#eme_rsvp_mail_port_row').hide(); 
-      }
-   });
-   if ($j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]:checked').val() != 1) {
-      $j_eme_event('tr#eme_smtp_username_row').hide(); 
-      $j_eme_event('tr#eme_smtp_password_row').hide();
-   }
-   $j_eme_event('input[name=eme_rsvp_mail_SMTPAuth]').change(function() {
-      if($j_eme_event(this).val() == 1) {
-         $j_eme_event('tr#eme_smtp_username_row').show(); 
-         $j_eme_event('tr#eme_smtp_password_row').show(); 
-      } else {
-         $j_eme_event('tr#eme_smtp_username_row').hide(); 
-         $j_eme_event('tr#eme_smtp_password_row').hide();
-      }
-   });
-   if ($j_eme_event('input[name=eme_paypal_s_encrypt]:checked').val() != 1) {
-      $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
-      $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
-      $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
-      $j_eme_event('tr#eme_paypal_s_certid_row').hide();
-   }
-   $j_eme_event('input[name=eme_paypal_s_encrypt]').change(function() {
-      if($j_eme_event(this).val() == 1) {
-         $j_eme_event('tr#eme_paypal_s_pubcert_row').show(); 
-         $j_eme_event('tr#eme_paypal_s_privkey_row').show();
-         $j_eme_event('tr#eme_paypal_s_paypalcert_row').show();
-         $j_eme_event('tr#eme_paypal_s_certid_row').show();
-      } else {
-         $j_eme_event('tr#eme_paypal_s_pubcert_row').hide(); 
-         $j_eme_event('tr#eme_paypal_s_privkey_row').hide();
-         $j_eme_event('tr#eme_paypal_s_paypalcert_row').hide();
-         $j_eme_event('tr#eme_paypal_s_certid_row').hide();
-      }
-   });
    updateIntervalDescriptor(); 
    updateIntervalSelectors();
    updateShowHideRecurrence();
    updateShowHideRsvp();
-   $j_eme_event('input#event-recurrence').change(updateShowHideRecurrence);
-   $j_eme_event('input#rsvp-checkbox').change(updateShowHideRsvp);
+   updateShowHideRecurrenceSpecificDays();
+   updateShowHideTime();
+   jQuery('input#event-recurrence').change(updateShowHideRecurrence);
+   jQuery('input#rsvp-checkbox').change(updateShowHideRsvp);
+   jQuery('input#eme_prop_all_day').change(updateShowHideTime);
    // recurrency elements
-   $j_eme_event('input#recurrence-interval').keyup(updateIntervalDescriptor);
-   $j_eme_event('select#recurrence-frequency').change(updateIntervalDescriptor);
-   $j_eme_event('select#recurrence-frequency').change(updateIntervalSelectors);
+   jQuery('input#recurrence-interval').keyup(updateIntervalDescriptor);
+   jQuery('select#recurrence-frequency').change(updateIntervalDescriptor);
+   jQuery('select#recurrence-frequency').change(updateIntervalSelectors);
+   jQuery('select#recurrence-frequency').change(updateShowHideRecurrenceSpecificDays);
+
+   // for the eme-options pages
+   updateShowHideCustomReturnPage();
+   updateShowHidePaypalSEncrypt();
+   updateShowHideRsvpMailNotify ();
+   updateShowHideRsvpMailSendMethod ();
+   updateShowHideRsvpMailSMTPAuth ();
+   jQuery('input[name=eme_payment_show_custom_return_page]').change(updateShowHideCustomReturnPage);
+   jQuery('input[name=eme_paypal_s_encrypt]').change(updateShowHidePaypalSEncrypt);
+   jQuery('input[name=eme_rsvp_mail_notify_is_active]').change(updateShowHideRsvpMailNotify);
+   jQuery('select[name=eme_rsvp_mail_send_method]').change(updateShowHideRsvpMailSendMethod);
+   jQuery('input[name=eme_rsvp_mail_SMTPAuth]').change(updateShowHideRsvpMailSMTPAuth);
 
    // Add a "+" to the collapsable postboxes
    //jQuery('.postbox h3').prepend('<a class="togbox">+</a> ');
@@ -2861,57 +3050,42 @@ $j_eme_event(document).ready( function() {
 
    // users cannot submit the event form unless some fields are filled
    function validateEventForm() {
-      errors = "";
-      var recurring = $j_eme_event("input[name=repeated_event]:checked").val();
+      var errors = "";
+      var recurring = jQuery("input[name=repeated_event]:checked").val();
       //requiredFields= new Array('event_name', 'localised_event_start_date', 'location_name','location_address','location_town');
-      requiredFields= new Array('event_name', 'localised_event_start_date');
+      var requiredFields = ['event_name', 'localised_event_start_date'];
       var localisedRequiredFields = {'event_name':"<?php _e ( 'Name', 'eme' )?>",
                       'localised_event_start_date':"<?php _e ( 'Date', 'eme' )?>"
                      };
       
-      missingFields = new Array;
-      for (var i in requiredFields) {
-         if ($j_eme_event("input[name=" + requiredFields[i]+ "]").val() == 0) {
+      var missingFields = [];
+      var i;
+      for (i in requiredFields) {
+         if (jQuery("input[name=" + requiredFields[i]+ "]").val() == 0) {
             missingFields.push(localisedRequiredFields[requiredFields[i]]);
-            $j_eme_event("input[name=" + requiredFields[i]+ "]").css('border','2px solid red');
+            jQuery("input[name=" + requiredFields[i]+ "]").css('border','2px solid red');
          } else {
-            $j_eme_event("input[name=" + requiredFields[i]+ "]").css('border','1px solid #DFDFDF');
+            jQuery("input[name=" + requiredFields[i]+ "]").css('border','1px solid #DFDFDF');
          }
       }
    
-      //    alert('ciao ' + recurring+ " end: " + $j_eme_event("input[@name=localised_event_end_date]").val());
       if (missingFields.length > 0) {
          errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
       }
-      if(recurring && $j_eme_event("input[name=localised_recurrence_end_date]").val() == "") {
+      if (recurring && jQuery("input#localised-rec-end-date").val() == "" && jQuery("select#recurrence-frequency").val() != "specific") {
          errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
-         $j_eme_event("input[name=localised_recurrence_end_date]").css('border','2px solid red');
+         jQuery("input#localised-rec-end-date").css('border','2px solid red');
       } else {
-         $j_eme_event("input[name=localised_recurrence_end_date]").css('border','1px solid #DFDFDF');
+         jQuery("input#localised-rec-end-date").css('border','1px solid #DFDFDF');
       }
-      if(errors != "") {
+      if (errors != "") {
          alert(errors);
          return false;
       }
       return true;
    }
 
-   $j_eme_event('#eventForm').bind("submit", validateEventForm);
-
-   function areyousuretodeny() {
-      if ($j_eme_event("select[name=action]").val() == "denyRegistration") {
-        if (!confirm("<?php _e('Are you sure you want to deny registration for these bookings?','eme');?>")) {
-           return false;
-        } else {
-           return true;
-        }
-      }
-      return true;
-   }
-
-   $j_eme_event('#eme-admin-pendingform').bind("submit", areyousuretodeny);
-   $j_eme_event('#eme-admin-changeregform').bind("submit", areyousuretodeny);
-      
+   jQuery('#eventForm').bind("submit", validateEventForm);
 });
 
 //]]>
@@ -2920,15 +3094,22 @@ $j_eme_event(document).ready( function() {
 <?php
 }
 
+//function eme_admin_options_save() {
+//   if (is_admin() && isset($_GET['settings-updated']) && $_GET['settings-updated']) {
+//     return; 
+//   }
+//}
+
 function eme_admin_event_boxes() {
    global $plugin_page;
    $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
    foreach ($screens as $screen) {
         if (preg_match("/$plugin_page/",$screen)) {
+
            // we need titlediv for qtranslate as ID
            add_meta_box("titlediv", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
-           add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
            add_meta_box("div_recurrence_date", __('Recurrence dates', 'eme'), "eme_meta_box_div_recurrence_date",$screen,"post");
+           add_meta_box("div_event_date", __('Event date', 'eme'), "eme_meta_box_div_event_date",$screen,"post");
            add_meta_box("div_event_time", __('Event time', 'eme'), "eme_meta_box_div_event_time",$screen,"post");
            add_meta_box("div_event_page_title_format", __('Single Event Title Format', 'eme'), "eme_meta_box_div_event_page_title_format",$screen,"post");
            add_meta_box("div_event_single_event_format", __('Single Event Format', 'eme'), "eme_meta_box_div_event_single_event_format",$screen,"post");
@@ -2936,6 +3117,7 @@ function eme_admin_event_boxes() {
            add_meta_box("div_event_registration_recorded_ok_html", __('Booking recorded html Format', 'eme'), "eme_meta_box_div_event_registration_recorded_ok_html",$screen,"post");
            add_meta_box("div_event_respondent_email_body", __('Respondent Email Format', 'eme'), "eme_meta_box_div_event_respondent_email_body",$screen,"post");
            add_meta_box("div_event_registration_pending_email_body", __('Registration Pending Email Format', 'eme'), "eme_meta_box_div_event_registration_pending_email_body",$screen,"post");
+           add_meta_box("div_event_registration_updated_email_body", __('Registration Updated Email Format', 'eme'), "eme_meta_box_div_event_registration_updated_email_body",$screen,"post");
            add_meta_box("div_event_registration_form_format", __('Registration Form Format', 'eme'), "eme_meta_box_div_event_registration_form_format",$screen,"post");
            add_meta_box("div_location_name", __('Location', 'eme'), "eme_meta_box_div_location_name",$screen,"post");
            add_meta_box("div_event_notes", __('Details', 'eme'), "eme_meta_box_div_event_notes",$screen,"post");
@@ -2949,140 +3131,167 @@ function eme_admin_event_boxes() {
 
 function eme_meta_box_div_event_name($event){
 ?>
-                        <!-- we need title for qtranslate as ID -->
-                        <input type="text" id="title" name="event_name" value="<?php echo eme_sanitize_html($event['event_name']); ?>" />
-                        <br />
-                        <?php _e ( 'The event name. Example: Birthday party', 'eme' )?>
-                        <br />
-                        <br />
-                        <?php if ($event['event_name'] != "") {
-                                 _e ('Permalink: ', 'eme' );
-                                 echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_events_prefix')).$event['event_id']."/";
-                                 $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
-                                 $slug = untrailingslashit(eme_permalink_convert($slug));
-                        ?>
-                                 <input type="text" id="slug" name="event_slug" value="<?php echo $slug; ?>" /><?php echo user_trailingslashit(""); ?>
-                        <?php
-                              }
+   <!-- we need title for qtranslate as ID -->
+   <input type="text" id="title" name="event_name" value="<?php echo eme_sanitize_html($event['event_name']); ?>" />
+   <br />
+   <?php _e ( 'The event name. Example: Birthday party', 'eme' )?>
+   <br />
+   <br />
+   <?php if ($event['event_id'] && $event['event_name'] != "") {
+      _e ('Permalink: ', 'eme' );
+      echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_events_prefix')).$event['event_id']."/";
+      $slug = $event['event_slug'] ? $event['event_slug'] : $event['event_name'];
+      $slug = untrailingslashit(eme_permalink_convert($slug));
+      ?>
+         <input type="text" id="slug" name="event_slug" value="<?php echo $slug; ?>" /><?php echo user_trailingslashit(""); ?>
+         <?php
+   }
 }
 
 function eme_meta_box_div_event_date($event){
+   $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 ?>
-                        <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
-                        <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
-                        <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
-                        <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
-                        <br />
-                        <span id='event-date-explanation'>
-                        <?php _e ( 'The event date.', 'eme' ); ?>
-                        </span>
+      <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
+      <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
+      <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
+      <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
+      <span id='event-date-explanation'>
+      <?php _e ( 'The event beginning and end date.', 'eme' ); ?>
+      </span>
+      <br />
+      <span id='event-date-recursive-explanation'>
+      <?php _e ( 'In case of a recurrent event, use the beginning and end date to just indicate the duration of one event in days. The real start date is determined by the recurrence scheme being used.', 'eme' ); ?>
+      </span>
+      <br />
+      <br />
+      <input id="eme_prop_all_day" name='eme_prop_all_day' value='1' type='checkbox' <?php echo $eme_prop_all_day_checked; ?> />
+      <?php _e ( 'This event lasts all day', 'eme' ); ?>
 <?php
 }
 
 function eme_meta_box_div_recurrence_date($event){
 ?>
-                        <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="" readonly="readonly" />
-                        <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="" style="background: #FCFFAA" />
-                        <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="" readonly="readonly" />
-                        <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="" style="background: #FCFFAA" />
-                        <br />
-                        <span id='recurrence-dates-explanation'>
-                        <?php _e ( 'The recurrence beginning and end date.', 'eme' ); ?>
-                        </span>
+   <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="" readonly="readonly" />
+   <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="" style="background: #FCFFAA" />
+   <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="" readonly="readonly" />
+   <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="" style="background: #FCFFAA" />
+   <br />
+   <span id='recurrence-dates-explanation'>
+   <?php _e ( 'The recurrence beginning and end date.', 'eme' ); ?>
+   </span>
+   <span id='recurrence-dates-explanation-specificdates'>
+   <?php _e ( 'Select all the dates you want the event to begin on.', 'eme' ); ?>
+   </span>
 <?php
 }
 
 function eme_meta_box_div_event_page_title_format($event) {
 ?>
-                        <textarea name="event_page_title_format" id="event_page_title_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_page_title_format']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the single event title.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
+   <textarea name="event_page_title_format" id="event_page_title_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_page_title_format']);?></textarea>
+   <br />
+   <p><?php _e ( 'The format of the single event title.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
 <?php
 }
 
 function eme_meta_box_div_event_time($event) {
-   $hours_locale = "24";
-   // Setting 12 hours format for those countries using it
-   $locale_code = get_locale();
-   if (preg_match ( "/en_US|sk|zh|us|uk/i", $locale_code ))
-      $hours_locale = "12";
+   // check if the user wants AM/PM or 24 hour notation
+   $time_format = get_option('time_format');
+   $hours_locale = '24';
+   if (preg_match ( "/g|h/", $time_format )) {
+      $event_start_time = date("h:iA", strtotime($event['event_start_time']));
+      $event_end_time = date("h:iA", strtotime($event['event_end_time']));
+   } else {
+      $event_start_time = $event['event_start_time'];
+      $event_end_time = $event['event_end_time'];
+   }
 
 ?>
-                        <input id="start-time" type="text" size="8" maxlength="8" name="event_start_time" value="<?php echo $event['event_start_' . $hours_locale . "h_time"]; ?>" />
-                        -
-                        <input id="end-time" type="text" size="8" maxlength="8" name="event_end_time" value="<?php echo $event['event_end_' . $hours_locale . "h_time"]; ?>" />
-                        <br />
-                        <?php _e ( 'The time of the event beginning and end', 'eme' )?>
-                        .
+   <input id="start-time" type="text" size="8" maxlength="8" name="event_start_time" value="<?php echo $event_start_time; ?>" />
+   -
+   <input id="end-time" type="text" size="8" maxlength="8" name="event_end_time" value="<?php echo $event_end_time; ?>" />
+   <br />
+   <?php _e ( 'The time of the event beginning and end', 'eme' )?>
+   .
 <?php
 }
 
 function eme_meta_box_div_event_single_event_format($event) {
 ?>
-                        <textarea name="event_single_event_format" id="event_single_event_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_single_event_format']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the single event page.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
+   <textarea name="event_single_event_format" id="event_single_event_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_single_event_format']);?></textarea>
+   <br />
+   <p><?php _e ( 'The format of the single event page.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
 <?php
 }
 
 function eme_meta_box_div_event_contactperson_email_body($event) {
 ?>
-                        <textarea name="event_contactperson_email_body" id="event_contactperson_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_contactperson_email_body']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the email which will be sent to the contact person.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
+   <textarea name="event_contactperson_email_body" id="event_contactperson_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_contactperson_email_body']);?></textarea>
+   <br />
+   <p><?php _e ( 'The format of the email which will be sent to the contact person.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
 <?php
 }
 
 function eme_meta_box_div_event_registration_recorded_ok_html($event) {
 ?>
-                        <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The text (html allowed) shown to the user when the booking has been made successfully.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
+   <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
+   <br />
+   <p><?php _e ( 'The text (html allowed) shown to the user when the booking has been made successfully.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
 <?php
 }
 
 function eme_meta_box_div_event_respondent_email_body($event) {
 ?>
-                        <textarea name="event_respondent_email_body" id="event_respondent_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_respondent_email_body']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the email which will be sent to the respondent.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
+   <textarea name="event_respondent_email_body" id="event_respondent_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_respondent_email_body']);?></textarea>
+   <br />
+   <p><?php _e ( 'The format of the email which will be sent to the respondent.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
 <?php
 }
 
 function eme_meta_box_div_event_registration_pending_email_body($event) {
 ?>
-                        <textarea name="event_registration_pending_email_body" id="event_registration_pending_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_pending_email_body']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The format of the email which will be sent to the respondent if the registration is pending.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
+   <textarea name="event_registration_pending_email_body" id="event_registration_pending_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_pending_email_body']);?></textarea>
+   <br />
+   <p><?php _e ( 'The format of the email which will be sent to the respondent if the registration is pending.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
+<?php
+}
+
+function eme_meta_box_div_event_registration_updated_email_body($event) {
+?>
+   <textarea name="event_registration_updated_email_body" id="event_registration_updated_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_updated_email_body']);?></textarea>
+   <br />
+   <p><?php _e ( 'The format of the email which will be sent to the respondent if the registration has been updated by an admin.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
 <?php
 }
 
 function eme_meta_box_div_event_registration_form_format($event) {
 ?>
-                        <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
-                        <br />
-                        <p><?php _e ( 'The registration form format.','eme');?>
-                        <br />
-                        <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
-                        </p>
+   <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
+   <br />
+   <p><?php _e ( 'The registration form format.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
 <?php
 }
 
@@ -3092,149 +3301,161 @@ function eme_meta_box_div_location_name($event) {
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
       $use_select_for_locations=1;
    }
+   $location = eme_get_location ( $event['location_id'] );
 ?>
-                        <table id="eme-location-data">
-                           <tr>
-                           <?php  if($use_select_for_locations) {
-                              $location_0['location_id']=0;
-                              $location_0['location_name']= '';
-                              $locations = eme_get_locations();
-                           ?>
-                              <th><?php _e('Location','eme') ?></th>
-                              <td> 
-                                 <select name="location-select-id" id='location-select-id' size="1">
-         <option value="<?php echo $location_0['location_id'] ?>" ><?php echo eme_trans_sanitize_html($location_0['location_name']) ?></option>
-                                 <?php 
-                                 $selected_location=$location_0;
-                                 foreach($locations as $location) :
-                                    $selected = "";
-                                    if(isset($event['location_id']))  { 
-                                       $location_id =  $event['location_id'];
-                                       if ($location_id == $location['location_id']) {
-                                          $selected_location=$location;
-                                          $selected = "selected='selected' ";
-                                       }
-                                    }
-                                 ?>
-         <option value="<?php echo $location['location_id'] ?>" <?php echo $selected ?>><?php echo eme_trans_sanitize_html($location['location_name']) ?></option>
-                                 <?php endforeach; ?>
-                                 </select>
-                                 <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>'/>
-                                 <input type='hidden' name='location-select-town' value='<?php echo eme_trans_sanitize_html($selected_location['location_town'])?>'/>
-                                 <input type='hidden' name='location-select-address' value='<?php echo eme_trans_sanitize_html($selected_location['location_address'])?>'/>      
-                                 <input type='hidden' name='location-select-latitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_latitude'])?>'/>      
-                                 <input type='hidden' name='location-select-longitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_longitude'])?>'/>      
-                              </td>
-                           <?php } else { ?>
-                              <th><?php _e ( 'Name','eme' )?>&nbsp;</th>
-                              <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($event['location_name'])?>" /></td>
-                           <?php } ?>
-                           <?php
-                              $gmap_is_active = get_option('eme_gmap_is_active' );
-                              if ($gmap_is_active) {
-                           ?>
-                              <td rowspan='6'>
-                                 <div id='eme-admin-map-not-found'>
-                                    <p>
-                                       <?php _e ( 'Map not found','eme' ); ?>
-                                    </p>
-                                 </div>
-                                 <div id='eme-admin-location-map'></div></td>
-                              <?php
+   <table id="eme-location-data">
+   <tr>
+   <?php
+   if($use_select_for_locations) {
+      $location_0['location_id']=0;
+      $location_0['location_name']= '';
+      $locations = eme_get_locations();
+   ?>
+      <th><?php _e('Location','eme') ?></th>
+      <td> 
+      <select name="location-select-id" id='location-select-id' size="1">
+      <option value="<?php echo $location_0['location_id'] ?>" ><?php echo eme_trans_sanitize_html($location_0['location_name']) ?></option>
+      <?php 
+      $selected_location=$location_0;
+      foreach($locations as $tmp_location) {
+         $selected = "";
+         if ($location['location_id'] == $tmp_location['location_id']) {
+            $selected_location=$location;
+            $selected = "selected='selected' ";
          }
-         ; // end of IF_GMAP_ACTIVE ?>
-                           </tr>
-                            <?php  if(!$use_select_for_locations) { ?>
-                           <tr>
-                              <td colspan='2'>
-                                 <?php _e ( 'The name of the location where the event takes place. You can use the name of a venue, a square, etc', 'eme' );?>
-<br />
-                                 <?php _e ( 'If you leave this empty, the map will NOT be shown for this event', 'eme' );?>
-                              </td>
-                           </tr>
-                           <?php } else { ?>
-                           <tr >
-                              <td colspan='2'  rowspan='5' style='vertical-align: top'>
-                                     <?php _e ( 'Select a location for your event', 'eme' )?>
-                              </td>
-                           </tr>
-                           <?php } ?>
-                           <?php if(!$use_select_for_locations) { ?> 
-                           <tr>
-                              <th><?php _e ( 'Address:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_address" type="text" name="location_address" value="<?php echo $event['location_address']; ?>" /></td>
-                           </tr>
-                           <tr>
-                              <td colspan='2'>
-                                    <?php _e ( 'The address of the location where the event takes place. Example: 21, Dominick Street', 'eme' )?>
-                              </td>
-                           </tr>
-                           <tr>
-                              <th><?php _e ( 'Town:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_town" type="text" name="location_town" value="<?php echo $event['location_town']?>" /></td>
-                           </tr>
-                           <tr>
-                              <td colspan='2'>
-                                    <?php _e ( 'The town where the location is located. If you\'re using the Google Map integration and want to avoid geotagging ambiguities include the country in the town field. Example: Verona, Italy.', 'eme' )?>
-                              </td>
-                           </tr>
-                           <tr>
-                              <th><?php _e ( 'Latitude:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_latitude" type="text" name="location_latitude" value="<?php echo $event['location_latitude']?>" /></td>
-                           </tr>
-                           <tr>
-                              <th><?php _e ( 'Longitude:', 'eme' )?> &nbsp;</th>
-                              <td><input id="location_longitude" type="text" name="location_longitude" value="<?php echo $event['location_longitude']?>" /></td>
-                           </tr>
-                           <tr>
-                              <td colspan='2'>
-                                    <?php _e ( 'If you\'re using the Google Map integration and are really serious about the correct place, use these.', 'eme' )?>
-                              </td>
-                           </tr>
-                           <?php } ?>
-                        </table>
+         ?>
+         <option value="<?php echo $tmp_location['location_id'] ?>" <?php echo $selected ?>><?php echo eme_trans_sanitize_html($tmp_location['location_name']) ?></option>
+      <?php
+      }
+      ?>
+      </select>
+      <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>'/>
+      <input type='hidden' name='location-select-town' value='<?php echo eme_trans_sanitize_html($selected_location['location_town'])?>'/>
+      <input type='hidden' name='location-select-address' value='<?php echo eme_trans_sanitize_html($selected_location['location_address'])?>'/>      
+      <input type='hidden' name='location-select-latitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_latitude'])?>'/>      
+      <input type='hidden' name='location-select-longitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_longitude'])?>'/>      
+      </td>
+   <?php
+   } else {
+   ?>
+      <th><?php _e ( 'Name','eme' )?>&nbsp;</th>
+      <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($location['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($location['location_name'])?>" /></td>
+   <?php
+   }
+   $gmap_is_active = get_option('eme_gmap_is_active' );
+   if ($gmap_is_active) {
+      ?>
+      <td rowspan='6'>
+      <div id='eme-admin-map-not-found'>
+      <p>
+      <?php _e ( 'Map not found','eme' ); ?>
+      </p>
+      </div>
+      <div id='eme-admin-location-map'></div></td>
+      <?php
+   }
+   // end of IF_GMAP_ACTIVE ?>
+   </tr>
+   <?php
+   if (!$use_select_for_locations) {
+   ?>
+      <tr>
+      <td colspan='2'>
+      <?php _e ( 'The name of the location where the event takes place. You can use the name of a venue, a square, etc', 'eme' );?>
+      <br />
+      <?php _e ( 'If you leave this empty, the map will NOT be shown for this event', 'eme' );?>
+      </td>
+      </tr>
+    <?php
+    } else {
+    ?>
+       <tr >
+       <td colspan='2'  rowspan='5' style='vertical-align: top'>
+       <?php _e ( 'Select a location for your event', 'eme' )?>
+       </td>
+       </tr>
+    <?php } ?>
+    <?php if (!$use_select_for_locations) { ?> 
+       <tr>
+       <th><?php _e ( 'Address:', 'eme' )?> &nbsp;</th>
+       <td><input id="location_address" type="text" name="location_address" value="<?php echo $location['location_address']; ?>" /></td>
+       </tr>
+       <tr>
+       <td colspan='2'>
+       <?php _e ( 'The address of the location where the event takes place. Example: 21, Dominick Street', 'eme' )?>
+       </td>
+       </tr>
+       <tr>
+       <th><?php _e ( 'Town:', 'eme' )?> &nbsp;</th>
+       <td><input id="location_town" type="text" name="location_town" value="<?php echo $location['location_town']?>" /></td>
+       </tr>
+       <tr>
+       <td colspan='2'>
+       <?php _e ( 'The town where the location is located. If you\'re using the Google Map integration and want to avoid geotagging ambiguities include the country in the town field. Example: Verona, Italy.', 'eme' )?>
+       </td>
+       </tr>
+       <tr>
+       <th><?php _e ( 'Latitude:', 'eme' )?> &nbsp;</th>
+       <td><input id="location_latitude" type="text" name="location_latitude" value="<?php echo $location['location_latitude']?>" /></td>
+       </tr>
+       <tr>
+       <th><?php _e ( 'Longitude:', 'eme' )?> &nbsp;</th>
+       <td><input id="location_longitude" type="text" name="location_longitude" value="<?php echo $location['location_longitude']?>" /></td>
+       </tr>
+       <tr>
+       <td colspan='2'>
+       <?php _e ( 'If you\'re using the Google Map integration and are really serious about the correct place, use these.', 'eme' )?>
+       </td>
+       </tr>
+    <?php } ?>
+    </table>
 <?php
 }
  
 function eme_meta_box_div_event_notes($event) {
 ?>
-                        <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                  <!-- we need content for qtranslate as ID -->
-                           <?php wp_editor($event['event_notes'],"content"); ?>
-                        </div>
-                        <br />
-                        <?php _e ( 'Details about the event', 'eme' )?>
+   <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
+   <!-- we need content for qtranslate as ID -->
+   <?php wp_editor($event['event_notes'],"content"); ?>
+   </div>
+   <br />
+   <?php _e ( 'Details about the event', 'eme' )?>
 <?php
 }
 
 function eme_meta_box_div_event_image($event) {
+    if (isset($event['event_image_id']) && !empty($event['event_image_id']))
+       $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
 ?>
-                        <div id="event_current_image" class="postarea">
-                        <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
-                                 _e('Current image:', 'eme');
-                                 echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' width='200' />";
-                              } else {
-                                 echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
-                              }
-                              // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
-                        ?>
-                        </div>
-                        <br />
+   <div id="event_current_image" class="postarea">
+   <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) {
+      _e('Current image:', 'eme');
+      echo "<img id='eme_event_image_example' src='".$event['event_image_url']."' width='200' />";
+      echo "<input type='hidden' name='event_image_url' id='event_image_url' value='".$event['event_image_url']."' />";
+   } else {
+      echo "<img id='eme_event_image_example' src='' alt='' width='200' />";
+      echo "<input type='hidden' name='event_image_url' id='event_image_url' />";
+   }
+   if (isset($event['event_image_id']) && !empty($event['event_image_id'])) {
+      echo "<input type='hidden' name='event_image_id' id='event_image_id' value='".$event['event_image_id']."' />";
+   } else {
+      echo "<input type='hidden' name='event_image_id' id='event_image_id' />";
+   }
+   // based on code found at http://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
+   ?>
+   </div>
+   <br />
 
-                        <div class="uploader">
-                           <?php if (isset($event['event_image_url']) && !empty($event['event_image_url'])) { ?>
-                           <input type="hidden" name="event_image_url" id="event_image_url" value="<?php echo $event['event_image_url']; ?>" />
-                           <?php } else { ?>
-                           <input type="hidden" name="event_image_url" id="event_image_url" />
-                           <?php } ?>
-                           <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
-                           <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
-                        </div>
+   <div class="uploader">
+   <input type="button" name="event_image_button" id="event_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
+   <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
+   </div>
 <script>
 jQuery(document).ready(function($){
 
   $('#eme_remove_old_image').click(function(e) {
         $('#event_image_url').val('');
+        $('#event_image_id').val('');
         $('#eme_event_image_example' ).attr("src",'');
   });
   $('#event_image_button').click(function(e) {
@@ -3245,6 +3466,7 @@ jQuery(document).ready(function($){
     wp.media.editor.send.attachment = function(props, attachment){
       if ( eme_custom_media ) {
         $('#event_image_url').val(attachment.url);
+        $('#event_image_id').val(attachment.id);
         $('#eme_event_image_example' ).attr("src",attachment.url);
       } else {
         return _orig_send_attachment.apply( this,[props, attachment] );
@@ -3267,22 +3489,22 @@ function eme_meta_box_div_event_attributes($event) {
 
 function eme_meta_box_div_event_url($event) {
 ?>
-                        <input type="text" id="event_url" name="event_url" value="<?php echo eme_sanitize_html($event['event_url']); ?>" />
-                        <br />
-                        <?php _e ( 'If this is filled in, the single event URL will point to this url instead of the standard event page.', 'eme' )?>
+   <input type="text" id="event_url" name="event_url" value="<?php echo eme_sanitize_html($event['event_url']); ?>" />
+   <br />
+   <?php _e ( 'If this is filled in, the single event URL will point to this url instead of the standard event page.', 'eme' )?>
 <?php
 }
 
 function eme_admin_map_script() {
    global $plugin_page;
    // when the action is the POST of a new event, don't do the javascript
-   if ($plugin_page == 'eme-new_event' && isset ( $_REQUEST['action'] ) && $_REQUEST['action'] == 'insert_event') {
+   if ($plugin_page == 'eme-new_event' && isset ( $_REQUEST['eme_admin_action'] ) && $_REQUEST['eme_admin_action'] == 'insert_event') {
       return;
    }
 
    # we also do this for locations, since the locations page also needs the loadMap javascript function
    if (( ($plugin_page == 'eme-locations' || $plugin_page == 'eme-new_event')) ||
-       (isset ( $_REQUEST['action'] ) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence'))) {
+       (isset ( $_REQUEST['eme_admin_action'] ) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) {
          if (isset($_REQUEST['event_id']))
             $event_ID = intval($_REQUEST['event_id']);
          else
@@ -3298,11 +3520,9 @@ function eme_admin_map_script() {
                width: 50%;
             }     */
 </style>
-<script src="http://maps.google.com/maps/api/js?v=3.1&amp;sensor=false" type="text/javascript"></script>
+<script src="//maps.google.com/maps/api/js?v=3.1&amp;sensor=false" type="text/javascript"></script>
 <script type="text/javascript">
          //<![CDATA[
-          $j_eme_admin=jQuery.noConflict();
-
           function loadMap(location, town, address) {
             var latlng = new google.maps.LatLng(-34.397, 150.644);
             var myOptions = {
@@ -3315,7 +3535,7 @@ function eme_admin_map_script() {
                },
                mapTypeId: google.maps.MapTypeId.ROADMAP
             }
-            $j_eme_admin("#eme-admin-location-map").show();
+            jQuery("#eme-admin-location-map").show();
             var map = new google.maps.Map(document.getElementById("eme-admin-location-map"), myOptions);
             var geocoder = new google.maps.Geocoder();
             if (address !="") {
@@ -3336,18 +3556,18 @@ function eme_admin_map_script() {
                         content: '<div class=\"eme-location-balloon\"><strong>' + location +'</strong><p>' + address + '</p><p>' + town + '</p></div>'
                      });
                      infowindow.open(map,marker);
-                     $j_eme_admin('input#location_latitude').val(results[0].geometry.location.lat());
-                     $j_eme_admin('input#location_longitude').val(results[0].geometry.location.lng());
-                     $j_eme_admin("#eme-admin-location-map").show();
-                     $j_eme_admin('#eme-admin-map-not-found').hide();
+                     jQuery('input#location_latitude').val(results[0].geometry.location.lat());
+                     jQuery('input#location_longitude').val(results[0].geometry.location.lng());
+                     jQuery("#eme-admin-location-map").show();
+                     jQuery('#eme-admin-map-not-found').hide();
                   } else {
-                     $j_eme_admin("#eme-admin-location-map").hide();
-                     $j_eme_admin('#eme-admin-map-not-found').show();
+                     jQuery("#eme-admin-location-map").hide();
+                     jQuery('#eme-admin-map-not-found').show();
                   }
                });
             } else {
-               $j_eme_admin("#eme-admin-location-map").hide();
-               $j_eme_admin('#eme-admin-map-not-found').show();
+               jQuery("#eme-admin-location-map").hide();
+               jQuery('#eme-admin-map-not-found').show();
             }
          }
       
@@ -3364,7 +3584,7 @@ function eme_admin_map_script() {
                   },
                   mapTypeId: google.maps.MapTypeId.ROADMAP
                }
-               $j_eme_admin("#eme-admin-location-map").show();
+               jQuery("#eme-admin-location-map").show();
                var map = new google.maps.Map(document.getElementById("eme-admin-location-map"), myOptions);
                var marker = new google.maps.Marker({
                   map: map, 
@@ -3374,14 +3594,14 @@ function eme_admin_map_script() {
                   content: '<div class=\"eme-location-balloon\"><strong>' + location +'</strong><p>' + address + '</p><p>' + town + '</p></div>'
                });
                infowindow.open(map,marker);
-               $j_eme_admin("#eme-admin-location-map").show();
-               $j_eme_admin('#eme-admin-map-not-found').hide();
+               jQuery("#eme-admin-location-map").show();
+               jQuery('#eme-admin-map-not-found').hide();
             } else {
                loadMap(location, town, address);
             }
          }
  
-         $j_eme_admin(document).ready(function() {
+         jQuery(document).ready(function() {
             <?php 
             // if we're creating a new event, or editing an event *AND*
             // the use_select_for_locations options is on or qtranslate is installed
@@ -3389,104 +3609,98 @@ function eme_admin_map_script() {
             // We check on the new/edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             if (
-               ((isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
+               ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
                      (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE'))) { ?>
-            eventLocation = $j_eme_admin("input[name='location-select-name']").val(); 
-            eventTown = $j_eme_admin("input[name='location-select-town']").val();
-            eventAddress = $j_eme_admin("input[name='location-select-address']").val(); 
-            eventLat = $j_eme_admin("input#location-select-latitude").val();
-            eventLong = $j_eme_admin("input#location-select-longitude").val();
+            eventLocation = jQuery("input[name='location-select-name']").val(); 
+            eventTown = jQuery("input[name='location-select-town']").val();
+            eventAddress = jQuery("input[name='location-select-address']").val(); 
+            eventLat = jQuery("input#location-select-latitude").val();
+            eventLong = jQuery("input#location-select-longitude").val();
    
                <?php } else { ?>
-            eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-            eventTown = $j_eme_admin("input#location_town").val(); 
-            eventAddress = $j_eme_admin("input#location_address").val();
-            eventLat = $j_eme_admin("input#location_latitude").val();
-            eventLong = $j_eme_admin("input#location_longitude").val();
+            eventLocation = jQuery("input[name='translated_location_name']").val(); 
+            eventTown = jQuery("input#location_town").val(); 
+            eventAddress = jQuery("input#location_address").val();
+            eventLat = jQuery("input#location_latitude").val();
+            eventLong = jQuery("input#location_longitude").val();
                <?php } ?>
 
             loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
          
-            $j_eme_admin("input[name='location_name']").focus(function(){
-               eventLocation = $j_eme_admin("input[name='location_name']").val();
+            jQuery("input[name='location_name']").focus(function(){
+               eventLocation = jQuery("input[name='location_name']").val();
             });
 
-            $j_eme_admin("input[name='location_name']").blur(function(){
-               newEventLocation = $j_eme_admin("input[name='location_name']").val();
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               eventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input[name='location_name']").blur(function(){
+               newEventLocation = jQuery("input[name='location_name']").val();
+               eventTown = jQuery("input#location_town").val(); 
+               eventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newEventLocation != eventLocation) {
                   loadMapLatLong(newEventLocation, eventTown, eventAddress, eventLat, eventLong); 
                }
             });
-            $j_eme_admin("input#location_town").focus(function(){
-               eventTown = $j_eme_admin("input#location_town").val(); 
+            jQuery("input#location_town").focus(function(){
+               eventTown = jQuery("input#location_town").val(); 
             });
-            $j_eme_admin("input#location_town").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               newEventTown = $j_eme_admin("input#location_town").val();
-               eventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_town").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               newEventTown = jQuery("input#location_town").val();
+               eventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newEventTown != eventTown) {
                   loadMap(eventLocation, newEventTown, eventAddress); 
                }
             });
-            $j_eme_admin("input#location_address").focus(function(){
-               eventAddress = $j_eme_admin("input#location_address").val();
+            jQuery("input#location_address").focus(function(){
+               eventAddress = jQuery("input#location_address").val();
             });
-            $j_eme_admin("input#location_address").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               newEventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_address").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               eventTown = jQuery("input#location_town").val(); 
+               newEventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newEventAddress != eventAddress) {
                   loadMap(eventLocation, eventTown, newEventAddress); 
                }
             });
-            $j_eme_admin("input#location_latitude").focus(function(){
-               eventLat = $j_eme_admin("input#location_latitude").val();
+            jQuery("input#location_latitude").focus(function(){
+               eventLat = jQuery("input#location_latitude").val();
             });
-            $j_eme_admin("input#location_latitude").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               eventAddress = $j_eme_admin("input#location_address").val();
-               newLat = $j_eme_admin("input#location_latitude").val();
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_latitude").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               eventTown = jQuery("input#location_town").val(); 
+               eventAddress = jQuery("input#location_address").val();
+               newLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
                if (newLat != eventLat) {
                   loadMapLatLong(eventLocation, eventTown, eventAddress, newLat, eventLong); 
                }
             });
-            $j_eme_admin("input#location_longitude").focus(function(){
-               eventLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_longitude").focus(function(){
+               eventLong = jQuery("input#location_longitude").val();
             });
-            $j_eme_admin("input#location_longitude").blur(function(){
-               eventLocation = $j_eme_admin("input[name='translated_location_name']").val(); 
-               eventTown = $j_eme_admin("input#location_town").val(); 
-               eventAddress = $j_eme_admin("input#location_address").val();
-               eventLat = $j_eme_admin("input#location_latitude").val();
-               newLong = $j_eme_admin("input#location_longitude").val();
+            jQuery("input#location_longitude").blur(function(){
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               eventTown = jQuery("input#location_town").val(); 
+               eventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               newLong = jQuery("input#location_longitude").val();
                if (newLong != eventLong) {
                   loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, newLong); 
                }
             });
             }); 
-            $j_eme_admin(document).unload(function() {
+            jQuery(document).unload(function() {
             GUnload();
          });
           //]]>
       </script>
 <?php
    }
-}
-
-$gmap_is_active = get_option('eme_gmap_is_active' );
-if ($gmap_is_active) {
-   add_action ( 'admin_head', 'eme_admin_map_script' );
-
 }
 
 function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5, $location_id='',$title='') {
@@ -3520,10 +3734,8 @@ function eme_rss_link_shortcode($atts) {
    $result = eme_rss_link ( "justurl=$justurl&echo=0&text=$text&limit=$limit&scope=$scope&order=$order&category=$category&author=$author&contact_person=$contact_person&location_id=$location_id&title=".urlencode($title) );
    return $result;
 }
-add_shortcode ( 'events_rss_link', 'eme_rss_link_shortcode' );
 
 function eme_rss() {
-   if (isset ( $_GET['eme_rss'] ) && $_GET['eme_rss'] == 'main') {
       if (isset($_GET['limit'])) {
          $limit=intval($_GET['limit']);
       } else {
@@ -3564,7 +3776,6 @@ function eme_rss() {
       } else {
          $main_title=get_option('eme_rss_main_title' );
       }
-      header ( "Content-type: text/xml" );
       echo "<?xml version='1.0'?>\n";
       
       ?>
@@ -3604,8 +3815,14 @@ Weblog Editor 2.0
              echo "<item>\n";
              echo "<title>$title</title>\n";
              echo "<link>$event_link</link>\n";
-             if (get_option('eme_rss_show_pubdate' ))
-                echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
+             if (get_option('eme_rss_show_pubdate' )) {
+                if (get_option('eme_rss_pubdate_startdate' )) {
+                   $timezoneoffset=date('O');
+                   echo "<pubDate>".date_i18n ('D, d M Y H:i:s $timezoneoffset', strtotime($event['event_start_date']." ".$event['event_start_time']))."</pubDate>\n";
+                } else {
+                   echo "<pubDate>".date_i18n ('D, d M Y H:i:s +0000', strtotime($event['modif_date_gmt']))."</pubDate>\n";
+                }
+             }
              echo "<description>$description</description>\n";
              if (get_option('eme_categories_enabled')) {
                 $categories = eme_sanitize_rss(eme_replace_placeholders ( "#_CATEGORIES", $event, "rss" ));
@@ -3620,14 +3837,11 @@ Weblog Editor 2.0
 </rss>
 
 <?php
-      die ();
-   }
 }
-add_action ( 'init', 'eme_rss' );
+
 function eme_general_head() {
-   global $wp_query;
    if (eme_is_single_event_page()) {
-      $event=eme_get_event($wp_query->query_vars['event_id']);
+      $event=eme_get_event(get_query_var('event_id'));
       // I don't know if the canonical rel-link is needed, but since WP adds it by default ...
       $canon_url=eme_event_url($event);
       echo "<link rel=\"canonical\" href=\"$canon_url\" />\n";
@@ -3635,25 +3849,25 @@ function eme_general_head() {
       if ($extra_headers_format != "") {
          $extra_headers_lines = explode ("\n",$extra_headers_format);
          foreach ($extra_headers_lines as $extra_header_format) {
-            # the RSS format already removes most of html code, so let's use that
-            $extra_header = eme_replace_placeholders ($extra_header_format, $event, "rss" );
-            # the RSS format converts \n to \r\n but we want one line only
+            # the text format already removes most of html code, so let's use that
+            $extra_header = strip_shortcodes(eme_replace_placeholders ($extra_header_format, $event, "text",0 ));
+            # the text format converts \n to \r\n but we want one line only
             $extra_header = trim(preg_replace('/\r\n/', "", $extra_header));
             if ($extra_header != "")
                echo $extra_header."\n";
          }
       }
    } elseif (eme_is_single_location_page()) {
-      $location=eme_get_location($wp_query->query_vars['location_id']);
+      $location=eme_get_location(get_query_var('location_id'));
       $canon_url=eme_location_url($location);
       echo "<link rel=\"canonical\" href=\"$canon_url\" />\n";
       $extra_headers_format=get_option('eme_location_html_headers_format');
       if ($extra_headers_format != "") {
          $extra_headers_lines = explode ("\n",$extra_headers_format);
          foreach ($extra_headers_lines as $extra_header_format) {
-            # the RSS format already removes most of html code, so let's use that
-            $extra_header = eme_replace_locations_placeholders ($extra_header_format, $location, "rss" );
-            # the RSS format converts \n to \r\n but we want one line only
+            # the text format already removes most of html code, so let's use that
+            $extra_header = strip_shortcodes(eme_replace_locations_placeholders ($extra_header_format, $location, "text", 0 ));
+            # the text format converts \n to \r\n but we want one line only
             $extra_header = trim(preg_replace('/\r\n/', "", $extra_header));
             if ($extra_header != "")
                echo $extra_header."\n";
@@ -3665,19 +3879,13 @@ function eme_general_head() {
    if ($gmap_is_active && $load_js_in_header) {
       echo "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_location_map.js'></script>\n";
    }
-   if ($load_js_in_header) {
-      eme_ajaxize_calendar();
-   }
 }
-add_action ( 'wp_head', 'eme_general_head' );
 
 function eme_change_canonical_url() {
    if (eme_is_single_event_page() || eme_is_single_location_page()) {
       remove_action( 'wp_head', 'rel_canonical' );
    }
 }
-add_action( 'template_redirect', 'eme_change_canonical_url' );
-
 
 function eme_general_css() {
    $eme_css_url= EME_PLUGIN_URL."events_manager.css";
@@ -3690,7 +3898,6 @@ function eme_general_css() {
       wp_register_style('eme_stylesheet_extra',$eme_css_url,'eme_stylesheet');
    wp_enqueue_style('eme_stylesheet_extra'); 
 }
-add_action('wp_enqueue_scripts','eme_general_css');
 
 function eme_general_footer() {
    global $eme_need_gmap_js;
@@ -3701,7 +3908,6 @@ function eme_general_footer() {
       echo "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_location_map.js'></script>\n";
    }
 }
-add_action('wp_footer', 'eme_general_footer');
 
 function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    global $wpdb;
@@ -3721,6 +3927,11 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
    }
+   $event_properties = @unserialize($event['event_properties']);
+   if ($event_properties['all_day']) {
+      $event['event_start_time']="00:00:00";
+      $event['event_end_time']="23:59:59";
+   }
    // if the end day/time is lower than the start day/time, then put
    // the end day one day (86400 secs) ahead, but only if
    // the end time has been filled in, if it is empty then we keep
@@ -3728,10 +3939,12 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    if ($event['event_end_time'] != "00:00:00") {
       $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
       $endstring=strtotime($event['event_end_date']." ".$event['event_end_time']);
-      if ($endstring<=$startstring) {
+      if ($endstring<$startstring) {
          $event['event_end_date']=date("Y-m-d",strtotime($event['event_start_date'])+86400);
       }
    }
+
+   if (has_filter('eme_event_preinsert_filter')) $event=apply_filters('eme_event_preinsert_filter',$event);
 
    $wpdb->show_errors(true);
    if (!$wpdb->insert ( $table_name, $event )) {
@@ -3763,6 +3976,11 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    // some sanity checks
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
+   }
+   $event_properties = @unserialize($event['event_properties']);
+   if ($event_properties['all_day']) {
+      $event['event_start_time']="00:00:00";
+      $event['event_end_time']="23:59:59";
    }
    // if the end day/time is lower than the start day/time, then put
    // the end day one day (86400 secs) ahead, but only if
@@ -3814,25 +4032,26 @@ function eme_favorite_menu($actions) {
 function eme_alert_events_page() {
    global $pagenow;
    $events_page_id = get_option('eme_events_page' );
-   if ($pagenow == 'post.php' && ( get_query_var('post_type') && 'page' == get_query_var('post_type') ) && isset ( $_GET['action'] ) && $_GET['action'] == 'edit' && isset ( $_GET['post'] ) && $_GET['post'] == "$events_page_id") {
+   if ($pagenow == 'post.php' && ( get_query_var('post_type') && 'page' == get_query_var('post_type') ) && isset ( $_GET['eme_admin_action'] ) && $_GET['eme_admin_action'] == 'edit' && isset ( $_GET['post'] ) && $_GET['post'] == "$events_page_id") {
       $message = sprintf ( __ ( "This page corresponds to <strong>Events Made Easy</strong> events page. Its content will be overriden by <strong>Events Made Easy</strong>. If you want to display your content, you can can assign another page to <strong>Events Made Easy</strong> in the the <a href='%s'>Settings</a>. ", 'eme' ), 'admin.php?page=eme-options' );
       $notice = "<div class='error'><p>$message</p></div>";
       echo $notice;
    }
 }
-add_action ( 'admin_notices', 'eme_alert_events_page' );
 
-function eme_handlepostbox(){
+function eme_enqueue_js(){
    global $plugin_page;
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
    }
-   if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
-      wp_enqueue_script('jquery-ui-datepicker');
+   if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
+      wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
+   }
+   if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager') ) ) {
+      wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js");
    }
 }
-add_action ( 'admin_init', 'eme_handlepostbox' );
 
 # return number of days until next event or until the specified event
 function eme_countdown($atts) {
@@ -3845,10 +4064,9 @@ function eme_countdown($atts) {
       $newest_event_array=eme_get_events(1);
       $event=$newest_event_array[0];
    }
-   $end_date=$event['event_start_date'];
-   return eme_daydifference($now,$end_date);
+   $start_date=$event['event_start_date'];
+   return eme_daydifference($now,$start_date);
 }
-add_shortcode('events_countdown', 'eme_countdown');
 
 function eme_image_url_for_event($event) {
    if (isset($event['recurrence_id']) && $event['recurrence_id']>0) {
