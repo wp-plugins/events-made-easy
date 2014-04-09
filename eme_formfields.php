@@ -510,16 +510,18 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    }
 
    // the 2 placeholders that can contain extra text are treated seperately first
-   // the question mark is used for non greede (minimal) matching
+   // the question mark is used for non greedy (minimal) matching
    if (preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
-	 if (get_option('eme_captcha_for_booking'))
-            $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
-         else
-            $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
+      // only show the captcha when booking via the frontend, not the admin backend
+      if (!is_admin() && get_option('eme_captcha_for_booking'))
+         $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
+      else
+         $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
    }
+
    if (preg_match('/#_SUBMIT\[.+\]/', $format)) {
-         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
-         $required_fields_count++;
+      $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
+      $required_fields_count++;
    }
 
    // now the normal placeholders
