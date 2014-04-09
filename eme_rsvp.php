@@ -297,12 +297,12 @@ function eme_delete_booking_form($event_id) {
    }
 
    $form_html  .= "<form id='booking-delete-form' name='booking-delete-form' method='post' action='$destination'>
+      <input type='hidden' name='eme_eventAction' value='delete_booking'/>
+      <input type='hidden' name='event_id' value='$event_id'/>
       <table class='eme-rsvp-form'>
          <tr><th scope='row'>".__('Name', 'eme').":</th><td><input type='text' name='bookerName' value='$bookerName' $readonly /></td></tr>
          <tr><th scope='row'>".__('E-Mail', 'eme').":</th><td><input type='text' name='bookerEmail' value='$bookerEmail' $readonly /></td></tr>
       </table>
-      <input type='hidden' name='eme_eventAction' value='delete_booking'/>
-      <input type='hidden' name='event_id' value='$event_id'/>
       <input type='submit' value='".eme_translate(get_option('eme_rsvp_delbooking_submit_string'))."'/>
    </form>";
 

@@ -520,7 +520,10 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    }
 
    if (preg_match('/#_SUBMIT\[.+\]/', $format)) {
-      $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
+      if (is_admin() && $booking)
+         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".__('Update booking','eme')."'/>" ,$format );
+      else
+         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
       $required_fields_count++;
    }
 
