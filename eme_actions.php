@@ -5,6 +5,18 @@ function eme_actions_init() {
    nocache_headers();
    eme_load_textdomain();
 
+   // now, first update the DB if needed
+   $db_version = get_option('eme_version');
+   if ($db_version && $db_version != EME_DB_VERSION) {
+      eme_create_tables();
+      // to do: check if the db update succeeded ...
+
+      // let the admin side know if the update succeeded
+      $db_version = get_option('eme_version');
+      if ($db_version && $db_version == EME_DB_VERSION)
+         add_option('eme_update_done',1);         
+   }
+
    // now first all ajax ops: exit needed
    if (isset ( $_GET ['eme_ical'] ) && $_GET ['eme_ical'] == 'public_single' && isset ( $_GET ['event_id'] )) {
       header("Content-type: text/calendar; charset=utf-8");
@@ -86,6 +98,14 @@ add_action('init','eme_actions_init');
 function eme_actions_admin_init() {
    eme_enqueue_js();
    eme_options_register();
+
+   // let the admin know the DB has been updated
+   if (current_user_can( get_option('eme_cap_settings') ) && isset($_GET['disable_update_message']) && $_GET['disable_update_message'] == 'true')
+      delete_option('eme_update_done');
+   if (get_option('eme_update_done')) {
+      add_action('admin_notices', 'eme_explain_dbupdate_done');
+   }
+
    eme_handle_get();
 }
 add_action('admin_init','eme_actions_admin_init');

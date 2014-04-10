@@ -348,7 +348,6 @@ function eme_install($networkwide) {
 
 // the private function; for activation
 function _eme_install() {
-   global $wpdb;
    // check the user is allowed to make changes
    if ( !current_user_can( SETTING_CAPABILITY  ) ) {
       return;
@@ -366,28 +365,6 @@ function _eme_install() {
       delete_option('eme_events_admin_limit');
    }
 
-   // Creates the events table if necessary
-   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-   $charset="";
-   $collate="";
-   if ( $wpdb->has_cap('collation') ) {
-      if ( ! empty($wpdb->charset) )
-         $charset = "DEFAULT CHARACTER SET $wpdb->charset";
-      if ( ! empty($wpdb->collate) )
-         $collate = "COLLATE $wpdb->collate";
-   }
-   eme_create_events_table($charset,$collate);
-   eme_create_recurrence_table($charset,$collate);
-   eme_create_locations_table($charset,$collate);
-   eme_create_bookings_table($charset,$collate);
-   eme_create_people_table($charset,$collate);
-   eme_create_categories_table($charset,$collate);
-   eme_create_templates_table($charset,$collate);
-   eme_create_formfields_table($charset,$collate);
-   eme_create_answers_table($charset,$collate);
-   
-   update_option('eme_version', EME_DB_VERSION); 
-
    // always reset the drop data option
    update_option('eme_uninstall_drop_data', 0); 
    
@@ -404,8 +381,10 @@ function _eme_install() {
       eme_create_events_page(); 
    }
 
-    // SEO rewrite rules
-    eme_flushRules();
+   eme_create_tables();
+
+   // SEO rewrite rules
+   eme_flushRules();
 }
 
 function eme_uninstall($networkwide) {
@@ -460,6 +439,30 @@ function eme_new_blog($blog_id, $user_id, $domain, $path, $site_id, $meta ) {
       _eme_install();
       switch_to_blog($old_blog);
    }
+}
+
+function eme_create_tables() {
+   // Creates the events table if necessary
+   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+   $charset="";
+   $collate="";
+   if ( $wpdb->has_cap('collation') ) {
+      if ( ! empty($wpdb->charset) )
+         $charset = "DEFAULT CHARACTER SET $wpdb->charset";
+      if ( ! empty($wpdb->collate) )
+         $collate = "COLLATE $wpdb->collate";
+   }
+   eme_create_events_table($charset,$collate);
+   eme_create_recurrence_table($charset,$collate);
+   eme_create_locations_table($charset,$collate);
+   eme_create_bookings_table($charset,$collate);
+   eme_create_people_table($charset,$collate);
+   eme_create_categories_table($charset,$collate);
+   eme_create_templates_table($charset,$collate);
+   eme_create_formfields_table($charset,$collate);
+   eme_create_answers_table($charset,$collate);
+   
+   update_option('eme_version', EME_DB_VERSION); 
 }
 
 function eme_drop_table($table) {
@@ -937,11 +940,6 @@ function eme_delete_events_page() {
 // Create the Manage Events and the Options submenus 
 add_action('admin_menu','eme_create_events_submenu');
 function eme_create_events_submenu () {
-   // let's check if deactivation is needed
-   $db_version = get_option('eme_version');
-   if ($db_version && $db_version < EME_DB_VERSION)
-      add_action('admin_notices', "eme_explain_deactivation_needed");
-
    $events_page_id = get_option('eme_events_page');
    if (!$events_page_id || !get_page($events_page_id))
       add_action('admin_notices', "eme_explain_events_page_missing");
@@ -980,12 +978,13 @@ function eme_create_events_submenu () {
       }
       $plugin_page = add_submenu_page('events-manager', __('Cleanup', 'eme'), __('Cleanup', 'eme'), get_option('eme_cap_cleanup'), 'eme-cleanup', "eme_cleanup_page");
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
+
       # just in case: make sure the Settings page can be reached if something is not correct with the security settings
-      if (get_option('eme_cap_settings') =='') {
-         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), DEFAULT_CAP_SETTINGS, "eme-options", 'eme_options_page');
-      } else {
-         $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), get_option('eme_cap_settings'), "eme-options", 'eme_options_page');
-      }
+      if (get_option('eme_cap_settings') =='')
+         $cap_settings=DEFAULT_CAP_SETTINGS;
+      else
+         $cap_settings=get_option('eme_cap_settings');
+      $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), $cap_settings, "eme-options", 'eme_options_page');
       add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       // do some option checking after the options have been updated
       // add_action( 'load-'. $plugin_page, 'eme_admin_options_save');
@@ -1840,29 +1839,21 @@ function admin_show_warnings() {
    $db_version = get_option('eme_version');
    global $plugin_page;
 
-   if ($db_version && $db_version < EME_DB_VERSION) {
-      // the warning is already given via admin_notice, we just want
-      // to prevent people to do anything in EME without deactivation/activation first
-      // But we allow access to the settings page ...
-      if ($plugin_page != 'eme-options')
-         exit(1);
-   } else {
-      // the normal warnings
-      $donation_done = get_option('eme_donation_done' );
-      if ($donation_done == 0)
-         eme_explain_donation ();
+   // the normal warnings
+   $donation_done = get_option('eme_donation_done' );
+   if (!$donation_done)
+      eme_explain_donation ();
 
-      // now the normal warnings
-      $say_hello = get_option('eme_hello_to_user' );
-      if ($say_hello == 1)
-         eme_hello_to_new_user ();
-   }
+   // now the normal warnings
+   $say_hello = get_option('eme_hello_to_user' );
+   if ($say_hello)
+      eme_hello_to_new_user ();
 }
 
-function eme_explain_deactivation_needed() {
-   $advice = __("It seems you upgraded Events Made Eeasy but your events database hasn't been updated accordingly yet. Please deactivate/activate the plugin for this to happen.",'eme')."<br />".__("<strong>Warning:</strong> make sure the option 'Delete all EME data when upgrading or deactivating' is not activated if you don't want to lose all existing event data!",'eme');
+function eme_explain_dbupdate_done() {
+   $advice = sprintf(__("It seems you upgraded Events Made Eeasy, the events database has been updated accordingly. Click <a href='%s'>here</a> to dismiss this message.",'eme'),add_query_arg(array("disable_update_message"=>"true")));
    ?>
-<div id="message" class="error"><p> <?php echo $advice; ?> </p></div>
+<div id="message" class="update-nag"><p> <?php echo $advice; ?> </p></div>
 <?php
 }
 

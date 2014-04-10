@@ -256,16 +256,17 @@ function eme_handle_get() {
       return;
 
    // Disable Hello to new user if requested
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['disable_hello_to_user'] ) && $_GET ['disable_hello_to_user'] == 'true')
+   if (current_user_can( get_option('eme_cap_settings') ) && isset($_GET['disable_hello_to_user']) && $_GET['disable_hello_to_user'] == 'true')
       update_option('eme_hello_to_user', 0 );
 
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['disable_donate_message'] ) && $_GET ['disable_donate_message'] == 'true')
+   // Disable donation message if requested
+   if (current_user_can( get_option('eme_cap_settings') ) && isset($_GET['disable_donate_message']) && $_GET['disable_donate_message'] == 'true')
       update_option('eme_donation_done', 1 );
 
    // do the UTF-8 conversion if wanted
-   if (current_user_can( get_option('eme_cap_settings') ) && isset ( $_GET ['do_character_conversion'] ) && $_GET ['do_character_conversion'] == 'true' && $wpdb->has_cap('collation')) {
-                if ( ! empty($wpdb->charset)) {
-                        $charset = "CHARACTER SET $wpdb->charset";
+   if (current_user_can( get_option('eme_cap_settings') ) && isset($_GET['do_character_conversion']) && $_GET['do_character_conversion'] == 'true' && $wpdb->has_cap('collation')) {
+      if ( ! empty($wpdb->charset)) {
+         $charset = "CHARACTER SET $wpdb->charset";
          $collate="";
          if ( ! empty($wpdb->collate) )
             $collate = "COLLATE $wpdb->collate";
@@ -275,10 +276,11 @@ function eme_handle_get() {
                         eme_convert_charset(BOOKINGS_TBNAME,$charset,$collate);
                         eme_convert_charset(PEOPLE_TBNAME,$charset,$collate);
                         eme_convert_charset(CATEGORIES_TBNAME,$charset,$collate);
-                }
+      }
       update_option('eme_conversion_needed', 0 );
       print "<div id=\"message\" class=\"updated\">".__('Conversion done, please check your events and restore from backup if you see any sign of troubles.')."</div>";
    }
+
 }
 
 function eme_admin_tabs( $current = 'homepage' ) {
