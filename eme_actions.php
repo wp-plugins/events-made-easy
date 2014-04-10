@@ -14,7 +14,7 @@ function eme_actions_init() {
       // let the admin side know if the update succeeded
       $db_version = get_option('eme_version');
       if ($db_version && $db_version == EME_DB_VERSION)
-         add_option('eme_update_done',1);         
+         eme_add_option('eme_update_done',1);         
    }
 
    // now first all ajax ops: exit needed
@@ -106,6 +106,7 @@ function eme_actions_admin_init() {
       add_action('admin_notices', 'eme_explain_dbupdate_done');
    }
 
+   // flush the SEO rules if the event page has been changed
    eme_handle_get();
 }
 add_action('admin_init','eme_actions_admin_init');

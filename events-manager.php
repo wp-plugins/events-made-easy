@@ -348,10 +348,6 @@ function eme_install($networkwide) {
 
 // the private function; for activation
 function _eme_install() {
-   // check the user is allowed to make changes
-   if ( !current_user_can( SETTING_CAPABILITY  ) ) {
-      return;
-   }
    eme_add_options();
 
    $db_version = get_option('eme_version');

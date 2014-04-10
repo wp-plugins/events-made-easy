@@ -64,6 +64,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.3.5 =
 * Bugfix: don't show the captcha when showing the booking form in the admin backend, it was ignored but still it's best not to confuse people
 * Improvement: the events database now gets updated upon first site visit (admin or not), so no more deactivate/reactivate action needed
+* Improvement: when the events page setting changes, the SEO rules are flushed, so no more deactivate/reactivate action needed
 
 = 1.3.4 =
 * Feature: when doing the "quick" deny for registrations while editing an event, no mails were being sent. There's now a general option in the Mail section that allows you to change that.

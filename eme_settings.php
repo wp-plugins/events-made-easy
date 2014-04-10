@@ -281,6 +281,15 @@ function eme_handle_get() {
       print "<div id=\"message\" class=\"updated\">".__('Conversion done, please check your events and restore from backup if you see any sign of troubles.')."</div>";
    }
 
+   // if settings have been changed, check if the SEO rules need to be flushed
+   if ($plugin_page == 'eme-options' && isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true') {
+      $old_events_page=get_option('eme_old_events_page');
+      $events_page=get_option('eme_events_page');
+      if ($events_page != $old_events_page) {
+         eme_flushRules();
+         update_option('eme_old_events_page',$events_page);
+      }
+   }
 }
 
 function eme_admin_tabs( $current = 'homepage' ) {
