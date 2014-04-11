@@ -8,8 +8,15 @@ function eme_actions_init() {
    // now, first update the DB if needed
    $db_version = get_option('eme_version');
    if ($db_version && $db_version != EME_DB_VERSION) {
+      // first set the version, so as to limit the possibility of 2
+      // of these updates to happen if more than 1 person visits
+      // the site at the same time
+      update_option('eme_version', EME_DB_VERSION);
+      // now add possible new options
+      eme_add_options();
+      // and update the DB tables if needed
       eme_create_tables();
-      // to do: check if the db update succeeded ...
+      // to do: check if the DB update succeeded ...
 
       // let the admin side know if the update succeeded
       $db_version = get_option('eme_version');

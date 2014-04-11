@@ -381,6 +381,9 @@ function _eme_install() {
 
    // SEO rewrite rules
    eme_flushRules();
+   
+   // now set the version correct
+   update_option('eme_version', EME_DB_VERSION); 
 }
 
 function eme_uninstall($networkwide) {
@@ -457,8 +460,6 @@ function eme_create_tables() {
    eme_create_templates_table($charset,$collate);
    eme_create_formfields_table($charset,$collate);
    eme_create_answers_table($charset,$collate);
-   
-   update_option('eme_version', EME_DB_VERSION); 
 }
 
 function eme_drop_table($table) {
