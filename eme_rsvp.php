@@ -217,14 +217,6 @@ function eme_attendee_list_shortcode($atts) {
 function eme_delete_booking_form($event_id) {
    global $current_user;
    
-   if (is_user_logged_in()) {
-      get_currentuserinfo();
-      $bookerName=$current_user->display_name;
-      $bookerEmail=$current_user->user_email;
-   } else {
-      $bookerName="";
-      $bookerEmail="";
-   }
    $form_html = "";
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
@@ -296,15 +288,14 @@ function eme_delete_booking_form($event_id) {
       $form_html .= "</div>";
    }
 
-   $form_html  .= "<form id='booking-delete-form' name='booking-delete-form' method='post' action='$destination'>
+   $form_html .= "<form id='booking-delete-form' name='booking-delete-form' method='post' action='$destination'>
       <input type='hidden' name='eme_eventAction' value='delete_booking'/>
-      <input type='hidden' name='event_id' value='$event_id'/>
-      <table class='eme-rsvp-form'>
-         <tr><th scope='row'>".__('Name', 'eme').":</th><td><input type='text' name='bookerName' value='$bookerName' $readonly /></td></tr>
-         <tr><th scope='row'>".__('E-Mail', 'eme').":</th><td><input type='text' name='bookerEmail' value='$bookerEmail' $readonly /></td></tr>
-      </table>
-      <input type='submit' value='".eme_translate(get_option('eme_rsvp_delbooking_submit_string'))."'/>
-   </form>";
+      <input type='hidden' name='event_id' value='$event_id'/>";
+   $form_html .= wp_nonce_field('del_booking','eme_rsvp_nonce');
+   $form_html .= eme_replace_cancelformfields_placeholders($event);
+   $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
+      <p>".__('(* marks a required field)', 'eme')."</p>";
+   $form_html .= "</form>";
 
    if (has_filter('eme_delete_booking_form_filter')) $form_html=apply_filters('eme_delete_booking_form_filter',$form_html);
    return $form_html;
@@ -324,6 +315,36 @@ function eme_cancel_seats($event) {
    if (is_admin()) {
       return __('This function is not allowed from the admin backend.', 'eme');
    }
+
+   // check for spammers as early as possible
+   if (isset($_POST['honeypot_check'])) {
+      $honeypot_check = stripslashes($_POST['honeypot_check']);
+   } elseif (!is_admin() && !isset($_POST['honeypot_check'])) {
+      $honeypot_check = "bad boy";
+   } else {
+      $honeypot_check = "";
+   }
+
+   if (!is_admin() && get_option('eme_captcha_for_booking')) {
+      $captcha_err = response_check_captcha("captcha_check",1);
+   } else {
+      $captcha_err = "";
+   }
+
+   if (!is_admin() && (! isset( $_POST['eme_rsvp_nonce'] ) ||
+       ! wp_verify_nonce( $_POST['eme_rsvp_nonce'], 'del_booking' ))) {
+      $nonce_err = "bad boy";
+   } else {
+      $nonce_err = "";
+   }
+
+   if(!empty($captcha_err)) {
+      return __('You entered an incorrect code','eme');
+   } elseif (!empty($honeypot_check) ||  !empty($nonce_err)) {
+      // a bot fills this in, but a human never will, since it's
+      // a hidden field
+      return __('You are a bad boy','eme');
+   } 
 
    if ($registration_wp_users_only && is_user_logged_in()) {
       // we require a user to be WP registered to be able to book

@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 49);
+define('EME_DB_VERSION', 50);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -536,6 +536,7 @@ function eme_create_events_table($charset,$collate) {
          event_registration_pending_email_body text NULL, 
          event_registration_updated_email_body text NULL, 
          event_registration_form_format text NULL, 
+         event_cancel_form_format text NULL, 
          registration_requires_approval bool DEFAULT 0,
          registration_wp_users_only bool DEFAULT 0,
          event_image_url text NULL,
@@ -610,6 +611,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'modif_date', "alter table $table_name add modif_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'modif_date_gmt', "alter table $table_name add modif_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'event_registration_form_format', "alter table $table_name add event_registration_form_format text NULL;"); 
+      maybe_add_column($table_name, 'event_cancel_form_format', "alter table $table_name add event_cancel_form_format text NULL;"); 
       maybe_add_column($table_name, 'event_image_url', "alter table $table_name add event_image_url text NULL;"); 
       maybe_add_column($table_name, 'event_image_id', "alter table $table_name add event_image_id mediumint(9) DEFAULT 0 NOT NULL;"); 
       if ($db_version<3) {

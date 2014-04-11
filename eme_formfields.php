@@ -325,6 +325,128 @@ function eme_get_formfield_html($field_id, $entered_val) {
    return $html;
 }
 
+function eme_replace_cancelformfields_placeholders ($event) {
+   global $current_user;
+   // not used from the admin backend, but we check to be sure
+   if (is_admin()) return;
+
+   $registration_wp_users_only=$event['registration_wp_users_only'];
+   if ($registration_wp_users_only) {
+      $readonly="disabled='disabled'";
+   } else {
+      $readonly="";
+   }
+
+   $format = $event['event_cancel_form_format'];
+   if (empty($format)) {
+      $format = get_option('eme_cancel_form_format');
+   }
+
+   $eme_captcha_for_booking=get_option('eme_captcha_for_booking');
+
+   $required_fields_count = 0;
+   // We need at least #_NAME, #_EMAIL and #_SUBMIT
+   $required_fields_min = 3;
+   // if we require the captcha: add 1
+   if ($eme_captcha_for_booking)
+      $required_fields_min++;
+
+   $bookerName="";
+   $bookerEmail="";
+   if (is_user_logged_in()) {
+      get_currentuserinfo();
+      $bookerName=$current_user->display_name;
+      $bookerEmail=$current_user->user_email;
+   }
+   // check for previously filled in data
+   // this in case people entered a wrong captcha
+   if (isset($_POST['bookerName'])) $bookerName = eme_sanitize_html(stripslashes_deep($_POST['bookerName']));
+   if (isset($_POST['bookerEmail'])) $bookerEmail = eme_sanitize_html(stripslashes_deep($_POST['bookerEmail']));
+
+   // the 2 placeholders that can contain extra text are treated seperately first
+   // the question mark is used for non greedy (minimal) matching
+   if (preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
+      // only show the captcha when booking via the frontend, not the admin backend
+      if (get_option('eme_captcha_for_booking'))
+         $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
+      else
+         $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
+   }
+
+   if (preg_match('/#_SUBMIT\[.+\]/', $format)) {
+      $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
+      $required_fields_count++;
+   }
+
+   // now the normal placeholders
+   preg_match_all("/#(REQ)?_[A-Z0-9_]+/", $format, $placeholders);
+   // make sure we set the largest matched placeholders first, otherwise if you found e.g.
+   // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
+   usort($placeholders[0],'sort_stringlenth');
+   # we need 3 required fields: #_NAME, #_EMAIL and #_SEATS
+   # if these are not present: we don't replace anything and the form is worthless
+   foreach($placeholders[0] as $result) {
+      $orig_result = $result;
+      $found=1;
+      $required=0;
+      $html5_wanted=0;
+      $replacement = "";
+      if (strstr($result,'#REQ')) {
+         $result = str_replace("#REQ","#",$result);
+         $required=1;
+      }
+
+      // also support RESPNAME, RESPEMAIL, ...
+      if (strstr($result,'#_RESP')) {
+         $result = str_replace("#_RESP","#_",$result);
+      }
+
+      if (preg_match('/#_NAME/', $result)) {
+         $replacement = "<input type='text' name='bookerName' value='$bookerName' $readonly />";
+         $required_fields_count++;
+         // #_NAME is always required
+         $required=1;
+      } elseif (preg_match('/#_HTML5_EMAIL/', $result)) {
+         $replacement = "<input type='email' name='bookerEmail' value='$bookerEmail' $readonly />";
+         $required_fields_count++;
+         // #_EMAIL is always required
+         $required=1;
+      } elseif (preg_match('/#_EMAIL/', $result)) {
+         $replacement = "<input type='text' name='bookerEmail' value='$bookerEmail' $readonly />";
+         $required_fields_count++;
+         // #_EMAIL is always required
+         $required=1;
+      } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
+         $replacement = "<img src='".EME_PLUGIN_URL."captcha.php'><br><input type='text' name='captcha_check' />";
+         $required_fields_count++;
+      } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
+         $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_delbooking_submit_string'))."'/>";
+         $required_fields_count++;
+      } else {
+         $found = 0;
+      }
+
+      if ($required)
+         $replacement .= "<div class='eme-required-field'>&nbsp;".__('(Required field)','eme')."</div>";
+
+      if ($found) {
+         $format = str_replace($orig_result, $replacement ,$format );
+      }
+   }
+
+   // now any leftover event placeholders
+   $format = eme_replace_placeholders($format, $event);
+
+   // now, replace any language tags found in the format itself
+   $format = eme_translate($format);
+
+   if ($required_fields_count >= $required_fields_min) {
+      return $format;
+   } else {
+      return __('Not all required fields are present in the cancel form.', 'eme');
+   }
+}
+
 function eme_replace_formfields_placeholders ($event,$booking="") {
    global $current_user;
 
@@ -438,6 +560,16 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    }
 
    $required_fields_count = 0;
+   $eme_captcha_for_booking=get_option('eme_captcha_for_booking');
+   # we need 4 required fields: #_NAME, #_EMAIL, #_SEATS and #_SUBMIT
+   # for multiprice: 3 + number of possible prices (we add those later on)
+   if (eme_is_multi($event['price']))
+      $required_fields_min = 3;
+   else
+      $required_fields_min = 4;
+   // if we require the captcha: add 1
+   if ($eme_captcha_for_booking)
+      $required_fields_min++;
 
    $bookerName="";
    $bookerEmail="";
@@ -513,10 +645,12 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    // the question mark is used for non greedy (minimal) matching
    if (preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
       // only show the captcha when booking via the frontend, not the admin backend
-      if (!is_admin() && get_option('eme_captcha_for_booking'))
+      if (!is_admin() && $eme_captcha_for_booking) {
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
-      else
+         $required_fields_count++;
+      } else {
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
+      }
    }
 
    if (preg_match('/#_SUBMIT\[.+\]/', $format)) {
@@ -558,6 +692,8 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       } elseif (preg_match('/#_HTML5_EMAIL/', $result)) {
          $replacement = "<input type='email' name='bookerEmail' value='$bookerEmail' $readonly />";
          $required_fields_count++;
+         // #_EMAIL is always required
+         $required=1;
       } elseif (preg_match('/#_EMAIL/', $result)) {
          $replacement = "<input type='text' name='bookerEmail' value='$bookerEmail' $readonly />";
          $required_fields_count++;
@@ -585,8 +721,9 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
-      } elseif (preg_match('/#_CAPTCHA/', $result) && get_option('eme_captcha_for_booking')) {
+      } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php'><br><input type='text' name='captcha_check' />";
+         $required_fields_count++;
       } elseif (preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
@@ -643,7 +780,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       $matches=preg_split('/\|\|/', $event['price']);
       $count=count($matches);
       // the count can be >3+$count if conditional tags are used to combine a form for single and multiple prices
-      if ($required_fields_count >= 3+$count) {
+      if ($required_fields_count >= $required_fields_min+$count) {
          return $format;
       } else {
          $res = __('Not all required fields are present in the booking form.', 'eme');
@@ -651,7 +788,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
          $res.= '<br />'.__("See the documentation about multiprice events.",'eme');
          return "<div id='message' class='eme-rsvp-message'>$res</div>";
       }
-   } elseif ($required_fields_count >= 4) {
+   } elseif ($required_fields_count >= $required_fields_min) {
       // the count can be > 4 if conditional tags are used to combine a form for single and multiple prices
       return $format;
    } else {

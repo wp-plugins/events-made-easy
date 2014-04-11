@@ -37,6 +37,7 @@ function eme_new_event() {
       "event_registration_pending_email_body" => '',
       "event_registration_updated_email_body" => '',
       "event_registration_form_format" => '',
+      "event_cancel_registration_form_format" => '',
       "event_registration_recorded_ok_html" => '',
       "event_slug" => '',
       "event_image_url" => '',
@@ -287,6 +288,7 @@ function eme_events_page() {
       $event['event_registration_pending_email_body'] = isset($_POST['event_registration_pending_email_body']) ? stripslashes ( $_POST['event_registration_pending_email_body'] ) : '';
       $event['event_registration_updated_email_body'] = isset($_POST['event_registration_updated_email_body']) ? stripslashes ( $_POST['event_registration_updated_email_body'] ) : '';
       $event['event_registration_form_format'] = isset($_POST['event_registration_form_format']) ? stripslashes ( $_POST['event_registration_form_format'] ) : '';
+      $event['event_cancel_form_format'] = isset($_POST['event_cancel_form_format']) ? stripslashes ( $_POST['event_cancel_form_format'] ) : '';
       $event['event_url'] = isset($_POST['event_url']) ? eme_strip_tags ( $_POST['event_url'] ) : '';
       $event['event_image_url'] = isset($_POST['event_image_url']) ? eme_strip_tags ( $_POST['event_image_url'] ) : '';
       $event['event_image_id'] = isset($_POST['event_image_id']) ? intval ( $_POST['event_image_id'] ) : 0;
@@ -2597,6 +2599,8 @@ function eme_event_form($event, $title, $element) {
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_updated_email_body','eme_closed');
                   if ($event['event_registration_form_format']=="")
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_form_format','eme_closed');
+                  if ($event['event_cancel_form_format']=="")
+                     add_filter('postbox_classes_'.$screen.'_div_event_cancel_form_format','eme_closed');
                }
 
                if ($is_new_event) {
@@ -2793,6 +2797,7 @@ function updateShowHideRsvp () {
       jQuery("div#div_event_registration_pending_email_body").fadeIn();
       jQuery("div#div_event_registration_updated_email_body").fadeIn();
       jQuery("div#div_event_registration_form_format").fadeIn();
+      jQuery("div#div_event_cancel_form_format").fadeIn();
    } else {
       jQuery("div#rsvp-data").fadeOut();
       jQuery("div#div_event_contactperson_email_body").fadeOut();
@@ -2800,7 +2805,7 @@ function updateShowHideRsvp () {
       jQuery("div#div_event_respondent_email_body").fadeOut();
       jQuery("div#div_event_registration_pending_email_body").fadeOut();
       jQuery("div#div_event_registration_updated_email_body").fadeOut();
-      jQuery("div#div_event_registration_form_format").fadeOut();
+      jQuery("div#div_event_cancel_form_format").fadeOut();
    }
 }
 
@@ -3009,6 +3014,21 @@ jQuery(document).ready( function() {
          jQuery(this).val('');
       }
    }); 
+   jQuery('textarea#event_cancel_form_format').focus(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_cancel_form_format' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if (jQuery(this).val() == '') {
+         jQuery(this).val(tmp_value);
+      }
+   }); 
+   jQuery('textarea#event_cancel_form_format').blur(function(){
+      var tmp_value='<?php echo rawurlencode(get_option('eme_cancel_form_format' )); ?>';
+      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+      if (jQuery(this).val() == tmp_value) {
+         jQuery(this).val('');
+      }
+   }); 
+
 
    updateIntervalDescriptor(); 
    updateIntervalSelectors();
@@ -3119,6 +3139,7 @@ function eme_admin_event_boxes() {
            add_meta_box("div_event_registration_pending_email_body", __('Registration Pending Email Format', 'eme'), "eme_meta_box_div_event_registration_pending_email_body",$screen,"post");
            add_meta_box("div_event_registration_updated_email_body", __('Registration Updated Email Format', 'eme'), "eme_meta_box_div_event_registration_updated_email_body",$screen,"post");
            add_meta_box("div_event_registration_form_format", __('Registration Form Format', 'eme'), "eme_meta_box_div_event_registration_form_format",$screen,"post");
+           add_meta_box("div_event_cancel_form_format", __('Cancel Registration Form Format', 'eme'), "eme_meta_box_div_event_cancel_form_format",$screen,"post");
            add_meta_box("div_location_name", __('Location', 'eme'), "eme_meta_box_div_location_name",$screen,"post");
            add_meta_box("div_event_notes", __('Details', 'eme'), "eme_meta_box_div_event_notes",$screen,"post");
            add_meta_box("div_event_image", __('Event image', 'eme'), "eme_meta_box_div_event_image",$screen,"post");
@@ -3289,6 +3310,17 @@ function eme_meta_box_div_event_registration_form_format($event) {
    <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
    <br />
    <p><?php _e ( 'The registration form format.','eme');?>
+   <br />
+   <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
+   </p>
+<?php
+}
+
+function eme_meta_box_div_event_cancel_form_format($event) {
+?>
+   <textarea name="event_cancel_form_format" id="event_cancel_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_cancel_form_format']);?></textarea>
+   <br />
+   <p><?php _e ( 'The cancel registration form format.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>

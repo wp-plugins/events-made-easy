@@ -19,7 +19,7 @@ function eme_actions_init() {
       update_option('eme_version', EME_DB_VERSION);
 
       // let the admin side know if the update succeeded
-      eme_add_option('eme_update_done',1);         
+      update_option('eme_update_done',1);         
    }
 
    // now first all ajax ops: exit needed

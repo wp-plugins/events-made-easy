@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.3.5 =
+* Feature: the cancel registration form can now also be formatted (also per event if wanted)
 * Bugfix: don't show the captcha when showing the booking form in the admin backend, it was ignored but still it's best not to confuse people
 * Improvement: the events database now gets updated upon first site visit (admin or not), so no more deactivate/reactivate action needed
 * Improvement: when the events page setting changes, the SEO rules are flushed, so no more deactivate/reactivate action needed
