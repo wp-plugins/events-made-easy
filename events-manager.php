@@ -1045,7 +1045,7 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
    return $format;
 }
 
-function eme_replace_placeholders($format, $event="", $target="html", $do_shortcode=1, $do_translate=1) {
+function eme_replace_placeholders($format, $event="", $target="html", $do_shortcode=1, $lang='') {
    global $wp_query;
    global $eme_need_gmap_js, $booking_id_done;
 
@@ -1252,7 +1252,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#_LINKEDNAME/', $result)) {
          $event_link = eme_event_url($event);
-         $replacement="<a href='$event_link' title='".eme_trans_sanitize_html($event['event_name'])."'>".eme_trans_sanitize_html($event['event_name'])."</a>";
+         $replacement="<a href='$event_link' title='".eme_trans_sanitize_html($event['event_name'],$lang)."'>".eme_trans_sanitize_html($event['event_name'],$lang)."</a>";
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
@@ -1279,7 +1279,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (!empty($event['event_image_id']))
             $event['event_image_url'] = wp_get_attachment_url($event['event_image_id']);
          if($event['event_image_url'] != '') {
-            $replacement = "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            $replacement = "<img src='".$event['event_image_url']."' alt='".eme_trans_sanitize_html($event['event_name'],$lang)."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement); 
             } elseif ($target == "rss")  {
@@ -1302,7 +1302,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $thumb_url = $thumb_array[0];
             $thumb_width = $thumb_array[1];
             $thumb_height = $thumb_array[2];
-            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'],$lang)."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement); 
             } elseif ($target == "rss")  {
@@ -1325,7 +1325,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $thumb_url = $thumb_array[0];
             $thumb_width = $thumb_array[1];
             $thumb_height = $thumb_array[2];
-            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'])."'/>";
+            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'],$lang)."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement); 
             } elseif ($target == "rss")  {
@@ -1353,13 +1353,13 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $field = "event_name";
          if (isset($event[$field]))  $replacement = $event[$field];
          if ($target == "html") {
-            $replacement = eme_trans_sanitize_html($replacement);
+            $replacement = eme_trans_sanitize_html($replacement,$lang);
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
-            $replacement = eme_translate($replacement);
+            $replacement = eme_translate($replacement,$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
-            $replacement = eme_translate($replacement);
+            $replacement = eme_translate($replacement,$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
@@ -1446,7 +1446,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $contact = eme_get_contact($event);
          if ($contact)
             $replacement = $contact->display_name;
-         $replacement = eme_trans_sanitize_html($replacement);
+         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
@@ -1502,26 +1502,26 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_EVENTCATEGORYIDS$/', $result) && get_option('eme_categories_enabled')) {
          $categories = $event['event_category_ids'];
          if ($target == "html") {
-            $replacement = eme_trans_sanitize_html($categories);
+            $replacement = eme_trans_sanitize_html($categories,$lang);
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
-            $replacement = eme_trans_sanitize_html($categories);
+            $replacement = eme_trans_sanitize_html($categories,$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
-            $replacement = eme_trans_sanitize_html($categories);
+            $replacement = eme_trans_sanitize_html($categories,$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif ($event && preg_match('/#_(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_categories($event['event_id']);
          if ($target == "html") {
-            $replacement = eme_trans_sanitize_html(join(", ",$categories));
+            $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
-            $replacement = eme_translate(join(", ",$categories));
+            $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
-            $replacement = eme_translate(join(", ",$categories));
+            $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
@@ -1531,18 +1531,18 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          foreach ($categories as $category) {
             $cat_link=eme_event_category_url($category);
             if ($target == "html")
-               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category)."'>".eme_trans_sanitize_html($category)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category,$lang)."'>".eme_trans_sanitize_html($category,$lang)."</a>");
             else
-               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category)."'>".eme_translate($category)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category,$lang)."'>".eme_translate($category,$lang)."</a>");
          }
          $replacement = join(", ",$cat_links);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
-            $replacement = eme_translate(join(", ",$cat_links));
+            $replacement = eme_translate(join(", ",$cat_links),$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
-            $replacement = eme_translate(join(", ",$cat_links));
+            $replacement = eme_translate(join(", ",$cat_links),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
@@ -1557,13 +1557,13 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $extra_conditions = join(" AND ",$extra_conditions_arr);
          $categories = eme_get_event_categories($event['event_id'],$extra_conditions);
          if ($target == "html") {
-            $replacement = eme_trans_sanitize_html(join(", ",$categories));
+            $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
-            $replacement = eme_translate(join(", ",$categories));
+            $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
-            $replacement = eme_translate(join(", ",$categories));
+            $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
@@ -1581,18 +1581,18 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          foreach ($categories as $category) {
             $cat_link=eme_event_category_url($category);
             if ($target == "html")
-               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category)."'>".eme_trans_sanitize_html($category)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category,$lang)."'>".eme_trans_sanitize_html($category,$lang)."</a>");
             else
-               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category)."'>".eme_translate($category)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category,$lang)."'>".eme_translate($category,$lang)."</a>");
          }
          $replacement = join(", ",$cat_links);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
-            $replacement = eme_translate(join(", ",$cat_links));
+            $replacement = eme_translate(join(", ",$cat_links),$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
-            $replacement = eme_translate(join(", ",$cat_links));
+            $replacement = eme_translate(join(", ",$cat_links),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
@@ -1734,7 +1734,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
    # but the eme_replace_locations_placeholders can't do "do_shortcode" at the end, because
    # this would cause [eme_if] tags to be replaced here already, while some placeholders of the
    # event haven't been replaced yet (like time placeholders, and event details)
-   $format = eme_replace_locations_placeholders ( $format, $location, $target, 0 );
+   $format = eme_replace_locations_placeholders ( $format, $location, $target, 0, $lang );
 
   // for extra date formatting, eg. #_{d/m/Y}
    preg_match_all("/#(ESC|URL)?@?_\{.*?\}/", $format, $results);
@@ -1779,8 +1779,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       $format = eme_replace_notes_placeholders ( $format, $event, $target );
  
    // now, replace any language tags found in the format itself
-   if ($do_translate)
-      $format = eme_translate($format);
+   $format = eme_translate($format,$lang);
 
    if ($do_shortcode)
       return do_shortcode($format);
@@ -1798,8 +1797,8 @@ function sort_stringlenth($a,$b){
    return strlen($b)-strlen($a);
 }
 
-function eme_trans_sanitize_html( $value, $do_convert=1 ) {
-   $value = eme_translate( $value);
+function eme_trans_sanitize_html( $value, $lang, $do_convert=1 ) {
+   $value = eme_translate( $value,$lang);
    if ($do_convert) {
       return eme_sanitize_html($value);
    } else {
@@ -1807,12 +1806,12 @@ function eme_trans_sanitize_html( $value, $do_convert=1 ) {
    }
 }
 
-function eme_translate ( $value, $language='') {
+function eme_translate ( $value, $lang='') {
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
-      if (empty($language))
+      if (empty($lang))
          return qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
       else
-         return qtrans_use($language,$value);
+         return qtrans_use($lang,$value);
    } else {
       return $value;
    }

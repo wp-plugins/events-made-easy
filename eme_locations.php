@@ -1121,7 +1121,7 @@ EOD;
    return $output;
 }
 
-function eme_replace_locations_placeholders($format, $location="", $target="html", $do_shortcode=1) {
+function eme_replace_locations_placeholders($format, $location="", $target="html", $do_shortcode=1, $lang='') {
 
    // first we do the custom attributes, since these can contain other placeholders
    preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $format, $results);
@@ -1221,7 +1221,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          $field = "location_".ltrim(strtolower($result), "#_");
          if (isset($location[$field]))
             $replacement = $location[$field];
-         $replacement = eme_trans_sanitize_html($replacement);
+         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1234,7 +1234,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          $field = "location_name";
          if (isset($location[$field]))
             $replacement = $location[$field];
-         $replacement = eme_trans_sanitize_html($replacement);
+         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1246,7 +1246,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       } elseif (preg_match('/#_LOCATIONID/', $result)) {
          $field = "location_id";
          $replacement = $location[$field];
-         $replacement = eme_trans_sanitize_html($replacement);
+         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1259,7 +1259,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          if (!empty($location['location_image_id']))
             $location['location_image_url'] = wp_get_attachment_url($location['location_image_id']);
          if(!empty($location['location_image_url'])) {
-            $replacement = "<img src='".$location['location_image_url']."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+            $replacement = "<img src='".$location['location_image_url']."' alt='".eme_trans_sanitize_html($location['location_name'],$lang)."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement);
             } elseif ($target == "rss")  {
@@ -1289,7 +1289,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
             $thumb_url = $thumb_array[0];
             $thumb_width = $thumb_array[1];
             $thumb_height = $thumb_array[2];
-            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($location['location_name'])."'/>";
+            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($location['location_name'],$lang)."'/>";
             if ($target == "html") {
                $replacement = apply_filters('eme_general', $replacement);
             } elseif ($target == "rss")  {
@@ -1326,7 +1326,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       } elseif (preg_match('/#_LATITUDE/', $result)) {
          $field = "location_latitude";
          $replacement = $location[$field];
-         $replacement = eme_trans_sanitize_html($replacement);
+         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1338,7 +1338,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       } elseif (preg_match('/#_LONGITUDE/', $result)) {
          $field = "location_longitude";
          $replacement = $location[$field];
-         $replacement = eme_trans_sanitize_html($replacement);
+         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1359,7 +1359,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
 
       } elseif (preg_match('/#_CATEGORIES|#_LOCATIONCATEGORIES/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_location_categories($location['location_id']);
-         $replacement = eme_trans_sanitize_html(join(", ",$categories));
+         $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1438,7 +1438,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
    }
 
    // now, replace any language tags found
-   $format = eme_translate($format);
+   $format = eme_translate($format,$lang);
 
    // and now replace any shortcodes, if wanted
    if ($do_shortcode)
