@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 50);
+define('EME_DB_VERSION', 51);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -768,6 +768,7 @@ function eme_create_bookings_table($charset,$collate) {
          booking_payed bool DEFAULT 0,
          transfer_nbr_be97 varchar(20),
          wp_id bigint(20) unsigned DEFAULT NULL,
+         lang varchar(10) DEFAULT '',
          UNIQUE KEY  (booking_id)
          ) $charset $collate;";
       dbDelta($sql);
@@ -783,6 +784,7 @@ function eme_create_bookings_table($charset,$collate) {
       maybe_add_column($table_name, 'booking_seats_mp', "alter table $table_name add booking_seats_mp varchar(250);"); 
       maybe_add_column($table_name, 'booking_price', "alter table $table_name add booking_price text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
+      maybe_add_column($table_name, 'lang', "ALTER TABLE $table_name add lang varchar(10) DEFAULT '';"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_id mediumint(9) NOT NULL;");
          $wpdb->query("ALTER TABLE $table_name MODIFY person_id mediumint(9) NOT NULL;");
@@ -807,11 +809,13 @@ function eme_create_people_table($charset,$collate) {
          person_email tinytext NOT NULL,
          person_phone tinytext DEFAULT NULL,
          wp_id bigint(20) unsigned DEFAULT NULL,
+         lang varchar(10) DEFAULT '',
          UNIQUE KEY (person_id)
          ) $charset $collate;";
       dbDelta($sql);
    } else {
       maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
+      maybe_add_column($table_name, 'lang', "ALTER TABLE $table_name add lang varchar(10) DEFAULT '';"); 
       if ($db_version<10) {
          $wpdb->query("ALTER TABLE $table_name MODIFY person_phone tinytext DEFAULT 0;");
       }
@@ -1041,7 +1045,7 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
    return $format;
 }
 
-function eme_replace_placeholders($format, $event="", $target="html", $do_shortcode=1) {
+function eme_replace_placeholders($format, $event="", $target="html", $do_shortcode=1, $do_translate=1) {
    global $wp_query;
    global $eme_need_gmap_js, $booking_id_done;
 
@@ -1775,7 +1779,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       $format = eme_replace_notes_placeholders ( $format, $event, $target );
  
    // now, replace any language tags found in the format itself
-   $format = eme_translate($format);
+   if ($do_translate)
+      $format = eme_translate($format);
 
    if ($do_shortcode)
       return do_shortcode($format);
@@ -1802,11 +1807,15 @@ function eme_trans_sanitize_html( $value, $do_convert=1 ) {
    }
 }
 
-function eme_translate ( $value) {
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage'))
-      return qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
-   else
+function eme_translate ( $value, $language='') {
+   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
+      if (empty($language))
+         return qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
+      else
+         return qtrans_use($language,$value);
+   } else {
       return $value;
+   }
 }
 
 function eme_sanitize_rss( $value ) {

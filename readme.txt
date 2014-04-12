@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.3.5 =
+* Feature: use language selected at booking time for sending mail concerning the booking or the attendee
 * Feature: the cancel registration form can now also be formatted (also per event if wanted)
 * Bugfix: don't show the captcha when showing the booking form in the admin backend, it was ignored but still it's best not to confuse people
 * Improvement: the events database now gets updated upon first site visit (admin or not), so no more deactivate/reactivate action needed

@@ -448,7 +448,7 @@ function eme_get_persons($person_ids="") {
    return $result;
 }
 
-function eme_add_person($name, $email, $phone, $wp_id) {
+function eme_add_person($name, $email, $phone, $wp_id, $lang) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    $person=array();
@@ -456,6 +456,7 @@ function eme_add_person($name, $email, $phone, $wp_id) {
    $person['person_email'] = eme_sanitize_request($email);
    $person['person_phone'] = eme_sanitize_request($phone);
    $person['wp_id'] = eme_sanitize_request($wp_id);
+   $person['lang'] = eme_sanitize_request($lang);
    $wpdb->insert($people_table,$person);
    $person['person_id'] = $wpdb->insert_id;
    return ($person);

@@ -2159,6 +2159,7 @@ function eme_events_table($scope="future") {
 function eme_event_form($event, $title, $element) {
    
    admin_show_warnings();
+   eme_admin_map_script();
    global $plugin_page;
    $event_status_array = eme_status_array ();
    $saved_bydays = array();
@@ -3339,8 +3340,8 @@ function eme_meta_box_div_location_name($event) {
    <tr>
    <?php
    if($use_select_for_locations) {
+      $location_0 = eme_new_location();
       $location_0['location_id']=0;
-      $location_0['location_name']= '';
       $locations = eme_get_locations();
    ?>
       <th><?php _e('Location','eme') ?></th>
@@ -3529,29 +3530,9 @@ function eme_meta_box_div_event_url($event) {
 
 function eme_admin_map_script() {
    global $plugin_page;
-   // when the action is the POST of a new event, don't do the javascript
-   if ($plugin_page == 'eme-new_event' && isset ( $_REQUEST['eme_admin_action'] ) && $_REQUEST['eme_admin_action'] == 'insert_event') {
+   if (!get_option('eme_gmap_is_active' ))
       return;
-   }
-
-   # we also do this for locations, since the locations page also needs the loadMap javascript function
-   if (( ($plugin_page == 'eme-locations' || $plugin_page == 'eme-new_event')) ||
-       (isset ( $_REQUEST['eme_admin_action'] ) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) {
-         if (isset($_REQUEST['event_id']))
-            $event_ID = intval($_REQUEST['event_id']);
-         else
-            $event_ID =0;
-         $event = eme_get_event ( $event_ID );
-         
-            ?>
-<style type="text/css">
-/* div#location_town, div#location_address, div#location_name {
-               width: 480px;
-            }
-            table.form-table {
-               width: 50%;
-            }     */
-</style>
+?>
 <script src="//maps.google.com/maps/api/js?v=3.1&amp;sensor=false" type="text/javascript"></script>
 <script type="text/javascript">
          //<![CDATA[
@@ -3648,7 +3629,6 @@ function eme_admin_map_script() {
             eventAddress = jQuery("input[name='location-select-address']").val(); 
             eventLat = jQuery("input#location-select-latitude").val();
             eventLong = jQuery("input#location-select-longitude").val();
-   
                <?php } else { ?>
             eventLocation = jQuery("input[name='translated_location_name']").val(); 
             eventTown = jQuery("input#location_town").val(); 
@@ -3732,7 +3712,6 @@ function eme_admin_map_script() {
           //]]>
       </script>
 <?php
-   }
 }
 
 function eme_rss_link($justurl = 0, $echo = 1, $text = "RSS", $scope="future", $order = "ASC",$category='',$author='',$contact_person='',$limit=5, $location_id='',$title='') {
