@@ -326,7 +326,7 @@ function eme_cancel_seats($event) {
    }
 
    if (!is_admin() && get_option('eme_captcha_for_booking')) {
-      $captcha_err = response_check_captcha("captcha_check",1);
+      $captcha_err = response_check_captcha("captcha_check","eme_del_booking");
    } else {
       $captcha_err = "";
    }
@@ -392,7 +392,7 @@ function eme_book_seats($event, $send_mail=1) {
    }
 
    if (!is_admin() && get_option('eme_captcha_for_booking')) {
-      $captcha_err = response_check_captcha("captcha_check",1);
+      $captcha_err = response_check_captcha("captcha_check","eme_add_booking");
    } else {
       $captcha_err = "";
    }
