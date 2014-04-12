@@ -222,23 +222,18 @@ add_filter('eme_notes', 'wptexturize');
 add_filter('eme_notes', 'convert_smilies');
 add_filter('eme_notes', 'convert_chars');
 add_filter('eme_notes', 'wpautop');
+add_filter('eme_notes', 'shortcode_unautop');
 add_filter('eme_notes', 'prepend_attachment');
-// RSS general filters
-add_filter('eme_general_rss', 'wp_strip_all_tags');
-add_filter('eme_general_rss', 'convert_chars', 8);
+// RSS general filters (corresponding to those of  "the_content_rss")
 add_filter('eme_general_rss', 'ent2ncr', 8);
-//add_filter('eme_general_rss', 'esc_html');
-// RSS content filter
-add_filter('eme_notes_rss', 'wp_strip_all_tags');
-add_filter('eme_notes_rss', 'convert_chars', 8);
-add_filter('eme_notes_rss', 'ent2ncr', 8);
+// RSS excerpt filter (corresponding to those of  "the_excerpt_rss")
+add_filter('eme_excerpt_rss', 'convert_chars', 8);
+add_filter('eme_excerpt_rss', 'ent2ncr', 8);
+
 // TEXT content filter
 add_filter('eme_text', 'wp_strip_all_tags');
 add_filter('eme_text', 'ent2ncr', 8);
 
-add_filter('eme_notes_map', 'convert_chars', 8);
-add_filter('eme_notes_map', 'js_escape');
- 
 // we only want the google map javascript to be loaded if needed, so we set a global
 // variable to 0 here and if we detect #_MAP, we set it to 1. In a footer filter, we then
 // check if it is 1 and if so: include it
@@ -1008,29 +1003,34 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
          $field = "event_".ltrim(strtolower($result), "#_");
          // to catch every alternative (we just need to know if it is an excerpt or not)
          if ($field != "event_excerpt")
-            $field = "event_notes";
+            $show_excerpt=0;
+         else
+            $show_excerpt=1;
 
          // when on the single event page, never show just the excerpt
-         if ($field == "event_excerpt" && eme_is_single_event_page()) {
-            $field = "event_notes";
+         if (eme_is_single_event_page() && $target == "html") {
+            $show_excerpt=0;
          }
 
-         //If excerpt, we use more link text
-         if ($field == "event_excerpt") {
+         // If excerpt, we use more link text
+         if ($show_excerpt) {
             if (isset($event['event_notes'])) {
                $matches = explode('<!--more-->', $event['event_notes']);
                $replacement = $matches[0];
             }
-         } elseif (isset($event[$field])) {
-            $replacement = $event[$field];
+         } elseif (isset($event['event_notes'])) {
+            // remove the more-part
+            $replacement = str_replace('<!--more-->', '' ,$event['event_notes'] );
          }
          $replacement = eme_translate($replacement);
          if ($target == "html") {
             $replacement = apply_filters('eme_notes', $replacement);
          } else {
             if ($target == "rss") {
-               $replacement = apply_filters('eme_notes_rss', $replacement);
-               $replacement = apply_filters('the_content_rss', $replacement);
+               if ($show_excerpt)
+                  $replacement = apply_filters('eme_excerpt_rss', $replacement);
+               else
+                  $replacement = apply_filters('eme_general_rss', $replacement);
             } else {
                $replacement = apply_filters('eme_text', $replacement);
             }

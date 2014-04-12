@@ -62,6 +62,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.3.5 =
+* Feature: RSS feed now shows html (no maps or forms), as does all other parts of wordpress do
 * Feature: use language selected at booking time for sending mail concerning the booking or the attendee
 * Feature: the cancel registration form can now also be formatted (also per event if wanted)
 * Bugfix: don't show the captcha when showing the booking form in the admin backend, it was ignored but still it's best not to confuse people
