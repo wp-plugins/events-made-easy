@@ -1797,7 +1797,7 @@ function sort_stringlenth($a,$b){
    return strlen($b)-strlen($a);
 }
 
-function eme_trans_sanitize_html( $value, $lang, $do_convert=1 ) {
+function eme_trans_sanitize_html( $value, $lang='', $do_convert=1 ) {
    $value = eme_translate( $value,$lang);
    if ($do_convert) {
       return eme_sanitize_html($value);
