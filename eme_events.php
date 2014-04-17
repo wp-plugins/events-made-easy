@@ -4059,7 +4059,7 @@ function eme_enqueue_js(){
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
    }
-   if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager') ) ) {
+   if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager','eme-people') ) ) {
       wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js");
    }
 }

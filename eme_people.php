@@ -314,52 +314,69 @@ function eme_people_table($message="") {
    if (count($persons) < 1 ) {
       _e("No people have responded to your events yet!", 'eme');
    } else { 
-      $result = "<p>".__('This table shows the data about the people who responded to your events', 'eme')."</p>"; 
-      if($message != "") {
-            $result .= "
+   ?>
+      <p><?php _e('This table shows the data about the people who responded to your events', 'eme') ?> </p> 
+      <?php if($message != "") { ?>
             <div id='message' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
-               <p>$message</p>
-            </div>";
-      }
+               <p><?php print $message; ?></p>
+            </div>
+      <?php } ?>
 
-      $result .= "<form id='people-filter' method='post' action='".$destination."'>
-                  <input type='hidden' name='eme_admin_action' value='delete_people'/>";
-      $result .=" <table id='eme-people-table' class='widefat post fixed'>
+      <form id='people-filter' method='post' action='<?php print $destination; ?>'>
+      <input type='hidden' name='eme_admin_action' value='delete_people'/>
+      <table id='eme-people-table' class='widefat hover stripe'>
             <thead>
             <tr>
-            <th class='manage-column column-cb check-column' scope='col'>&nbsp;</th>
-            <th class='manage-column' scope='col'>Name</th>
-            <th scope='col'>E-mail</th>
-            <th scope='col'>Phone number</th>
+            <th class='manage-column column-cb check-column' scope='col'><input class='select-all' type='checkbox' value='1' /></th>
+            <th class='manage-column' scope='col'><?php _e('Name', 'eme'); ?></th>
+            <th scope='col'><?php _e('E-mail', 'eme'); ?></th>
+            <th scope='col'><?php _e('Phone number', 'eme'); ?></th>
             </tr>
             </thead>
-            <tfoot>
-            <tr>
-            <th class='manage-column column-cb check-column' scope='col'>&nbsp;</th>
-            <th class='manage-column' scope='col'>Name</th>
-            <th scope='col'>E-mail</th>
-            <th scope='col'>Phone number</th>
-            </tr>
-            </tfoot>
-         " ;
+            <tbody>
+      <?php
       foreach ($persons as $person) {
-            $result .= "<tr><td><input type='checkbox' class ='row-selector' value='".$person['person_id']."' name='persons[]'/></td>
+            print "<tr><td><input type='checkbox' class ='row-selector' value='".$person['person_id']."' name='persons[]'/></td>
                   <td>".$person['person_name']."</td>
                   <td>".$person['person_email']."</td>
                   <td>".$person['person_phone']."</td></tr>";
       }
+      ?>
 
-      $result .= "</table>
+      </tbody></table>
                      <div class='tablenav'>
                         <div class='alignleft actions'>
-                        <input type='checkbox' name='delete_assoc_bookings' value='1'>".__('Also delete associated bookings','eme')."
+                        <input type='checkbox' name='delete_assoc_bookings' value='1'><?php _e('Also delete associated bookings','eme'); ?>
                         <input class='button-primary action' type='submit' name='doaction' value='Delete'/>
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>
-                     </div>";
-
-      echo $result;
+                     </div>
+<script type="text/javascript">
+   jQuery(document).ready( function() {
+            jQuery('#eme-people-table').dataTable( {
+               <?php
+               // jquery datatables locale loading
+               $locale_code = get_locale();
+               $locale_file = EME_PLUGIN_DIR. "/js/jquery-datatables/i18n/$locale_code.json";
+               $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datatables/i18n/$locale_code.json";
+               if ($locale_code != "en_US" && file_exists($locale_file)) {
+               ?>
+               "language": {
+               "url": "<?php echo $locale_file_url; ?>"
+               },
+               <?php
+               }
+               ?> 
+               "stateSave": true,
+               "pagingType": "full",
+               "columnDefs": [
+               { "sortable": false, "targets": 0 }
+               ]
+               } );
+   } );
+</script>
+<?php
    }
 } 
 
