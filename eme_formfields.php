@@ -365,7 +365,21 @@ function eme_replace_cancelformfields_placeholders ($event) {
 
    // the 2 placeholders that can contain extra text are treated seperately first
    // the question mark is used for non greedy (minimal) matching
-   if (preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
+   if (preg_match('/#_CAPTCHAHTML\{.+\}/', $format)) {
+      // only show the captcha when booking via the frontend, not the admin backend
+      if ($eme_captcha_for_booking)
+         $format = preg_replace('/#_CAPTCHAHTML\{(.+?)\}/', '$1' ,$format );
+      else
+         $format = preg_replace('/#_CAPTCHAHTML\{(.+?)\}/', '' ,$format );
+   }
+
+   if (preg_match('/#_SUBMIT\{.+\}/', $format)) {
+      $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
+      $required_fields_count++;
+   }
+
+   $legacy = get_option('eme_legacy');
+   if ($legacy && preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
       // only show the captcha when booking via the frontend, not the admin backend
       if ($eme_captcha_for_booking)
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
@@ -373,7 +387,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
    }
 
-   if (preg_match('/#_SUBMIT\[.+\]/', $format)) {
+   if ($legacy && preg_match('/#_SUBMIT\[.+\]/', $format)) {
       $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
       $required_fields_count++;
    }
@@ -643,7 +657,24 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
 
    // the 2 placeholders that can contain extra text are treated seperately first
    // the question mark is used for non greedy (minimal) matching
-   if (preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
+   if (preg_match('/#_CAPTCHAHTML\{.+\}/', $format)) {
+      // only show the captcha when booking via the frontend, not the admin backend
+      if ($eme_captcha_for_booking)
+         $format = preg_replace('/#_CAPTCHAHTML\{(.+?)\}/', '$1' ,$format );
+      else
+         $format = preg_replace('/#_CAPTCHAHTML\{(.+?)\}/', '' ,$format );
+   }
+
+   if (preg_match('/#_SUBMIT\{.+\}/', $format)) {
+      if (is_admin() && $booking)
+         $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".__('Update booking','eme')."'/>" ,$format );
+      else
+         $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
+      $required_fields_count++;
+   }
+
+   $legacy = get_option('eme_legacy');
+   if ($legacy && preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
       // only show the captcha when booking via the frontend, not the admin backend
       if (!is_admin() && $eme_captcha_for_booking) {
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
@@ -653,7 +684,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       }
    }
 
-   if (preg_match('/#_SUBMIT\[.+\]/', $format)) {
+   if ($legacy && preg_match('/#_SUBMIT\[.+\]/', $format)) {
       if (is_admin() && $booking)
          $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".__('Update booking','eme')."'/>" ,$format );
       else

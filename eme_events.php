@@ -110,7 +110,7 @@ function eme_events_page() {
    }
 
    // in case some generic actions were taken (like disable hello or disable donate), ignore all other actions
-   if (isset($_GET['disable_hello_to_user']) || isset($_GET['disable_donate_message']) || isset($_GET['dbupdate'])) {
+   if (isset($_GET['disable_hello_to_user']) || isset($_GET['disable_donate_message']) || isset($_GET['dbupdate']) || isset($_GET['disable_legacy_warning'])) {
       $action ="";
    }
    

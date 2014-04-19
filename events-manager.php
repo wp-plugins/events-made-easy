@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 51);
+define('EME_DB_VERSION', 52);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -1096,7 +1096,13 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
    }
 
    // and now all the other placeholders
-   preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_]+(\[.*\])?(\[.*\])?/", $format, $placeholders);
+   $legacy=get_option('eme_legacy');
+
+   if ($legacy)
+      preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_]+(\[.*\])?(\[.*\])?/", $format, $placeholders);
+   else
+      preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_]+(\{.*?\})?(\{.*?\})?/", $format, $placeholders);
+
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
    usort($placeholders[0],'sort_stringlenth');
@@ -1215,7 +1221,14 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)$/', $result)) {
          $replacement = eme_get_available_seats($event['event_id']);
 
-      } elseif (preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(\d+)/', $result, $matches)) {
+      } elseif (preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats=eme_get_available_multiseats($event['event_id']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
+         }
+      } elseif ($legacy && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_available_multiseats($event['event_id']);
@@ -1226,7 +1239,14 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(TOTALSPACES|TOTALSEATS)$/', $result)) {
          $replacement = $event['event_seats'];
 
-      } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)(\d+)/', $result, $matches)) {
+      } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats = eme_convert_multi2array($event['event_seats']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
+         }
+      } elseif ($legacy && preg_match('/#_(TOTALSPACES|TOTALSEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats = eme_convert_multi2array($event['event_seats']);
@@ -1237,7 +1257,14 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          $replacement = eme_get_booked_seats($event['event_id']);
 
-      } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
+      } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats=eme_get_booked_multiseats($event['event_id']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
+         }
+      } elseif ($legacy && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_booked_multiseats($event['event_id']);
@@ -1319,7 +1346,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = $thumb_url;
          }
 
-      } elseif ($event && preg_match('/#_EVENTIMAGETHUMB\[(.+)\]/', $result, $matches)) {
+      } elseif ($event && preg_match('/#_EVENTIMAGETHUMB\{(.+)\}/', $result, $matches)) {
          if (!empty($event['event_image_id'])) {
             $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
             $thumb_url = $thumb_array[0];
@@ -1335,16 +1362,44 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
-      } elseif ($event && preg_match('/#_EVENTIMAGETHUMBURL\[(.+)\]/', $result, $matches)) {
+      } elseif ($legacy && $event && preg_match('/#_EVENTIMAGETHUMB\[(.+)\]/', $result, $matches)) {
+         if (!empty($event['event_image_id'])) {
+            $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
+            $thumb_url = $thumb_array[0];
+            $thumb_width = $thumb_array[1];
+            $thumb_height = $thumb_array[2];
+            $replacement = "<img width='$thumb_width' height='$thumb_height' src='".$thumb_url."' alt='".eme_trans_sanitize_html($event['event_name'],$lang)."'/>";
+            if ($target == "html") {
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif ($event && preg_match('/#_EVENTIMAGETHUMBURL\{(.+)\}/', $result, $matches)) {
          if (!empty($event['event_image_id'])) {
             $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
             $thumb_url = $thumb_array[0];
             $replacement = $thumb_url;
          }
 
-      } elseif ($event && preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
+      } elseif ($legacy && $event && preg_match('/#_EVENTIMAGETHUMBURL\[(.+)\]/', $result, $matches)) {
+         if (!empty($event['event_image_id'])) {
+            $thumb_array = image_downsize( $event['event_image_id'], $matches[1]);
+            $thumb_url = $thumb_array[0];
+            $replacement = $thumb_url;
+         }
+
+      } elseif ($event && preg_match('/#_EVENTPAGEURL\{(.+)\}/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
          $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
+
+      } elseif ($legacy && $event && preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
+         $events_page_link = eme_get_events_page(true, false);
+         $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
+
 
       } elseif ($event && preg_match('/#_EVENTPAGEURL$/', $result)) {
          $replacement = eme_event_url($event);
@@ -1394,7 +1449,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_(EVENT)?PRICE(\d+)/', $result, $matches)) {
+      } elseif ($event && preg_match('/#_(EVENT)?PRICE\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2]-1);
          if ($event["price"] && eme_is_multi($event["price"])) {
             $prices = eme_convert_multi2array($event["price"]);
@@ -1409,6 +1464,23 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                }
             }
          }
+
+      } elseif ($legacy && $event && preg_match('/#_(EVENT)?PRICE(\d+)/', $result, $matches)) {
+         $field_id = intval($matches[2]-1);
+         if ($event["price"] && eme_is_multi($event["price"])) {
+            $prices = eme_convert_multi2array($event["price"]);
+            if (is_array($prices) && array_key_exists($field_id,$prices)) {
+               $replacement = $prices[$field_id];
+               if ($target == "html") {
+                  $replacement = apply_filters('eme_general', $replacement); 
+               } elseif ($target == "rss")  {
+                  $replacement = apply_filters('eme_general_rss', $replacement);
+               } else {
+                  $replacement = apply_filters('eme_text', $replacement);
+               }
+            }
+         }
+
       } elseif ($event && preg_match('/#_CURRENCY/', $result)) {
          $field = "currency";
          // currency is only important if the price is not empty as well
@@ -1546,7 +1618,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/^#_(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]/', $result, $matches) && get_option('eme_categories_enabled')) {
+      } elseif ($event && preg_match('/^#_(EVENT)?CATEGORIES\{(.*?)\}\{(.*?)\}/', $result, $matches) && get_option('eme_categories_enabled')) {
          $include_cats=$matches[2];
          $exclude_cats=$matches[3];
          $extra_conditions_arr = array();
@@ -1564,6 +1636,56 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
             $replacement = eme_translate(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
+      } elseif ($legacy && $event && preg_match('/^#_(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]/', $result, $matches) && get_option('eme_categories_enabled')) {
+         $include_cats=$matches[2];
+         $exclude_cats=$matches[3];
+         $extra_conditions_arr = array();
+         if (!empty($include_cats))
+            array_push($extra_conditions_arr, "category_id IN ($include_cats)");
+         if (!empty($exclude_cats))
+            array_push($extra_conditions_arr, "category_id NOT IN ($exclude_cats)");
+         $extra_conditions = join(" AND ",$extra_conditions_arr);
+         $categories = eme_get_event_categories($event['event_id'],$extra_conditions);
+         if ($target == "html") {
+            $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = eme_translate(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = eme_translate(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
+      } elseif ($event && preg_match('/#_LINKED(EVENT)?CATEGORIES\{(.*?)\}\{(.*?)\}/', $result, $matches) && get_option('eme_categories_enabled')) {
+         $include_cats=$matches[2];
+         $exclude_cats=$matches[3];
+         $extra_conditions_arr = array();
+         if (!empty($include_cats))
+            array_push($extra_conditions_arr, "category_id IN ($include_cats)");
+         if (!empty($exclude_cats))
+            array_push($extra_conditions_arr, "category_id NOT IN ($exclude_cats)");
+         $extra_conditions = join(" AND ",$extra_conditions_arr);
+         $categories = eme_get_event_categories($event['event_id'],$extra_conditions);
+         $cat_links = array();
+         foreach ($categories as $category) {
+            $cat_link=eme_event_category_url($category);
+            if ($target == "html")
+               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category,$lang)."'>".eme_trans_sanitize_html($category,$lang)."</a>");
+            else
+               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category,$lang)."'>".eme_translate($category,$lang)."</a>");
+         }
+         $replacement = join(", ",$cat_links);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = eme_translate(join(", ",$cat_links),$lang);
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = eme_translate(join(", ",$cat_links),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
@@ -1843,18 +1965,19 @@ function eme_strip_tags ( $value ) {
 }
 
 function admin_show_warnings() {
-   $db_version = get_option('eme_version');
    global $plugin_page;
 
-   // the normal warnings
-   $donation_done = get_option('eme_donation_done' );
+   $donation_done = get_option('eme_donation_done');
    if (!$donation_done)
       eme_explain_donation ();
 
-   // now the normal warnings
-   $say_hello = get_option('eme_hello_to_user' );
+   $say_hello = get_option('eme_hello_to_user');
    if ($say_hello)
       eme_hello_to_new_user ();
+
+   $show_legacy_warning = get_option('eme_legacy_warning');
+   if ($show_legacy_warning)
+      eme_show_legacy_warning();
 }
 
 function eme_explain_dbupdate_done() {
@@ -1912,5 +2035,19 @@ function eme_hello_to_new_user() {
    </div>
 <?php
 }
+
+function eme_show_legacy_warning() {
+   $advice = sprintf ( __ ( "<p><strong>Events Made Easy placeholders warning</strong>: </p>
+   <p>The legacy placeholders of Events Made Easy have been disabled. More info can be found in <a href=\"%s\" title=\"Legacy doc\">the documention</a></p>
+   <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), 'http://www.e-dynamics.be/wordpress/?p=51559', add_query_arg (array("disable_legacy_warning"=>"true")) );
+   ?>
+<div id="message" class="updated">
+      <?php
+   echo $advice;
+   ?>
+   </div>
+<?php
+}
+
 
 ?>
