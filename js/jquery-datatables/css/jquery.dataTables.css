@@ -223,6 +223,7 @@ table.dataTable td {
   position: relative;
   clear: both;
   float: left;
+  width: 100%;
   *zoom: 1;
   zoom: 1;
 }
