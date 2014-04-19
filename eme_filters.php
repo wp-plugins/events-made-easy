@@ -77,7 +77,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    if ($fields == "all")
       $fields="categories,locations,towns,weeks,months";
 
-   preg_match_all("/#_[A-Za-z0-9_\[\]]+/", $format, $placeholders);
+   preg_match_all("/#_[A-Za-z0-9_]+/", $format, $placeholders);
    usort($placeholders[0],'sort_stringlenth');
 
    // if one of these changes, also the eme_events.php needs changing for the "Next page" part
