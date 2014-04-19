@@ -806,15 +806,28 @@ function eme_delete_all_bookings_for_person_id($person_id) {
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    $sql = "DELETE FROM $bookings_table WHERE person_id = $person_id";
    $wpdb->query($sql);
-   #$person = eme_get_person($person_id);
    return 1;
 }
+
+function eme_transfer_all_bookings($person_id,$to_person_id) {
+   global $wpdb;
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
+   $where = array();
+   $fields = array();
+   $where['person_id'] = $person_id;
+   $fields['person_id'] = $to_person_id;
+   $fields['modif_date']=current_time('mysql', false);
+   $fields['modif_date_gmt']=current_time('mysql', true);
+   return $wpdb->update($bookings_table, $fields, $where);
+}
+
 function eme_delete_booking_by_person_event_id($person_id,$event_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE person_id = %d AND event_id= %d",$person_id,$event_id);
    return $wpdb->query($sql);
 }
+
 function eme_delete_booking($booking_id) {
    global $wpdb;
    // first delete all the answers
@@ -1646,14 +1659,24 @@ function eme_registration_seats_page($pending=0) {
       }
    
    // now show the menu
-   $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
-   eme_registration_seats_form_table($event_id,$pending);
+   eme_registration_seats_form_table($pending);
 }
 
-function eme_registration_seats_form_table($event_id=0,$pending=0) {
+function eme_registration_seats_form_table($pending=0) {
    global $plugin_page;
 
-   $all_events=eme_get_events(0,"future");
+   $scope_names = array ();
+   $scope_names['past'] = __ ( 'Past events', 'eme' );
+   $scope_names['all'] = __ ( 'All events', 'eme' );
+   $scope_names['future'] = __ ( 'Future events', 'eme' );
+
+   $event_id = isset($_POST['event_id']) ? intval($_POST['event_id']) : 0;
+   $scope = isset($_POST['scope']) ? $_POST['scope'] : 'future';
+   if (isset($_GET['search'])) {
+      $scope="all";
+      $search = "person_id=".intval($_GET['search']);
+   }
+   $all_events=eme_get_events(0,$scope);
 
 ?>
 <div class="wrap">
@@ -1691,7 +1714,8 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
    if ($pending) 
       _e ('Pending Approvals','eme');
    else
-      _e ('Change reserved spaces or cancel registrations','eme'); ?>
+      _e ('Change reserved spaces or cancel registrations','eme');
+   ?>
 </h2>
 <div class="wrap">
 <br />
@@ -1699,6 +1723,18 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
    <div class="tablenav">
    <div class="alignleft">
    <form id="eme-admin-regsearchform" name="eme-admin-regsearchform" action="" method="post">
+
+   <select name="scope">
+   <?php
+   foreach ( $scope_names as $key => $value ) {
+      $selected = "";
+      if ($key == $scope)
+         $selected = "selected='selected'";
+      echo "<option value='$key' $selected>$value</option>  ";
+   }
+   ?>
+   </select>
+
    <select name="event_id">
    <option value='0'><?php _e ( 'All events' ); ?></option>
    <?php
@@ -1718,6 +1754,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
    }
    ?>
    </select>
+
    <input class="button-secondary" type="submit" value="<?php _e ( 'Filter' )?>" />
    </form>
    </div>
@@ -1755,6 +1792,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
          <th><?php _e ('ID','eme'); ?></th>
+         <th></th>
          <th><?php _e ('Name','eme'); ?></th>
          <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
@@ -1788,6 +1826,7 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
       <tr <?php echo "$style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
+          <td>person_id=<?php echo $person['person_id']; ?></td>
          <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$plugin_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see the details and/or edit the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
          <td><strong>
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
@@ -1858,11 +1897,22 @@ function eme_registration_seats_form_table($event_id=0,$pending=0) {
                },
             <?php
             }
+            if (!empty($search)) {
+            ?> 
+            "search": {
+               "search": "<?php echo $search; ?>"
+               },
+            <?php
+            } else {
             ?> 
             "stateSave": true,
+            <?php
+            }
+            ?> 
             "pagingType": "full",
             "columnDefs": [
-               { "sortable": false, "targets": 0 }
+               { "sortable": false, "targets": 0 },
+               { "visible": false, "targets": 1 },
             ]
          } );
    } );

@@ -1,19 +1,80 @@
 <?php
 function eme_people_page() {
    $message="";
-   if (!current_user_can( get_option('eme_cap_people')) && isset($_REQUEST['eme_admin_action'])) {
+   if (!current_user_can( get_option('eme_cap_people')) && isset($_POST['eme_admin_action'])) {
       $message = __('You have no right to update people!','eme');
-   } elseif (isset ($_REQUEST['persons']) && isset($_REQUEST['eme_admin_action']) && $_REQUEST['eme_admin_action'] == 'delete_people') {
-         $persons = $_REQUEST['persons'];
+
+   } elseif (isset ($_POST['persons']) && isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == 'delete_people') {
+      $persons = $_POST['persons'];
+      $destination = admin_url("admin.php?page=eme-people");
+   ?>
+      <h2><?php _e('Delete People','eme'); ?></h2>
+      <?php admin_show_warnings(); ?>
+      <form id='people-filter' method='post' action='<?php print $destination; ?>'>
+      <p><?php _e('You have specified these people for deletion:','eme'); ?></p>
+      <ul>
+      <?php 
+      if(is_array($persons)) {
+         foreach ($persons as $person_id) {
+            if (is_numeric($person_id)) {
+               $person=eme_get_person($person_id);
+               print "<li><input type='hidden' name='persons[]' value='".$person_id."' />".eme_sanitize_html($person['person_name'])."</li>";
+            }
+         }
+      }
+      ?>
+      </ul>
+      <fieldset><p><legend><?php _e('What should be done with the bookings done by these people?','eme'); ?></legend></p>
+      <ul style="list-style:none;">
+      <li><label><input type="radio" id="delete_option0" name="delete_option" value="delete_assoc_bookings" /><?php _e('Delete associated bookings','eme');?></label></li>
+      <li><input type="radio" id="delete_option1" name="delete_option" value="transfer_assoc_bookings" />
+      <label for="delete_option1"><?php _e('Transfer associated bookings to:','eme');?></label> <select name='to_person_id' id='to_person_id' class=''>
+      <?php
+      $other_persons=eme_get_persons("",$persons);
+      foreach ($other_persons as $person) {
+         print "<option value='".$person['person_id']."'>".eme_sanitize_html($person['person_name'])."</option>";
+      }
+      ?>
+      </select></li>
+      </ul></fieldset>
+      <input type="hidden" name="eme_admin_action" value="confirm_delete_people" />
+      <p class="submit"><input type="submit" name="submit" id="submit" class="button" value="Confirm Deletion"  /></p></div>
+      </form>
+      <script>
+      jQuery(document).ready( function($) {
+            var submit = $('#submit').prop('disabled', true);
+            $('input[name=delete_option]').one('change', function() {
+               submit.prop('disabled', false);
+      });
+      $('#to_person_id').focus( function() {
+         $('#delete_option1').prop('checked', true).trigger('change');
+         });
+      }); 
+      </script>
+
+   <?php
+      // don't show the people table in this case, so we return from the function
+      return;
+
+   } elseif (isset ($_POST['persons']) && isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == 'confirm_delete_people') {
+         $persons = $_POST['persons'];
          if(is_array($persons)){
             //Make sure the array is only numbers
             foreach ($persons as $person_id) {
                if (is_numeric($person_id)) {
                   $person=eme_get_person($person_id);
-                  if (isset($_REQUEST['delete_assoc_bookings'])) {
+                  if (isset($_POST['delete_option']) && $_POST['delete_option'] == 'delete_assoc_bookings') {
                      $res=eme_delete_all_bookings_for_person_id($person_id);
                      if ($res) {
                         $message.=__("Deleted all bookings made by '".$person['person_name']."'", 'eme');
+                        $message.="<br>";
+                     }
+                  } elseif (isset($_POST['delete_option']) && $_POST['delete_option'] == 'transfer_assoc_bookings') {
+                     $to_person_id=intval($_POST['to_person_id']);
+                     $to_person=eme_get_person($to_person_id);
+                     $res=eme_transfer_all_bookings($person_id,$to_person_id);
+                     if ($res) {
+                        $message.=__("Transferred all bookings made by '".$person['person_name']."' to '".$to_person['person_name']."'", 'eme');
                         $message.="<br>";
                      }
                   }
@@ -30,14 +91,14 @@ function eme_people_page() {
          }
    }
    ?>
-   
-   <div class='wrap'> 
-   <div id="icon-users" class="icon32"><br /></div>
-   <h2>People</h2>
-   <?php admin_show_warnings(); eme_people_table($message); ?>
-   </div> 
 
-   <?php
+      <div class='wrap'> 
+      <div id="icon-users" class="icon32"><br /></div>
+      <h2>People</h2>
+      <?php admin_show_warnings(); eme_people_table($message); ?>
+      </div> 
+
+      <?php
 }
 
 function eme_global_map_json($eventful = false, $scope = "all", $category = '', $offset = 0) {
@@ -323,7 +384,14 @@ function eme_people_table($message="") {
       <?php } ?>
 
       <form id='people-filter' method='post' action='<?php print $destination; ?>'>
-      <input type='hidden' name='eme_admin_action' value='delete_people'/>
+      <select name="eme_admin_action">
+      <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
+      <option value="delete_people"><?php _e ( 'Delete selected','eme' ); ?></option>
+      </select>
+      <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
+      <div class="clear"></div>
+      <br />
+
       <table id='eme-people-table' class='widefat hover stripe'>
             <thead>
             <tr>
@@ -331,27 +399,24 @@ function eme_people_table($message="") {
             <th class='manage-column' scope='col'><?php _e('Name', 'eme'); ?></th>
             <th scope='col'><?php _e('E-mail', 'eme'); ?></th>
             <th scope='col'><?php _e('Phone number', 'eme'); ?></th>
+            <th scope='col'></th>
             </tr>
             </thead>
             <tbody>
       <?php
+      $searchform_dest=admin_url("admin.php?page=eme-registration-seats");
       foreach ($persons as $person) {
-            print "<tr><td><input type='checkbox' class ='row-selector' value='".$person['person_id']."' name='persons[]'/></td>
-                  <td>".$person['person_name']."</td>
-                  <td>".$person['person_email']."</td>
-                  <td>".$person['person_phone']."</td></tr>";
+         $searchform_url=add_query_arg(array('search'=>$person['person_id']),$searchform_dest);
+         print "<tr><td><input type='checkbox' class ='row-selector' value='".$person['person_id']."' name='persons[]'/></td>
+                  <td>".eme_sanitize_html($person['person_name'])."</td>
+                  <td>".eme_sanitize_html($person['person_email'])."</td>
+                  <td>".eme_sanitize_html($person['person_phone'])."</td>
+                  <td><a href='".$searchform_url."'>".__('Show all bookings','eme')."</a></td>
+                  </tr>";
       }
       ?>
 
       </tbody></table>
-                     <div class='tablenav'>
-                        <div class='alignleft actions'>
-                        <input type='checkbox' name='delete_assoc_bookings' value='1'><?php _e('Also delete associated bookings','eme'); ?>
-                        <input class='button-primary action' type='submit' name='doaction' value='Delete'/>
-                        <br class='clear'/>
-                        </div>
-                        <br class='clear'/>
-                     </div>
 <script type="text/javascript">
    jQuery(document).ready( function() {
             jQuery('#eme-people-table').dataTable( {
@@ -434,12 +499,15 @@ function eme_get_person($person_id) {
    return $result;
 }
 
-function eme_get_persons($person_ids="") {
+function eme_get_persons($person_ids="",$not_person_ids="") {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    if ($person_ids != "") {
       $tmp_ids=join(",",$person_ids);
       $sql = "SELECT * FROM $people_table WHERE person_id IN ($tmp_ids);" ;
+   } elseif ($not_person_ids != "") {
+      $tmp_ids=join(",",$not_person_ids);
+      $sql = "SELECT * FROM $people_table WHERE person_id NOT IN ($tmp_ids);" ;
    } else {
       $sql = "SELECT *  FROM $people_table";
    }
