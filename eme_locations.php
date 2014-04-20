@@ -1314,7 +1314,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          }
 
       } elseif (preg_match('/#_LOCATIONPAGEURL/', $result)) {
-         $replacement = eme_location_url($location);
+         $replacement = eme_location_url($location,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {

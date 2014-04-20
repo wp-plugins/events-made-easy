@@ -501,7 +501,7 @@ function eme_options_page() {
    eme_options_input_text ( __ ( 'RSS main title', 'eme' ), 'eme_rss_main_title', __ ( 'The main title of your RSS events feed.', 'eme' ) );
    eme_options_input_text ( __ ( 'RSS main description', 'eme' ), 'eme_rss_main_description', __ ( 'The main description of your RSS events feed.', 'eme' ) );
    eme_options_input_text ( __ ( 'RSS title format', 'eme' ), 'eme_rss_title_format', __ ( 'The format of the title of each item in the events RSS feed.', 'eme' ) );
-   eme_options_input_text ( __ ( 'RSS description format', 'eme' ), 'eme_rss_description_format', __ ( 'The format of the description of each item in the events RSS feed. Follow the previous formatting instructions.', 'eme' ) );
+   eme_options_textarea ( __ ( 'RSS description format', 'eme' ), 'eme_rss_description_format', __ ( 'The format of the description of each item in the events RSS feed. Follow the previous formatting instructions.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'RSS Pubdate usage', 'eme' ), 'eme_rss_show_pubdate', __ ( 'Show the event creation/modification date as PubDate info in the in the events RSS feed.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'RSS Pubdate is start date', 'eme' ), 'eme_rss_pubdate_startdate', __ ( 'If you select this, the pubDate field in RSS will be the event start date, not the modification date.', 'eme' ) );
    eme_options_input_text ( __ ( 'ICAL title format', 'eme' ), 'eme_ical_title_format', __ ( 'The format of the title of each item in the events ICAL feed.', 'eme' ) );

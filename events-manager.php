@@ -1278,7 +1278,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_LINKEDNAME/', $result)) {
-         $event_link = eme_event_url($event);
+         $event_link = eme_event_url($event,$lang);
          $replacement="<a href='$event_link' title='".eme_trans_sanitize_html($event['event_name'],$lang)."'>".eme_trans_sanitize_html($event['event_name'],$lang)."</a>";
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
@@ -1402,7 +1402,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
 
       } elseif ($event && preg_match('/#_EVENTPAGEURL$/', $result)) {
-         $replacement = eme_event_url($event);
+         $replacement = eme_event_url($event,$lang);
 
       } elseif ($event && preg_match('/#_(NAME|EVENTNAME)$/', $result)) {
          $field = "event_name";

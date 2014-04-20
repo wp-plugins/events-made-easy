@@ -103,9 +103,11 @@ function eme_permalink_convert ($val) {
    return trailingslashit($val);
 }
 
-function eme_event_url($event) {
+function eme_event_url($event,$language="") {
    global $wp_rewrite;
 
+   if (empty($language))
+         $language = eme_detect_lang();
    if ($event['event_url'] != '') {
       $the_link = $event['event_url'];
    } else {
@@ -140,9 +142,11 @@ function eme_event_url($event) {
    return $the_link;
 }
 
-function eme_location_url($location) {
+function eme_location_url($location,$language="") {
    global $wp_rewrite;
 
+   if (empty($language))
+         $language = eme_detect_lang();
    $the_link = "";
    if ($location['location_url'] != '') {
       $the_link = $location['location_url'];
@@ -184,7 +188,7 @@ function eme_calendar_day_url($day) {
    global $wp_rewrite;
 
    $url_mode=1;
-   $language = eme_detect_lang();
+
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
       $name=$events_prefix.eme_permalink_convert($day);
