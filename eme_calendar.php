@@ -309,7 +309,10 @@ function eme_get_calendar($args="") {
    for ($i=$start_of_week; $i<$start_of_week+7; $i++) {
 	   $j=$i;
 	   if ($j==7) $j-=7;
-	   $sCalDayNames.= "<td>".$wp_locale->get_weekday_abbrev($weekdays[$j])."</td>";
+      if ($full)
+         $sCalDayNames.= "<td>".$wp_locale->get_weekday_abbrev($weekdays[$j])."</td>";
+      else
+         $sCalDayNames.= "<td>".$wp_locale->get_weekday_initial($weekdays[$j])."</td>";
    }
 
    // the real links are created via jquery when clicking on the prev-month or next-month class-links
