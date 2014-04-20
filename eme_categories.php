@@ -190,10 +190,7 @@ function eme_categories_edit_layout($message = "") {
          </table>
       <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Update category', 'eme')."' /></p>
       </form>
-         
-      
    </div>
-         
    ";  
    echo $layout;
 }

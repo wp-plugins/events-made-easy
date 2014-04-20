@@ -1722,7 +1722,7 @@ function eme_registration_seats_form_table($pending=0) {
 
    <div class="tablenav">
    <div class="alignleft">
-   <form id="eme-admin-regsearchform" name="eme-admin-regsearchform" action="" method="post">
+   <form id="eme-admin-regsearchform" name="eme-admin-regsearchform" action="<?php echo admin_url("admin.php?page=$plugin_page"); ?>" method="post">
 
    <select name="scope">
    <?php
@@ -1775,10 +1775,14 @@ function eme_registration_seats_form_table($pending=0) {
    <?php _e('Send mails to attendees upon changes being made?','eme'); echo eme_ui_select_binary(1,"send_mail"); ?>
    </p></div>
 <?php 
-      if ($pending)
+      if ($pending) {
          $booking_status=1;
-      else
+         // different table id for pending bookings, so the save-state from datatables doesn't interfere with the one from non-pending
+         $table_id="eme_pending_admin_bookings";
+      } else {
          $booking_status=2;
+         $table_id="eme_admin_bookings";
+      }
 
       if ($event_id)
          $bookings = eme_get_bookings_for($event_id,$booking_status);
@@ -1786,13 +1790,13 @@ function eme_registration_seats_form_table($pending=0) {
          $bookings = eme_get_bookings_for($events_with_bookings,$booking_status);
       if (!empty($bookings)) {
 ?>
-   <table class="widefat hover stripe" id="eme_admin_bookings">
+   <table class="widefat hover stripe" id="<?php print "$table_id";?>">
    <thead>
       <tr>
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
-         <th><?php _e ('ID','eme'); ?></th>
          <th>hidden for person id search</th>
+         <th><?php _e ('ID','eme'); ?></th>
          <th><?php _e ('Name','eme'); ?></th>
          <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
@@ -1806,8 +1810,11 @@ function eme_registration_seats_form_table($pending=0) {
    </thead>
    <tbody>
      <?php
+
+      $search_dest=admin_url("admin.php?page=eme-people");
       foreach ( $bookings as $event_booking ) {
          $person = eme_get_person ($event_booking['person_id']);
+         $search_url=add_query_arg(array('search'=>$person['person_id']),$search_dest);
          $event = eme_get_event($event_booking['event_id']);
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_start_time = eme_localised_time($event['event_start_time']);
@@ -1848,8 +1855,7 @@ function eme_registration_seats_form_table($pending=0) {
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
-         <td>
-            <?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?>
+         <td><a href="<?php echo $search_url; ?>"><?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?></a>
          </td>
          <td data-sort="<?php echo $bookingtimestamp; ?>">
             <?php echo $localised_booking_date ." ". $localised_booking_time;?>
@@ -1884,7 +1890,7 @@ function eme_registration_seats_form_table($pending=0) {
 
 <script type="text/javascript">
    jQuery(document).ready( function() {
-         jQuery('#eme_admin_bookings').dataTable( {
+         jQuery('#<?php print "$table_id";?>').dataTable( {
             <?php
             // jquery datatables locale loading
             $locale_code = get_locale();
@@ -1897,22 +1903,21 @@ function eme_registration_seats_form_table($pending=0) {
                },
             <?php
             }
-            if (!empty($search)) {
-            ?> 
-            "search": {
-               "search": "<?php echo $search; ?>"
-               },
-            <?php
-            } else {
             ?> 
             "stateSave": true,
+            <?php
+            if (!empty($search)) {
+            ?> 
+            "stateLoadParams": function (settings, data) {
+               data.oSearch.sSearch = "<?php echo $search; ?>";
+            },
             <?php
             }
             ?> 
             "pagingType": "full",
             "columnDefs": [
                { "sortable": false, "targets": 0 },
-               { "visible": false, "targets": 1 },
+               { "visible": false, "targets": 1 }
             ]
          } );
    } );

@@ -4,9 +4,121 @@ function eme_people_page() {
    if (!current_user_can( get_option('eme_cap_people')) && isset($_POST['eme_admin_action'])) {
       $message = __('You have no right to update people!','eme');
 
+   } elseif (isset ($_GET['person_id']) && isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'editperson') {
+      eme_people_edit_layout();
+      // don't show the people table in this case, so we return from the function
+      return;
+   } elseif (isset ($_POST['person_id']) && isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == 'confirm_editperson') {
+      global $wpdb;
+      $people_table = $wpdb->prefix.PEOPLE_TBNAME;
+      $person_id=intval($_POST['person_id']);
+      $person = array();
+      $person['person_name'] = trim(stripslashes($_POST['person_name']));
+      $person['person_email'] = trim(stripslashes($_POST['person_email']));
+      $person['person_phone'] = trim(stripslashes($_POST['person_phone']));
+      $validation_result = $wpdb->update( $people_table, $person, array('person_id' => $person_id) );
+      if ($validation_result)
+               $message = __("Person info has been updated.","eme");
+      else
+               $message = __("Couldn't update the person. Please try again.","eme");
    } elseif (isset ($_POST['persons']) && isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == 'delete_people') {
-      $persons = $_POST['persons'];
-      $destination = admin_url("admin.php?page=eme-people");
+      eme_people_delete_layout();
+      // don't show the people table in this case, so we return from the function
+      return;
+   } elseif (isset ($_POST['persons']) && isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == 'confirm_delete_people') {
+         $persons = $_POST['persons'];
+         if(is_array($persons)){
+            //Make sure the array is only numbers
+            foreach ($persons as $person_id) {
+               if (is_numeric($person_id)) {
+                  $person=eme_get_person($person_id);
+                  if (isset($_POST['delete_option']) && $_POST['delete_option'] == 'delete_assoc_bookings') {
+                     $res=eme_delete_all_bookings_for_person_id($person_id);
+                     if ($res) {
+                        $message.=__("Deleted all bookings made by '".$person['person_name']."'", 'eme');
+                        $message.="<br>";
+                     }
+                  } elseif (isset($_POST['delete_option']) && $_POST['delete_option'] == 'transfer_assoc_bookings') {
+                     $to_person_id=intval($_POST['to_person_id']);
+                     $to_person=eme_get_person($to_person_id);
+                     $res=eme_transfer_all_bookings($person_id,$to_person_id);
+                     if ($res) {
+                        $message.=__("Transferred all bookings made by '".$person['person_name']."' to '".$to_person['person_name']."'", 'eme');
+                        $message.="<br>";
+                     }
+                  }
+                  $res=eme_delete_person($person_id);
+                  if ($res) {
+                     $message.=__("Deleted '".$person['person_name']."'", 'eme');
+                     $message.="<br>";
+                  }
+               }
+            }
+         } else {
+               $validation_result = false;
+               $message = __("Couldn't delete the people. Please try again.","eme");
+         }
+   }
+   ?>
+
+   <div class='wrap'> 
+   <div id="icon-users" class="icon32"><br /></div>
+   <h2>People</h2>
+   <?php admin_show_warnings(); eme_people_table($message); ?>
+   </div> 
+
+   <?php
+}
+
+function eme_people_edit_layout($message = "") {
+   $person_id = intval($_GET['person_id']);
+   $person = eme_get_person($person_id);
+   $layout = "
+      <div class='wrap'>
+      <div id='icon-edit' class='icon32'>
+      <br />
+      </div>
+
+      <h2>".__('Edit person', 'eme')."</h2>";
+
+   if($message != "") {
+      $layout .= "
+         <div id='message' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
+         <p>$message</p>
+         </div>";
+   }
+   $layout .= "
+      <div id='ajax-response'></div>
+
+      <form name='editperson' id='editperson' method='post' action='".admin_url("admin.php?page=eme-people")."' class='validate'>
+      <input type='hidden' name='eme_admin_action' value='confirm_editperson' />
+      <input type='hidden' name='person_id' value='".$person_id."'/>";
+
+   $layout .= "
+      <table class='form-table'>
+      <tr class='form-field form-required'>
+      <th scope='row' valign='top'><label for='person_name'>".__('Name', 'eme')."</label></th>
+      <td><input name='person_name' id='person_name' type='text' value='".eme_sanitize_html($person['person_name'])."' size='40' /></td>
+      </tr>
+      <tr class='form-field form-required'>
+      <th scope='row' valign='top'><label for='person_email'>".__('E-mail', 'eme')."</label></th>
+      <td><input name='person_email' id='person_email' type='text' value='".eme_sanitize_html($person['person_email'])."' size='40' /></td>
+      </tr>
+      <tr class='form-field form-required'>
+      <th scope='row' valign='top'><label for='person_phone'>".__('Phone number', 'eme')."</label></th>
+      <td><input name='person_phone' id='person_phone' type='text' value='".eme_sanitize_html($person['person_phone'])."' size='40' /></td>
+      </tr>
+      </table>
+      <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Update person', 'eme')."' /></p>
+      </form>
+      </div>
+      ";
+   echo $layout;
+}
+
+function eme_people_delete_layout($message = "") {
+   $persons = $_POST['persons'];
+   $destination = admin_url("admin.php?page=eme-people");
    ?>
       <h2><?php _e('Delete People','eme'); ?></h2>
       <?php admin_show_warnings(); ?>
@@ -53,52 +165,6 @@ function eme_people_page() {
       </script>
 
    <?php
-      // don't show the people table in this case, so we return from the function
-      return;
-
-   } elseif (isset ($_POST['persons']) && isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == 'confirm_delete_people') {
-         $persons = $_POST['persons'];
-         if(is_array($persons)){
-            //Make sure the array is only numbers
-            foreach ($persons as $person_id) {
-               if (is_numeric($person_id)) {
-                  $person=eme_get_person($person_id);
-                  if (isset($_POST['delete_option']) && $_POST['delete_option'] == 'delete_assoc_bookings') {
-                     $res=eme_delete_all_bookings_for_person_id($person_id);
-                     if ($res) {
-                        $message.=__("Deleted all bookings made by '".$person['person_name']."'", 'eme');
-                        $message.="<br>";
-                     }
-                  } elseif (isset($_POST['delete_option']) && $_POST['delete_option'] == 'transfer_assoc_bookings') {
-                     $to_person_id=intval($_POST['to_person_id']);
-                     $to_person=eme_get_person($to_person_id);
-                     $res=eme_transfer_all_bookings($person_id,$to_person_id);
-                     if ($res) {
-                        $message.=__("Transferred all bookings made by '".$person['person_name']."' to '".$to_person['person_name']."'", 'eme');
-                        $message.="<br>";
-                     }
-                  }
-                  $res=eme_delete_person($person_id);
-                  if ($res) {
-                     $message.=__("Deleted '".$person['person_name']."'", 'eme');
-                     $message.="<br>";
-                  }
-               }
-            }
-         } else {
-               $validation_result = false;
-               $message = __("Couldn't delete the people. Please try again.","eme");
-         }
-   }
-   ?>
-
-      <div class='wrap'> 
-      <div id="icon-users" class="icon32"><br /></div>
-      <h2>People</h2>
-      <?php admin_show_warnings(); eme_people_table($message); ?>
-      </div> 
-
-      <?php
 }
 
 function eme_global_map_json($eventful = false, $scope = "all", $category = '', $offset = 0) {
@@ -370,6 +436,10 @@ function eme_printable_booking_report($event_id) {
 } 
 
 function eme_people_table($message="") {
+   if (isset($_GET['search'])) {
+      $search = "[person_id=".intval($_GET['search'])."]";
+   }
+
    $persons = eme_get_persons();
    $destination = admin_url("admin.php?page=eme-people");
    if (count($persons) < 1 ) {
@@ -396,6 +466,8 @@ function eme_people_table($message="") {
             <thead>
             <tr>
             <th class='manage-column column-cb check-column' scope='col'><input class='select-all' type='checkbox' value='1' /></th>
+            <th>hidden for person id search</th>
+            <th class='manage-column' scope='col'><?php _e('ID', 'eme'); ?></th>
             <th class='manage-column' scope='col'><?php _e('Name', 'eme'); ?></th>
             <th scope='col'><?php _e('E-mail', 'eme'); ?></th>
             <th scope='col'><?php _e('Phone number', 'eme'); ?></th>
@@ -404,14 +476,16 @@ function eme_people_table($message="") {
             </thead>
             <tbody>
       <?php
-      $searchform_dest=admin_url("admin.php?page=eme-registration-seats");
+      $search_dest=admin_url("admin.php?page=eme-registration-seats");
       foreach ($persons as $person) {
-         $searchform_url=add_query_arg(array('search'=>$person['person_id']),$searchform_dest);
+         $search_url=add_query_arg(array('search'=>$person['person_id']),$search_dest);
          print "<tr><td><input type='checkbox' class ='row-selector' value='".$person['person_id']."' name='persons[]'/></td>
+                  <td>[person_id=".$person['person_id']."]</td>
+                  <td><a href='".admin_url("admin.php?page=eme-people&amp;eme_admin_action=editperson&amp;person_id=".$person['person_id'])."' title='". __('Click the ID in order to edit the person.','eme')."'>".$person['person_id']."</a></td>
                   <td>".eme_sanitize_html($person['person_name'])."</td>
                   <td>".eme_sanitize_html($person['person_email'])."</td>
                   <td>".eme_sanitize_html($person['person_phone'])."</td>
-                  <td><a href='".$searchform_url."'>".__('Show all bookings','eme')."</a></td>
+                  <td><a href='".$search_url."'>".__('Show all bookings','eme')."</a></td>
                   </tr>";
       }
       ?>
@@ -434,9 +508,19 @@ function eme_people_table($message="") {
                }
                ?> 
                "stateSave": true,
+               <?php
+               if (!empty($search)) {
+               ?> 
+               "stateLoadParams": function (settings, data) {
+                  data.oSearch.sSearch = "<?php echo $search; ?>";
+               },
+               <?php
+               }
+               ?> 
                "pagingType": "full",
                "columnDefs": [
-               { "sortable": false, "targets": 0 }
+               { "sortable": false, "targets": 0 },
+               { "visible": false, "targets": 1 }
                ]
                } );
    } );
