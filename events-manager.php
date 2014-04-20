@@ -1395,11 +1395,14 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_EVENTPAGEURL\{(.+)\}/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
          $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
+         if (!empty($lang))
+            $replacement = add_query_arg(array('lang'=>$lang),$replacement);
 
       } elseif ($legacy && $event && preg_match('/#_EVENTPAGEURL\[(.+)\]/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
          $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
-
+         if (!empty($lang))
+            $replacement = add_query_arg(array('lang'=>$lang),$replacement);
 
       } elseif ($event && preg_match('/#_EVENTPAGEURL$/', $result)) {
          $replacement = eme_event_url($event,$lang);
