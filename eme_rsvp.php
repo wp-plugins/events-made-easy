@@ -1674,7 +1674,7 @@ function eme_registration_seats_form_table($pending=0) {
    $scope = isset($_POST['scope']) ? $_POST['scope'] : 'future';
    if (isset($_GET['search'])) {
       $scope="all";
-      $search = "person_id=".intval($_GET['search']);
+      $search = "[person_id=".intval($_GET['search'])."]";
    }
    $all_events=eme_get_events(0,$scope);
 
@@ -1792,7 +1792,7 @@ function eme_registration_seats_form_table($pending=0) {
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
          <th><?php _e ('ID','eme'); ?></th>
-         <th></th>
+         <th>hidden for person id search</th>
          <th><?php _e ('Name','eme'); ?></th>
          <th><?php _e ('Date and time','eme'); ?></th>
          <th><?php _e ('Booker','eme'); ?></th>
@@ -1826,7 +1826,7 @@ function eme_registration_seats_form_table($pending=0) {
       <tr <?php echo "$style"; ?>>
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
-          <td>person_id=<?php echo $person['person_id']; ?></td>
+          <td>[person_id=<?php echo $person['person_id']; ?>]</td>
          <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$plugin_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see the details and/or edit the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
          <td><strong>
          <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
