@@ -22,19 +22,26 @@ function eme_new_location() {
  
 function eme_locations_page() {
    $current_userid=get_current_user_id();
-   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edit") { 
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editlocation") { 
       $location_id = intval($_GET['location_ID']);
       $location = eme_get_location($location_id);
       if (current_user_can( get_option('eme_cap_edit_locations')) ||
-             (current_user_can( get_option('eme_cap_author_locations')) && ($location['location_author']==$current_userid))) {
+            (current_user_can( get_option('eme_cap_author_locations')) && ($location['location_author']==$current_userid))) {
          // edit location
          eme_locations_edit_layout($location);
       } else {
          $message = __('You have no right to edit this location!','eme');
-         $locations = eme_get_locations();
-         eme_locations_table_layout($locations, null, $message);
+         eme_locations_table_layout($message);
       }
-   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "delete") { 
+   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "addlocation") { 
+      if (current_user_can( get_option('eme_cap_add_locations'))) {
+         $location = eme_new_location();
+         eme_locations_edit_layout($location);
+      } else {
+         $message = __('You have no right to add a location!','eme');
+         eme_locations_table_layout($message);
+      }
+   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "deletelocation") { 
       $locations = $_POST['locations'];
       foreach($locations as $location_id) {
          $location = eme_get_location(intval($location_id));
@@ -43,15 +50,21 @@ function eme_locations_page() {
             eme_delete_location(intval($location_id));
          }
       }
-      $locations = eme_get_locations();
-      eme_locations_table_layout($locations, null, "");
-   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "editedlocation") { 
-      $orig_location=eme_get_location(intval($_POST['location_ID']));
-      if (current_user_can( get_option('eme_cap_edit_locations')) ||
-            (current_user_can( get_option('eme_cap_author_locations')) && ($orig_location['location_author']==$current_userid))) {
-         // location update required
+      eme_locations_table_layout();
+   } elseif (isset($_POST['eme_admin_action']) && ($_POST['eme_admin_action'] == "do_editlocation" || $_POST['eme_admin_action'] == "do_addlocation")) { 
+      $action = $_POST['eme_admin_action'];
+      if ($action == "do_addlocation" && !current_user_can( get_option('eme_cap_add_locations'))) {
+         $message = __('You have no right to add a location!','eme');
+         eme_locations_table_layout($message);
+      } elseif ($action == "do_editlocation") {
+         $orig_location=eme_get_location(intval($_POST['location_ID']));
+         if (!(current_user_can( get_option('eme_cap_edit_locations')) ||
+                  (current_user_can( get_option('eme_cap_author_locations')) && ($orig_location['location_author']==$current_userid)))) {
+            $message = __('You have no right to edit this location!','eme');
+            eme_locations_table_layout($message);
+         }
+      } else {
          $location = eme_new_location();
-         $location['location_id'] = intval($_POST['location_ID']);
          $location['location_name'] = trim(stripslashes($_POST['location_name']));
          $location['location_address'] = stripslashes($_POST['location_address']); 
          $location['location_town'] = stripslashes($_POST['location_town']); 
@@ -82,14 +95,14 @@ function eme_locations_page() {
 
          $location['location_latitude'] = $_POST['location_latitude'];
          $location['location_longitude'] = $_POST['location_longitude'];
-         if(empty($location['location_latitude'])) {
+         if (empty($location['location_latitude'])) {
             $location['location_latitude']  = 0;
             $location['location_longitude'] = 0;
          }
 
          $location_attributes = array();
          for($i=1 ; isset($_POST["mtm_{$i}_ref"]) && trim($_POST["mtm_{$i}_ref"])!='' ; $i++ ) {
-            if(trim($_POST["mtm_{$i}_name"]) != '') {
+            if (trim($_POST["mtm_{$i}_name"]) != '') {
                $location_attributes[$_POST["mtm_{$i}_ref"]] = stripslashes($_POST["mtm_{$i}_name"]);
             }
          }
@@ -97,90 +110,38 @@ function eme_locations_page() {
 
          $validation_result = eme_validate_location($location);
          if ($validation_result == "OK") {
-            if (eme_update_location($location)) {
-               $message = __('The location has been updated.', 'eme');
-            } else {
-               $message = __('The location update failed.', 'eme');
+            if ($action = "do_addlocation") {
+               $new_location = eme_insert_location($location);
+               if ($new_location) {
+                  $message = __('The location has been added.', 'eme'); 
+               } else {
+                  $message = __('There has been a problem adding the location.', 'eme'); 
+               }      
+            } elseif ($action == "do_editlocation") {      
+               $location['location_id'] = intval($_POST['location_ID']);
+               if (eme_update_location($location)) {
+                  $message = __('The location has been updated.', 'eme');
+               } else {
+                  $message = __('The location update failed.', 'eme');
+               }
             }
-            $locations = eme_get_locations();
-            eme_locations_table_layout($locations, $location, $message);
+            eme_locations_table_layout($message);
          } else {
             $message = $validation_result;
             eme_locations_edit_layout($location, $message);
          }
-      } else {
-         $message = __('You have no right to edit this location!','eme');
-         $locations = eme_get_locations();
-         eme_locations_table_layout($locations, null, $message);
-      }
-   } elseif(isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "addlocation") {
-      if (current_user_can( get_option('eme_cap_add_locations'))) {
-         $location = eme_new_location();
-         $location['location_name'] = trim(stripslashes($_POST['location_name']));
-         $location['location_address'] = stripslashes($_POST['location_address']);
-         $location['location_town'] = stripslashes($_POST['location_town']); 
-         $location['location_latitude'] = $_POST['location_latitude'];
-         $location['location_longitude'] = $_POST['location_longitude'];
-         $location['location_description'] = stripslashes($_POST['content']);
-         $location['location_author'] = $current_userid;
-         $location['location_url'] = isset($_POST ['location_url']) ? eme_strip_tags ( $_POST ['location_url'] ) : '';
-         $location['location_image_url'] = isset($_POST ['location_image_url']) ? eme_strip_tags ( $_POST ['location_image_url'] ) : '';
-         $location['location_image_id'] = isset($_POST ['location_image_id']) ? intval ( $_POST ['location_image_id'] ) : 0;
-         $location['location_slug'] = isset($_POST ['location_slug']) ? eme_permalink_convert(eme_strip_tags ( $_POST ['location_slug'] )) : eme_permalink_convert($location['location_name']);
-         if (isset ($_POST['location_category_ids'])) {
-            // the category id's need to begin and end with a comma
-            // this is needed so we can later search for a specific
-            // cat using LIKE '%,$cat,%'
-            $location ['location_category_ids']="";
-            foreach ($_POST['location_category_ids'] as $cat) {
-               if (is_numeric($cat)) {
-                  if (empty($location ['location_category_ids'])) {
-                     $location ['location_category_ids'] = "$cat";
-                  } else {
-                     $location ['location_category_ids'] .= ",$cat";
-                  }
-               }
-            }
-         } else {
-            $location ['location_category_ids']="";
-         }
-
-         $location_attributes = array();
-         for($i=1 ; isset($_POST["mtm_{$i}_ref"]) && trim($_POST["mtm_{$i}_ref"])!='' ; $i++ ) {
-            if(trim($_POST["mtm_{$i}_name"]) != '') {
-               $location_attributes[$_POST["mtm_{$i}_ref"]] = stripslashes($_POST["mtm_{$i}_name"]);
-            }
-         }
-         $location['location_attributes'] = serialize($location_attributes);
-
-         $validation_result = eme_validate_location($location);
-         if ($validation_result == "OK") {
-            $new_location = eme_insert_location($location);
-            if ($new_location) {
-               $message = __('The location has been added.', 'eme'); 
-            } else {
-               $message = __('There has been a problem adding the location.', 'eme'); 
-            }      
-            $locations = eme_get_locations();
-            eme_locations_table_layout($locations, null,$message);
-         } else {
-            $message = $validation_result;
-            $locations = eme_get_locations();
-            eme_locations_table_layout($locations, $location, $message);
-         }
-      } else {
-         $message = __('You have no right to add a location!','eme');
-         $locations = eme_get_locations();
-         eme_locations_table_layout($locations, null, $message);
       }
    } else {
       // no action, just a locations list
-      $locations = eme_get_locations();
-      eme_locations_table_layout($locations, null, "");
+      eme_locations_table_layout();
    }
 }
 
 function eme_locations_edit_layout($location, $message = "") {
+   if (!isset($location['location_id']))
+      $action="add";
+   else
+      $action="edit";
    eme_admin_map_script();
    ?>
    <div class="wrap">
@@ -189,19 +150,27 @@ function eme_locations_edit_layout($location, $message = "") {
             <br />
          </div>
             
-         <h2><?php _e('Edit location', 'eme') ?></h2>
+         <h2><?php if ($action=="add")
+                     _e('Add location', 'eme');
+                   else
+                     _e('Edit location', 'eme');
+             ?></h2>
              <?php admin_show_warnings(); ?>
          
-         <?php if($message != "") : ?>
+         <?php if ($message != "") { ?>
             <div id="message" class="updated fade below-h2" style="background-color: rgb(255, 251, 204);">
                <p><?php  echo $message ?></p>
             </div>
-         <?php endif; ?>
+         <?php } ?>
          <div id="ajax-response"></div>
    
-         <form enctype="multipart/form-data" name="editcat" id="editcat" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>" class="validate">
-         <input type="hidden" name="eme_admin_action" value="editedlocation" />
+         <form enctype="multipart/form-data" name="editloc" id="editloc" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>" class="validate">
+         <?php if ($action == "add") { ?>
+         <input type="hidden" name="eme_admin_action" value="do_addlocation" />
+         <?php } else { ?>
+         <input type="hidden" name="eme_admin_action" value="do_editlocation" />
          <input type="hidden" name="location_ID" value="<?php echo $location['location_id'] ?>"/>
+         <?php } ?>
          
          <!-- we need titlediv and title for qtranslate as ID -->
          <div id="titlediv" class="form-required">
@@ -367,7 +336,7 @@ jQuery(document).ready(function($){
             </h3>
                <?php eme_attributes_form($location); ?>
          </div>
-	 <?php } ?>
+       <?php } ?>
          <div class="postbox">
             <h3>
                <?php _e ( 'External link', 'eme' ); ?>
@@ -377,18 +346,16 @@ jQuery(document).ready(function($){
             <p><?php _e ( 'If this is filled in, the single location URL will point to this url instead of the standard location page.', 'eme' )?></p>
             </div>
          </div>
-         <p class="submit"><input type="submit" class="button-primary" name="submit" value="<?php _e('Update location', 'eme') ?>" /></p>
+         <p class="submit"><input type="submit" class="button-primary" name="submit" value="<?php if ($action=="add") _e('Add location', 'eme'); else _e('Update location', 'eme'); ?>" /></p>
       </div>
       </form>
    </div>
    <?php
 }
 
-function eme_locations_table_layout($locations, $new_location, $message = "") {
+function eme_locations_table_layout($message = "") {
+   $locations = eme_get_locations();
    eme_admin_map_script();
-   if (!is_array($new_location)) {
-      $new_location = eme_new_location();
-   }
 
    ?>
       <div class="wrap nosubsub">
@@ -399,16 +366,21 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
          <h2><?php _e('Locations', 'eme') ?></h2>
          <?php admin_show_warnings(); ?>
          
-         <?php if($message != "") : ?>
+         <?php if ($message != "") { ?>
             <div id="message" class="updated fade below-h2" style="background-color: rgb(255, 251, 204);">
                <p><?php echo $message ?></p>
             </div>
-         <?php endif; ?>
+         <?php } ?>
+         <div class="wrap">
+         <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
+            <input type="hidden" name="eme_admin_action" value="addlocation"/>
+            <input type="submit" class="button-primary" name="submit" value="<?php _e('Add location', 'eme');?>">
+         </form>
+         </div>
          <div id="col-container">
-            <div id="col-right">
              <div class="col-wrap">
                 <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
-                  <input type="hidden" name="eme_admin_action" value="delete"/>
+                  <input type="hidden" name="eme_admin_action" value="deletelocation"/>
                   <?php if (count($locations)>0) : ?>
                   <table class="widefat">
                      <thead>
@@ -434,7 +406,7 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                         <tr>
                            <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id']; ?>" name="locations[]"/></td>
                            <td><?php echo $this_location['location_id']; ?></td>
-                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=editlocation&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_town']); ?></td>
                         </tr>
@@ -455,139 +427,6 @@ function eme_locations_table_layout($locations, $new_location, $message = "") {
                   <?php endif; ?>
                   </form>
                </div>
-            </div>  <!-- end col-right -->
-            
-            <div id="col-left">
-            <div class="col-wrap">
-                  <div class="form-wrap"> 
-                     <div id="ajax-response"/>
-                  <h3><?php _e('Add location', 'eme') ?></h3>
-                      <form enctype="multipart/form-data" name="addlocation" id="addlocation" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>" class="add:the-list: validate">
-                        <input type="hidden" name="eme_admin_action" value="addlocation" />
-                        <div id="titlediv" class="form-field form-required">
-                          <label><?php _e('Location name', 'eme') ?></label>
-                          <input name="location_name" id="title" type="text" value="<?php echo eme_sanitize_html($new_location['location_name']); ?>" size="40" />
-                          <input type="hidden" name="translated_location_name" value="<?php echo eme_trans_sanitize_html($new_location['location_name']); ?>" />
-                          <p><?php _e('The name of the location', 'eme') ?>.</p>
-                        </div>
-
-                        <div class="form-field">
-                           <label for="location_address"><?php _e('Location address', 'eme') ?></label>
-                           <input id="location_address" name="location_address" type="text" value="<?php echo eme_sanitize_html($new_location['location_address']); ?>" size="40"  />
-                           <p><?php _e('The address of the location', 'eme') ?>.</p>
-                        </div>
- 
-                        <div class="form-field ">
-                           <label for="location_town"><?php _e('Location town', 'eme') ?></label>
-                           <input id="location_town" name="location_town" type="text" value="<?php echo eme_sanitize_html($new_location['location_town']); ?>" size="40"  />
-                           <p><?php _e('The town of the location', 'eme') ?>.</p>
-                        </div>
-                        
-                        <div class="form-field">
-                           <label for="location_latitude"><?php _e('Latitude', 'eme') ?></label>
-                           <input id="location_latitude" name="location_latitude" type="text" value="<?php echo eme_sanitize_html($new_location['location_latitude']); ?>" size="40"  />
-                           <br />
-                           <label for="location_longitude"><?php _e('Longitude', 'eme') ?></label>
-                           <input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($new_location['location_longitude']); ?>" size="40"  />
-                           <p><?php _e('The latitude/longitude coordinates of the location, if you want to specify these manually', 'eme') ?>.</p>
-                        </div>
-
-                        <div class="form-field">
-                           <label for="eme_location_image_example"><?php _e('Location image', 'eme') ?></label>
-                          <div id="event_current_image" class="postarea">
-                          <img id='eme_location_image_example' src='' alt='' width='200' />
-                        </div>
-                        <div class="uploader">
-                          <input type="hidden" name="location_image_url" id="location_image_url" />
-                          <input type="hidden" name="location_image_id" id="location_image_id" />
-                          <input type="button" name="location_image_button" id="location_image_button" value="<?php _e ( 'Set a featured image', 'eme' )?>" />
-                          <input type="button" id="eme_remove_old_image" name="eme_remove_old_image" value=" <?php _e ( 'Unset featured image', 'eme' )?>" />
-                        </div>
-<script>
-jQuery(document).ready(function($){
-
-  $('#eme_remove_old_image').click(function(e) {
-        $('#location_image_url').val('');
-        $('#location_image_id').val('');
-        $('#eme_location_image_example' ).attr("src",'');
-  });
-  $('#location_image_button').click(function(e) {
-    var button = $(this);
-    var _orig_send_attachment = wp.media.editor.send.attachment;
-    var eme_custom_media = true;
-
-    wp.media.editor.send.attachment = function(props, attachment){
-      if ( eme_custom_media ) {
-        $('#location_image_url').val(attachment.url);
-        $('#location_image_id').val(attachment.id);
-        $('#eme_location_image_example' ).attr("src",attachment.url);
-      } else {
-        return _orig_send_attachment.apply( this, [props, attachment] );
-      };
-      eme_custom_media = false;
-    }
-
-    wp.media.editor.open(button);
-    return false;
-  });
-});
-</script>
-                           </div>
-
-                        <?php if(get_option('eme_categories_enabled')) :?>
-                           <div>
-                           <label for="location_category_ids"><?php _e('Category', 'eme') ?></label><br />
-                           <?php
-                           $categories = eme_get_categories();
-                           foreach ( $categories as $category) {
-                              if ($new_location['location_category_ids'] && in_array($category['category_id'],explode(",",$new_location['location_category_ids']))) {
-                                 $selected = "checked='checked'";
-                              } else {
-                                 $selected = "";
-                              }
-                           ?>
-                           <input type="checkbox" name="location_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo $category['category_name']; ?><br />
-                           <?php
-                           }
-                           ?>
-                           </div>
-                        <?php endif; ?>
-
-                        <?php 
-                           $gmap_is_active = get_option('eme_gmap_is_active');
-                              if ($gmap_is_active) :
-                         ?>   
-                           <div id="eme-admin-map-not-found"><p><?php _e('Map not found','eme') ?></p></div>
-                           <div id="eme-admin-location-map"></div>
-                           <br style="clear:both;" />
-                         <?php endif; ?>
-                           <div id="loc_description">
-                              <label><?php _e('Location description', 'eme') ?></label>
-                              <div class="inside">
-                                 <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-                                    <!-- we need content for qtranslate as ID -->
-                                    <?php wp_editor($new_location['location_description'],"content"); ?>
-                                 </div>
-                                 <?php _e('A description of the Location. You may include any kind of info here.', 'eme') ?>
-                              </div>
-                           </div>
-     	 <?php if (get_option('eme_attributes_enabled')) { ?>
-         <div class="form-field">
-            <label for="location_url" ><?php _e ( 'Attributes', 'eme' ); ?></label>
-               <?php eme_attributes_form($new_location); ?>
-         </div>
-     	 <?php } ?>
-         <div class="form-field">
-            <label for="location_url" ><?php _e ( 'External link', 'eme' ); ?></label>
-            <input name="location_url" id="location_url" type="text" value="<?php echo eme_sanitize_html($new_location['location_url']); ?>" size="40"  />
-            <p><?php _e ( 'If this is filled in, the single event URL will point to this url instead of the standard event page.', 'eme' )?></p>
-         </div>
-                         <p class="submit"><input type="submit" class="button-primary" name="submit" value="<?php _e('Add location', 'eme') ?>" /></p>
-                      </form>
-
-                 </div>
-               </div> 
-            </div>  <!-- end col-left -->
          </div> <!-- end col-container -->
       </div> 
    </div>
