@@ -67,6 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: RSS feed now shows html (no maps or forms), as does all other parts of wordpress do
 * Feature: use language selected at booking time for sending mail concerning the booking or the attendee
 * Feature: the cancel registration form can now also be formatted (also per event if wanted)
+* Feature: locations can now also be duplicated
 * Bugfix: don't show the captcha when showing the booking form in the admin backend, it was ignored but still it's best not to confuse people
 * Bugfix: if the current day had an event, the calendar didn't show the eventfull class
 * Bugfix: don't match "[...]"  for location placeholders, solved more generically by the new placeholders notation feature.

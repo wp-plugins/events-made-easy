@@ -33,7 +33,20 @@ function eme_locations_page() {
          $message = __('You have no right to edit this location!','eme');
          eme_locations_table_layout($message);
       }
-   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "addlocation") { 
+   } elseif (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "copylocation") { 
+      $location_id = intval($_GET['location_ID']);
+      $location = eme_get_location($location_id);
+      // make it look like a new location
+      unset($location['location_id']);
+      $location['location_name'].= "(Copy)";
+
+      if (current_user_can( get_option('eme_cap_add_locations'))) {
+         eme_locations_edit_layout($location);
+      } else {
+         $message = __('You have no right to copy this location!','eme');
+         eme_locations_table_layout($message);
+      }
+    } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "addlocation") { 
       if (current_user_can( get_option('eme_cap_add_locations'))) {
          $location = eme_new_location();
          eme_locations_edit_layout($location);
@@ -53,16 +66,16 @@ function eme_locations_page() {
       eme_locations_table_layout();
    } elseif (isset($_POST['eme_admin_action']) && ($_POST['eme_admin_action'] == "do_editlocation" || $_POST['eme_admin_action'] == "do_addlocation")) { 
       $action = $_POST['eme_admin_action'];
+      if ($action == "do_editlocation")
+         $orig_location=eme_get_location(intval($_POST['location_ID']));
+
       if ($action == "do_addlocation" && !current_user_can( get_option('eme_cap_add_locations'))) {
          $message = __('You have no right to add a location!','eme');
          eme_locations_table_layout($message);
-      } elseif ($action == "do_editlocation") {
-         $orig_location=eme_get_location(intval($_POST['location_ID']));
-         if (!(current_user_can( get_option('eme_cap_edit_locations')) ||
+      } elseif ($action == "do_editlocation" && !(current_user_can( get_option('eme_cap_edit_locations')) ||
                   (current_user_can( get_option('eme_cap_author_locations')) && ($orig_location['location_author']==$current_userid)))) {
             $message = __('You have no right to edit this location!','eme');
             eme_locations_table_layout($message);
-         }
       } else {
          $location = eme_new_location();
          $location['location_name'] = trim(stripslashes($_POST['location_name']));
@@ -110,7 +123,7 @@ function eme_locations_page() {
 
          $validation_result = eme_validate_location($location);
          if ($validation_result == "OK") {
-            if ($action = "do_addlocation") {
+            if ($action == "do_addlocation") {
                $new_location = eme_insert_location($location);
                if ($new_location) {
                   $message = __('The location has been added.', 'eme'); 
@@ -180,7 +193,7 @@ function eme_locations_edit_layout($location, $message = "") {
             <div class="inside">
            <input name="location_name" id="title" type="text" value="<?php echo eme_sanitize_html($location['location_name']); ?>" size="40" />
            <input type="hidden" name="translated_location_name" value="<?php echo eme_trans_sanitize_html($location['location_name']); ?>" />
-           <?php if ($location ['location_name'] != "") {
+           <?php if ($action=="edit") {
                     _e ('Permalink: ', 'eme' );
                     echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix')).$location['location_id']."/";
                     $slug = $location['location_slug'] ? $location['location_slug'] : $location['location_name'];
@@ -363,7 +376,7 @@ function eme_locations_table_layout($message = "") {
          <div id="icon-edit" class="icon32">
             <br />
          </div>
-         <h2><?php _e('Locations', 'eme') ?></h2>
+         <h2><?php _e('Add a new location', 'eme') ?></h2>
          <?php admin_show_warnings(); ?>
          
          <?php if ($message != "") { ?>
@@ -377,6 +390,8 @@ function eme_locations_table_layout($message = "") {
             <input type="submit" class="button-primary" name="submit" value="<?php _e('Add location', 'eme');?>">
          </form>
          </div>
+
+         <h2><?php _e('Locations', 'eme') ?></h2>
          <div id="col-container">
              <div class="col-wrap">
                 <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
@@ -390,6 +405,7 @@ function eme_locations_table_layout($message = "") {
                            <th><?php _e('Name', 'eme') ?></th>
                            <th><?php _e('Address', 'eme') ?></th>
                            <th><?php _e('Town', 'eme') ?></th>
+                           <th></th>
                         </tr> 
                      </thead>
                      <tfoot>
@@ -399,6 +415,7 @@ function eme_locations_table_layout($message = "") {
                            <th><?php _e('Name', 'eme') ?></th>
                            <th><?php _e('Address', 'eme') ?></th>
                            <th><?php _e('Town', 'eme') ?></th>
+                           <th></th>
                         </tr>
                      </tfoot>
                      <tbody>
@@ -409,6 +426,7 @@ function eme_locations_table_layout($message = "") {
                            <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=editlocation&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_town']); ?></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=copylocation&amp;location_ID=".$this_location['location_id']); ?>" title="<?php _e('Duplicate this location','eme'); ?>">+</a></td>
                         </tr>
                         <?php endforeach; ?>
                      </tbody>
