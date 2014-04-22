@@ -181,7 +181,7 @@ function eme_add_booking_form($event_id) {
    $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
    $ret_string .= eme_replace_formfields_placeholders ($event);
    // add a nonce for extra security
-   $ret_string .= wp_nonce_field('add_booking','eme_rsvp_nonce');
+   $ret_string .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
    // also add a honeypot field: if it gets completed with data, 
    // it's a bot, since a humand can't see this (using CSS to render it invisible)
    $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
@@ -291,7 +291,7 @@ function eme_delete_booking_form($event_id) {
    $form_html .= "<form id='booking-delete-form' name='booking-delete-form' method='post' action='$destination'>
       <input type='hidden' name='eme_eventAction' value='delete_booking'/>
       <input type='hidden' name='event_id' value='$event_id'/>";
-   $form_html .= wp_nonce_field('del_booking','eme_rsvp_nonce');
+   $form_html .= wp_nonce_field('del_booking','eme_rsvp_nonce',false,false);
    $form_html .= eme_replace_cancelformfields_placeholders($event);
    $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
       <p>".__('(* marks a required field)', 'eme')."</p>";
