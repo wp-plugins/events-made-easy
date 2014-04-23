@@ -3352,7 +3352,7 @@ function eme_meta_box_div_location_name($event) {
       $selected_location=$location_0;
       foreach($locations as $tmp_location) {
          $selected = "";
-         if ($location['location_id'] == $tmp_location['location_id']) {
+         if (isset($location['location_id']) && $location['location_id'] == $tmp_location['location_id']) {
             $selected_location=$location;
             $selected = "selected='selected' ";
          }
