@@ -83,7 +83,7 @@ function eme_people_edit_layout($message = "") {
 
    if($message != "") {
       $layout .= "
-         <div id='message' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
+         <div id='message' class='updated' style='background-color: rgb(255, 251, 204);'>
          <p>$message</p>
          </div>";
    }

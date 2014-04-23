@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.3.4
+Version: 1.3.5
 Plugin URI: http://www.e-dynamics.be/wordpress
 Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 52);
+define('EME_DB_VERSION', 53);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -1097,6 +1097,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
    // and now all the other placeholders
    $legacy=get_option('eme_legacy');
+   $deprecated=get_option('eme_deprecated');
 
    if ($legacy)
       preg_match_all("/#(ESC|URL)?@?_?[A-Za-z0-9_]+(\[.*\])?(\[.*\])?/", $format, $placeholders);
@@ -1228,7 +1229,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             if (array_key_exists($field_id,$seats))
                $replacement = $seats[$field_id];
          }
-      } elseif ($legacy && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(\d+)/', $result, $matches)) {
+      } elseif ($deprecated && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_available_multiseats($event['event_id']);
@@ -1246,7 +1247,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             if (array_key_exists($field_id,$seats))
                $replacement = $seats[$field_id];
          }
-      } elseif ($legacy && preg_match('/#_(TOTALSPACES|TOTALSEATS)(\d+)/', $result, $matches)) {
+      } elseif ($deprecated && preg_match('/#_(TOTALSPACES|TOTALSEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats = eme_convert_multi2array($event['event_seats']);
@@ -1264,7 +1265,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             if (array_key_exists($field_id,$seats))
                $replacement = $seats[$field_id];
          }
-      } elseif ($legacy && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
+      } elseif ($deprecated && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_booked_multiseats($event['event_id']);
@@ -1468,7 +1469,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
-      } elseif ($legacy && $event && preg_match('/#_(EVENT)?PRICE(\d+)/', $result, $matches)) {
+      } elseif ($deprecated && $event && preg_match('/#_(EVENT)?PRICE(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2]-1);
          if ($event["price"] && eme_is_multi($event["price"])) {
             $prices = eme_convert_multi2array($event["price"]);
@@ -1981,7 +1982,13 @@ function admin_show_warnings() {
    $show_legacy_warning = get_option('eme_legacy_warning');
    if ($show_legacy_warning)
       eme_show_legacy_warning();
+
+   if (get_option('eme_legacy'))
+      eme_show_legacy_message();
+   if (get_option('eme_deprecated'))
+      eme_show_deprecated_message();
 }
+
 
 function eme_explain_dbupdate_done() {
    $advice = sprintf(__("It seems you upgraded Events Made Eeasy, the events database has been updated accordingly. Click <a href='%s'>here</a> to dismiss this message.",'eme'),add_query_arg(array("disable_update_message"=>"true")));
@@ -2040,9 +2047,33 @@ function eme_hello_to_new_user() {
 }
 
 function eme_show_legacy_warning() {
-   $advice = sprintf ( __ ( "<p><strong>Events Made Easy placeholders warning</strong>: </p>
+   $advice = sprintf ( __ ( "<p><strong>Events Made Easy placeholders warning</strong></p>
    <p>The legacy placeholders of Events Made Easy have been disabled. More info can be found in <a href=\"%s\" title=\"Legacy doc\">the documention</a></p>
    <p>What? Tired of seeing this advice? I hear you, <a href=\"%s\" title=\"Don't show this advice again\">click here</a> and you won't see this again!</p>", 'eme' ), 'http://www.e-dynamics.be/wordpress/?p=51559', add_query_arg (array("disable_legacy_warning"=>"true")) );
+   ?>
+<div id="message" class="updated">
+      <?php
+   echo $advice;
+   ?>
+   </div>
+<?php
+}
+
+function eme_show_legacy_message() {
+   $advice = sprintf ( __ ( "<p><strong>Events Made Easy placeholders warning</strong></p>
+   <p>You have activated the use of legacy placeholder syntax. Please note that, although it works just fine, you should switch to the new syntax to avoid issues with regular wordpress shortcodes. More info can be found in <a href=\"%s\" title=\"Legacy doc\">the documention</a>. This message will go away when the use of legacy placeholder syntax has been disabled.</p>", 'eme' ), 'http://www.e-dynamics.be/wordpress/?p=51559');
+   ?>
+<div id="message" class="error">
+      <?php
+   echo $advice;
+   ?>
+   </div>
+<?php
+}
+
+function eme_show_deprecated_message() {
+   $advice = sprintf ( __ ( "<p><strong>Events Made Easy placeholders warning</strong></p>
+   <p>The use of deprecated placeholders is still allowed. Please note that, although these work just fine, you should switch to the new syntax because these might go away at some time in the future. More info can be found in <a href=\"%s\" title=\"Deprecated doc\">the documention</a>. This message will go away when the use of deprecated placeholders has been disabled.</p>", 'eme' ), 'http://www.e-dynamics.be/wordpress/?p=51559');
    ?>
 <div id="message" class="updated">
       <?php

@@ -378,8 +378,8 @@ function eme_replace_cancelformfields_placeholders ($event) {
       $required_fields_count++;
    }
 
-   $legacy = get_option('eme_legacy');
-   if ($legacy && preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
+   $deprecated = get_option('eme_deprecated');
+   if ($deprecated && preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
       // only show the captcha when booking via the frontend, not the admin backend
       if ($eme_captcha_for_booking)
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
@@ -387,7 +387,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
    }
 
-   if ($legacy && preg_match('/#_SUBMIT\[.+\]/', $format)) {
+   if ($deprecated && preg_match('/#_SUBMIT\[.+\]/', $format)) {
       $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."'/>" ,$format );
       $required_fields_count++;
    }
@@ -673,8 +673,8 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       $required_fields_count++;
    }
 
-   $legacy = get_option('eme_legacy');
-   if ($legacy && preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
+   $deprecated = get_option('eme_deprecated');
+   if ($deprecated && preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
       // only show the captcha when booking via the frontend, not the admin backend
       if (!is_admin() && $eme_captcha_for_booking) {
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
@@ -684,7 +684,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       }
    }
 
-   if ($legacy && preg_match('/#_SUBMIT\[.+\]/', $format)) {
+   if ($deprecated && preg_match('/#_SUBMIT\[.+\]/', $format)) {
       if (is_admin() && $booking)
          $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".__('Update booking','eme')."'/>" ,$format );
       else

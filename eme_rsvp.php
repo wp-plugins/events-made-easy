@@ -1272,12 +1272,9 @@ function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$
 }
 
 function eme_replace_booking_placeholders($format, $event, $booking, $target="html",$lang='') {
-   $legacy=get_option('eme_legacy');
+   $deprecated=get_option('eme_deprecated');
 
-   if ($legacy)
-      preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+/", $format, $placeholders);
-   else
-      preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
+   preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
    $person  = eme_get_person ($booking['person_id']);
    $answers = eme_get_answers($booking['booking_id']);
 
@@ -1314,7 +1311,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
              if (array_key_exists($field_id,$seats))
                 $replacement = $seats[$field_id];
          }
-      } elseif ($legacy && preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
+      } elseif ($deprecated && preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($booking['booking_price'])) {
              $seats=eme_convert_multi2array($booking['booking_seats_mp']);
@@ -1329,7 +1326,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          $field_id = intval($matches[1])-1;
          if (array_key_exists($field_id,$total_prices))
             $replacement = $total_prices[$field_id];
-       } elseif ($legacy && preg_match('/#_TOTALPRICE(\d+)/', $result, $matches)) {
+       } elseif ($deprecated && preg_match('/#_TOTALPRICE(\d+)/', $result, $matches)) {
          // total price to pay per price if multiprice
          $total_prices=eme_get_total_booking_multiprice($event,$booking);
          $field_id = intval($matches[1])-1;
@@ -1376,11 +1373,11 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
-       } elseif ($legacy && preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) {
+       } elseif ($deprecated && preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name'],$lang);
-      } elseif ($legacy && preg_match('/#_FIELD(\d+)/', $result, $matches)) {
+      } elseif ($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          foreach ($answers as $answer) {
