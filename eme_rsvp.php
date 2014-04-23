@@ -438,8 +438,7 @@ function eme_book_seats($event, $send_mail=1) {
          $bookedSeats_mp[$key] = 0;
       }
       foreach($_POST as $key=>$value) {
-         if (($deprecated && preg_match('/bookedSeats(\d+)/', $key, $matches)) ||
-              preg_match('/bookedSeats\{(\d+)\}/', $key, $matches)) {
+         if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
             $field_id = intval($matches[1])-1;
             $bookedSeats += $value;
             $bookedSeats_mp[$field_id]=$value;
@@ -769,10 +768,8 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
 function eme_record_answers($booking_id) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
-   $deprecated=get_option('eme_deprecated');
    foreach($_POST as $key =>$value) {
-		if (($deprecated && preg_match('/FIELD(.+)/', $key, $matches)) ||
-           preg_match('/FIELD\{(.+)\}/', $key, $matches)) {
+		if (preg_match('/FIELD(.+)/', $key, $matches)) { 
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          // for multivalue fields like checkbox, the value is in fact an array
@@ -1309,14 +1306,8 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
-      } elseif (preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)\{(\d+)\}/', $result, $matches)) {
-         $field_id = intval($matches[2])-1;
-         if (eme_is_multi($booking['booking_price'])) {
-             $seats=eme_convert_multi2array($booking['booking_seats_mp']);
-             if (array_key_exists($field_id,$seats))
-                $replacement = $seats[$field_id];
-         }
-      } elseif ($deprecated && preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) ||
+                preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($booking['booking_price'])) {
              $seats=eme_convert_multi2array($booking['booking_seats_mp']);

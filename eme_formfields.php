@@ -260,10 +260,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
    $formfield = eme_get_formfield_byid($field_id);
    $field_info = eme_sanitize_html($formfield['field_info']);
    $deprecated = get_option('eme_deprecated');
-   if ($deprecated)
-      $fiel_dname='FIELD'.$field_id;
-   else
-      $field_name='FIELD{'.$field_id.'}';
+   $field_name='FIELD'.$field_id;
    switch($formfield['field_type']) {
       case 1:
 	      # for text field
@@ -745,10 +742,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       } elseif (($deprecated && preg_match('/#_(SEATS|SPACES)(\d+)/', $result, $matches)) ||
                  preg_match('/#_(SEATS|SPACES)\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2]);
-         if ($deprecated)
-            $field_name="bookedSeats".$field_id;
-         else
-            $field_name="bookedSeats{".$field_id."}";
+         $field_name="bookedSeats".$field_id;
 
          if ($booking && isset(${"bookedSeats".$field_id}))
             $entered_val=${"bookedSeats".$field_id};
@@ -773,10 +767,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
       } elseif (($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) || preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         if ($deprecated)
-            $field_name="FIELD".$field_id;
-         else
-            $field_name="FIELD{".$field_id."}";
+         $field_name="FIELD".$field_id;
          if ($booking) {
             $answers = eme_get_answers($booking['booking_id']);
             $formfield = eme_get_formfield_byid($field_id);
@@ -849,7 +840,7 @@ function eme_find_required_formfields ($format) {
    }
    preg_match_all("/#REQ_?[A-Z0-9_]+(\{[A-Z0-9_]+\})?/", $format, $placeholders);
    usort($placeholders[0],'sort_stringlenth');
-   return str_replace("#REQ_","",$placeholders[0]);
+   return preg_replace("/#REQ_|\{|\}/","",$placeholders[0]);
 }
 
 ?>
