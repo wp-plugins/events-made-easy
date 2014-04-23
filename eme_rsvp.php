@@ -438,7 +438,8 @@ function eme_book_seats($event, $send_mail=1) {
          $bookedSeats_mp[$key] = 0;
       }
       foreach($_POST as $key=>$value) {
-         if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
+         if (($deprecated && preg_match('/bookedSeats(\d+)/', $key, $matches)) ||
+              preg_match('/bookedSeats\{(\d+)\}/', $key, $matches)) {
             $field_id = intval($matches[1])-1;
             $bookedSeats += $value;
             $bookedSeats_mp[$field_id]=$value;
@@ -1567,6 +1568,7 @@ function eme_registration_seats_page($pending=0) {
          } elseif ($action == 'updateRegistration') {
             $booking_id = intval($_POST['booking_id']);
             $booking = eme_get_booking ($booking_id);
+            $deprecated=get_option('eme_deprecated');
             //$event_id = $booking['event_id'];
             //$event = eme_get_event($event_id);
 
@@ -1593,7 +1595,8 @@ function eme_registration_seats_page($pending=0) {
                   $bookedSeats_mp[$key] = 0;
                }
                foreach($_POST as $key=>$value) {
-                  if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
+                  if (($deprecated && preg_match('/bookedSeats(\d+)/', $key, $matches)) ||
+                        preg_match('/bookedSeats\{(\d+)\}/', $key, $matches)) {
                      $field_id = intval($matches[1])-1;
                      $bookedSeats += $value;
                      $bookedSeats_mp[$field_id]=$value;
