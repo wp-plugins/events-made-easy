@@ -742,12 +742,12 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       } elseif (($deprecated && preg_match('/#_(SEATS|SPACES)(\d+)/', $result, $matches)) ||
                  preg_match('/#_(SEATS|SPACES)\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2]);
-         $field_name="bookedSeats".$field_id;
+         $postfield_name="bookedSeats".$field_id;
 
          if ($booking && isset(${"bookedSeats".$field_id}))
             $entered_val=${"bookedSeats".$field_id};
-         elseif (isset($_POST[$field_name]))
-            $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST[$field_name]));
+         elseif (isset($_POST[$postfield_name]))
+            $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST[$postfield_name]));
          else
             $entered_val=0;
 
@@ -767,7 +767,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
       } elseif (($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) || preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
-         $field_name="FIELD".$field_id;
+         $postfield_name="FIELD".$field_id;
          if ($booking) {
             $answers = eme_get_answers($booking['booking_id']);
             $formfield = eme_get_formfield_byid($field_id);
@@ -781,8 +781,8 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
                   }
                }
             }
-         } elseif (isset($_POST[$field_name])) {
-            $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST[$field_name]));
+         } elseif (isset($_POST[$postfield_name])) {
+            $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST[$postfield_name]));
          } else {
             $entered_val = "";
          }

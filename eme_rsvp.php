@@ -469,8 +469,7 @@ function eme_book_seats($event, $send_mail=1) {
          } elseif (preg_match ("/COMMENT/",$required_field)) {
             if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
          } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
-            if (($deprecated && preg_match('/FIELD(.+)/', $required_field, $matches)) ||
-                  preg_match('/FIELD\{(.+)\}/', $required_field, $matches)) {
+            if (preg_match('/FIELD(.+)/', $required_field, $matches)) {
                $field_id = intval($matches[1]);
                $formfield = eme_get_formfield_byid($field_id);
                array_push($missing_required_fields, $formfield['field_name']);
@@ -1586,8 +1585,7 @@ function eme_registration_seats_page($pending=0) {
                   $bookedSeats_mp[$key] = 0;
                }
                foreach($_POST as $key=>$value) {
-                  if (($deprecated && preg_match('/bookedSeats(\d+)/', $key, $matches)) ||
-                        preg_match('/bookedSeats\{(\d+)\}/', $key, $matches)) {
+                  if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
                      $field_id = intval($matches[1])-1;
                      $bookedSeats += $value;
                      $bookedSeats_mp[$field_id]=$value;
