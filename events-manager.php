@@ -1222,14 +1222,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)$/', $result)) {
          $replacement = eme_get_available_seats($event['event_id']);
 
-      } elseif (preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)\{(\d+)\}/', $result, $matches)) {
-         $field_id = intval($matches[2])-1;
-         if (eme_is_multi($event['event_seats'])) {
-            $seats=eme_get_available_multiseats($event['event_id']);
-            if (array_key_exists($field_id,$seats))
-               $replacement = $seats[$field_id];
-         }
-      } elseif ($deprecated && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)(\d+)/', $result, $matches)) ||
+                preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_available_multiseats($event['event_id']);
@@ -1240,14 +1234,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(TOTALSPACES|TOTALSEATS)$/', $result)) {
          $replacement = $event['event_seats'];
 
-      } elseif (preg_match('/#_(TOTALSPACES|TOTALSEATS)\{(\d+)\}/', $result, $matches)) {
-         $field_id = intval($matches[2])-1;
-         if (eme_is_multi($event['event_seats'])) {
-            $seats = eme_convert_multi2array($event['event_seats']);
-            if (array_key_exists($field_id,$seats))
-               $replacement = $seats[$field_id];
-         }
-      } elseif ($deprecated && preg_match('/#_(TOTALSPACES|TOTALSEATS)(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_(TOTALSPACES|TOTALSEATS)(\d+)/', $result, $matches)) ||
+                preg_match('/#_(TOTALSPACES|TOTALSEATS)\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats = eme_convert_multi2array($event['event_seats']);
@@ -1258,14 +1246,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          $replacement = eme_get_booked_seats($event['event_id']);
 
-      } elseif (preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)\{(\d+)\}/', $result, $matches)) {
-         $field_id = intval($matches[2])-1;
-         if (eme_is_multi($event['event_seats'])) {
-            $seats=eme_get_booked_multiseats($event['event_id']);
-            if (array_key_exists($field_id,$seats))
-               $replacement = $seats[$field_id];
-         }
-      } elseif ($deprecated && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) ||
+                preg_match('/#_(RESERVEDSPACES|BOOKEDSEATS)\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_booked_multiseats($event['event_id']);
@@ -1453,23 +1435,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_(EVENT)?PRICE\{(\d+)\}/', $result, $matches)) {
-         $field_id = intval($matches[2]-1);
-         if ($event["price"] && eme_is_multi($event["price"])) {
-            $prices = eme_convert_multi2array($event["price"]);
-            if (is_array($prices) && array_key_exists($field_id,$prices)) {
-               $replacement = $prices[$field_id];
-               if ($target == "html") {
-                  $replacement = apply_filters('eme_general', $replacement); 
-               } elseif ($target == "rss")  {
-                  $replacement = apply_filters('eme_general_rss', $replacement);
-               } else {
-                  $replacement = apply_filters('eme_text', $replacement);
-               }
-            }
-         }
-
-      } elseif ($deprecated && $event && preg_match('/#_(EVENT)?PRICE(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && $event && preg_match('/#_(EVENT)?PRICE(\d+)/', $result, $matches)) ||
+                ($event && preg_match('/#_(EVENT)?PRICE\{(\d+)\}/', $result, $matches))) {
          $field_id = intval($matches[2]-1);
          if ($event["price"] && eme_is_multi($event["price"])) {
             $prices = eme_convert_multi2array($event["price"]);

@@ -259,6 +259,11 @@ function eme_get_fieldtype($type_id){
 function eme_get_formfield_html($field_id, $entered_val) {
    $formfield = eme_get_formfield_byid($field_id);
    $field_info = eme_sanitize_html($formfield['field_info']);
+   $deprecated = get_option('eme_deprecated');
+   if ($deprecated)
+      $fiel_dname='FIELD'.$field_id;
+   else
+      $field_name='FIELD{'.$field_id.'}';
    switch($formfield['field_type']) {
       case 1:
 	      # for text field
@@ -266,7 +271,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
             $value=$field_info;
          else
             $value=$entered_val;
-         $html = "<input type='text' name='FIELD$field_id' value='$value'>";
+         $html = "<input type='text' name='$field_name' value='$value'>";
          break;
       case 2:
          # dropdown
@@ -275,7 +280,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_select($entered_val,"FIELD$field_id",$my_arr);
+         $html = eme_ui_select($entered_val,$field_name,$my_arr);
          break;
       case 3:
          # textarea
@@ -283,7 +288,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
             $value=$field_info;
          else
             $value=$entered_val;
-         $html = "<textarea name='FIELD$field_id'>$value</textarea>";
+         $html = "<textarea name='$field_name'>$value</textarea>";
          break;
       case 4:
          # radiobox
@@ -292,7 +297,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_radio($entered_val,"FIELD$field_id",$my_arr);
+         $html = eme_ui_radio($entered_val,$field_name,$my_arr);
          break;
       case 5:
          # radiobox, vertical
@@ -301,7 +306,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_radio($entered_val,"FIELD$field_id",$my_arr,false);
+         $html = eme_ui_radio($entered_val,$field_name,$my_arr,false);
          break;
       case 6:
       	# checkbox
@@ -310,7 +315,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_checkbox($entered_val,"FIELD$field_id",$my_arr);
+         $html = eme_ui_checkbox($entered_val,$field_name,$my_arr);
          break;
       case 7:
       	# checkbox, vertical
@@ -319,7 +324,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          foreach ($values as $val) {
             $my_arr[$val]=$val;
          }
-         $html = eme_ui_checkbox($entered_val,"FIELD$field_id",$my_arr,false);
+         $html = eme_ui_checkbox($entered_val,$field_name,$my_arr,false);
          break;
    }
    return $html;
@@ -693,7 +698,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    }
 
    // now the normal placeholders
-   preg_match_all("/#(REQ)?_[A-Z0-9_]+/", $format, $placeholders);
+   preg_match_all("/#(REQ)?_?[A-Z0-9_]+(\{[A-Z0-9_]+\})?/", $format, $placeholders);
    // make sure we set the largest matched placeholders first, otherwise if you found e.g.
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
    usort($placeholders[0],'sort_stringlenth');
@@ -755,11 +760,11 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_add_booking'><br><input type='text' name='captcha_check' />";
          $required_fields_count++;
-      } elseif (preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) || preg_match('/#_FIELDNAME\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name']);
-      } elseif (preg_match('/#_FIELD(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) || preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          if ($booking) {
             $answers = eme_get_answers($booking['booking_id']);
@@ -831,7 +836,7 @@ function eme_find_required_formfields ($format) {
    if (empty($format)) {
       $format = get_option('eme_registration_form_format');
    }
-   preg_match_all("/#REQ_[A-Za-z0-9_]+/", $format, $placeholders);
+   preg_match_all("/#REQ_?[A-Z0-9_]+(\{[A-Z0-9_]+\})?/", $format, $placeholders);
    usort($placeholders[0],'sort_stringlenth');
    return str_replace("#REQ_","",$placeholders[0]);
 }

@@ -418,6 +418,7 @@ function eme_book_seats($event, $send_mail=1) {
    // now do regular checks
 
    $all_required_fields=eme_find_required_formfields($event['event_registration_form_format']);
+   $deprecated=get_option('eme_deprecated');
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];
 
@@ -468,13 +469,14 @@ function eme_book_seats($event, $send_mail=1) {
          } elseif (preg_match ("/COMMENT/",$required_field)) {
             if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
          } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
-		 if (preg_match('/FIELD(.+)/', $required_field, $matches)) {
-			 $field_id = intval($matches[1]);
-			 $formfield = eme_get_formfield_byid($field_id);
-			 array_push($missing_required_fields, $formfield['field_name']);
-		 } else {
-			 array_push($missing_required_fields, $required_field);
-		 }
+            if (($deprecated && preg_match('/FIELD(.+)/', $required_field, $matches)) ||
+                  preg_match('/FIELD\{(.+)\}/', $required_field, $matches)) {
+               $field_id = intval($matches[1]);
+               $formfield = eme_get_formfield_byid($field_id);
+               array_push($missing_required_fields, $formfield['field_name']);
+            } else {
+               array_push($missing_required_fields, $required_field);
+            }
          }
       }
    }
@@ -766,8 +768,10 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
 function eme_record_answers($booking_id) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
+   $deprecated=get_option('eme_deprecated');
    foreach($_POST as $key =>$value) {
-      if (preg_match('/FIELD(.+)/', $key, $matches)) {
+		if (($deprecated && preg_match('/FIELD(.+)/', $key, $matches)) ||
+           preg_match('/FIELD\{(.+)\}/', $key, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          // for multivalue fields like checkbox, the value is in fact an array
@@ -1358,26 +1362,13 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          $replacement = $field_replace;
       } elseif (preg_match('/#_PAYED/', $result)) {
          $replacement = ($booking['booking_payed'])? __('Yes') : __('No');
-      } elseif (preg_match('/#_FIELDNAME\{(\d+)\}/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) ||
+                preg_match('/#_FIELDNAME\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name'],$lang);
-      } elseif (preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
-         $field_id = intval($matches[1]);
-         $formfield = eme_get_formfield_byid($field_id);
-         foreach ($answers as $answer) {
-            if ($answer['field_name'] == $formfield['field_name'])
-               $replacement = $answer['answer'];
-         }
-         if ($target == "html")
-            $replacement = apply_filters('eme_general', $replacement); 
-         else 
-            $replacement = apply_filters('eme_general_rss', $replacement); 
-       } elseif ($deprecated && preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) {
-         $field_id = intval($matches[1]);
-         $formfield = eme_get_formfield_byid($field_id);
-         $replacement = eme_trans_sanitize_html($formfield['field_name'],$lang);
-      } elseif ($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) {
+      } elseif (($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) ||
+                preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          foreach ($answers as $answer) {
