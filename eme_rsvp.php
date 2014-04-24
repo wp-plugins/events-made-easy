@@ -556,7 +556,6 @@ function eme_book_seats($event, $send_mail=1) {
             }
 
             $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
-            eme_record_answers($booking_id);
             $booking = eme_get_booking ($booking_id);
             $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
             // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
@@ -755,6 +754,7 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
          $where['booking_id'] = $booking['booking_id'];
          $fields['transfer_nbr_be97'] = $booking['transfer_nbr_be97'];
          $wpdb->update($bookings_table, $fields, $where);
+         eme_record_answers($booking_id);
          // now that everything is (or should be) correctly entered in the db, execute possible actions for the new booking
          if (has_action('eme_insert_rsvp_action')) do_action('eme_insert_rsvp_action',$booking);
          return $booking['booking_id'];
@@ -899,6 +899,10 @@ function eme_update_booking($booking_id,$event_id,$seats,$booking_price,$comment
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
    $returncode=$wpdb->update($bookings_table, $fields, $where);
+   if ($returncode) {
+      eme_delete_answers($booking_id);
+      eme_record_answers($booking_id);
+   }
    // now that everything is (or should be) correctly entered in the db, execute possible actions for the booking
    if (has_action('eme_update_rsvp_action')) {
       $booking=eme_get_booking($booking_id);
@@ -1603,8 +1607,6 @@ function eme_registration_seats_page($pending=0) {
                   eme_update_phone($booker,$bookerPhone);
             }
 
-            eme_delete_answers($booking_id);
-            eme_record_answers($booking_id);
             if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
             print "<div id='message' class='updated'><p>".__("Booking updated","eme")."</p></div>";
 
