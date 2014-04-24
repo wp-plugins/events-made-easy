@@ -747,11 +747,12 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
 
       // we insert the booking in the DB, then calc the transfer_nbr for it based on the new booking id
       if ($wpdb->insert($bookings_table,$booking)) {
-         $booking['booking_id'] = $wpdb->insert_id;
-         $booking['transfer_nbr_be97'] = eme_transfer_nbr_be97($booking['booking_id']);
+         $booking_id = $wpdb->insert_id;
+         $booking['booking_id'] = $booking_id;
+         $booking['transfer_nbr_be97'] = eme_transfer_nbr_be97($booking_id);
          $where = array();
          $fields = array();
-         $where['booking_id'] = $booking['booking_id'];
+         $where['booking_id'] = $booking_id;
          $fields['transfer_nbr_be97'] = $booking['transfer_nbr_be97'];
          $wpdb->update($bookings_table, $fields, $where);
          eme_record_answers($booking_id);
