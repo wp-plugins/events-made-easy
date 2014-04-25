@@ -38,7 +38,7 @@ function eme_locations_page() {
       $location = eme_get_location($location_id);
       // make it look like a new location
       unset($location['location_id']);
-      $location['location_name'].= "(Copy)";
+      $location['location_name'].= __(" (Copy)","eme");
 
       if (current_user_can( get_option('eme_cap_add_locations'))) {
          eme_locations_edit_layout($location);
