@@ -82,7 +82,7 @@ function eme_new_event_page() {
    if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "insert_event") {
       eme_events_page();
    } else {
-      eme_event_form ($event, $title, '');
+      eme_event_form ($event, $title, 0);
    }
 }
 
@@ -460,11 +460,16 @@ function eme_events_page() {
    //Add duplicate event if requested
    if ($action == 'duplicate_event') {
       $event = eme_get_event ( $event_ID );
+      // make it look like a new event
+      unset($event['event_id']);
+      $event['event_name'].= "(Copy)";
+
       if (current_user_can( get_option('eme_cap_edit_events')) ||
           (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
-         eme_duplicate_event ( $event_ID );
+         $title = __ ( "Edit event copy", 'eme' ) . " '" . $event['event_name'] . "'";
+         eme_event_form ( $event, $title, 0 );
       } else {
-         $feedback_message = __('You have no right to update','eme'). " '" . $event['event_name'] . "' !";
+         $feedback_message = __('You have no right to copy','eme'). " '" . $event['event_name'] . "' !";
          echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
          eme_events_table ();
       }
@@ -2697,7 +2702,8 @@ function eme_admin_general_script() {
    eme_admin_general_css();
    ?>
 <script src="<?php echo EME_PLUGIN_URL; ?>js/eme.js" type="text/javascript"></script>
-<script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.js" type="text/javascript"></script>
+<script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.plugin.min.js" type="text/javascript"></script>
+<script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.min.js" type="text/javascript"></script>
 <?php
    
    // all the rest below is needed on 3 pages only (for now), so we return if not there

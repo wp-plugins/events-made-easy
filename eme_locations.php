@@ -1451,8 +1451,8 @@ function eme_locations_autocomplete() {
                jQuery("input[name='location-select-town']").val(eventTown); 
                jQuery("input[name='location-select-latitude']").val(eventLat); 
                jQuery("input[name='location-select-longitude']").val(eventLong); 
-               loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong)
-               })
+               loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
+            })
          });
          <?php } ?>
       });   
