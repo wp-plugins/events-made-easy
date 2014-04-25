@@ -1857,38 +1857,6 @@ function eme_get_event_data($event) {
    return $event;
 }
 
-function eme_duplicate_event($event_id) {
-   global $wpdb;
-
-   $list_limit = get_option('eme_events_admin_limit');
-
-   //First, duplicate.
-   $event_table_name = $wpdb->prefix . EVENTS_TBNAME;
-   $eventArray = $wpdb->get_row("SELECT * FROM {$event_table_name} WHERE event_id={$event_id}", ARRAY_A );
-   // unset the old event id
-   unset($eventArray['event_id']);
-   // set the new authorID
-   $current_userid=get_current_user_id();
-   $eventArray['event_author']=$current_userid;
-   $event_ID = eme_db_insert_event($eventArray);
-   if ( $event_ID ) {
-      //Get the ID of the new item
-      $event = eme_get_event ( $event_ID );
-      $event['event_id'] = $event_ID;
-      //Now we edit the duplicated item
-      $title = __ ( "Edit Event", 'eme' ) . " '" . $event['event_name'] . "'";
-      echo "<div id='message' class='updated below-h2'>You are now editing the duplicated event.</div>";
-      eme_event_form ( $event, $title, $event_ID );
-   } else {
-      echo "<div class='error'><p>There was an error duplicating the event. Try again maybe? Here are the errors:</p>";
-      foreach ($EZSQL_ERROR as $errorArray) {
-         echo "<p>{$errorArray['error_str']}</p>";
-      }  
-      echo "</div>";
-      eme_events_table ();
-   }
-}
-
 function eme_events_table($scope="future") {
 
    //$list_limit = get_option('eme_events_admin_limit');
@@ -2610,7 +2578,12 @@ function eme_event_form($event, $title, $element) {
                }
 
                if ($is_new_event) {
-                  do_meta_boxes('events_page_eme-new_event',"post",$event);
+                  // we add the meta boxes only on the page we're currently at, so for duplicate event it is the same as for edit event
+                  if ($_GET['eme_admin_action'] == 'duplicate_event')
+                     do_meta_boxes('toplevel_page_events-manager',"post",$event);
+                  else
+                     do_meta_boxes('events_page_eme-new_event',"post",$event);
+
                } else {
                   do_meta_boxes('toplevel_page_events-manager',"post",$event);
                }
@@ -3132,7 +3105,6 @@ function eme_admin_event_boxes() {
    $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
    foreach ($screens as $screen) {
         if (preg_match("/$plugin_page/",$screen)) {
-
            // we need titlediv for qtranslate as ID
            add_meta_box("titlediv", __('Name', 'eme'), "eme_meta_box_div_event_name",$screen,"post");
            add_meta_box("div_recurrence_date", __('Recurrence dates', 'eme'), "eme_meta_box_div_recurrence_date",$screen,"post");
