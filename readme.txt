@@ -74,7 +74,6 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: show weekday initials only again for small calendar format
 * Bugfix: the wordpress nonce was being outputted too much times. Although the fields are hidden, it's not good to do so.
 * Bugfix: when inserting or updating a booking, the action hook was executed before the answers for extra fields were stored in the db
-* Bugfix: some javascript fixes when duplicating an event
 * Improvement: the events database now gets updated upon first site visit (admin or not), so no more deactivate/reactivate action needed
 * Improvement: when the events page setting changes, the SEO rules are flushed, so no more deactivate/reactivate action needed
 * Improvement: code dedup for locations page
