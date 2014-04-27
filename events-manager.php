@@ -539,7 +539,7 @@ function eme_create_events_table($charset,$collate) {
          UNIQUE KEY (event_id)
          ) $charset $collate;";
       
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
       //--------------  DEBUG CODE to insert a few events n the new table
       // get the current timestamp into an array
       $timestamp = time();
@@ -664,7 +664,7 @@ function eme_create_recurrence_table($charset,$collate) {
          recurrence_specific_days text NULL,
          UNIQUE KEY (recurrence_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
    } else {
       maybe_add_column($table_name, 'creation_date', "alter table $table_name add creation_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
       maybe_add_column($table_name, 'creation_date_gmt', "alter table $table_name add creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00';"); 
@@ -711,7 +711,7 @@ function eme_create_locations_table($charset,$collate) {
          location_attributes text NULL, 
          UNIQUE KEY (location_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
       
       $wpdb->query("INSERT INTO ".$table_name." (location_name, location_address, location_town, location_latitude, location_longitude)
                VALUES ('Arts Millenium Building', 'Newcastle Road','Galway', 53.275, -9.06532)");
@@ -766,7 +766,7 @@ function eme_create_bookings_table($charset,$collate) {
          lang varchar(10) DEFAULT '',
          UNIQUE KEY  (booking_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
    } else {
       maybe_add_column($table_name, 'booking_comment', "ALTER TABLE $table_name add booking_comment text DEFAULT NULL;"); 
       maybe_add_column($table_name, 'booking_approved', "ALTER TABLE $table_name add booking_approved bool DEFAULT 0;"); 
@@ -807,7 +807,7 @@ function eme_create_people_table($charset,$collate) {
          lang varchar(10) DEFAULT '',
          UNIQUE KEY (person_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
    } else {
       maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
       maybe_add_column($table_name, 'lang', "ALTER TABLE $table_name add lang varchar(10) DEFAULT '';"); 
@@ -828,7 +828,7 @@ function eme_create_categories_table($charset,$collate) {
          category_name tinytext NOT NULL,
          UNIQUE KEY  (category_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
    }
 }
 
@@ -844,7 +844,7 @@ function eme_create_templates_table($charset,$collate) {
          format text NOT NULL,
          UNIQUE KEY  (id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
    } else {
       if ($db_version<41) {
          $wpdb->query("ALTER TABLE $table_name MODIFY format text NOT NULL;");
@@ -865,7 +865,7 @@ function eme_create_formfields_table($charset,$collate) {
          field_info text NOT NULL,
          UNIQUE KEY  (field_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
    }
 
    $table_name = $wpdb->prefix.FIELDTYPES_TBNAME;
@@ -875,7 +875,7 @@ function eme_create_formfields_table($charset,$collate) {
          type_info tinytext NOT NULL,
          UNIQUE KEY  (type_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
       $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (1,'Text')");
       $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (2,'DropDown')");
       $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (3,'TextArea')");
@@ -907,7 +907,7 @@ function eme_create_answers_table($charset,$collate) {
          answer text NOT NULL,
          KEY  (booking_id)
          ) $charset $collate;";
-      dbDelta($sql);
+      maybe_create_table($table_name,$sql);
    } else {
       if ($db_version==23) {
          $wpdb->query("ALTER TABLE ".$table_name." DROP PRIMARY KEY");
