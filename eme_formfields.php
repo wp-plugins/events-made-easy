@@ -8,25 +8,38 @@ function eme_formfields_page() {
       eme_formfields_table_layout($message);
    } elseif (isset($_GET['action']) && $_GET['action'] == "editformfield") { 
       // edit formfield  
-      eme_formfields_edit_layout();
+      $field_id = intval($_GET['field_id']);
+      eme_formfields_edit_layout($field_id);
    } else {
       // Insert/Update/Delete Record
       $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME;
       $validation_result = '';
       if (isset($_POST['action']) && $_POST['action'] == "edit" ) {
-         // formfield update required  
+         // formfield update required
          $formfield = array();
+         $field_id = intval($_POST['field_id']);
          $formfield['field_name'] = trim(stripslashes($_POST['field_name']));
          $formfield['field_type'] = intval($_POST['field_type']);
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
-         $validation_result = $wpdb->update( $formfields_table, $formfield, array('field_id' => intval($_POST['field_id'])) );
+         if (!eme_get_fieldcan_be_empty($formfield['field_type']) && empty($formfield['field_info'])) {
+            $message = __('The field value can not be empty for this type of field.','eme');
+            eme_formfields_edit_layout($field_id,$message);
+            return;
+         } else {
+            $validation_result = $wpdb->update( $formfields_table, $formfield, array('field_id' => $field_id) );
+         }
       } elseif ( isset($_POST['action']) && $_POST['action'] == "add" ) {
          // Add a new formfield
          $formfield = array();
          $formfield['field_name'] = trim(stripslashes($_POST['field_name']));
          $formfield['field_type'] = intval($_POST['field_type']);
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
-         $validation_result = $wpdb->insert( $formfields_table, $formfield );
+         if (!eme_get_fieldcan_be_empty($formfield['field_type']) && empty($formfield['field_info'])) {
+            $message = __('The field value can not be empty for this type of field.','eme');
+            $validation_result = false;
+         } else {
+            $validation_result = $wpdb->insert( $formfields_table, $formfield );
+         }
       } elseif ( isset($_POST['action']) && $_POST['action'] == "delete" ) {
          // Delete formfield or multiple
          $formfields = $_POST['formfields'];
@@ -60,7 +73,7 @@ function eme_formfields_page() {
    }
 } 
 
-function eme_formfields_table_layout($message = "") {
+function eme_formfields_table_layout($message) {
    $formfields = eme_get_formfields();
    $fieldtypes = eme_get_fieldtypes();
    $destination = admin_url("admin.php?page=eme-formfields"); 
@@ -71,7 +84,7 @@ function eme_formfields_table_layout($message = "") {
          </div>
          <h2>".__('Form fields', 'eme')."</h2>\n ";   
          
-         if($message != "") {
+         if(!empty($message)) {
             $table .= "
             <div id='message' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
                <p>$message</p>
@@ -165,8 +178,7 @@ function eme_formfields_table_layout($message = "") {
    echo $table;  
 }
 
-function eme_formfields_edit_layout($message = "") {
-   $field_id = intval($_GET['field_id']);
+function eme_formfields_edit_layout($field_id,$message = "") {
    $formfield = eme_get_formfield_byid($field_id);
    $fieldtypes = eme_get_fieldtypes();
    $layout = "
@@ -247,12 +259,19 @@ function eme_get_formfield_id_byname($field_name) {
    return $wpdb->get_var($sql);
 }
 
-
 function eme_get_fieldtype($type_id){
    global $wpdb;
    $fieldtypes_table = $wpdb->prefix.FIELDTYPES_TBNAME; 
    $formfields = array();
    $sql = "SELECT type_info FROM $fieldtypes_table WHERE type_id ='$type_id'";   
+   return $wpdb->get_var($sql);
+}
+
+function eme_get_fieldcan_be_empty($type_id){
+   global $wpdb;
+   $fieldtypes_table = $wpdb->prefix.FIELDTYPES_TBNAME; 
+   $formfields = array();
+   $sql = "SELECT can_be_empty FROM $fieldtypes_table WHERE type_id ='$type_id'";   
    return $wpdb->get_var($sql);
 }
 

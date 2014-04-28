@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 53);
+define('EME_DB_VERSION', 54);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -873,16 +873,17 @@ function eme_create_formfields_table($charset,$collate) {
       $sql = "CREATE TABLE ".$table_name." (
          type_id int(11) NOT NULL,
          type_info tinytext NOT NULL,
+         can_be_empty int(1) NOT NULL,
          UNIQUE KEY  (type_id)
          ) $charset $collate;";
       maybe_create_table($table_name,$sql);
-      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (1,'Text')");
-      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (2,'DropDown')");
-      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (3,'TextArea')");
-      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (4,'RadioBox')");
-      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (5,'RadioBox (Vertical)')");
-      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (6,'CheckBox')");
-      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (7,'CheckBox (Vertical)')");
+      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (1,'Text',1)");
+      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (2,'DropDown',0)");
+      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (3,'TextArea',1)");
+      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (4,'RadioBox',0)");
+      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (5,'RadioBox (Vertical)',0)");
+      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (6,'CheckBox',0)");
+      $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (7,'CheckBox (Vertical)',0)");
    } else {
       if ($db_version<43) {
          $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (4,'RadioBox')");
@@ -891,6 +892,17 @@ function eme_create_formfields_table($charset,$collate) {
          $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (5,'RadioBox (Vertical)')");
 	 $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (6,'CheckBox')");
 	 $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (7,'CheckBox (Vertical)')");
+      }
+      if ($db_version<54) {
+         maybe_add_column($table_name, 'can_be_empty', "ALTER TABLE $table_name add can_be_empty int(1) DEFAULT 1;"); 
+         $wpdb->query("DELETE FROM ".$table_name);
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (1,'Text',1)");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (2,'DropDown',0)");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (3,'TextArea',1)");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (4,'RadioBox',0)");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (5,'RadioBox (Vertical)',0)");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (6,'CheckBox',0)");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info,can_be_empty) VALUES (7,'CheckBox (Vertical)',0)");
       }
    }
 }
