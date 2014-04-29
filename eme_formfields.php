@@ -315,6 +315,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          # dropdown
          $values = eme_convert_multi2array($field_info);
          $tags = eme_convert_multi2array($field_tags);
+         $entered_val = eme_trans_sanitize_html($entered_val);
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
@@ -336,6 +337,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          # radiobox
          $values = eme_convert_multi2array($field_info);
          $tags = eme_convert_multi2array($field_tags);
+         $entered_val = eme_trans_sanitize_html($entered_val);
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
@@ -347,6 +349,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          # radiobox, vertical
          $values = eme_convert_multi2array($field_info);
          $tags = eme_convert_multi2array($field_tags);
+         $entered_val = eme_trans_sanitize_html($entered_val);
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
@@ -358,6 +361,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
       	# checkbox
          $values = eme_convert_multi2array($field_info);
          $tags = eme_convert_multi2array($field_tags);
+         $entered_val = eme_trans_sanitize_html($entered_val);
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
@@ -369,6 +373,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
       	# checkbox, vertical
          $values = eme_convert_multi2array($field_info);
          $tags = eme_convert_multi2array($field_tags);
+         $entered_val = eme_trans_sanitize_html($entered_val);
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
