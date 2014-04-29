@@ -73,7 +73,7 @@ function eme_formfields_page() {
    }
 } 
 
-function eme_formfields_table_layout($message) {
+function eme_formfields_table_layout($message="") {
    $formfields = eme_get_formfields();
    $fieldtypes = eme_get_fieldtypes();
    $destination = admin_url("admin.php?page=eme-formfields"); 
