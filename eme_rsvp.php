@@ -796,6 +796,29 @@ function eme_delete_answers($booking_id) {
    $wpdb->query($sql);
 }
 
+function eme_convert_answer2tag($answer) {
+   $formfield=eme_get_formfield_byname($answer['field_name']);
+   $field_info=$formfield['field_info'];
+   $field_tags=$formfield['field_tags'];
+
+   if (!empty($field_tags) && eme_is_multifield($formfield['field_type'])) {
+      $answers = eme_convert_multi2array($answer['answer']);
+      $values = eme_convert_multi2array($field_info);
+      $tags = eme_convert_multi2array($field_tags);
+      $my_arr = array();
+      foreach ($answers as $ans) {
+         foreach ($values as $key=>$val) {
+            if ($val==$ans) {
+               $my_arr[]=$tags[$key];
+            }
+         }
+      }
+      return eme_convert_array2multi($my_arr);
+   } else {
+      return $answer['answer'];
+   }
+} 
+
 function eme_get_answercolumns($booking_ids) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
@@ -1353,7 +1376,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {
-            $field_replace.=$answer['field_name'].": ".$answer['answer']."\n";
+            $field_replace.=$answer['field_name'].": ".eme_convert_answer2tag($answer)."\n";
          }
          $replacement = $field_replace;
       } elseif (preg_match('/#_PAYED/', $result)) {
@@ -1369,7 +1392,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          $formfield = eme_get_formfield_byid($field_id);
          foreach ($answers as $answer) {
             if ($answer['field_name'] == $formfield['field_name'])
-               $replacement = $answer['answer'];
+               $replacement = eme_convert_answer2tag($answer);
          }
          if ($target == "html")
             $replacement = apply_filters('eme_general', $replacement); 
@@ -1435,11 +1458,6 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    }
 
    $booking = eme_get_booking ($booking_id);
-   $answers = eme_get_answers ($booking_id);
-   $field_replace = "";
-   foreach ($answers as $answer) {
-      $field_replace.=$answer['field_name'].": ".$answer['answer']."\n";
-   }
 
    $person = eme_get_person ($booking['person_id']);
    $event = eme_get_event($booking['event_id']);
@@ -1513,134 +1531,134 @@ function eme_registration_approval_page() {
 function eme_registration_seats_page($pending=0) {
    global $wpdb,$plugin_page;
 
-      // do the actions if required
-      if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editRegistration" && isset($_GET['booking_id'])) {
-            $booking_id = intval($_GET['booking_id']);
-            $booking = eme_get_booking($booking_id);
-            $event_id = $booking['event_id'];
-            $event = eme_get_event($event_id);
-            // we need to set the action url, otherwise the GET parameters stay and we will fall in this if-statement all over again
-            $action_url = admin_url("admin.php?page=$plugin_page");
-            $ret_string = "<form id='eme-rsvp-form' name='booking-form' method='post' action='$action_url'>";
-            $ret_string.= __('Send mails for changed registration?','eme') . eme_ui_select_binary(1,"send_mail");
-            $ret_string.= eme_replace_formfields_placeholders ($event,$booking);
-            $ret_string .= "
-                           <input type='hidden' name='eme_admin_action' value='updateRegistration'/>
-                           <input type='hidden' name='booking_id' value='$booking_id'/>
-                           </form></div>";
-            print $ret_string;
-            return;
-      } else {
-         $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
-         $send_mail = isset($_POST ['send_mail']) ? intval($_POST ['send_mail']) : 1;
+   // do the actions if required
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editRegistration" && isset($_GET['booking_id'])) {
+      $booking_id = intval($_GET['booking_id']);
+      $booking = eme_get_booking($booking_id);
+      $event_id = $booking['event_id'];
+      $event = eme_get_event($event_id);
+      // we need to set the action url, otherwise the GET parameters stay and we will fall in this if-statement all over again
+      $action_url = admin_url("admin.php?page=$plugin_page");
+      $ret_string = "<form id='eme-rsvp-form' name='booking-form' method='post' action='$action_url'>";
+      $ret_string.= __('Send mails for changed registration?','eme') . eme_ui_select_binary(1,"send_mail");
+      $ret_string.= eme_replace_formfields_placeholders ($event,$booking);
+      $ret_string .= "
+         <input type='hidden' name='eme_admin_action' value='updateRegistration'/>
+         <input type='hidden' name='booking_id' value='$booking_id'/>
+         </form></div>";
+      print $ret_string;
+      return;
+   } else {
+      $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
+      $send_mail = isset($_POST ['send_mail']) ? intval($_POST ['send_mail']) : 1;
 
-         if ($action == 'newRegistration') {
-            $event_id = intval($_POST['event_id']);
-            $event = eme_get_event($event_id);
-            $ret_string = "<form id='eme-rsvp-form' name='booking-form' method='post' action=''>";
-            $ret_string.= __('Send mails for new registration?','eme') . eme_ui_select_binary(1,"send_mail");
-            $ret_string.= eme_replace_formfields_placeholders ($event);
-            $ret_string .= "
-                           <input type='hidden' name='eme_admin_action' value='addRegistration'/>
-                           <input type='hidden' name='event_id' value='$event_id'/>
-                           </form></div>";
-            print $ret_string;
-            return;
+      if ($action == 'newRegistration') {
+         $event_id = intval($_POST['event_id']);
+         $event = eme_get_event($event_id);
+         $ret_string = "<form id='eme-rsvp-form' name='booking-form' method='post' action=''>";
+         $ret_string.= __('Send mails for new registration?','eme') . eme_ui_select_binary(1,"send_mail");
+         $ret_string.= eme_replace_formfields_placeholders ($event);
+         $ret_string .= "
+            <input type='hidden' name='eme_admin_action' value='addRegistration'/>
+            <input type='hidden' name='event_id' value='$event_id'/>
+            </form></div>";
+         print $ret_string;
+         return;
 
-         } elseif ($action == 'addRegistration') {
-            $event_id = intval($_POST['event_id']);
-            $booking_payed = isset($_POST ['booking_payed']) ? intval($_POST ['booking_payed']) : 0;
-            $event = eme_get_event($event_id);
-            $booking_res = eme_book_seats($event, $send_mail);
-            $result=$booking_res[0];
-            $booking_id_done=$booking_res[1];
-            if (!$booking_id_done) {
-               print "<div id='message' class='error'><p>$result</p></div>";
-            } else {
-               print "<div id='message' class='updated'><p>$result</p></div>";
-               eme_update_booking_payed($booking_id_done,$booking_payed);
+      } elseif ($action == 'addRegistration') {
+         $event_id = intval($_POST['event_id']);
+         $booking_payed = isset($_POST ['booking_payed']) ? intval($_POST ['booking_payed']) : 0;
+         $event = eme_get_event($event_id);
+         $booking_res = eme_book_seats($event, $send_mail);
+         $result=$booking_res[0];
+         $booking_id_done=$booking_res[1];
+         if (!$booking_id_done) {
+            print "<div id='message' class='error'><p>$result</p></div>";
+         } else {
+            print "<div id='message' class='updated'><p>$result</p></div>";
+            eme_update_booking_payed($booking_id_done,$booking_payed);
+         }
+      } elseif ($action == 'updateRegistration') {
+         $booking_id = intval($_POST['booking_id']);
+         $booking = eme_get_booking ($booking_id);
+         $deprecated=get_option('eme_deprecated');
+         //$event_id = $booking['event_id'];
+         //$event = eme_get_event($event_id);
+
+         if (isset($_POST['bookerComment']))
+            $bookerComment = eme_strip_tags($_POST['bookerComment']);
+         else
+            $bookerComment = "";
+
+         if (isset($_POST['bookedSeats']))
+            $bookedSeats = intval($_POST['bookedSeats']);
+         else
+            $bookedSeats = 0;
+
+         // for multiple prices, we have multiple booked Seats as well
+         // the next foreach is only valid when called from the frontend
+         $bookedSeats_mp = array();
+         //if (eme_is_multi($event['price'])) {
+         if (eme_is_multi($booking['booking_price'])) {
+            // make sure the array contains the correct keys already, since
+            // later on in the function eme_record_booking we do a join
+            //$booking_prices_mp=eme_convert_multi2array($event['price']);
+            $booking_prices_mp=eme_convert_multi2array($booking['booking_price']);
+            foreach ($booking_prices_mp as $key=>$value) {
+               $bookedSeats_mp[$key] = 0;
             }
-         } elseif ($action == 'updateRegistration') {
-            $booking_id = intval($_POST['booking_id']);
+            foreach($_POST as $key=>$value) {
+               if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
+                  $field_id = intval($matches[1])-1;
+                  $bookedSeats += $value;
+                  $bookedSeats_mp[$field_id]=$value;
+               }
+            }
+            eme_update_booking($booking_id,$booking['event_id'],eme_convert_array2multi($bookedSeats_mp),$booking['booking_price'],$bookerComment);
+         } else {
+            eme_update_booking($booking_id,$booking['event_id'],$bookedSeats,$booking['booking_price'],$bookerComment);
+         }
+
+         if (isset($_POST['bookerPhone'])) {
+            $bookerPhone = eme_strip_tags($_POST['bookerPhone']);
+            $booker=eme_get_person($booking['person_id']);
+            if ($booker['person_phone'] != $bookerPhone)
+               eme_update_phone($booker,$bookerPhone);
+         }
+
+         if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
+         print "<div id='message' class='updated'><p>".__("Booking updated","eme")."</p></div>";
+
+      } elseif ($action == 'approveRegistration' || $action == 'denyRegistration' || $action == 'updatePayedStatus') {
+         $bookings = isset($_POST ['bookings']) ? $_POST ['bookings'] : array();
+         $selected_bookings = isset($_POST ['selected_bookings']) ? $_POST ['selected_bookings'] : array();
+         $bookings_seats = isset($_POST ['bookings_seats']) ? $_POST ['bookings_seats'] : array();
+         $bookings_payed = isset($_POST ['bookings_payed']) ? $_POST ['bookings_payed'] : array();
+
+         foreach ( $bookings as $key=>$booking_id ) {
+            if (!in_array($booking_id,$selected_bookings)) {
+               continue;
+            }
+            // make sure the seats are integers
             $booking = eme_get_booking ($booking_id);
-            $deprecated=get_option('eme_deprecated');
-            //$event_id = $booking['event_id'];
-            //$event = eme_get_event($event_id);
-
-            if (isset($_POST['bookerComment']))
-               $bookerComment = eme_strip_tags($_POST['bookerComment']);
-            else
-               $bookerComment = "";
-
-            if (isset($_POST['bookedSeats']))
-               $bookedSeats = intval($_POST['bookedSeats']);
-            else
-               $bookedSeats = 0;
-
-            // for multiple prices, we have multiple booked Seats as well
-            // the next foreach is only valid when called from the frontend
-            $bookedSeats_mp = array();
-            //if (eme_is_multi($event['price'])) {
-            if (eme_is_multi($booking['booking_price'])) {
-               // make sure the array contains the correct keys already, since
-               // later on in the function eme_record_booking we do a join
-               //$booking_prices_mp=eme_convert_multi2array($event['price']);
-               $booking_prices_mp=eme_convert_multi2array($booking['booking_price']);
-               foreach ($booking_prices_mp as $key=>$value) {
-                  $bookedSeats_mp[$key] = 0;
-               }
-               foreach($_POST as $key=>$value) {
-                  if (preg_match('/bookedSeats(\d+)/', $key, $matches)) {
-                     $field_id = intval($matches[1])-1;
-                     $bookedSeats += $value;
-                     $bookedSeats_mp[$field_id]=$value;
-                  }
-               }
-               eme_update_booking($booking_id,$booking['event_id'],eme_convert_array2multi($bookedSeats_mp),$booking['booking_price'],$bookerComment);
-            } else {
-               eme_update_booking($booking_id,$booking['event_id'],$bookedSeats,$booking['booking_price'],$bookerComment);
-            }
-
-            if (isset($_POST['bookerPhone'])) {
-               $bookerPhone = eme_strip_tags($_POST['bookerPhone']);
-               $booker=eme_get_person($booking['person_id']);
-               if ($booker['person_phone'] != $bookerPhone)
-                  eme_update_phone($booker,$bookerPhone);
-            }
-
-            if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
-            print "<div id='message' class='updated'><p>".__("Booking updated","eme")."</p></div>";
-
-         } elseif ($action == 'approveRegistration' || $action == 'denyRegistration' || $action == 'updatePayedStatus') {
-            $bookings = isset($_POST ['bookings']) ? $_POST ['bookings'] : array();
-            $selected_bookings = isset($_POST ['selected_bookings']) ? $_POST ['selected_bookings'] : array();
-            $bookings_seats = isset($_POST ['bookings_seats']) ? $_POST ['bookings_seats'] : array();
-            $bookings_payed = isset($_POST ['bookings_payed']) ? $_POST ['bookings_payed'] : array();
-
-            foreach ( $bookings as $key=>$booking_id ) {
-               if (!in_array($booking_id,$selected_bookings)) {
-                  continue;
-               }
-               // make sure the seats are integers
-               $booking = eme_get_booking ($booking_id);
-               if ($action == 'updatePayedStatus') {
-                  if ($booking['booking_payed']!= intval($bookings_payed[$key]))
-                     eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
-               } elseif ($action == 'approveRegistration') {
-                  eme_approve_booking($booking_id);
-                  if ($booking['booking_payed']!= intval($bookings_payed[$key]))
-                     eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
-                  if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
-               } elseif ($action == 'denyRegistration') {
-                  // deny registration: this means the booking id will be deleted, so
-                  // if we want to sent a mail, we need to do that first
-                  if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
-                  eme_delete_booking($booking_id);
-               }
+            if ($action == 'updatePayedStatus') {
+               if ($booking['booking_payed']!= intval($bookings_payed[$key]))
+                  eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
+            } elseif ($action == 'approveRegistration') {
+               eme_approve_booking($booking_id);
+               if ($booking['booking_payed']!= intval($bookings_payed[$key]))
+                  eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
+               if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
+            } elseif ($action == 'denyRegistration') {
+               // deny registration: this means the booking id will be deleted, so
+               // if we want to sent a mail, we need to do that first
+               if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
+               eme_delete_booking($booking_id);
             }
          }
       }
-   
+   }
+
    // now show the menu
    eme_registration_seats_form_table($pending);
 }

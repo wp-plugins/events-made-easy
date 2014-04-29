@@ -446,7 +446,7 @@ function eme_events_page() {
          if (current_user_can( get_option('eme_cap_edit_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
             // UPDATE event
-            $feedback_message = sprintf(__("Edit Event '%s'",'eme'),$event['event_name']);
+            $title = sprintf(__("Edit Event '%s'",'eme'),$event['event_name']);
             eme_event_form ( $event, $title, $event_ID );
          } else {
             $feedback_message = sprintf(__("You have no right to update '%s'",'eme'),$event['event_name']);

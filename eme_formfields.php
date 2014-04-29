@@ -21,7 +21,8 @@ function eme_formfields_page() {
          $formfield['field_name'] = trim(stripslashes($_POST['field_name']));
          $formfield['field_type'] = intval($_POST['field_type']);
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
-         if (!eme_get_fieldcan_be_empty($formfield['field_type']) && empty($formfield['field_info'])) {
+         $formfield['field_tags'] = trim(stripslashes($_POST['field_tags']));
+         if (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
             $message = __('The field value can not be empty for this type of field.','eme');
             eme_formfields_edit_layout($field_id,$message);
             return;
@@ -34,7 +35,8 @@ function eme_formfields_page() {
          $formfield['field_name'] = trim(stripslashes($_POST['field_name']));
          $formfield['field_type'] = intval($_POST['field_type']);
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
-         if (!eme_get_fieldcan_be_empty($formfield['field_type']) && empty($formfield['field_info'])) {
+         $formfield['field_tags'] = trim(stripslashes($_POST['field_tags']));
+         if (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
             $message = __('The field value can not be empty for this type of field.','eme');
             $validation_result = false;
          } else {
@@ -158,13 +160,16 @@ function eme_formfields_table_layout($message="") {
                         <input type='hidden' name='action' value='add' />
                          <div class='form-field form-required'>
                            <label for='field_name'>".__('Field name', 'eme')."</label>
-                           <input id='field-name' name='field_name' id='field_name' type='text' value='' size='40' />
+                           <input name='field_name' id='field_name' type='text' value='' size='40' />
                            <label for='field_type'>".__('Field type', 'eme')."</label>
 			". eme_ui_select("","field_type",$fieldtypes)
                             ."
                            <label for='field_info'>".__('Field values', 'eme')."</label>
-                           <input id='field-info' name='field_info' id='field_info' type='text' value='' size='40' />
+                           <input name='field_info' id='field_info' type='text' value='' size='40' />
                            <br />".__('Tip: for multivalue field types (like Drop Down), use "||" to seperate the different values (e.g.: a1||a2||a3)','eme')."
+                           <label for='field_tags'>".__('Field tags', 'eme')."</label>
+                           <input name='field_tags' id='field_tags' type='text' value='' size='40' />
+                           <br />".__('For multivalue fields, you can here enter the "visible" tags people will see. If left empty, the field values will be used. Use "||" to seperate the different tags (e.g.: a1||a2||a3)','eme')."
                          </div>
                          <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Add field', 'eme')."' /></p>
                       </form>
@@ -220,6 +225,12 @@ function eme_formfields_edit_layout($field_id,$message = "") {
                   <br />".__('Tip: for multivalue field types (like Drop Down), use "||" to seperate the different values (e.g.: a1||a2||a3)','eme')."
                </td>
             </tr>
+            <tr class='form-tags form-required'>
+               <th scope='row' valign='top'><label for='field_tags'>".__('Field tags', 'eme')."</label></th>
+               <td><input name='field_tags' id='field-tags' type='text' value='".eme_sanitize_html($formfield['field_tags'])."' size='40'  />
+                  <br />".__('For multivalue fields, you can here enter the "visible" tags people will see. If left empty, the field values will be used. Use "||" to seperate the different tags (e.g.: a1||a2||a3)','eme')."
+               </td>
+            </tr>
       </table>
       <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Update field', 'eme')."' /></p>
       </form>
@@ -252,6 +263,13 @@ function eme_get_formfield_byid($field_id) {
    return $wpdb->get_row($sql, ARRAY_A);
 }
 
+function eme_get_formfield_byname($field_name) { 
+   global $wpdb;
+   $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME; 
+   $sql = $wpdb->prepare("SELECT * FROM $formfields_table WHERE field_name=%s",$field_name);
+   return $wpdb->get_row($sql, ARRAY_A);
+}
+
 function eme_get_formfield_id_byname($field_name) { 
    global $wpdb;
    $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME; 
@@ -267,78 +285,91 @@ function eme_get_fieldtype($type_id){
    return $wpdb->get_var($sql);
 }
 
-function eme_get_fieldcan_be_empty($type_id){
+function eme_is_multifield($type_id){
    global $wpdb;
    $fieldtypes_table = $wpdb->prefix.FIELDTYPES_TBNAME; 
    $formfields = array();
-   $sql = "SELECT can_be_empty FROM $fieldtypes_table WHERE type_id ='$type_id'";   
+   $sql = "SELECT is_multi FROM $fieldtypes_table WHERE type_id ='$type_id'";   
    return $wpdb->get_var($sql);
 }
 
 function eme_get_formfield_html($field_id, $entered_val) {
    $formfield = eme_get_formfield_byid($field_id);
    $field_info = eme_sanitize_html($formfield['field_info']);
+   $field_tags = eme_sanitize_html($formfield['field_tags']);
    $deprecated = get_option('eme_deprecated');
    $field_name='FIELD'.$field_id;
    switch($formfield['field_type']) {
       case 1:
 	      # for text field
-         if (empty($entered_val))
+         $value=$entered_val;
+         if (empty($value))
+            $value=$field_tags;
+         if (empty($value))
             $value=$field_info;
-         else
-            $value=$entered_val;
          $html = "<input type='text' name='$field_name' value='$value'>";
          break;
       case 2:
          # dropdown
-         $values = explode("||",$field_info);
+         $values = eme_convert_multi2array($field_info);
+         $tags = eme_convert_multi2array($field_tags);
          $my_arr = array();
-         foreach ($values as $val) {
-            $my_arr[$val]=$val;
+         foreach ($values as $key=>$val) {
+            $tag=$tags[$key];
+            $my_arr[$val]=$tag;
          }
          $html = eme_ui_select($entered_val,$field_name,$my_arr);
          break;
       case 3:
          # textarea
-         if (empty($entered_val))
+         $value=$entered_val;
+         if (empty($value))
+            $value=$field_tags;
+         if (empty($value))
             $value=$field_info;
-         else
-            $value=$entered_val;
          $html = "<textarea name='$field_name'>$value</textarea>";
          break;
       case 4:
          # radiobox
-         $values = explode("||",$field_info);
+         $values = eme_convert_multi2array($field_info);
+         $tags = eme_convert_multi2array($field_tags);
          $my_arr = array();
-         foreach ($values as $val) {
-            $my_arr[$val]=$val;
+         foreach ($values as $key=>$val) {
+            $tag=$tags[$key];
+            $my_arr[$val]=$tag;
          }
          $html = eme_ui_radio($entered_val,$field_name,$my_arr);
          break;
       case 5:
          # radiobox, vertical
-         $values = explode("||",$field_info);
+         $values = eme_convert_multi2array($field_info);
+         $tags = eme_convert_multi2array($field_tags);
          $my_arr = array();
-         foreach ($values as $val) {
-            $my_arr[$val]=$val;
+         foreach ($values as $key=>$val) {
+            $tag=$tags[$key];
+            $my_arr[$val]=$tag;
          }
          $html = eme_ui_radio($entered_val,$field_name,$my_arr,false);
          break;
       case 6:
       	# checkbox
-         $values = explode("||",$field_info);
+         $values = eme_convert_multi2array($field_info);
+         $tags = eme_convert_multi2array($field_tags);
          $my_arr = array();
-         foreach ($values as $val) {
-            $my_arr[$val]=$val;
+         foreach ($values as $key=>$val) {
+            $tag=$tags[$key];
+            $my_arr[$val]=$tag;
          }
          $html = eme_ui_checkbox($entered_val,$field_name,$my_arr);
          break;
       case 7:
       	# checkbox, vertical
-         $values = explode("||",$field_info);
+         $values = eme_convert_multi2array($field_info);
+         $tags = eme_convert_multi2array($field_tags);
          $my_arr = array();
-         foreach ($values as $val) {
-            $my_arr[$val]=$val;
+         foreach ($values as $key=>$val) {
+            $tag=$tags[$key];
+            $my_arr[$val]=$tag;
          }
          $html = eme_ui_checkbox($entered_val,$field_name,$my_arr,false);
          break;

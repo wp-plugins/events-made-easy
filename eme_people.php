@@ -282,7 +282,7 @@ function eme_csv_booking_report($event_id) {
          $found=0;
          foreach ($answers as $answer) {
             if ($answer['field_name'] == $col['field_name']) {
-               $line[]=$answer['answer'];
+               $line[]=eme_convert_answer2tag($answer);
                $found=1;
                break;
             }
@@ -395,7 +395,7 @@ function eme_printable_booking_report($event_id) {
                      foreach ($answers as $answer) {
                         $class="eme_print_formfield".$formfield[$col['field_name']];
                         if ($answer['field_name'] == $col['field_name']) {
-                           print "<td class='$class'>".eme_sanitize_html($answer['answer'])."</td>";
+                           print "<td class='$class'>".eme_sanitize_html(eme_convert_answer2tag($answer))."</td>";
                            $found=1;
                            break;
                         }
