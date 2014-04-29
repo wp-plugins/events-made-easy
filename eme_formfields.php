@@ -295,6 +295,7 @@ function eme_is_multifield($type_id){
 
 function eme_get_formfield_html($field_id, $entered_val) {
    $formfield = eme_get_formfield_byid($field_id);
+   if (!$formfield) return;
    $field_info = eme_sanitize_html($formfield['field_info']);
    $field_tags = eme_sanitize_html($formfield['field_tags']);
    $deprecated = get_option('eme_deprecated');
@@ -307,6 +308,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
             $value=$field_tags;
          if (empty($value))
             $value=$field_info;
+         $value = eme_trans_sanitize_html($value);
          $html = "<input type='text' name='$field_name' value='$value'>";
          break;
       case 2:
@@ -316,7 +318,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
-            $my_arr[$val]=$tag;
+            $my_arr[$val]=eme_trans_sanitize_html($tag);
          }
          $html = eme_ui_select($entered_val,$field_name,$my_arr);
          break;
@@ -327,6 +329,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
             $value=$field_tags;
          if (empty($value))
             $value=$field_info;
+         $value = eme_trans_sanitize_html($value);
          $html = "<textarea name='$field_name'>$value</textarea>";
          break;
       case 4:
@@ -336,7 +339,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
-            $my_arr[$val]=$tag;
+            $my_arr[$val]=eme_trans_sanitize_html($tag);
          }
          $html = eme_ui_radio($entered_val,$field_name,$my_arr);
          break;
@@ -347,7 +350,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
-            $my_arr[$val]=$tag;
+            $my_arr[$val]=eme_trans_sanitize_html($tag);
          }
          $html = eme_ui_radio($entered_val,$field_name,$my_arr,false);
          break;
@@ -358,7 +361,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
-            $my_arr[$val]=$tag;
+            $my_arr[$val]=eme_trans_sanitize_html($tag);
          }
          $html = eme_ui_checkbox($entered_val,$field_name,$my_arr);
          break;
@@ -369,7 +372,7 @@ function eme_get_formfield_html($field_id, $entered_val) {
          $my_arr = array();
          foreach ($values as $key=>$val) {
             $tag=$tags[$key];
-            $my_arr[$val]=$tag;
+            $my_arr[$val]=eme_trans_sanitize_html($tag);
          }
          $html = eme_ui_checkbox($entered_val,$field_name,$my_arr,false);
          break;
@@ -832,7 +835,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
                }
             }
          } elseif (isset($_POST[$postfield_name])) {
-            $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST[$postfield_name]));
+            $entered_val = stripslashes_deep($_POST[$postfield_name]);
          } else {
             $entered_val = "";
          }

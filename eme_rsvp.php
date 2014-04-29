@@ -1378,7 +1378,11 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          foreach ($answers as $answer) {
             $field_replace.=$answer['field_name'].": ".eme_convert_answer2tag($answer)."\n";
          }
-         $replacement = $field_replace;
+         $replacement = eme_trans_sanitize_html($field_replace,$lang);
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
       } elseif (preg_match('/#_PAYED/', $result)) {
          $replacement = ($booking['booking_payed'])? __('Yes') : __('No');
       } elseif (($deprecated && preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) ||
@@ -1386,13 +1390,17 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          $replacement = eme_trans_sanitize_html($formfield['field_name'],$lang);
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
       } elseif (($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) ||
                 preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          foreach ($answers as $answer) {
             if ($answer['field_name'] == $formfield['field_name'])
-               $replacement = eme_convert_answer2tag($answer);
+               $replacement = eme_trans_sanitize_html(eme_convert_answer2tag($answer),$lang);
          }
          if ($target == "html")
             $replacement = apply_filters('eme_general', $replacement); 
