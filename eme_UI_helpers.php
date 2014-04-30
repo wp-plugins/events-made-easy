@@ -123,7 +123,7 @@ function eme_ui_select($option_value, $name, $list) {
            $t_value=$value;
         }
         "$t_key" == $option_value ? $selected = "selected='selected' " : $selected = '';
-        $val.= "<option value='$t_key' $selected>$t_value</option>";
+        $val.= "<option value='".eme_sanitize_html($t_key)."' $selected>".eme_sanitize_html($t_value)."</option>";
      }
      $val.=" </select>";
      return $val;
@@ -137,7 +137,7 @@ function eme_ui_multiselect($option_value, $name, $list, $size=3) {
         } else {
            "$key" == $option_value ? $selected = "selected='selected' " : $selected = '';
         }
-        $val.= "<option value='$key' $selected>$value</option>";
+        $val.= "<option value='".eme_sanitize_html($key)."' $selected>".eme_sanitize_html($value)."</option>";
      }
      $val.=" </select>";
      return $val;
@@ -154,7 +154,7 @@ function eme_ui_radio($option_value, $name, $list,$horizontal = true) {
            $t_value=$value;
         }
         "$t_key" == $option_value ? $selected = "checked='checked' " : $selected = '';
-        $val.= "<input type='radio' id='$name' name='$name' value='$t_key' $selected>$t_value</option>";
+        $val.= "<input type='radio' id='$name' name='$name' value='".eme_sanitize_html($t_key)."' $selected>".eme_sanitize_html($t_value)."</option>";
         if(!$horizontal)  
            $val .= "<br />\n";
      }
@@ -169,7 +169,7 @@ function eme_ui_checkbox($option_value, $name, $list, $horizontal = true) {
         } else {
            "$key" == $option_value ? $selected = "checked='checked' " : $selected = '';
         }
-        $val.= "<input type='checkbox' name='${name}[]' value='$key' $selected>$value";
+        $val.= "<input type='checkbox' name='${name}[]' value='".eme_sanitize_html($key)."' $selected>".eme_sanitize_html($value);
         if(!$horizontal)  
            $val .= "<br />\n";
      }
