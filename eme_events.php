@@ -37,7 +37,7 @@ function eme_new_event() {
       "event_registration_pending_email_body" => '',
       "event_registration_updated_email_body" => '',
       "event_registration_form_format" => '',
-      "event_cancel_registration_form_format" => '',
+      "event_cancel_form_format" => '',
       "event_registration_recorded_ok_html" => '',
       "event_slug" => '',
       "event_image_url" => '',
@@ -2579,7 +2579,8 @@ function eme_event_form($event, $title, $element) {
 
                if ($is_new_event) {
                   // we add the meta boxes only on the page we're currently at, so for duplicate event it is the same as for edit event
-                  if ($_GET['eme_admin_action'] == 'duplicate_event')
+                  // see the eme_admin_event_boxes function
+                  if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'duplicate_event')
                      do_meta_boxes('toplevel_page_events-manager',"post",$event);
                   else
                      do_meta_boxes('events_page_eme-new_event',"post",$event);
