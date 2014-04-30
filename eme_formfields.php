@@ -22,11 +22,16 @@ function eme_formfields_page() {
          $formfield['field_type'] = intval($_POST['field_type']);
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
          $formfield['field_tags'] = trim(stripslashes($_POST['field_tags']));
-         if (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
-            $message = __('The field value can not be empty for this type of field.','eme');
+         if (eme_get_formfield_byname($formfield['field_name'])) {
+            $message = __('Error: the field name must be unique.','eme');
+            eme_formfields_edit_layout($field_id,$message);
+            return;
+         } elseif (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
+            $message = __('Error: the field value can not be empty for this type of field.','eme');
             eme_formfields_edit_layout($field_id,$message);
             return;
          } else {
+            $message = __("Successfully edited the field", "eme");
             $validation_result = $wpdb->update( $formfields_table, $formfield, array('field_id' => $field_id) );
          }
       } elseif ( isset($_POST['action']) && $_POST['action'] == "add" ) {
@@ -36,10 +41,14 @@ function eme_formfields_page() {
          $formfield['field_type'] = intval($_POST['field_type']);
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
          $formfield['field_tags'] = trim(stripslashes($_POST['field_tags']));
-         if (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
-            $message = __('The field value can not be empty for this type of field.','eme');
+         if (eme_get_formfield_byname($formfield['field_name'])) {
+            $message = __('Error: the field name must be unique.','eme');
+            $validation_result = false;
+         } elseif (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
+            $message = __('Error: the field value can not be empty for this type of field.','eme');
             $validation_result = false;
          } else {
+            $message = __("Successfully added the field", "eme");
             $validation_result = $wpdb->insert( $formfields_table, $formfield );
          }
       } elseif ( isset($_POST['action']) && $_POST['action'] == "delete" ) {
@@ -49,24 +58,23 @@ function eme_formfields_page() {
             //Make sure the array is only numbers
             foreach ($formfields as $field_id) {
                if (is_numeric($field_id)) {
-                  $fields[] = "field_id = $field_id";
+                  $fields[] = $field_id;
                }
             }
             //Run the query if we have an array of formfield ids
             if (count($fields > 0)) {
-               $validation_result = $wpdb->query( "DELETE FROM $formfields_table WHERE ". implode(" OR ", $fields) );
+               $validation_result = $wpdb->query( "DELETE FROM $formfields_table WHERE field_id IN (". implode(",", $fields).")" );
+               $message = __("Successfully deleted the field(s)", "eme");
             } else {
                $validation_result = false;
                $message = __("Couldn't delete the form fields. Incorrect field IDs supplied. Please try again.","eme");
             }
          }
       }
-      //die(print_r($_POST));
+
       if (is_numeric($validation_result) ) {
-         $message = (isset($message)) ? $message : __("Successfully {$_POST['action']}ed field", "eme");
          eme_formfields_table_layout($message);
       } elseif ( $validation_result === false ) {
-         $message = (isset($message)) ? $message : __("There was a problem {$_POST['action']}ing the field, please try again.");                     
          eme_formfields_table_layout($message);
       } else {
          // no action, just a formfield list
@@ -107,7 +115,7 @@ function eme_formfields_table_layout($message="") {
                            <tr>
                               <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1'/></th>
                               <th>".__('ID', 'eme')."</th>
-                              <th>".__('Title', 'eme')."</th>
+                              <th>".__('Name', 'eme')."</th>
                               <th>".__('Type', 'eme')."</th>
                            </tr>
                         </thead>
@@ -115,7 +123,7 @@ function eme_formfields_table_layout($message="") {
                            <tr>
                               <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1'/></th>
                               <th>".__('ID', 'eme')."</th>
-                              <th>".__('Title', 'eme')."</th>
+                              <th>".__('Name', 'eme')."</th>
                               <th>".__('Type', 'eme')."</th>
                            </tr>
                         </tfoot>
