@@ -340,15 +340,15 @@ function eme_printable_booking_report($event_id) {
                echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme_print.css' type='text/css' media='print' />\n";
           ?>
       </head>
-      <body id="printable">
-         <div id="container">
+      <body id="eme_printable_body">
+         <div id="eme_printable_container">
          <h1>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></h1> 
          <p><?php echo eme_localised_date($event['event_start_date']); ?></p>
          <p><?php if ($event['location_id']) echo eme_replace_placeholders("#_LOCATIONNAME, #_ADDRESS, #_TOWN", $event); ?></p>
          <?php if ($event['price']) ?>
             <p><?php _e ( 'Price: ','eme' ); echo eme_replace_placeholders("#_CURRENCY #_PRICE", $event)?></p>
          <h2><?php _e('Bookings data', 'eme');?></h2>
-         <table id="bookings-table">
+         <table id="eme_printable_table">
             <tr>
                <th scope='col' class='eme_print_name'><?php _e('Name', 'eme')?></th>
                <th scope='col' class='eme_print_email'><?php _e('E-mail', 'eme')?></th>
@@ -357,9 +357,11 @@ function eme_printable_booking_report($event_id) {
                <th scope='col' class='eme_print_paid'><?php _e('Paid', 'eme')?></th>
                <th scope='col' class='eme_print_comment'><?php _e('Comment', 'eme')?></th> 
             <?php
+            $nbr_columns=6;
             foreach($answer_columns as $col) {
                $class="eme_print_formfield".$formfield[$col['field_name']];
                print "<th scope='col' class='$class'>".$col['field_name']."</th>";
+               $nbr_columns++;
             }
             ?>
             </tr>
@@ -407,8 +409,8 @@ function eme_printable_booking_report($event_id) {
                ?>
             </tr>
                <?php } ?>
-            <tr id='booked-seats'>
-               <td colspan='2'>&nbsp;</td>
+            <tr id='eme_printable_booked-seats'>
+               <td colspan='<?php echo $nbr_columns-4;?>'>&nbsp;</td>
                <td class='total-label'><?php _e('Booked', 'eme')?>:</td>
                <td colspan='3' class='seats-number'><?php
                print $booked_seats;
@@ -419,11 +421,11 @@ function eme_printable_booking_report($event_id) {
                   else
                      print " ".sprintf( __('(%s pending)','eme'), $pending_seats);
                }
-			?>
-		</td>
+               ?>
+            </td>
             </tr>
-            <tr id='available-seats'>
-               <td colspan='2'>&nbsp;</td> 
+            <tr id='eme_printable_available-seats'>
+               <td colspan='<?php echo $nbr_columns-4;?>'>&nbsp;</td>
                <td class='total-label'><?php _e('Available', 'eme')?>:</td>
                <td colspan='3' class='seats-number'><?php print $available_seats; if ($is_multiseat) print " ($available_seats_ms)"; ?></td>
             </tr>
