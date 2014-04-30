@@ -129,13 +129,13 @@ function eme_ui_select($option_value, $name, $list) {
      return $val;
 }
 
-function eme_ui_multiselect($option_value_arr, $name, $list, $size=3) {
+function eme_ui_multiselect($option_value, $name, $list, $size=3) {
      $val = "<select multiple='multiple' name='${name}[]' size='$size'>";
      foreach($list as $key => $value) {
-        if (is_array($option_value_arr)) {
-           in_array($key,$option_value_arr) ? $selected = "selected='selected' " : $selected = '';
+        if (is_array($option_value)) {
+           in_array($key,$option_value) ? $selected = "selected='selected' " : $selected = '';
         } else {
-           "$key" == $option_value_arr ? $selected = "selected='selected' " : $selected = '';
+           "$key" == $option_value ? $selected = "selected='selected' " : $selected = '';
         }
         $val.= "<option value='$key' $selected>$value</option>";
      }
@@ -155,23 +155,23 @@ function eme_ui_radio($option_value, $name, $list,$horizontal = true) {
         }
         "$t_key" == $option_value ? $selected = "checked='checked' " : $selected = '';
         $val.= "<input type='radio' id='$name' name='$name' value='$t_key' $selected>$t_value</option>";
-	if(!$horizontal)  
-		$val .= "<br />\n";
+        if(!$horizontal)  
+           $val .= "<br />\n";
      }
      return $val;
 }
 
-function eme_ui_checkbox($option_value_arr, $name, $list, $horizontal = true) {
+function eme_ui_checkbox($option_value, $name, $list, $horizontal = true) {
      $val = "";
      foreach($list as $key => $value) {
-        if (is_array($option_value_arr)) {
-           in_array($key,$option_value_arr) ? $selected = "checked='checked' " : $selected = '';
+        if (is_array($option_value)) {
+           in_array($key,$option_value) ? $selected = "checked='checked' " : $selected = '';
         } else {
-           "$key" == $option_value_arr ? $selected = "checked='checked' " : $selected = '';
+           "$key" == $option_value ? $selected = "checked='checked' " : $selected = '';
         }
         $val.= "<input type='checkbox' name='${name}[]' value='$key' $selected>$value";
-	if(!$horizontal)  
-		$val .= "<br />\n";
+        if(!$horizontal)  
+           $val .= "<br />\n";
      }
      return $val;
 }
