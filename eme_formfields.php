@@ -22,7 +22,8 @@ function eme_formfields_page() {
          $formfield['field_type'] = intval($_POST['field_type']);
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
          $formfield['field_tags'] = trim(stripslashes($_POST['field_tags']));
-         if (eme_get_formfield_byname($formfield['field_name'])) {
+         $db_formfield=eme_get_formfield_byname($formfield['field_name']);
+         if ($db_formfield && $db_formfield['field_id']!=$field_id) {
             $message = __('Error: the field name must be unique.','eme');
             eme_formfields_edit_layout($field_id,$message);
             return;
@@ -304,8 +305,8 @@ function eme_is_multifield($type_id){
 function eme_get_formfield_html($field_id, $entered_val) {
    $formfield = eme_get_formfield_byid($field_id);
    if (!$formfield) return;
-   $field_info = eme_sanitize_html($formfield['field_info']);
-   $field_tags = eme_sanitize_html($formfield['field_tags']);
+   $field_info = $formfield['field_info'];
+   $field_tags = $formfield['field_tags'];
    $deprecated = get_option('eme_deprecated');
    $field_name='FIELD'.$field_id;
    switch($formfield['field_type']) {
