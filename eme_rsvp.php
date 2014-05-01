@@ -73,6 +73,14 @@ function eme_add_booking_form($event_id) {
       }
    }
 
+   #$destination = eme_event_url($event)."#eme-rsvp-message";
+   if (isset($_GET['lang'])) {
+      $language=eme_strip_tags($_GET['lang']);
+      $destination = "?lang=".$language."#eme-rsvp-message";
+   } else {
+      $destination = "#eme-rsvp-message";
+   }
+
    // after the add or delete booking, we do a POST to the same page using javascript to show just the result
    // this has 2 advantages: you can give arguments in the post, and refreshing the page won't repeat the booking action, just the post showing the result
    // a javascript redir using window.replace + GET would work too, but that leaves an ugly GET url
@@ -82,7 +90,6 @@ function eme_add_booking_form($event_id) {
       $booking_res = eme_book_seats($event);
       $form_result_message = $booking_res[0];
       $booking_id_done=$booking_res[1];
-      $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
       $post_string="{";
       if ($booking_id_done && eme_event_needs_payment($event)) {
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
@@ -124,7 +131,7 @@ function eme_add_booking_form($event_id) {
          myForm.submit() ;
          document.body.removeChild(myForm) ;
       }
-      <?php echo "postwith('$current_url',$post_string);"; ?>
+      <?php echo "postwith('$destination',$post_string);"; ?>
       </script>
       <?php
       return;
@@ -152,8 +159,6 @@ function eme_add_booking_form($event_id) {
       unset($_POST['eme_message']);
    }
 
-   #$destination = eme_event_url($event)."#eme-rsvp-message";
-   $destination = "#eme-rsvp-message";
    $ret_string = "<div id='eme-rsvp-message'>";
    if(!empty($form_result_message))
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
@@ -234,10 +239,17 @@ function eme_delete_booking_form($event_id) {
       $readonly="";
    }
 
+   #$destination = eme_event_url($event)."#eme-rsvp-message";
+   if (isset($_GET['lang'])) {
+      $language=eme_strip_tags($_GET['lang']);
+      $destination = "?lang=".$language."#eme-rsvp-message";
+   } else {
+      $destination = "#eme-rsvp-message";
+   }
+   
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'delete_booking' && isset($_POST['event_id'])) {
       $form_result_message = eme_cancel_seats($event);
       // post to a page showing the result of the booking
-      $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."#eme-rsvp-message";
       // create the JS array that will be used to post
       $post_arr = array (
             "eme_eventAction" => 'message',
@@ -260,7 +272,7 @@ function eme_delete_booking_form($event_id) {
          myForm.submit() ;
          document.body.removeChild(myForm) ;
       }
-      <?php echo "postwith('$current_url',$post_string);"; ?>
+      <?php echo "postwith('$destination',$post_string);"; ?>
       </script>
       <?php
       return;
@@ -271,9 +283,6 @@ function eme_delete_booking_form($event_id) {
       unset($_POST['eme_message']);
    }
 
-   #$destination = eme_event_url($event)."#eme-rsvp-message";
-   $destination = "#eme-rsvp-message";
-   
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
    if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
       $ret_string = "<div id='eme-rsvp-message'>";
