@@ -1391,7 +1391,7 @@ function eme_events_in_location_list($location, $scope = "") {
 }
 
 function eme_locations_autocomplete() {
-        $use_select_for_locations = get_option('eme_use_select_for_locations');
+   $use_select_for_locations = get_option('eme_use_select_for_locations');
    // qtranslate there? Then we need the select
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
       $use_select_for_locations=1;
@@ -1451,10 +1451,12 @@ function eme_locations_autocomplete() {
                jQuery("input[name='location-select-town']").val(eventTown); 
                jQuery("input[name='location-select-latitude']").val(eventLat); 
                jQuery("input[name='location-select-longitude']").val(eventLong); 
-               loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
+               if(gmap_enabled) {
+                  loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
+               }
             })
          });
-         <?php } ?>
+          <?php } ?>
       });   
       //]]> 
 

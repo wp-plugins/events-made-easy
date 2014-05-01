@@ -3595,26 +3595,31 @@ function eme_admin_map_script() {
  
          jQuery(document).ready(function() {
             <?php 
+            $use_select_for_locations = get_option('eme_use_select_for_locations');
+            // qtranslate there? Then we need the select
+            if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+               $use_select_for_locations=1;
+            }
+
             // if we're creating a new event, or editing an event *AND*
             // the use_select_for_locations options is on or qtranslate is installed
             // then we do the select thing
             // We check on the new/edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             if (
-               ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && 
-                     (get_option('eme_use_select_for_locations') || function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE'))) { ?>
-            eventLocation = jQuery("input[name='location-select-name']").val(); 
-            eventTown = jQuery("input[name='location-select-town']").val();
-            eventAddress = jQuery("input[name='location-select-address']").val(); 
-            eventLat = jQuery("input#location-select-latitude").val();
-            eventLong = jQuery("input#location-select-longitude").val();
-               <?php } else { ?>
-            eventLocation = jQuery("input[name='translated_location_name']").val(); 
-            eventTown = jQuery("input#location_town").val(); 
-            eventAddress = jQuery("input#location_address").val();
-            eventLat = jQuery("input#location_latitude").val();
-            eventLong = jQuery("input#location_longitude").val();
-               <?php } ?>
+               ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && $use_select_for_locations) { ?>
+               eventLocation = jQuery("input[name='location-select-name']").val(); 
+               eventTown = jQuery("input[name='location-select-town']").val();
+               eventAddress = jQuery("input[name='location-select-address']").val(); 
+               eventLat = jQuery("input[name='location-select-latitude']").val();
+               eventLong = jQuery("input[name='location-select-longitude']").val();
+            <?php } else { ?>
+               eventLocation = jQuery("input[name='translated_location_name']").val(); 
+               eventTown = jQuery("input#location_town").val(); 
+               eventAddress = jQuery("input#location_address").val();
+               eventLat = jQuery("input#location_latitude").val();
+               eventLong = jQuery("input#location_longitude").val();
+            <?php } ?>
 
             loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
          
