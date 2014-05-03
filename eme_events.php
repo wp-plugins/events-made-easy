@@ -462,6 +462,7 @@ function eme_events_page() {
       $event = eme_get_event ( $event_ID );
       // make it look like a new event
       unset($event['event_id']);
+      unset($event['recurrence_id']);
       $event['event_name'].= __(" (Copy)","eme");
 
       if (current_user_can( get_option('eme_cap_edit_events')) ||
