@@ -1925,9 +1925,15 @@ function eme_registration_seats_form_table($pending=0) {
             "stateSave": true,
             <?php
             if (!empty($search)) {
+               // If datatables state is saved, the initial search
+               // is ignored and we need to use stateloadparams
+               // So we give the 2 options
             ?> 
             "stateLoadParams": function (settings, data) {
                data.oSearch.sSearch = "<?php echo $search; ?>";
+            },
+            "search": {
+               "search":  "<?php echo $search; ?>"
             },
             <?php
             }
