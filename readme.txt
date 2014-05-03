@@ -1,24 +1,26 @@
 === Events Made Easy ===  
 Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
-Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal  
+Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 1.3.4
+Stable tag: 1.4.0
 
-Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal and other payment gateways support. SEO compatible.
+Manage and display events, recurring events, locations and maps, widgets, RSVP, ICAL and RSS feeds, payment gateways support. SEO compatible.
              
 == Description ==
 Events Made Easy is a full-featured event management solution for Wordpress. Events Made Easy supports public, private, draft and recurring events, locations management, RSVP (+ optional approval), Paypal, 2Checkout, Google Checkout and Google maps. With Events Made Easy you can plan and publish your event, or let people reserve spaces for your weekly meetings. You can add events list, calendars and description to your blog using multiple sidebar widgets or shortcodes; if you are a web designer you can simply employ the template tags provided by Events Made Easy. 
 
 Events Made Easy integrates with Google Maps; thanks to geocoding, Events Made Easy can find the location of your event and accordingly display a map. 
-Events Made Easy also integrates payments for events using paypal. 
+Events Made Easy handles RSVP and bookings, integrates payments for events using paypal and other payment gateways and allows payment tracking.
 
 Events Made Easy provides also a RSS and ICAL feed, to keep your subscribers updated about the events you're organising. 
 
-Events Made Easy is fully customisable; you can customise the amount of data displayed and their format in events lists, pages and in the RSS/ICAL feed. You can choose to show or hide the events page, and change its title.  
+Events Made Easy is fully customisable; you can customise the amount of data displayed and their format in events lists, locations, attendees and in the RSS/ICAL feed. Also the RSVP form can be changed to your liking with extra fields, and by using EME templates let you change the layout even per page!
 
 Events Made Easy is fully localisable and already partially localised in Italian, Spanish, German, Swedish, French and Dutch. 
+
+Events Made Easy is also fully compatible with qtranslate (and mqtranslate): most of the settings allow for language tags so you can show your events in different languages to different people. The booking mails also take the choosen language into account.
 
 For more information visit the [Documentation Page](http://www.e-dynamics.be/wordpress/) and [Support Forum](http://www.e-dynamics.be/bbpress/). 
 
@@ -28,10 +30,10 @@ Always take a backup of your db before doing the upgrade, just in case ...
 1. Upload the `events-made-easy` folder to the `/wp-content/plugins/` directory  
 2. Activate the plugin through the 'Plugins' menu in WordPress  
 3. Add events list or calendars following the instructions in the Usage section.  
-== Upgrade from the older Events Manager plugin ==
 
-Events Made Easy is completely backwards compatible with the old data from Events Manager 2.2.2. Just deactivate the old plugin, remove the files if you want, and proceed with the Events Made Easy installation as usual. Events Made Easy takes care of your events database migration automatically. 
-Again my note of warning: Events Made Easy (EME) is a fork (NOT an extension) of the older Events Manager (EM) version 2.2.2 (April 2010). After months, the original plugin came back to life with a new codebase, but I added so much features already that it is very hard to go back to being one plugin. Read here for the differences since 2.2.2: http://www.e-dynamics.be/wordpress/?page_id=2
+== Upgrade from the older Events Manager Extended plugin ==
+
+Events Made Easy is completely backwards compatible with the old data from Events Manager Extended. Just deactivate the old plugin, remove the files if you want, and proceed with the Events Made Easy installation as usual. Events Made Easy takes care of your events database migration automatically. 
 
 == Usage == 
 
@@ -61,14 +63,14 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.3.5 =
+= 1.4.0 =
 * Feature: more consistent notation for placeholders, see http://www.e-dynamics.be/wordpress/?p=51559
 * Feature: people page can now do merging of bookings, show all bookings per person and allows person editing
 * Feature: RSS feed now shows html (no maps or forms), as does all other parts of wordpress do
 * Feature: use language selected at booking time for sending mail concerning the booking or the attendee
 * Feature: the cancel registration form can now also be formatted (also per event if wanted)
 * Feature: locations can now also be duplicated
-* Feature: added field tags to form fields, these are shown to the booker and are qtranslate-compatible
+* Feature: added field tags to form fields, these are shown to the booker and are (m)qtranslate-compatible
 * Bugfix: don't show the captcha when showing the booking form in the admin backend, it was ignored but still it's best not to confuse people
 * Bugfix: if the current day had an event, the calendar didn't show the eventfull class
 * Bugfix: don't match "[...]"  for location placeholders, solved more generically by the new placeholders notation feature.
