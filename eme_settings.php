@@ -16,14 +16,14 @@ function eme_add_options($reset=0) {
             <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_PHONE</td></tr>
             <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_SPACES</td></tr>
             <tr><th scope='row'>".__('Comment', 'eme').":</th><td>#_COMMENT</td></tr>
-            #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
+            #_CAPTCHAHTML{<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>}
             </table>
             #_SUBMIT
             ";
    $cancel_form_format_localizable = "<table class='eme-rsvp-form'>
             <tr><th scope='row'>".__('Name', 'eme')."*:</th><td>#_NAME</td></tr>
             <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_EMAIL</td></tr>
-            #_CAPTCHAHTML[<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>]
+            #_CAPTCHAHTML{<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>}
             </table>
             #_SUBMIT
             ";
