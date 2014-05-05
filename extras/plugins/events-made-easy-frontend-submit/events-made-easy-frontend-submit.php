@@ -493,7 +493,8 @@ class EMEFS {
 	
 	public static function getCategories() {
 		$categories = eme_get_categories();
-      if (has_filter('emefs_categories_filter')) $categories=apply_filters('emefs_categories_filter',$categories);
+      		if (has_filter('emefs_categories_filter')) $categories=apply_filters('emefs_categories_filter',$categories);
+		return($categories);
 	}
 	
 	/**
@@ -568,7 +569,8 @@ class EMEFS {
 		global $emefs_config;
 
 		wp_register_script( 'jquery-ui-datepicker', EME_PLUGIN_URL.'js/jquery-ui-datepicker/ui.datepicker.js', array('jquery-ui-core'));
-		wp_register_script( 'jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js', array('jquery'));
+		wp_register_script( 'jquery-plugin-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.plugin.min.js', array('jquery'));
+		wp_register_script( 'jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js', array('jquery-plugin-timeentry'));
 		
 		wp_register_script( 'google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
 		
