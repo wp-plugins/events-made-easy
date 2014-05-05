@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.4.0
+Version: 1.4.1
 Plugin URI: http://www.e-dynamics.be/wordpress
 Description: Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
@@ -402,9 +402,9 @@ function eme_uninstall($networkwide) {
    _eme_uninstall();
 }
 
-function _eme_uninstall() {
+function _eme_uninstall($force_drop=0) {
    $drop_data = get_option('eme_uninstall_drop_data');
-   if ($drop_data) {
+   if ($drop_data || $force_drop) {
       eme_drop_table(EVENTS_TBNAME);
       eme_drop_table(RECURRENCE_TBNAME);
       eme_drop_table(LOCATIONS_TBNAME);
@@ -436,6 +436,7 @@ function eme_new_blog($blog_id, $user_id, $domain, $path, $site_id, $meta ) {
 }
 
 function eme_create_tables() {
+   global $wpdb;
    // Creates the events table if necessary
    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
    $charset="";
