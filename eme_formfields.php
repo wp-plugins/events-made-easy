@@ -814,9 +814,9 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
             $entered_val=0;
 
          if (eme_is_multi($event['event_seats']) || eme_is_multi($event['price']))
-            $replacement = eme_ui_select($entered_val,$field_name,$booked_places_options[$field_id-1]);
+            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options[$field_id-1]);
          else
-            $replacement = eme_ui_select($entered_val,$field_name,$booked_places_options);
+            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
