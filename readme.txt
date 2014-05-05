@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 
 Manage and display events, recurring events, locations and maps, widgets, RSVP, ICAL and RSS feeds, payment gateways support. SEO compatible.
              
@@ -62,6 +62,11 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
 See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
+
+= 1.4.2 =
+* Bugfix: some undef values fixed
+* Bugfix: make the default use the new notation too for captchas (for new installations)
+* Bugfix: the frontend submission plugin has been updated to account for new jquery timeentry plugin too
 
 = 1.4.1 =
 * Bugfix: fixed a bug with a undefined var, preventing activation of the plugin for new installations
