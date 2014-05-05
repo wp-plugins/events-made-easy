@@ -10,7 +10,7 @@ function eme_cleanup_page() {
    $message="";
    if (current_user_can( get_option('eme_cap_cleanup'))) {
       // do the actions if required
-      if (isset($_POST['eme_action']) && $_POST['eme_action'] == "eme_cleanup" && isset($_POST['eme_number']) && isset($_POST['eme_period'])) {
+      if (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "eme_cleanup" && isset($_POST['eme_number']) && isset($_POST['eme_period'])) {
          $eme_number = intval($_POST['eme_number']);
          $eme_period = $_POST['eme_period'];
          if ( !in_array( $eme_period, array( 'day', 'week', 'month' ) ) ) 
@@ -18,7 +18,7 @@ function eme_cleanup_page() {
          $end_date=date('Y-m-d', strtotime("-$eme_number $eme_period"));
          $wpdb->query("DELETE FROM $bookings_table where event_id in (SELECT event_id from $events_table where event_end_date<'$end_date')");
          $wpdb->query("DELETE FROM $events_table where event_end_date<'$end_date'");
-         $wpdb->query("DELETE FROM $recurrence_table where recurrence_end_date<'$end_date'");
+         $wpdb->query("DELETE FROM $recurrence_table where recurence_freq <> 'specific' AND recurrence_end_date<'$end_date'");
          $message = sprintf ( __ ( "Cleanup done: events (and corresponding booking data) older than %d %s(s) have been removed.","eme"),$eme_number,$eme_period);
       }
    }
@@ -42,7 +42,7 @@ function eme_cleanup_form($message = "") {
    <form id="posts-filter" action="" method="post">
 <?php _e('Remove events older than','eme'); ?>
    <input type='hidden' name='page' value='eme-cleanup' />
-   <input type='hidden' name='eme_action' value='eme_cleanup' />
+   <input type='hidden' name='eme_admin_action' value='eme_cleanup' />
    <div class="tablenav">
 
    <div class="alignleft actions">
@@ -52,7 +52,7 @@ function eme_cleanup_form($message = "") {
    <option value="week"><?php _e ( 'Week(s)','eme' ); ?></option>
    <option value="month"><?php _e ( 'Month(s)','eme' ); ?></option>
    </select>
-   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="eme_doaction" class="button-secondary action" />
+   <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction" id="eme_doaction" class="button-primary action" />
    </div>
 
    <div class="clear"></div>
