@@ -63,6 +63,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.4.3 =
+* Bugfix: the filter eme_eval_booking_form_filter was called too early, causing the second argument to be empty
+
 = 1.4.2 =
 * Bugfix: some undef values fixed
 * Bugfix: make the default use the new notation too for captchas (for new installations)

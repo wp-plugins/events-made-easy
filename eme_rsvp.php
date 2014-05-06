@@ -512,11 +512,6 @@ function eme_book_seats($event, $send_mail=1) {
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    }
    
-   if (has_filter('eme_eval_booking_form_filter'))
-      $eval_filter_return=apply_filters('eme_eval_booking_form_filter',$event,$booker);
-   else
-      $eval_filter_return=array(0=>1,1=>'');
-
    if (!$bookerName) {
       // if any required field is empty: return an error
       $result = __('Please fill out your name','eme');
@@ -543,9 +538,6 @@ function eme_book_seats($event, $send_mail=1) {
    } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
       // spammers might get here, but we catch them
       $result = __('WP membership is required for registration','eme');
-   } elseif (is_array($eval_filter_return) && !$eval_filter_return[0]) {
-      // the result of own eval rules
-      $result = $eval_filter_return[1];
    } else {
       $language=eme_detect_lang();
       if (eme_is_multi($event['event_seats']))
@@ -559,27 +551,36 @@ function eme_book_seats($event, $send_mail=1) {
 
          // ok, just to be safe: check the person_id of the booker
          if ($booker['person_id']>0) {
-            // if the user enters a new phone number, update it
-            if ($booker['person_phone'] != $bookerPhone) {
-               eme_update_phone($booker,$bookerPhone);
-            }
-
-            $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
-            $booking = eme_get_booking ($booking_id);
-            $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
-            // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-            $result = eme_replace_placeholders($format, $event, "html", 0);
-            $result = eme_replace_booking_placeholders($result, $event, $booking);
-            if (is_admin()) {
-               $action="approveRegistration";
+            // we can only use the filter here, since the booker needs to be created first if needed
+            if (has_filter('eme_eval_booking_form_filter'))
+               $eval_filter_return=apply_filters('eme_eval_booking_form_filter',$event,$booker);
+            else
+               $eval_filter_return=array(0=>1,1=>'');
+            if (is_array($eval_filter_return) && !$eval_filter_return[0]) {
+               // the result of own eval rules failed, so let's use that as a result
+               $result = $eval_filter_return[1];
             } else {
-               $action="";
-            }
-            if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
+               // if the user enters a new phone number, update it
+               if ($booker['person_phone'] != $bookerPhone) {
+                  eme_update_phone($booker,$bookerPhone);
+               }
+               $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
+               $booking = eme_get_booking ($booking_id);
+               $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
+               // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+               $result = eme_replace_placeholders($format, $event, "html", 0);
+               $result = eme_replace_booking_placeholders($result, $event, $booking);
+               if (is_admin()) {
+                  $action="approveRegistration";
+               } else {
+                  $action="";
+               }
+               if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
 
-            // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
-            foreach($_POST as $key=>$value) {
-               unset($_POST[$key]);
+               // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
+               foreach($_POST as $key=>$value) {
+                  unset($_POST[$key]);
+               }
             }
          } else {
             $result = __('No booker ID found, something is wrong here','eme');
