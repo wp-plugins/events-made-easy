@@ -65,6 +65,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.4.3 =
 * Bugfix: the filter eme_eval_booking_form_filter was called too early, causing the second argument to be empty
+* Bugfix: the captcha isn't taken into account when adding a booking via admin backend, but it prevented adding a booking then
 
 = 1.4.2 =
 * Bugfix: some undef values fixed
