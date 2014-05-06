@@ -646,7 +646,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    else
       $required_fields_min = 4;
    // if we require the captcha: add 1
-   if ($eme_captcha_for_booking)
+   if (!is_admin() && $eme_captcha_for_booking)
       $required_fields_min++;
 
    $bookerName="";
@@ -723,7 +723,6 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    // the question mark is used for non greedy (minimal) matching
    if (preg_match('/#_CAPTCHAHTML\{.+\}/', $format)) {
       // only show the captcha when booking via the frontend, not the admin backend
-      $required_fields_count++;
       if (!is_admin() && $eme_captcha_for_booking)
          $format = preg_replace('/#_CAPTCHAHTML\{(.+?)\}/', '$1' ,$format );
       else
@@ -741,12 +740,10 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
    $deprecated = get_option('eme_deprecated');
    if ($deprecated && preg_match('/#_CAPTCHAHTML\[.+\]/', $format)) {
       // only show the captcha when booking via the frontend, not the admin backend
-      $required_fields_count++;
-      if (!is_admin() && $eme_captcha_for_booking) {
+      if (!is_admin() && $eme_captcha_for_booking)
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '$1' ,$format );
-      } else {
+      else
          $format = preg_replace('/#_CAPTCHAHTML\[(.+?)\]/', '' ,$format );
-      }
    }
 
    if ($deprecated && preg_match('/#_SUBMIT\[.+\]/', $format)) {
