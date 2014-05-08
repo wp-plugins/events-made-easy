@@ -836,7 +836,7 @@ function eme_global_map($atts) {
 
       // we add the list if wanted (only for "before" or "after")
       $locations = eme_get_locations((bool)$eventful,$scope,$category,0);
-      $loc_list = "<ol id='eme_locations_list'>"; 
+      $loc_list = "<div id='eme_div_locations_list'><ol id='eme_locations_list'>"; 
       $firstletter="A";
       foreach($locations as $location) {
          if ($show_locations) {
@@ -863,7 +863,7 @@ function eme_global_map($atts) {
          // usefull when we show events (more than one event per location)
          $firstletter++;
       }
-      $loc_list .= "</ol>"; 
+      $loc_list .= "</ol></div>"; 
       if ($list_location=="before") {
          $result = $loc_list.$result;
       } elseif ($list_location=="after") {
