@@ -1,11 +1,20 @@
 <?php
 
+
+
 function eme_filter_form_shortcode($atts) {
-   extract ( shortcode_atts ( array ('multiple' => 0, 'multisize' => 5, 'scope_count' => 12, 'submit' => 'Submit', 'fields'=> 'all', 'category' => '', 'notcategory' => '' ), $atts ) );
+   extract ( shortcode_atts ( array ('multiple' => 0, 'multisize' => 5, 'scope_count' => 12, 'submit' => 'Submit', 'fields'=> 'all', 'category' => '', 'notcategory' => '', 'template_id' => 0 ), $atts ) );
    $multiple = ($multiple==="true" || $multiple==="1") ? true : $multiple;
    $multiple = ($multiple==="false" || $multiple==="0") ? false : $multiple;
 
-   $content=eme_replace_filter_form_placeholders(get_option('eme_filter_form_format'),$multiple,$multisize,$scope_count,$fields,$category,$notcategory);
+   if ($template_id) {
+      $format_arr = eme_get_template($template_id);
+      $filter_form_format=$format_arr['format'];
+   } else {
+      $filter_form_format = get_option('eme_filter_form_format');
+   }
+
+   $content=eme_replace_filter_form_placeholders($filter_form_format,$multiple,$multisize,$scope_count,$fields,$category,$notcategory);
    # using the current page as action, so we can leave action empty in the html form definition
    # this helps to keep the language and any other parameters, and works with permalinks as well
    $form = "<form action='' method='POST'>";
@@ -17,7 +26,6 @@ function eme_filter_form_shortcode($atts) {
    $form .= "<input type='submit' value='$submit' /></form>";
    return $form;
 }
-add_shortcode ( 'events_filterform', 'eme_filter_form_shortcode' );
 
 function eme_create_week_scope($count) {
    $day_offset=date('w');
@@ -69,7 +77,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    if ($fields == "all")
       $fields="categories,locations,towns,weeks,months";
 
-   preg_match_all("/#_[A-Za-z0-9_\[\]]+/", $format, $placeholders);
+   preg_match_all("/#_[A-Za-z0-9_]+/", $format, $placeholders);
    usort($placeholders[0],'sort_stringlenth');
 
    // if one of these changes, also the eme_events.php needs changing for the "Next page" part
@@ -93,7 +101,10 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    foreach($placeholders[0] as $result) {
       $replacement = "";
       $eventful=0;
-      if (preg_match('/^#_(EVENTFUL_)?FILTER_CATS$/', $result) && get_option('eme_categories_enabled')) {
+      $found = 1;
+      $orig_result = $result;
+
+      if (preg_match('/#_(EVENTFUL_)?FILTER_CATS/', $result) && get_option('eme_categories_enabled')) {
          if (strstr($result,'#_EVENTFUL')) {
             $eventful=1;
          }
@@ -103,7 +114,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             $cat_list = array();
             foreach ($categories as $this_category) {
                $id=$this_category['category_id'];
-               $cat_list[$id]=eme_trans_sanitize_html($this_category['category_name']);
+               $cat_list[$id]=eme_translate($this_category['category_name']);
             }
             asort($cat_list);
             if ($multiple) {
@@ -115,7 +126,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             }
          }
 
-      } elseif (preg_match('/^#_(EVENTFUL_)?FILTER_LOCS$/', $result)) {
+      } elseif (preg_match('/#_(EVENTFUL_)?FILTER_LOCS/', $result)) {
          if (strstr($result,'#_EVENTFUL')) {
             $eventful=1;
          }
@@ -125,7 +136,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             $loc_list = array();
             foreach ($locations as $this_location) {
                $id=$this_location['location_id'];
-               $loc_list[$id]=eme_trans_sanitize_html($this_location['location_name']);
+               $loc_list[$id]=eme_translate($this_location['location_name']);
             }
             asort($loc_list);
             if ($multiple) {
@@ -137,7 +148,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             }
          }
 
-      } elseif (preg_match('/^#_(EVENTFUL_)?FILTER_TOWNS$/', $result)) {
+      } elseif (preg_match('/#_(EVENTFUL_)?FILTER_TOWNS/', $result)) {
          if (strstr($result,'#_EVENTFUL')) {
             $eventful=1;
          }
@@ -145,7 +156,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
          if (strstr($fields,'towns') && $towns) {
             $town_list = array();
             foreach ($towns as $this_town) {
-               $id=eme_trans_sanitize_html($this_town['location_town']);
+               $id=eme_translate($this_town['location_town']);
                $town_list[$id]=$id;
             }
             asort($town_list);
@@ -158,19 +169,23 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             }
          }
 
-      } elseif (preg_match('/^#_FILTER_WEEKS$/', $result)) {
+      } elseif (preg_match('/#_FILTER_WEEKS/', $result)) {
          if (strstr($fields,'weeks'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_week_scope($scope_count));
-      } elseif (preg_match('/^#_FILTER_MONTHS$/', $result)) {
+      } elseif (preg_match('/#_FILTER_MONTHS/', $result)) {
          if (strstr($fields,'months'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_month_scope($scope_count));
-      } elseif (preg_match('/^#_FILTER_YEARS$/', $result)) {
+      } elseif (preg_match('/#_FILTER_YEARS/', $result)) {
          if (strstr($fields,'years'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_year_scope($scope_count));
-      } 
+      } else {
+         $found = 0;
+      }
 
-      $replacement = apply_filters('eme_general', $replacement);
-      $format = str_replace($result, $replacement ,$format );
+      if ($found) {
+         $replacement = apply_filters('eme_general', $replacement);
+         $format = str_replace($orig_result, $replacement ,$format );
+      }
    }
 
    return do_shortcode($format);
