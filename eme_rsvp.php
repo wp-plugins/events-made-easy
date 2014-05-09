@@ -329,6 +329,8 @@ function eme_cancel_seats($event) {
    if (isset($_POST['honeypot_check'])) {
       $honeypot_check = stripslashes($_POST['honeypot_check']);
    } elseif (!is_admin() && !isset($_POST['honeypot_check'])) {
+      // a bot fills this in, but a human never will, since it's
+      // a hidden field
       $honeypot_check = "bad boy";
    } else {
       $honeypot_check = "";
@@ -350,9 +352,7 @@ function eme_cancel_seats($event) {
    if(!empty($captcha_err)) {
       return __('You entered an incorrect code','eme');
    } elseif (!empty($honeypot_check) ||  !empty($nonce_err)) {
-      // a bot fills this in, but a human never will, since it's
-      // a hidden field
-      return __('You are a bad boy','eme');
+      return __("You're not allowed to do this. If you believe you've received this message in error please contact the site owner.",'eme');
    } 
 
    if ($registration_wp_users_only && is_user_logged_in()) {
@@ -395,6 +395,8 @@ function eme_book_seats($event, $send_mail=1) {
    if (isset($_POST['honeypot_check'])) {
       $honeypot_check = stripslashes($_POST['honeypot_check']);
    } elseif (!is_admin() && !isset($_POST['honeypot_check'])) {
+      // a bot fills this in, but a human never will, since it's
+      // a hidden field
       $honeypot_check = "bad boy";
    } else {
       $honeypot_check = "";
@@ -417,9 +419,7 @@ function eme_book_seats($event, $send_mail=1) {
       $result = __('You entered an incorrect code','eme');
       return array(0=>$result,1=>$booking_id);
    } elseif (!empty($honeypot_check) ||  !empty($nonce_err)) {
-      // a bot fills this in, but a human never will, since it's
-      // a hidden field
-      $result = __('You are a bad boy','eme');
+      $result = __("You're not allowed to do this. If you believe you've received this message in error please contact the site owner.",'eme');
       return array(0=>$result,1=>$booking_id);
    } 
 
