@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 54);
+define('EME_DB_VERSION', 55);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -354,6 +354,11 @@ function _eme_install() {
    }
    if ($db_version>0 && $db_version<49) {
       delete_option('eme_events_admin_limit');
+   }
+   if ($db_version>0 && $db_version<55) {
+      $smtp_port=get_option('eme_rsvp_mail_port');
+      delete_option('eme_rsvp_mail_port');
+      update_option('eme_smtp_port', $smtp_port); 
    }
 
    // always reset the drop data option
@@ -1168,11 +1173,23 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement="eme-past-event";
          }
 
-      } elseif ($event && preg_match('/#_12HSTARTTIME/', $result)) {
+      } elseif ($event && preg_match('/#_12HSTARTTIME$/', $result)) {
          $replacement = date("h:i A", strtotime($event['event_start_time']));
 
-      } elseif ($event && preg_match('/#_12HENDTIME/', $result)) {
+      } elseif ($event && preg_match('/#_12HENDTIME$/', $result)) {
          $replacement = date("h:i A", strtotime($event['event_end_time']));
+
+      } elseif ($event && preg_match('/#_12HSTARTTIME_NOLEADINGZERO/', $result)) {
+         $replacement = date("g:i A", strtotime($event['event_start_time']));
+         if (get_option('eme_time_remove_leading_zeros')) {
+            $replacement = str_replace(":0",":",$replacement);
+         }
+
+      } elseif ($event && preg_match('/#_12HENDTIME_NOLEADINGZERO/', $result)) {
+         $replacement = date("g:i A", strtotime($event['event_end_time']));
+         if (get_option('eme_time_remove_leading_zeros')) {
+            $replacement = str_replace(":0",":",$replacement);
+         }
 
       } elseif ($event && preg_match('/#_MAP/', $result)) {
          if ($target == "rss" || $target == "text") {

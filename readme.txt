@@ -63,6 +63,11 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.4.4 =
+* Feature: added placeholders #_12HSTARTTIME_NOLEADINGZERO and #_12HENDTIME_NOLEADINGZERO
+* Improvement: a little more polite bad-boy message
+* Improvement: renamed an eme option, no big deal
+
 = 1.4.3 =
 * Bugfix: the filter eme_eval_booking_form_filter was called too early, causing the second argument to be empty
 * Bugfix: the captcha isn't taken into account when adding a booking via admin backend, but it prevented adding a booking then

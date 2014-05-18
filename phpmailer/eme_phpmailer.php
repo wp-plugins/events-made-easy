@@ -33,12 +33,20 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
             $mail->IsQmail();
          else
             $mail->Mailer = $eme_rsvp_mail_send_method;
-         $mail->Host = get_option('eme_smtp_host');
-         $mail->port = get_option('eme_rsvp_mail_port');
-         if(get_option('eme_rsvp_mail_SMTPAuth') == '1')
+         if (get_option('eme_smtp_host'))
+            $mail->Host = get_option('eme_smtp_host');
+         else
+            $mail->Host = "localhost";
+         if (get_option('eme_smtp_port'))
+            $mail->port = get_option('eme_smtp_port');
+         else
+            $mail->port = 25;
+
+         if(get_option('eme_rsvp_mail_SMTPAuth') == '1') {
             $mail->SMTPAuth = TRUE;
-         $mail->Username = get_option('eme_smtp_username');
-         $mail->Password = get_option('eme_smtp_password');
+            $mail->Username = get_option('eme_smtp_username');
+            $mail->Password = get_option('eme_smtp_password');
+         }
          $mail->From = $fromMail;
          $mail->FromName = $fromName;
          if(get_option('eme_rsvp_send_html') == '1')
