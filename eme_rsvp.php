@@ -512,6 +512,11 @@ function eme_book_seats($event, $send_mail=1) {
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    }
    
+   if (has_filter('eme_eval_booking_filter'))
+      $eval_filter_return=apply_filters('eme_eval_booking_filter',$event);
+   else
+      $eval_filter_return=array(0=>1,1=>'');
+
    if (!$bookerName) {
       // if any required field is empty: return an error
       $result = __('Please fill out your name','eme');
@@ -538,6 +543,9 @@ function eme_book_seats($event, $send_mail=1) {
    } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
       // spammers might get here, but we catch them
       $result = __('WP membership is required for registration','eme');
+   } elseif (is_array($eval_filter_return) && !$eval_filter_return[0]) {
+      // the result of own eval rules
+      $result = $eval_filter_return[1];
    } else {
       $language=eme_detect_lang();
       if (eme_is_multi($event['event_seats']))
