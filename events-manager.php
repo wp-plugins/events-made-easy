@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 55);
+define('EME_DB_VERSION', 56);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -542,6 +542,7 @@ function eme_create_events_table($charset,$collate) {
          registration_wp_users_only bool DEFAULT 0,
          event_image_url text NULL,
          event_image_id mediumint(9) DEFAULT 0 NOT NULL,
+         event_external_ref text NULL, 
          UNIQUE KEY (event_id)
          ) $charset $collate;";
       
@@ -615,6 +616,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'event_cancel_form_format', "alter table $table_name add event_cancel_form_format text NULL;"); 
       maybe_add_column($table_name, 'event_image_url', "alter table $table_name add event_image_url text NULL;"); 
       maybe_add_column($table_name, 'event_image_id', "alter table $table_name add event_image_id mediumint(9) DEFAULT 0 NOT NULL;"); 
+      maybe_add_column($table_name, 'event_external_ref', "alter table $table_name add event_external_ref text NULL;"); 
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_name text;");
          $wpdb->query("ALTER TABLE $table_name MODIFY event_notes longtext;");
@@ -715,6 +717,8 @@ function eme_create_locations_table($charset,$collate) {
          location_image_url text NULL,
          location_image_id mediumint(9) DEFAULT 0 NOT NULL,
          location_attributes text NULL, 
+         location_properties text NULL, 
+         location_external_ref text NULL, 
          UNIQUE KEY (location_id)
          ) $charset $collate;";
       maybe_create_table($table_name,$sql);
@@ -737,6 +741,8 @@ function eme_create_locations_table($charset,$collate) {
       maybe_add_column($table_name, 'location_image_url', "alter table $table_name add location_image_url text NULL;"); 
       maybe_add_column($table_name, 'location_image_id', "alter table $table_name add location_image_id mediumint(9) DEFAULT 0 NOT NULL;"); 
       maybe_add_column($table_name, 'location_attributes', "alter table $table_name add location_attributes text NULL;"); 
+      maybe_add_column($table_name, 'location_properties', "alter table $table_name add location_properties text NULL;"); 
+      maybe_add_column($table_name, 'location_external_ref', "alter table $table_name add location_external_ref text NULL;");    
       if ($db_version<3) {
          $wpdb->query("ALTER TABLE $table_name MODIFY location_name text NOT NULL ;");
       }

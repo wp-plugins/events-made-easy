@@ -42,15 +42,9 @@ function eme_new_event() {
       "event_slug" => '',
       "event_image_url" => '',
       "event_image_id" => 0,
+      "event_external_ref" => '',
       "event_url" => '',
-      "recurrence_id" => 0,
-      "recurrence_freq" => '',
-      "recurrence_start_date" => '',
-      "recurrence_end_date" => '',
-      "recurrence_interval" => '',
-      "recurrence_byweekno" => '',
-      "recurrence_byday" => '',
-      "recurrence_specific_days" => '',
+      "recurrence_id" => 0
    );
    $event['event_properties'] = eme_init_event_props($event['event_properties']);
    return $event;
@@ -1844,10 +1838,12 @@ function eme_get_event_data($event) {
       $event['event_end_date'] = $event['event_start_date'];
    }
       
-   $event['event_attributes'] = @unserialize($event['event_attributes']);
+   if (is_serialized($event['event_attributes']))
+         $event['event_attributes'] = @unserialize($event['event_attributes']);
    $event['event_attributes'] = (!is_array($event['event_attributes'])) ?  array() : $event['event_attributes'] ;
 
-   $event['event_properties'] = @unserialize($event['event_properties']);
+   if (is_serialized($event['event_properties']))
+      $event['event_properties'] = @unserialize($event['event_properties']);
    $event['event_properties'] = (!is_array($event['event_properties'])) ?  array() : $event['event_properties'] ;
    $event['event_properties'] = eme_init_event_props($event['event_properties']);
 
@@ -2636,7 +2632,8 @@ function eme_validate_event($event) {
          $troubles .= "<li>".__ ( 'Since the event contains multiple seat categories (multiseat), you must specify the exact same amount of prices (multiprice) as well.', 'eme' )."</li>";
    }
 
-   $event_properties = unserialize($event['event_properties']);
+   if (is_serialized($event['event_properties']))
+         $event_properties = unserialize($event['event_properties']);
    if (eme_is_multi($event_properties['max_allowed']) && eme_is_multi($event['price'])) {
       $count1=count(eme_convert_multi2array($event_properties['max_allowed']));
       $count2=count(eme_convert_multi2array($event['price']));
@@ -3923,6 +3920,12 @@ function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
    }
+   if (!is_serialized($event['event_attributes']))
+      $event['event_attributes'] = serialize($event['event_attributes']);
+
+   if (!is_serialized($event['event_properties']))
+      $event['event_properties'] = serialize($event['event_properties']);
+
    $event_properties = @unserialize($event['event_properties']);
    if ($event_properties['all_day']) {
       $event['event_start_time']="00:00:00";
@@ -3973,6 +3976,12 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    if ($event['event_end_date']<$event['event_start_date']) {
       $event['event_end_date']=$event['event_start_date'];
    }
+   if (!is_serialized($event['event_attributes']))
+      $event['event_attributes'] = serialize($event['event_attributes']);
+
+   if (!is_serialized($event['event_properties']))
+      $event['event_properties'] = serialize($event['event_properties']);
+
    $event_properties = @unserialize($event['event_properties']);
    if ($event_properties['all_day']) {
       $event['event_start_time']="00:00:00";

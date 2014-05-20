@@ -13,13 +13,20 @@ function eme_new_location() {
    'location_url' => '',
    'location_slug' => '',
    'location_image_url' => '',
+   'location_external_ref' => '',
    'location_image_id' => 0,
-   'location_attributes' => array()
+   'location_attributes' => array(),
+   'location_properties' => array()
    );
 
+   $location['location_properties'] = eme_init_location_props($location['location_properties']);
    return $location;
 }
  
+function eme_init_location_props($props) {
+   return $props;
+}
+
 function eme_locations_page() {
    $current_userid=get_current_user_id();
    if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editlocation") { 
@@ -120,6 +127,15 @@ function eme_locations_page() {
             }
          }
          $location['location_attributes'] = serialize($location_attributes);
+
+         $location_properties = array();
+         $location_properties = eme_init_location_props($location_properties);
+         foreach($_POST as $key=>$value) {
+            if (preg_match('/eme_loc_prop_(.+)/', $key, $matches)) {
+               $location_properties[$matches[1]] = stripslashes($value);
+            }
+         }
+         $location['location_properties'] = serialize($location_properties);
 
          $validation_result = eme_validate_location($location);
          if ($validation_result == "OK") {
@@ -533,8 +549,15 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
       foreach ($locations as $key=>$location) {
          if (empty($locations[$key]['location_image_id']) && empty($locations[$key]['location_image_url']))
             $locations[$key]['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
-         $locations[$key]['location_attributes'] = @unserialize($locations[$key]['location_attributes']);
+         if (is_serialized($locations[$key]['location_attributes']))
+            $locations[$key]['location_attributes'] = @unserialize($locations[$key]['location_attributes']);
          $locations[$key]['location_attributes'] = (!is_array($locations[$key]['location_attributes'])) ?  array() : $locations[$key]['location_attributes'] ;
+
+         if (is_serialized($locations[$key]['location_properties']))
+            $locations[$key]['location_properties'] = @unserialize($locations[$key]['location_properties']);
+         $locations[$key]['location_properties'] = (!is_array($locations[$key]['location_properties'])) ?  array() : $locations[$key]['location_properties'] ;
+         $locations[$key]['location_properties'] = eme_init_location_props($locations[$key]['location_properties']);
+
       }
    }
    if (has_filter('eme_location_list_filter')) $locations=apply_filters('eme_location_list_filter',$locations);
@@ -557,8 +580,14 @@ function eme_get_location($location_id=0) {
       if (empty($location['location_image_id']) && empty($location['location_image_url']))
          $location['location_image_url'] = eme_image_url_for_location_id($location['location_id']);
 
-      $location['location_attributes'] = @unserialize($location['location_attributes']);
+      if (is_serialized($location['location_attributes']))
+         $location['location_attributes'] = @unserialize($location['location_attributes']);
       $location['location_attributes'] = (!is_array($location['location_attributes'])) ?  array() : $location['location_attributes'] ;
+
+      if (is_serialized($location['location_properties']))
+         $location['location_properties'] = @unserialize($location['location_properties']);
+      $location['location_properties'] = (!is_array($location['location_properties'])) ?  array() : $location['location_properties'] ;
+      $location['location_properties'] = eme_init_location_props($location['location_properties']);
 
       if (has_filter('eme_location_filter')) $location=apply_filters('eme_location_filter',$location);
 
@@ -642,6 +671,12 @@ function eme_update_location($location) {
    // updated (eg, when you just add an image)
    // DONE: add modif timestamps, so that changes for each update,
    // and then we can check for the return code again (as for events)
+   if (!is_serialized($location['location_attributes']))
+      $location['location_attributes'] = serialize($location['location_attributes']);
+      
+   if (!is_serialized($location['location_properties']))
+      $location['location_properties'] = serialize($location['location_properties']);
+
    $location['location_modif_date']=current_time('mysql', false);
    $location['location_modif_date_gmt']=current_time('mysql', true);
    if (!$wpdb->update ( $table_name, $location, $where )) {
@@ -666,6 +701,12 @@ function eme_insert_location($location) {
    $location['location_creation_date_gmt']=current_time('mysql', true);
    $location['location_modif_date_gmt']=current_time('mysql', true);
 
+   if (!is_serialized($location['location_attributes']))
+      $location['location_attributes'] = serialize($location['location_attributes']);
+      
+   if (!is_serialized($location['location_properties']))
+      $location['location_properties'] = serialize($location['location_properties']);
+      
    if (current_user_can( get_option('eme_cap_add_locations'))) {
       $wpdb->show_errors(true);
       if (!$wpdb->insert($table_name,$location)) {
