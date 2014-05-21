@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added filter eme_eval_booking_filter, doing evaluations before the person is entered in the db. One parameter: $event. And $_POST can be used too of course.
 * Improvement: a little more polite bad-boy message
 * Improvement: renamed an eme option, no big deal
+* Bugfix: removing a person and his booking info left orphaned answers, cleaning those now
 
 = 1.4.3 =
 * Bugfix: the filter eme_eval_booking_form_filter was called too early, causing the second argument to be empty

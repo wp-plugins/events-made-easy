@@ -846,8 +846,11 @@ function eme_get_answercolumns($booking_ids) {
 
 function eme_delete_all_bookings_for_person_id($person_id) {
    global $wpdb;
-   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   $sql = "DELETE FROM $bookings_table WHERE person_id = $person_id";
+   $answers_table = $wpdb->prefix.ANSWERS_TBNAME;
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = $wpdb->prepare("DELETE FROM $answers_table WHERE booking_id IN (SELECT booking_id from $bookings_table WHERE person_id = %d)",$person_id);
+   $wpdb->query($sql);
+   $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE person_id = %d",$person_id);
    $wpdb->query($sql);
    return 1;
 }
