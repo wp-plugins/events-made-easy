@@ -174,6 +174,7 @@ function eme_db_update_recurrence($event, $recurrence) {
    $where = array('recurrence_id' => $recurrence['recurrence_id']);
    $wpdb->show_errors(true);
    $wpdb->update($recurrence_table, $recurrence, $where); 
+   $wpdb->show_errors(false);
    $event['recurrence_id'] = $recurrence['recurrence_id'];
    eme_update_events_for_recurrence($event,$recurrence); 
    if (has_action('eme_update_recurrence_action')) do_action('eme_update_recurrence_action',$event,$recurrence);

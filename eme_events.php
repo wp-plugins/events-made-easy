@@ -3994,6 +3994,11 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    global $wpdb;
    $table_name = $wpdb->prefix . EVENTS_TBNAME;
 
+   // make sure we don't update the auto-increment id, which is the event id
+   // it is ok to do so, but should not change anyway
+   if (isset($event['event_id'])) {
+      unset($event['event_id']);
+   }
 
    // backwards compatible: older versions gave directly the where array instead of the event_id
    if (!is_array($event_id)) 
@@ -4032,8 +4037,9 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    }
 
    $wpdb->show_errors(true);
-   if (!$wpdb->update ( $table_name, $event, $where )) {
+   if ($wpdb->update ( $table_name, $event, $where ) === false) {
       $wpdb->print_error();
+      $wpdb->show_errors(false);
       return false;
    } else {
       $event['event_id']=$event_id;
@@ -4043,6 +4049,7 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
          $event = eme_get_event($event_id);
          do_action('eme_update_event_action',$event);
       }
+      $wpdb->show_errors(false);
       return true;
    }
 }

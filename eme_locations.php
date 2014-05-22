@@ -665,7 +665,15 @@ function eme_validate_location($location) {
 function eme_update_location($location) {
    global $wpdb;
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME;
-   $where ['location_id'] = $location['location_id'];
+
+   $where=array('location_id' => $location['location_id']);
+
+   // make sure we don't update the auto-increment id, which is the location id
+   // it is ok to do so, but should not change anyway
+   if (isset($location['location_id'])) {
+      unset($location['location_id']);
+   }
+
    // we can't check the return code for wpdb->update,
    // since sometimes the update returns 0 because of no rows
    // updated (eg, when you just add an image)
@@ -679,10 +687,13 @@ function eme_update_location($location) {
 
    $location['location_modif_date']=current_time('mysql', false);
    $location['location_modif_date_gmt']=current_time('mysql', true);
-   if (!$wpdb->update ( $table_name, $location, $where )) {
+   $wpdb->show_errors(true);
+   if ($wpdb->update ( $table_name, $location, $where ) === false) {
       $wpdb->print_error();
+      $wpdb->show_errors(false);
       return false;
    } else {
+      $wpdb->show_errors(false);
       return true;
    }
 }
@@ -690,6 +701,12 @@ function eme_update_location($location) {
 function eme_insert_location($location) {
    global $wpdb;  
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME; 
+
+   // remove possible unwanted fields
+   if (isset($location['location_id'])) {
+      unset($location['location_id']);
+   }
+
    // if GMap is off the hidden fields are empty, so I add a custom value to make the query work
    if (empty($location['location_longitude']))
       $location['location_longitude'] = 0;
@@ -711,10 +728,12 @@ function eme_insert_location($location) {
       $wpdb->show_errors(true);
       if (!$wpdb->insert($table_name,$location)) {
          $wpdb->print_error();
+         $wpdb->show_errors(false);
          return false;
       } else {
          $location_ID = $wpdb->insert_id;
          $new_location = eme_get_location($location_ID);
+         $wpdb->show_errors(false);
          return $new_location;
       }
    } else {
