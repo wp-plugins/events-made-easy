@@ -107,11 +107,41 @@ function eme_events_page() {
    if (isset($_GET['disable_hello_to_user']) || isset($_GET['disable_donate_message']) || isset($_GET['dbupdate']) || isset($_GET['disable_legacy_warning'])) {
       $action ="";
    }
+
+   if ($action == 'publicEvents') {
+      if (current_user_can(get_option('eme_cap_edit_events'))) {
+         eme_change_event_state($selectedEvents,STATUS_PUBLIC);
+         $feedback_message = __ ( 'Event(s) published!', 'eme' );
+      } else {
+         $feedback_message = __ ( 'You have no right to edit events!', 'eme' );
+      }
+      eme_events_table ($feedback_message);
+      return;
+   }
+   if ($action == 'privateEvents') {
+      if (current_user_can(get_option('eme_cap_edit_events'))) {
+         eme_change_event_state($selectedEvents,STATUS_PRIVATE);
+         $feedback_message = __ ( 'Event(s) made private!', 'eme' );
+      } else {
+         $feedback_message = __ ( 'You have no right to edit events!', 'eme' );
+      }
+      eme_events_table ($feedback_message);
+      return;
+   }
+   if ($action == 'draftEvents') {
+      if (current_user_can(get_option('eme_cap_edit_events'))) {
+         eme_change_event_state($selectedEvents,STATUS_DRAFT);
+         $feedback_message = __ ( 'Event(s) changed to draft!', 'eme' );
+      } else {
+         $feedback_message = __ ( 'You have no right to edit events!', 'eme' );
+      }
+      eme_events_table ($feedback_message);
+      return;
+   }
    
    // DELETE action (either from the event list, or when the delete button is pushed while editing an event)
    if ($action == 'deleteEvents') {
-      if (current_user_can( get_option('eme_cap_edit_events')) ||
-         (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
+      if (current_user_can(get_option('eme_cap_edit_events'))) {
          foreach ( $selectedEvents as $event_ID ) {
             $tmp_event = array();
             $tmp_event = eme_get_event ( $event_ID );
@@ -119,12 +149,12 @@ function eme_events_page() {
                # if the event is part of a recurrence and it is the last event of the recurrence, delete the recurrence
                # else just delete the singe event
                if (eme_recurrence_count($tmp_event['recurrence_id'])==1) {
-                  eme_remove_recurrence ( $tmp_event['recurrence_id'] );
+                  eme_remove_recurrence ($tmp_event['recurrence_id'] );
                } else {
-                  eme_db_delete_event ( $tmp_event );
+                  eme_db_delete_event($tmp_event);
                }
             } else {
-               eme_db_delete_event ( $tmp_event );
+               eme_db_delete_event($tmp_event);
             }
          }
          $feedback_message = __ ( 'Event(s) deleted!', 'eme' );
@@ -132,24 +162,25 @@ function eme_events_page() {
          $feedback_message = __ ( 'You have no right to delete events!', 'eme' );
       }
       
-      echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      eme_events_table ();
+      eme_events_table ($feedback_message);
       return;
    }
 
    // DELETE action (either from the event list, or when the delete button is pushed while editing a recurrence)
    if ($action == 'deleteRecurrence') {
-      foreach ( $selectedEvents as $event_ID ) {
-         $tmp_event = array();
-         $tmp_event = eme_get_event ( $event_ID );
-         if (current_user_can( get_option('eme_cap_edit_events')) ||
-             (current_user_can( get_option('eme_cap_author_event')) && ($tmp_event['event_author']==$current_userid || $tmp_event['event_contactperson_id']==$current_userid))) {  
+      if (current_user_can(get_option('eme_cap_edit_events'))) {
+            foreach ( $selectedEvents as $event_ID ) {
+            $tmp_event = array();
+            $tmp_event = eme_get_event($event_ID);
             if ($tmp_event['recurrence_id']>0) {
-               eme_remove_recurrence ( $tmp_event['recurrence_id'] );
+               eme_remove_recurrence ($tmp_event['recurrence_id']);
             }
          }
+         $feedback_message = __ ( 'Event(s) deleted!', 'eme' );
+      } else {
+         $feedback_message = __ ( 'You have no right to delete events!', 'eme' );
       }
-      eme_events_table ();
+      eme_events_table ($feedback_message);
       return;
    }
 
@@ -157,8 +188,7 @@ function eme_events_page() {
    if ($action == 'insert_event' || $action == 'update_event' || $action == 'update_recurrence') {
       if ( ! (current_user_can( get_option('eme_cap_add_event')) || current_user_can( get_option('eme_cap_edit_events'))) ) {
          $feedback_message = __('You have no right to insert or update events','eme');
-         echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         eme_events_table ();
+         eme_events_table ($feedback_message);
          return;
       }
 
@@ -420,8 +450,7 @@ function eme_events_page() {
       }
          
       //$wpdb->query($sql); 
-      echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-      eme_events_table ();
+      eme_events_table ($feedback_message);
       return;
    }
 
@@ -432,8 +461,7 @@ function eme_events_page() {
             eme_event_form ( $event, $title, $event_ID );
          } else {
             $feedback_message = __('You have no right to add events!','eme');
-            echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            eme_events_table ();
+            eme_events_table ($feedback_message);
          }
       } else {
          $event = eme_get_event ( $event_ID );
@@ -444,8 +472,7 @@ function eme_events_page() {
             eme_event_form ( $event, $title, $event_ID );
          } else {
             $feedback_message = sprintf(__("You have no right to update '%s'",'eme'),$event['event_name']);
-            echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-            eme_events_table ();
+            eme_events_table ($feedback_message);
          }
       }
       return;
@@ -465,8 +492,7 @@ function eme_events_page() {
          eme_event_form ( $event, $title, 0 );
       } else {
          $feedback_message = sprintf(__("You have no right to copy '%s'",'eme'),$event['event_name']);
-         echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         eme_events_table ();
+         eme_events_table ($feedback_message);
       }
       return;
    }
@@ -479,8 +505,7 @@ function eme_events_page() {
          eme_event_form ( $recurrence, $title, $recurrence_ID );
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $recurrence['event_name'] . "' !";
-         echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($feedback_message)."</p></div>";
-         eme_events_table ();
+         eme_events_table ($feedback_message);
       }
       return;
    }
@@ -500,7 +525,7 @@ function eme_events_page() {
             $scope = "future";
       }
 
-      eme_events_table ( $scope );
+      eme_events_table ("", $scope );
       return;
    }
 }
@@ -1854,7 +1879,11 @@ function eme_get_event_data($event) {
    return $event;
 }
 
-function eme_events_table($scope="future") {
+function eme_events_table($message="",$scope="future") {
+
+   if (!empty($message)) {
+         echo "<div id='message' class='updated fade'><p>".eme_trans_sanitize_html($message)."</p></div>";
+   }
 
    //$list_limit = get_option('eme_events_admin_limit');
    //if ($list_limit<5 || $list_limit>200) {
@@ -1944,6 +1973,9 @@ function eme_events_table($scope="future") {
    <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
    <option value="deleteEvents"><?php _e ( 'Delete selected events','eme' ); ?></option>
    <option value="deleteRecurrence"><?php _e ( 'Delete selected recurrent events','eme' ); ?></option>
+   <option value="publicEvents"><?php _e ( 'Publish selected events','eme' ); ?></option>
+   <option value="privateEvents"><?php _e ( 'Make selected events private','eme' ); ?></option>
+   <option value="draftEvents"><?php _e ( 'Make selected events draft','eme' ); ?></option>
    </select>
    <input type="submit" value="<?php _e ( 'Apply' ); ?>" name="doaction2" id="doaction2" class="button-secondary action" />
    <div class="clear"></div>
@@ -4015,14 +4047,27 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    }
 }
 
+function eme_change_event_state($events,$state) {
+   global $wpdb;
+   $table_name = $wpdb->prefix . EVENTS_TBNAME;
+
+   if (is_array($events))
+      $events_to_change=join(',',$events);
+   else
+      $event_to_change=$events;
+
+   $sql = "UPDATE $table_name set event_status=$state WHERE event_id in (".$events_to_change.")";
+   $wpdb->query($sql);
+}
+
 function eme_db_delete_event($event) {
    global $wpdb;
    $table_name = $wpdb->prefix . EVENTS_TBNAME;
-   $sql = "DELETE FROM $table_name WHERE event_id = '".$event['event_id']."';";
+   $sql = $wpdb->prepare("DELETE FROM $table_name WHERE event_id = %d",$event['event_id']);
    // also delete associated image
    $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
    eme_delete_image_files($image_basename);
-   if ($wpdb->query ( $sql )) {
+   if ($wpdb->query($sql)) {
       if (has_action('eme_delete_event_action')) do_action('eme_delete_event_action',$event);
    }
 }

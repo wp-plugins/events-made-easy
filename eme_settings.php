@@ -546,7 +546,7 @@ function eme_options_page() {
 <table class='form-table'>
    <?php
       eme_options_textarea (__('Form format','eme'),'eme_registration_form_format', __("The look and feel of the form for registrations. #_NAME, #_EMAIL and #_SEATS are obligated fields, if not present then the form will not be shown.",'eme')  .'<br/>'.__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme').'</a>');
-      eme_options_textarea (__('Cancel form format','eme'),'eme_cancel_form_format', __("The look and feel of the cancel form for registrations. #_NAME and #_EMAIL are obligated fields, if not present then the form will not be shown.", 'eme').'<br/>'.__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=44'>".__('the documentation', 'eme').'</a>');
+      eme_options_textarea (__('Cancel form format','eme'),'eme_cancel_form_format', __("The look and feel of the cancel form for registrations. #_NAME and #_EMAIL are obligated fields, if not present then the form will not be shown.", 'eme').'<br/>'.__('For more information about form fields, see ', 'eme')."<a target='_blank' href='http://www.e-dynamics.be/wordpress/?cat=5950'>".__('the documentation', 'eme').'</a>');
    ?>
 </table>
 
