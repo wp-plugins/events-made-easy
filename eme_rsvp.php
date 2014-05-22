@@ -1363,27 +1363,35 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
                 $replacement = $seats[$field_id];
          }
       } elseif (preg_match('/#_TOTALPRICE$/', $result)) {
-         $replacement = eme_get_total_booking_price($event,$booking);
+         $price = eme_get_total_booking_price($event,$booking);
+         $replacement = sprintf("%01.2f",$price);
       } elseif (preg_match('/#_BOOKINGPRICEPERSEAT$/', $result)) {
-         $replacement = eme_get_seat_booking_price($event,$booking);
+         $price = eme_get_seat_booking_price($event,$booking);
+         $replacement = sprintf("%01.2f",$price);
       } elseif (preg_match('/#_BOOKINGPRICEPERSEAT\{(\d+)\}/', $result, $matches)) {
          // total price to pay per price if multiprice
          $total_prices=eme_get_seat_booking_multiprice($event,$booking);
          $field_id = intval($matches[1])-1;
-         if (array_key_exists($field_id,$total_prices))
-            $replacement = $total_prices[$field_id];
+         if (array_key_exists($field_id,$total_prices)) {
+            $price = $total_prices[$field_id];
+            $replacement = sprintf("%01.2f",$price);
+         }
        } elseif (preg_match('/#_TOTALPRICE\{(\d+)\}/', $result, $matches)) {
          // total price to pay per price if multiprice
          $total_prices=eme_get_total_booking_multiprice($event,$booking);
          $field_id = intval($matches[1])-1;
-         if (array_key_exists($field_id,$total_prices))
-            $replacement = $total_prices[$field_id];
+         if (array_key_exists($field_id,$total_prices)) {
+            $price = $total_prices[$field_id];
+            $replacement = sprintf("%01.2f",$price);
+         }
        } elseif ($deprecated && preg_match('/#_TOTALPRICE(\d+)/', $result, $matches)) {
          // total price to pay per price if multiprice
          $total_prices=eme_get_total_booking_multiprice($event,$booking);
          $field_id = intval($matches[1])-1;
-         if (array_key_exists($field_id,$total_prices))
-            $replacement = $total_prices[$field_id];
+         if (array_key_exists($field_id,$total_prices)) {
+            $price = $total_prices[$field_id];
+            $replacement = sprintf("%01.2f",$price);
+         }
       } elseif (preg_match('/#_RESPSPACES$|#_SPACES$|#_BOOKEDSEATS$/', $result)) {
          $replacement = eme_get_multitotal($booking['booking_seats']);
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)/', $result)) {
