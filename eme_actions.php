@@ -111,6 +111,10 @@ function eme_actions_admin_init() {
       add_action('admin_notices', 'eme_explain_dbupdate_done');
    }
 
+   // make sure the captcha doesn't cause problems
+   if (get_option('eme_captcha_for_booking') && !function_exists('imagecreatetruecolor'))
+      update_option('eme_captcha_for_booking', 0);
+
    // flush the SEO rules if the event page has been changed
    eme_handle_get();
 }
@@ -128,6 +132,7 @@ if (get_option('eme_use_client_clock')) {
    if (!session_id()) add_action('init', 'session_start', 1);
    add_action('wp_enqueue_scripts', 'eme_client_clock_enqueue_scripts');
 }
+
 if (get_option('eme_captcha_for_booking')) {
    // the captcha needs a session
    if (!session_id()) add_action('init', 'session_start', 1);

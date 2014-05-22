@@ -361,6 +361,10 @@ function _eme_install() {
       update_option('eme_smtp_port', $smtp_port); 
    }
 
+   // make sure the captcha doesn't cause problems
+   if (!function_exists('imagecreatetruecolor'))
+      update_option('eme_captcha_for_booking', 0); 
+
    // always reset the drop data option
    update_option('eme_uninstall_drop_data', 0); 
    

@@ -1364,7 +1364,15 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          }
       } elseif (preg_match('/#_TOTALPRICE$/', $result)) {
          $replacement = eme_get_total_booking_price($event,$booking);
-      } elseif (preg_match('/#_TOTALPRICE\{(\d+)\}/', $result, $matches)) {
+      } elseif (preg_match('/#_BOOKINGPRICEPERSEAT$/', $result)) {
+         $replacement = eme_get_seat_booking_price($event,$booking);
+      } elseif (preg_match('/#_BOOKINGPRICEPERSEAT\{(\d+)\}/', $result, $matches)) {
+         // total price to pay per price if multiprice
+         $total_prices=eme_get_seat_booking_multiprice($event,$booking);
+         $field_id = intval($matches[1])-1;
+         if (array_key_exists($field_id,$total_prices))
+            $replacement = $total_prices[$field_id];
+       } elseif (preg_match('/#_TOTALPRICE\{(\d+)\}/', $result, $matches)) {
          // total price to pay per price if multiprice
          $total_prices=eme_get_total_booking_multiprice($event,$booking);
          $field_id = intval($matches[1])-1;
@@ -2647,6 +2655,24 @@ function eme_get_total_booking_price($event,$booking) {
    return $price;
 }
 
+function eme_get_seat_booking_price($event,$booking) {
+   $price=0;
+   $basic_price= eme_get_booking_price($event,$booking);
+
+   if (eme_is_multi($basic_price)) {
+      $prices=eme_convert_multi2array($basic_price);
+      $seats=eme_convert_multi2array($booking['booking_seats_mp']);
+      foreach ($prices as $key=>$val) {
+         $price += $val*$seats[$key];
+      }
+      $price /= $booking['booking_seats'];
+   } else {
+      $price = $basic_price;
+   }
+   return $price;
+}
+
+
 function eme_get_total_booking_multiprice($event,$booking) {
    $price=array();
    $basic_price= eme_get_booking_price($event,$booking);
@@ -2660,6 +2686,17 @@ function eme_get_total_booking_multiprice($event,$booking) {
    }
    return $price;
 }
+
+function eme_get_seat_booking_multiprice($event,$booking) {
+   $price=array();
+   $basic_price= eme_get_booking_price($event,$booking);
+
+   if (eme_is_multi($basic_price)) {
+      $price=eme_convert_multi2array($basic_price);
+   }
+   return $price;
+}
+
 
 function eme_is_event_rsvp ($event) {
    $rsvp_is_active = get_option('eme_rsvp_enabled');
