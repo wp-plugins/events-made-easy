@@ -67,6 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added placeholders #_12HSTARTTIME_NOLEADINGZERO and #_12HENDTIME_NOLEADINGZERO
 * Feature: added filter eme_eval_booking_filter, doing evaluations before the person is entered in the db. One parameter: $event. And $_POST can be used too of course.
 * Feature: added #_BOOKINGPRICEPERSEAT and #_BOOKINGPRICEPERSEAT{xx} rsvp placeholders, to return the end-price per booked seat (either normally or for multiprice for the indicated price category). The filter eme_insert_rsvp_action is taken into account, so the end-price includes anything you do with it (including discounts)
+* Feature: subjects of mails being send to bookers is now also customizable and multi-lang ready
 * Improvement: a little more polite bad-boy message
 * Improvement: renamed an eme option, no big deal
 * Improvement: all RSVP prices are now showing as floating point, with 2 digits behind the "."
