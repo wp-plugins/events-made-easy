@@ -54,7 +54,7 @@ function eme_options_textarea($title, $name, $description) {
    ?>
    <tr valign="top" id='<?php echo $name;?>_row'>
       <th scope="row"><?php _e($title,'eme')?></th>
-         <td><textarea name="<?php echo $name ?>" id="<?php echo $name ?>" rows="6" cols="60"><?php echo eme_sanitize_html(get_option($name));?></textarea><br />
+         <td><textarea name="<?php echo $name ?>" id="<?php echo $name ?>" rows="6" style="width: 95%"><?php echo eme_sanitize_html(get_option($name));?></textarea><br />
             <?php echo $description; ?></td>
       </tr>
    <?php
