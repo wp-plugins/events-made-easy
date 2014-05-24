@@ -686,7 +686,7 @@ function eme_options_page() {
 <h3><?php _e ( 'Images size', 'eme' ); ?></h3>
 <table class='form-table'>
    <?php
-   eme_options_select ( __('Thumbnail size','eme'), 'eme_thumbnail_size', eme_thumbnail_sizes(), __('Choose thumbnail size to be shown when placeholders involging thumbnails like e.g. #_EVENTIMAGETHUMB, #_LOCATIONIMAGETHUMB ...','eme') );
+   eme_options_select ( __('Thumbnail size','eme'), 'eme_thumbnail_size', eme_thumbnail_sizes(), __('Choose the default thumbnail size to be shown when using placeholders involving thumbnails like e.g. #_EVENTIMAGETHUMB, #_LOCATIONIMAGETHUMB, ...','eme') );
    ?>
 </table>
 
