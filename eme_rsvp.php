@@ -844,6 +844,17 @@ function eme_get_answercolumns($booking_ids) {
    return $wpdb->get_results($sql, ARRAY_A);
 }
 
+function eme_delete_all_bookings_for_event_id($event_id) {
+   global $wpdb;
+   $answers_table = $wpdb->prefix.ANSWERS_TBNAME;
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   $sql = $wpdb->prepare("DELETE FROM $answers_table WHERE booking_id IN (SELECT booking_id from $bookings_table WHERE event_id = %d)",$event_id);
+   $wpdb->query($sql);
+   $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE event_id = %d",$event_id);
+   $wpdb->query($sql);
+   return 1;
+}
+
 function eme_delete_all_bookings_for_person_id($person_id) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME;
@@ -865,13 +876,6 @@ function eme_transfer_all_bookings($person_id,$to_person_id) {
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
    return $wpdb->update($bookings_table, $fields, $where);
-}
-
-function eme_delete_booking_by_person_event_id($person_id,$event_id) {
-   global $wpdb;
-   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE person_id = %d AND event_id= %d",$person_id,$event_id);
-   return $wpdb->query($sql);
 }
 
 function eme_delete_booking($booking_id) {

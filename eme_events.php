@@ -4075,6 +4075,7 @@ function eme_db_delete_event($event) {
    $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
    eme_delete_image_files($image_basename);
    if ($wpdb->query($sql)) {
+      eme_delete_all_bookings_for_event_id($event['event_id']);
       if (has_action('eme_delete_event_action')) do_action('eme_delete_event_action',$event);
    }
 }
