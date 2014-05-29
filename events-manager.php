@@ -1142,6 +1142,19 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
    // #_LOCATION, part of #_LOCATIONPAGEURL would get replaced as well ...
    usort($placeholders[0],'sort_stringlenth');
 
+   // if the add and remove booking form appear on the same page, we need to decide which form shows the "message" upon booking
+   // the first one wins
+   $a1=strpos($format,"ADDBOOKINGFORM");
+   $a2=strpos($format,"REMOVEBOOKINGFORM");
+   $show_message_on_add=1;
+   $show_message_on_remove=1;
+   if ($a1!==false && $a2!==false) {
+      if ($a1<$a2)
+         $show_message_on_remove=0;
+      else
+         $show_message_on_add=0;
+   }
+
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
@@ -1229,7 +1242,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             if ($booking_id_done && eme_event_needs_payment($event))
                $replacement = eme_payment_form($event,$booking_id_done);
             else
-               $replacement = eme_add_booking_form($event['event_id']);
+               $replacement = eme_add_booking_form($event['event_id'],$show_message_on_add);
          }
 
       } elseif ($event && preg_match('/#_ADDBOOKINGFORM_IF_NOT_REGISTERED/', $result)) {
@@ -1240,7 +1253,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             if ($booking_id_done && eme_event_needs_payment($event))
                $replacement = eme_payment_form($event,$booking_id_done);
             elseif (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
-               $replacement = eme_add_booking_form($event['event_id']);
+               $replacement = eme_add_booking_form($event['event_id'],$show_message_on_add);
          }
 
       } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM$/', $result)) {
@@ -1251,7 +1264,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             if ($booking_id_done && eme_event_needs_payment($event))
                $replacement = "";
             else
-               $replacement = eme_delete_booking_form($event['event_id']);
+               $replacement = eme_delete_booking_form($event['event_id'],$show_message_on_remove);
          }
 
       } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM_IF_REGISTERED/', $result)) {
@@ -1262,7 +1275,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             if ($booking_id_done && eme_event_needs_payment($event))
                $replacement = "";
             elseif (eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
-               $replacement = eme_delete_booking_form($event['event_id']);
+               $replacement = eme_delete_booking_form($event['event_id'],$show_message_on_remove);
          }
 
       } elseif ($event && preg_match('/#_(AVAILABLESPACES|AVAILABLESEATS)$/', $result)) {

@@ -58,7 +58,8 @@ function eme_payment_form($event,$booking_id,$form_result_message) {
    return $ret_string;
 }
 
-function eme_add_booking_form($event_id) {
+function eme_add_booking_form($event_id,$show_message=1) {
+   $form_result_message = "";
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
    if (!eme_is_event_rsvp($event)) {
@@ -146,8 +147,6 @@ function eme_add_booking_form($event_id) {
          // due to the double POST javascript, the eme_message is escaped again, so we need stripslashes
          // but the message may contain html, so no html sanitize
          $form_result_message = eme_translate(stripslashes_deep($_POST['eme_message']));
-         // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
-         unset($_POST['eme_message']);
          return eme_payment_form($event,$booking_id,$form_result_message);
       }
    }
@@ -155,12 +154,10 @@ function eme_add_booking_form($event_id) {
       // due to the double POST javascript, the eme_message is escaped again, so we need stripslashes
       // but the message may contain html, so no html sanitize
       $form_result_message = eme_translate(stripslashes_deep($_POST['eme_message']));
-      // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
-      unset($_POST['eme_message']);
    }
 
    $ret_string = "<div id='eme-rsvp-message'>";
-   if(!empty($form_result_message))
+   if($show_message && !empty($form_result_message))
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
@@ -219,10 +216,11 @@ function eme_attendee_list_shortcode($atts) {
       return eme_get_attendees_list_for($event,$template_id,$template_id_header,$template_id_footer);
 }
 
-function eme_delete_booking_form($event_id) {
+function eme_delete_booking_form($event_id,$show_message=1) {
    global $current_user;
    
    $form_html = "";
+   $form_result_message = "";
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
    if (!eme_is_event_rsvp($event)) {
@@ -279,8 +277,6 @@ function eme_delete_booking_form($event_id) {
    }
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
       $form_result_message = eme_sanitize_html($_POST['eme_message']);
-      // when the add and delete forms are shown on the same page, the message would also be shown twice, this prevents that
-      unset($_POST['eme_message']);
    }
 
    $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
@@ -291,7 +287,7 @@ function eme_delete_booking_form($event_id) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
-   if(!empty($form_result_message)) {
+   if($show_message && !empty($form_result_message)) {
       $form_html = "<div id='eme-rsvp-message'>";
       $form_html .= "<div class='eme-rsvp-message'>$form_result_message</div>";
       $form_html .= "</div>";
