@@ -200,8 +200,16 @@ function eme_templates_edit_layout($message = "") {
 function eme_get_templates() {
    global $wpdb;
    $templates_table = $wpdb->prefix.TEMPLATES_TBNAME;
-   $templates = array();
    return $wpdb->get_results("SELECT id,description FROM $templates_table", ARRAY_A);
+}
+
+function eme_get_templates_array_by_id() {
+   $templates = eme_get_templates();
+   $templates_by_id=array();
+   foreach ($templates as $template) {
+      $templates_by_id[$template['id']]=$template['description'];
+   }
+   return $templates_by_id;
 }
 
 function eme_get_template($template_id) { 
@@ -209,8 +217,7 @@ function eme_get_template($template_id) {
    $template_id = intval($template_id);
    $templates_table = $wpdb->prefix.TEMPLATES_TBNAME;
    $sql = "SELECT * FROM $templates_table WHERE id ='$template_id'";   
-   $template = $wpdb->get_row($sql, ARRAY_A);
-   return $template;
+   return $wpdb->get_row($sql, ARRAY_A);
 }
 
 ?>

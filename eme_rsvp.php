@@ -2016,9 +2016,21 @@ function eme_send_mails_page() {
 
    $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
    $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
-   $message = isset($_POST ['message']) ? $_POST ['message'] : '';
-   $subject = isset($_POST ['subject']) ? $_POST ['subject'] : '';
    $onchange = isset($_POST ['onchange']) ? intval($_POST ['onchange']) : 0;
+
+   if (isset($_POST ['message']) && !empty($_POST ['message']))
+      $message = $_POST ['message'];
+   elseif (isset($_POST ['message_template']) && intval($_POST ['message_template'])>0)
+      $message = eme_get_template(intval($_POST ['message_template']));
+   else
+      $message = "";
+
+   if (isset($_POST ['subject']) && !empty($_POST ['subject']))
+      $subject = $_POST ['subject'];
+   elseif (isset($_POST ['subject_template']) && intval($_POST ['subject_template'])>0)
+      $subject = eme_get_template(intval($_POST ['subject_template']));
+   else
+      $subject = "";
 
    if (!$onchange && $event_id>0 && $action == 'send_mail') {
       $pending_approved = isset($_POST ['pending_approved']) ? $_POST ['pending_approved'] : 0;
@@ -2096,6 +2108,9 @@ function eme_send_mail_form($event_id=0) {
    $all_events=eme_get_events(0,"future");
    $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
    $current_userid=get_current_user_id();
+   $templates_array=eme_get_templates_array_by_id();
+   $templates_array[0]='';
+   ksort($templates_array);
    echo "<option value='0' >".__('Select the event','eme')."</option>";
    foreach ( $all_events as $event ) {
       $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")";
@@ -2140,12 +2155,15 @@ function eme_send_mail_form($event_id=0) {
       </tr>
       </table>
 	   <div id="titlediv" class="form-field form-required"><p>
-		   <label><?php _e('Subject','eme'); ?></label><br>
-         <?php eme_ui_select(0,'subject_template',eme_get_templates()); ?><br>
-		   <input type="text" name="subject" value="" /></p>
+      <b><?php _e('Subject','eme'); ?></b><br>
+      <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'subject_template',$templates_array); ?><br>
+      <?php _e('Or enter your own: ','eme');?>
+      <input type="text" name="subject" value="" /></p>
 	   </div>
 	   <div class="form-field form-required"><p>
-	   <label><?php _e('Message','eme'); ?></label><br>
+	   <b><?php _e('Message','eme'); ?></b><br>
+      <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'message_template',$templates_array); ?><br>
+      <?php _e('Or enter your own: ','eme');?>
 	   <textarea name="message" value="" rows=10></textarea> </p>
 	   </div>
 	   <div>
