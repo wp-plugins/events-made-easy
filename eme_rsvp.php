@@ -2157,13 +2157,13 @@ function eme_send_mail_form($event_id=0) {
 	   <div id="titlediv" class="form-field form-required"><p>
       <b><?php _e('Subject','eme'); ?></b><br>
       <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'subject_template',$templates_array); ?><br>
-      <?php _e('Or enter your own (this takes precedence): ','eme');?>
+      <?php _e('Or enter your own (if anything is entered here, this takes precedence): ','eme');?>
       <input type="text" name="subject" value="" /></p>
 	   </div>
 	   <div class="form-field form-required"><p>
 	   <b><?php _e('Message','eme'); ?></b><br>
       <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'message_template',$templates_array); ?><br>
-      <?php _e('Or enter your own (this takes precedence): ','eme');?>
+      <?php _e('Or enter your own (if anything is entered here, this takes precedence): ','eme');?>
 	   <textarea name="message" value="" rows=10></textarea> </p>
 	   </div>
 	   <div>
