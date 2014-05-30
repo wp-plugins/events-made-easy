@@ -73,6 +73,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: renamed an eme option, no big deal
 * Improvement: all RSVP prices are now showing as floating point, with 2 digits behind the "."
 * Bugfix: removing a person and his booking info left orphaned answers, cleaning those now
+* Bugfix: when using the #_PAYMENT_URL in an email, all works ok but a php warning was shown (third variable for a function not initialized). Fixed
 
 = 1.4.3 =
 * Bugfix: the filter eme_eval_booking_form_filter was called too early, causing the second argument to be empty

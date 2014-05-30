@@ -1,6 +1,6 @@
 <?php
 
-function eme_payment_form($event,$booking_id,$form_result_message) {
+function eme_payment_form($event,$booking_id,$form_result_message="") {
 
    $ret_string = "<div id='eme-rsvp-message'>";
    if(!empty($form_result_message))
