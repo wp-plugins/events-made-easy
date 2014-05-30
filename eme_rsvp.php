@@ -2018,8 +2018,9 @@ function eme_send_mails_page() {
    $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
    $message = isset($_POST ['message']) ? $_POST ['message'] : '';
    $subject = isset($_POST ['subject']) ? $_POST ['subject'] : '';
+   $onchange = isset($_POST ['onchange']) ? intval($_POST ['onchange']) : 0;
 
-   if ($event_id>0 && $action == 'send_mail') {
+   if (!$onchange && $event_id>0 && $action == 'send_mail') {
       $pending_approved = isset($_POST ['pending_approved']) ? $_POST ['pending_approved'] : 0;
       $only_unpayed = isset($_POST ['only_unpayed']) ? $_POST ['only_unpayed'] : 0;
       $target = isset($_POST ['target']) ? $_POST ['target'] : 'attendees';
@@ -2089,22 +2090,23 @@ function eme_send_mail_form($event_id=0) {
    <form id='send-mail' name='send-mail' action="" method="post">
    <input type='hidden' name='page' value='eme-send-mails' />
    <input type='hidden' name='eme_admin_action' value='send_mail' />
-   <select name="event_id" onchange="this.form.submit()">
+   <input type='hidden' id='onchange' name='onchange' value='0' />
+   <select name="event_id" onchange="document.getElementById('onchange').value='1';this.form.submit();">
    <?php
    $all_events=eme_get_events(0,"future");
    $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
    $current_userid=get_current_user_id();
-   echo "<option value='0' >".__('Select the event','eme')."</option>  ";
+   echo "<option value='0' >".__('Select the event','eme')."</option>";
    foreach ( $all_events as $event ) {
-         $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")";
-	 if ($event['event_rsvp'] && current_user_can( get_option('eme_cap_send_other_mails')) ||
-			 (current_user_can( get_option('eme_cap_send_mails')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {  
-		 if ($event['event_id'] == $event_id) {
-			 echo "<option selected='selected' value='".$event['event_id']."' >".$option_text."</option>  ";
-		 } else {
-			 echo "<option value='".$event['event_id']."' >".$option_text."</option>  ";
-		 }
-	 }
+      $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")";
+      if ($event['event_rsvp'] && current_user_can( get_option('eme_cap_send_other_mails')) ||
+            (current_user_can( get_option('eme_cap_send_mails')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {  
+         if ($event['event_id'] == $event_id) {
+            echo "<option selected='selected' value='".$event['event_id']."' >".$option_text."</option>  ";
+         } else {
+            echo "<option value='".$event['event_id']."' >".$option_text."</option>  ";
+         }
+      }
    }
    ?>
    </select>
@@ -2139,6 +2141,7 @@ function eme_send_mail_form($event_id=0) {
       </table>
 	   <div id="titlediv" class="form-field form-required"><p>
 		   <label><?php _e('Subject','eme'); ?></label><br>
+         <?php eme_ui_select(0,'subject_template',eme_get_templates()); ?><br>
 		   <input type="text" name="subject" value="" /></p>
 	   </div>
 	   <div class="form-field form-required"><p>

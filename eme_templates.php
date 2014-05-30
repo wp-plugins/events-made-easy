@@ -29,16 +29,10 @@ function eme_templates_page() {
          // Delete template or multiple
          $templates = $_POST['templates'];
          if (is_array($templates)) {
-            //Make sure the array is only numbers
-            foreach ($templates as $template_id) {
-               if (is_numeric($template_id)) {
-                  $templates[] = "id = $template_id";
-               }
-            }
             //Run the query if we have an array of template ids
             if (count($templates > 0)) {
-               $validation_result = $wpdb->query( "DELETE FROM $templates_table WHERE ". implode(" OR ", $templates) );
-               if (is_numeric($validation_result) )
+               $validation_result = $wpdb->query( "DELETE FROM $templates_table WHERE id IN (". implode(",",$templates) .")" );
+               if ($validation_result !== false )
                   $message = __("Successfully deleted the template(s).","eme");
             } else {
                $validation_result = false;
@@ -49,8 +43,7 @@ function eme_templates_page() {
             $message = __("Couldn't delete the templates. Incorrect template IDs supplied. Please try again.","eme");
          }
       }
-      //die(print_r($_POST));
-      if (is_numeric($validation_result) ) {
+      if ($validation_result !== false ) {
          $message = (isset($message)) ? $message : __("Successfully {$_POST['eme_admin_action']}ed template", "eme");
          eme_templates_table_layout($message);
       } elseif ( $validation_result === false ) {
@@ -208,7 +201,7 @@ function eme_get_templates() {
    global $wpdb;
    $templates_table = $wpdb->prefix.TEMPLATES_TBNAME;
    $templates = array();
-   return $wpdb->get_results("SELECT * FROM $templates_table", ARRAY_A);
+   return $wpdb->get_results("SELECT id,description FROM $templates_table", ARRAY_A);
 }
 
 function eme_get_template($template_id) { 

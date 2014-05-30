@@ -27,16 +27,10 @@ function eme_categories_page() {
          // Delete category or multiple
          $categories = $_POST['categories'];
          if (is_array($categories)) {
-            //Make sure the array is only numbers
-            foreach ($categories as $cat_id) {
-               if (is_numeric($cat_id)) {
-                  $cats[] = "category_id = $cat_id";
-               }
-            }
             //Run the query if we have an array of category ids
             if (count($cats > 0)) {
-               $validation_result = $wpdb->query( "DELETE FROM $categories_table WHERE ". implode(" OR ", $cats) );
-               if (is_numeric($validation_result))
+               $validation_result = $wpdb->query( "DELETE FROM $categories_table WHERE category_id IN ( ". implode(",", $cats) .")" );
+               if ($validation_result !== false)
                   $message = __("Successfully deleted the selected categories.","eme");
             } else {
                $validation_result = false;
@@ -47,8 +41,7 @@ function eme_categories_page() {
             $message = __("Couldn't delete the categories. Incorrect category IDs supplied. Please try again.","eme");
          }
       }
-      //die(print_r($_POST));
-      if (is_numeric($validation_result) ) {
+      if ($validation_result !== false ) {
          $message = (isset($message)) ? $message : __("Successfully {$_POST['eme_admin_action']}ed category", "eme");
          eme_categories_table_layout($message);
       } elseif ( $validation_result === false ) {
@@ -218,7 +211,7 @@ function eme_get_categories($eventful=false,$scope="future",$extra_conditions=""
          $event_cats=join(",",$categories);
          if ($extra_conditions !="")
             $extra_conditions = " AND ($extra_conditions)";
-         $result = $wpdb->get_results("SELECT * FROM $categories_table where category_id in ($event_cats) $extra_conditions $orderby", ARRAY_A);
+         $result = $wpdb->get_results("SELECT * FROM $categories_table WHERE category_id IN ($event_cats) $extra_conditions $orderby", ARRAY_A);
       }
    } else {
       if ($extra_conditions !="")
