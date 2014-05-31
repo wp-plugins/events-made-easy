@@ -909,17 +909,14 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    $eme_format_footer="";
 
    if ($template_id) {
-      $format_arr = eme_get_template($template_id);
-      $format=$format_arr['format'];
+      $format = eme_get_template_format($template_id);
    }
    if ($template_id_header) {
-      $format_arr = eme_get_template($template_id_header);
-      $format_header = $format_arr['format'];
+      $format_header = eme_get_template_format($template_id_header);
       $eme_format_header=eme_replace_placeholders($format_header);
    }
    if ($template_id_footer) {
-      $format_arr = eme_get_template($template_id_footer);
-      $format_footer = $format_arr['format'];
+      $format_footer = eme_get_template_format($template_id_footer);
       $eme_format_footer=eme_replace_placeholders($format_footer);
    }
    if (empty($format)) {
@@ -1246,8 +1243,7 @@ function eme_get_events_list_shortcode($atts) {
 function eme_display_single_event($event_id,$template_id=0) {
    $event = eme_get_event ( intval($event_id) );
    if ($template_id) {
-      $format_arr = eme_get_template($template_id);
-      $single_event_format=$format_arr['format'];
+      $single_event_format= eme_get_template_format($template_id);
    } else {
       $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
    }

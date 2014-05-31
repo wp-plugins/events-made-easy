@@ -220,4 +220,12 @@ function eme_get_template($template_id) {
    return $wpdb->get_row($sql, ARRAY_A);
 }
 
+function eme_get_template_format($template_id) { 
+   global $wpdb;
+   $template_id = intval($template_id);
+   $templates_table = $wpdb->prefix.TEMPLATES_TBNAME;
+   $sql = "SELECT format FROM $templates_table WHERE id ='$template_id'";   
+   return $wpdb->get_col($sql);
+}
+
 ?>

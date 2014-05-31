@@ -8,8 +8,7 @@ function eme_filter_form_shortcode($atts) {
    $multiple = ($multiple==="false" || $multiple==="0") ? false : $multiple;
 
    if ($template_id) {
-      $format_arr = eme_get_template($template_id);
-      $filter_form_format=$format_arr['format'];
+      $filter_form_format= eme_get_template_format($template_id);
    } else {
       $filter_form_format = get_option('eme_filter_form_format');
    }

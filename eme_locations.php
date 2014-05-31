@@ -945,8 +945,7 @@ function eme_single_location_map_shortcode($atts){
 function eme_display_single_location($location_id,$template_id=0) {
    $location = eme_get_location( intval($location_id) );
    if ($template_id) {
-      $format_arr = eme_get_template($template_id);
-      $single_location_format=$format_arr['format'];
+      $single_location_format= eme_get_template_format($template_id);
    } else {
       $single_location_format = get_option('eme_location_list_format_item');
    }
@@ -982,17 +981,14 @@ function eme_get_locations_shortcode($atts) {
    $eme_format_footer="";
 
    if ($template_id) {
-      $format_arr = eme_get_template($template_id);
-      $format=$format_arr['format'];
+      $format = eme_get_template_format($template_id);
    }
    if ($template_id_header) {
-      $format_arr = eme_get_template($template_id_header);
-      $format_header = $format_arr['format'];
+      $format_header = eme_get_template_format($template_id_header);
       $eme_format_header=eme_replace_locations_placeholders($format_header);
    }
    if ($template_id_footer) {
-      $format_arr = eme_get_template($template_id_footer);
-      $format_footer = $format_arr['format'];
+      $format_footer = eme_get_template_format($template_id_footer);
       $eme_format_footer=eme_replace_locations_placeholders($format_footer);
    }
    if (empty($format)) {

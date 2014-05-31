@@ -1248,19 +1248,16 @@ function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,
    }
    
    if ($template_id) {
-      $format_arr = eme_get_template($template_id);
-      $format=$format_arr['format'];
+      $format = eme_get_template_format($template_id);
    }
 
    // header and footer can't contain per booking info, so we don't replace booking placeholders there
    if ($template_id_header) {
-      $format_arr = eme_get_template($template_id_header);
-      $format_header = $format_arr['format'];
+      $format_header = eme_get_template_format($template_id_header);
       $eme_format_header=eme_replace_placeholders($format_header, $event);
    }
    if ($template_id_footer) {
-      $format_arr = eme_get_template($template_id_footer);
-      $format_footer = $format_arr['format'];
+      $format_footer = eme_get_template_format($template_id_footer);
       $eme_format_footer=eme_replace_placeholders($format_footer, $event);
    }
 
@@ -1291,19 +1288,16 @@ function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$
    }
    
    if ($template_id) {
-      $format_arr = eme_get_template($template_id);
-      $format=$format_arr['format'];
+      $format = eme_get_template_format($template_id);
    }
 
    // header and footer can't contain per booking info, so we don't replace booking placeholders there
    if ($template_id_header) {
-      $format_arr = eme_get_template($template_id_header);
-      $format_header = $format_arr['format'];
+      $format_header = eme_get_template_format($template_id_header);
       $eme_format_header=eme_replace_placeholders($format_header, $event);
    }
    if ($template_id_footer) {
-      $format_arr = eme_get_template($template_id_footer);
-      $format_footer = $format_arr['format'];
+      $format_footer = eme_get_template_format($template_id_footer);
       $eme_format_footer=eme_replace_placeholders($format_footer, $event);
    }
 
@@ -2021,14 +2015,14 @@ function eme_send_mails_page() {
    if (isset($_POST ['message']) && !empty($_POST ['message']))
       $message = $_POST ['message'];
    elseif (isset($_POST ['message_template']) && intval($_POST ['message_template'])>0)
-      $message = eme_get_template(intval($_POST ['message_template']));
+      $message = eme_get_template_format(intval($_POST ['message_template']));
    else
       $message = "";
 
    if (isset($_POST ['subject']) && !empty($_POST ['subject']))
       $subject = $_POST ['subject'];
    elseif (isset($_POST ['subject_template']) && intval($_POST ['subject_template'])>0)
-      $subject = eme_get_template(intval($_POST ['subject_template']));
+      $subject = eme_get_template_format(intval($_POST ['subject_template']));
    else
       $subject = "";
 
