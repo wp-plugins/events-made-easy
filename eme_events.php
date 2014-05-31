@@ -62,10 +62,10 @@ function eme_init_event_props($props) {
    if (!isset($props['max_allowed']))
       $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
 
-   $template_override=array('event_page_title_format','event_single_event_format','event_contactperson_email_body','event_registration_recorded_ok_html','event_respondent_email_body','event_registration_pending_email_body','event_registration_updated_email_body','event_registration_form_format','event_cancel_form_format');
+   $template_override=array('event_page_title_format_tpl','event_single_event_format_tpl','event_contactperson_email_body_tpl','event_registration_recorded_ok_html_tpl','event_respondent_email_body_tpl','event_registration_pending_email_body_tpl','event_registration_updated_email_body_tpl','event_registration_form_format_tpl','event_cancel_form_format_tpl');
    foreach ($template_override as $template) {
       if (!isset($props[$template]))
-         $props[$template]="";
+         $props[$template]=0;
    }
 
    return $props;
@@ -622,7 +622,12 @@ function eme_events_page_content() {
       // single event page
       $event_ID = intval(get_query_var('event_id'));
       $event = eme_get_event ( $event_ID );
-      $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+      if (!empty($event['event_single_event_format']))
+         $single_event_format = $event['event_single_event_format'];
+      elseif ($event['event_properties']['event_single_event_format_tpl']>0)
+         $single_event_format = eme_get_template_format($event['event_properties']['event_single_event_format_tpl']);
+      else
+         $single_event_format = get_option('eme_single_event_format' );
       //$page_body = eme_replace_placeholders ( $single_event_format, $event, 'stop' );
       if (count($event) > 0 && ($event['event_status'] == STATUS_PRIVATE && is_user_logged_in() || $event['event_status'] != STATUS_PRIVATE))
          $page_body = eme_replace_placeholders ( $single_event_format, $event );
@@ -649,7 +654,12 @@ function eme_events_page_content() {
             //Add headers and footers to the events list
             $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
          } else {
-            $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+            if (!empty($event['event_single_event_format']))
+               $single_event_format = $event['event_single_event_format'];
+            elseif ($event['event_properties']['event_single_event_format_tpl']>0)
+               $single_event_format = eme_get_template_format($event['event_properties']['event_single_event_format_tpl']);
+            else
+               $single_event_format = get_option('eme_single_event_format' );
             $page_body = eme_replace_placeholders ( $single_event_format, $event );
          }
       }
@@ -742,7 +752,12 @@ function eme_page_title($data) {
          if ($events_N == 1) {
             $events = eme_get_events ( 0, eme_sanitize_request(get_query_var('calendar_day')));
             $event = $events[0];
-            $stored_page_title_format = ( $event['event_page_title_format'] != '' ) ? $event['event_page_title_format'] : get_option('eme_event_page_title_format' );
+            if (!empty($event['event_page_title_format']))
+               $stored_page_title_format = $event['event_page_title_format'];
+            elseif ($event['event_properties']['event_page_title_format_tpl']>0)
+               $stored_page_title_format = eme_get_template_format($event['event_properties']['event_page_title_format_tpl']);
+            else
+               $stored_page_title_format = get_option('eme_event_page_title_format' );
             $page_title = eme_replace_placeholders ( $stored_page_title_format, $event );
             return $page_title;
          }
@@ -752,11 +767,12 @@ function eme_page_title($data) {
          // single event page
          $event_ID = intval(get_query_var('event_id'));
          $event = eme_get_event ( $event_ID );
-         if (isset( $event['event_page_title_format']) && ( $event['event_page_title_format'] != '' )) {
+         if (!empty($event['event_page_title_format']))
             $stored_page_title_format = $event['event_page_title_format'];
-         } else {
+         elseif ($event['event_properties']['event_page_title_format_tpl']>0)
+            $stored_page_title_format = eme_get_template_format($event['event_properties']['event_page_title_format_tpl']);
+         else
             $stored_page_title_format = get_option('eme_event_page_title_format' );
-         }
          $page_title = eme_replace_placeholders ( $stored_page_title_format, $event );
          return $page_title;
       } elseif (eme_is_single_location_page()) {
@@ -1252,7 +1268,12 @@ function eme_display_single_event($event_id,$template_id=0) {
    if ($template_id) {
       $single_event_format= eme_get_template_format($template_id);
    } else {
-      $single_event_format = ( $event['event_single_event_format'] != '' ) ? $event['event_single_event_format'] : get_option('eme_single_event_format' );
+      if (!empty($event['event_single_event_format']))
+         $single_event_format = $event['event_single_event_format'];
+      elseif ($event['event_properties']['event_single_event_format_tpl']>0)
+         $single_event_format = eme_get_template_format($event['event_properties']['event_single_event_format_tpl']);
+      else
+         $single_event_format = get_option('eme_single_event_format' );
    }
    $page_body = eme_replace_placeholders ($single_event_format, $event);
    return $page_body;
@@ -2589,23 +2610,23 @@ function eme_event_form($event, $title, $element) {
                <?php 
                $screens = array( 'events_page_eme-new_event', 'toplevel_page_events-manager' );
                foreach ($screens as $screen) {
-                  if ($event['event_page_title_format']=="")
+                  if ($event['event_page_title_format']=="" && $event['event_properties']['event_page_title_format_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_page_title_format','eme_closed');
-                  if ($event['event_single_event_format']=="")
+                  if ($event['event_single_event_format']=="" && $event['event_properties']['event_single_event_format_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_single_event_format','eme_closed');
-                  if ($event['event_contactperson_email_body']=="")
+                  if ($event['event_contactperson_email_body']=="" && $event['event_properties']['event_contactperson_email_body_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_contactperson_email_body','eme_closed');
-                  if ($event['event_registration_recorded_ok_html']=="")
+                  if ($event['event_registration_recorded_ok_html']=="" && $event['event_properties']['event_registration_recorded_ok_html_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_recorded_ok_html','eme_closed');
-                  if ($event['event_respondent_email_body']=="")
+                  if ($event['event_respondent_email_body']=="" && $event['event_properties']['event_respondent_email_body_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_respondent_email_body','eme_closed');
-                  if ($event['event_registration_pending_email_body']=="")
+                  if ($event['event_registration_pending_email_body']=="" && $event['event_properties']['event_registration_pending_email_body_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_pending_email_body','eme_closed');
-                  if ($event['event_registration_updated_email_body']=="")
+                  if ($event['event_registration_updated_email_body']=="" && $event['event_properties']['event_registration_updated_email_body_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_updated_email_body','eme_closed');
-                  if ($event['event_registration_form_format']=="")
+                  if ($event['event_registration_form_format']=="" && $event['event_properties']['event_registration_form_format_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_registration_form_format','eme_closed');
-                  if ($event['event_cancel_form_format']=="")
+                  if ($event['event_cancel_form_format']=="" && $event['event_properties']['event_cancel_form_format_tpl']==0)
                      add_filter('postbox_classes_'.$screen.'_div_event_cancel_form_format','eme_closed');
                }
 
@@ -3231,7 +3252,7 @@ function eme_meta_box_div_recurrence_date($event){
 
 function eme_meta_box_div_event_page_title_format($event) {
 ?>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_page_title_format'],'eme_prop_event_page_title_format',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_page_title_format_tpl'],'eme_prop_event_page_title_format_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_page_title_format" id="event_page_title_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_page_title_format']);?></textarea>
    <br />
@@ -3270,7 +3291,7 @@ function eme_meta_box_div_event_single_event_format($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_single_event_format'],'eme_prop_event_single_event_format',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_single_event_format_tpl'],'eme_prop_event_single_event_format_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_single_event_format" id="event_single_event_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_single_event_format']);?></textarea>
 <?php
@@ -3282,7 +3303,7 @@ function eme_meta_box_div_event_contactperson_email_body($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_contactperson_email_body'],'eme_prop_event_contactperson_email_body',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_contactperson_email_body_tpl'],'eme_prop_event_contactperson_email_body_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_contactperson_email_body" id="event_contactperson_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_contactperson_email_body']);?></textarea>
 <?php
@@ -3294,7 +3315,7 @@ function eme_meta_box_div_event_registration_recorded_ok_html($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_recorded_ok_html'],'eme_prop_event_registration_recorded_ok_html',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_recorded_ok_html_tpl'],'eme_prop_event_registration_recorded_ok_html_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
 <?php
@@ -3306,7 +3327,7 @@ function eme_meta_box_div_event_respondent_email_body($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_respondent_email_body'],'eme_prop_event_respondent_email_body',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_respondent_email_body_tpl'],'eme_prop_event_respondent_email_body_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_respondent_email_body" id="event_respondent_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_respondent_email_body']);?></textarea>
 <?php
@@ -3318,7 +3339,7 @@ function eme_meta_box_div_event_registration_pending_email_body($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_pending_email_body'],'eme_prop_event_registration_pending_email_body',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_pending_email_body_tpl'],'eme_prop_event_registration_pending_email_body_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_registration_pending_email_body" id="event_registration_pending_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_pending_email_body']);?></textarea>
 <?php
@@ -3330,7 +3351,7 @@ function eme_meta_box_div_event_registration_updated_email_body($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_updated_email_body'],'eme_prop_event_registration_updated_email_body',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_updated_email_body_tpl'],'eme_prop_event_registration_updated_email_body_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_registration_updated_email_body" id="event_registration_updated_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_updated_email_body']);?></textarea>
 <?php
@@ -3342,7 +3363,7 @@ function eme_meta_box_div_event_registration_form_format($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_form_format'],'eme_prop_event_registration_form_format',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_form_format_tpl'],'eme_prop_event_registration_form_format_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
 <?php
@@ -3354,7 +3375,7 @@ function eme_meta_box_div_event_cancel_form_format($event) {
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
-   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_cancel_form_format'],'eme_prop_event_cancel_form_format',$event['templates_array']); ?><br>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_cancel_form_format_tpl'],'eme_prop_event_cancel_form_format_tpl',$event['templates_array']); ?><br>
    <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_cancel_form_format" id="event_cancel_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_cancel_form_format']);?></textarea>
 <?php
