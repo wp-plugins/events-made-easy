@@ -6,26 +6,32 @@ function eme_templates_page() {
    if (!current_user_can( get_option('eme_cap_templates')) && (isset($_GET['eme_admin_action']) || isset($_POST['eme_admin_action']))) {
       $message = __('You have no right to update templates!','eme');
       eme_templates_table_layout($message);
-   } elseif (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edittemplate") { 
+      return;
+   }
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edittemplate") { 
       // edit template  
       eme_templates_edit_layout();
-   } else {
+      return;
+   }
+
+   $validation_result = '';
+   $message = '';
+   if (isset($_POST['eme_admin_action'])) {
       // Insert/Update/Delete Record
       $templates_table = $wpdb->prefix.TEMPLATES_TBNAME;
-      $validation_result = '';
-      if (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "edit" ) {
+      if ($_POST['eme_admin_action'] == "edit" ) {
          // template update required  
          $template = array();
          $template['format'] = trim(stripslashes($_POST['format']));
          $template['description'] = trim(stripslashes($_POST['description']));
          $validation_result = $wpdb->update( $templates_table, $template, array('id' => intval($_POST['template_ID'])) );
-      } elseif ( isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "add" ) {
+      } elseif ($_POST['eme_admin_action'] == "add" ) {
          // Add a new template
          $template = array();
          $template['format'] = trim(stripslashes($_POST['format']));
          $template['description'] = trim(stripslashes($_POST['description']));
          $validation_result = $wpdb->insert($templates_table, $template);
-      } elseif ( isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "delete" ) {
+      } elseif ($_POST['eme_admin_action'] == "delete" ) {
          // Delete template or multiple
          $templates = $_POST['templates'];
          if (is_array($templates)) {
@@ -45,15 +51,11 @@ function eme_templates_page() {
       }
       if ($validation_result !== false ) {
          $message = (isset($message)) ? $message : __("Successfully {$_POST['eme_admin_action']}ed template", "eme");
-         eme_templates_table_layout($message);
-      } elseif ( $validation_result === false ) {
-         $message = (isset($message)) ? $message : __("There was a problem {$_POST['eme_admin_action']}ing the template, please try again.");
-         eme_templates_table_layout($message);
       } else {
-         // no action, just a template list
-         eme_templates_table_layout();
+         $message = (isset($message)) ? $message : __("There was a problem {$_POST['eme_admin_action']}ing the template, please try again.");
       }
    }
+   eme_templates_table_layout($message);
 } 
 
 function eme_templates_table_layout($message = "") {
