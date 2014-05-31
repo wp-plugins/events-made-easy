@@ -401,10 +401,13 @@ function eme_replace_cancelformfields_placeholders ($event) {
       $readonly="";
    }
 
-   $format = $event['event_cancel_form_format'];
-   if (empty($format)) {
-      $format = get_option('eme_cancel_form_format');
-   }
+   if (!empty($event['event_cancel_form_format']))
+      $format = $event['event_cancel_form_format'];
+   elseif ($event['event_properties']['event_cancel_form_format_tpl']>0)
+      $format = eme_get_template_format($event['event_properties']['event_cancel_form_format_tpl']);
+   else
+      $format = get_option('eme_cancel_form_format' );
+
 
    $eme_captcha_for_booking=get_option('eme_captcha_for_booking');
 
@@ -535,10 +538,12 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       $readonly="";
    }
 
-   $format = $event['event_registration_form_format'];
-   if (empty($format)) {
-      $format = get_option('eme_registration_form_format');
-   }
+   if (!empty($event['event_registration_form_format']))
+      $format = $event['event_registration_form_format'];
+   elseif ($event['event_properties']['event_registration_form_format_tpl']>0)
+      $format = eme_get_template_format($event['event_properties']['event_registration_form_format_tpl']);
+   else
+      $format = get_option('eme_registration_form_format' );
 
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];

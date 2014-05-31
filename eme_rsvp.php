@@ -570,7 +570,13 @@ function eme_book_seats($event, $send_mail=1) {
                }
                $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
                $booking = eme_get_booking ($booking_id);
-               $format = ( $event['event_registration_recorded_ok_html'] != '' ) ? $event['event_registration_recorded_ok_html'] : get_option('eme_registration_recorded_ok_html' );
+               if (!empty($event['event_registration_recorded_ok_html']))
+                  $format = $event['event_registration_recorded_ok_html'];
+               elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
+                  $format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
+               else
+                  $format = get_option('eme_registration_recorded_ok_html' );
+
                // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
                $result = eme_replace_placeholders($format, $event, "html", 0);
                $result = eme_replace_booking_placeholders($result, $event, $booking);
@@ -1508,13 +1514,24 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $confirmed_subject = get_option('eme_respondent_email_subject' );
    $confirmed_subject = eme_replace_placeholders($confirmed_subject, $event, "text",0,$booking['lang']);
    $confirmed_subject = eme_replace_booking_placeholders($confirmed_subject, $event, $booking, "text",$booking['lang']);
-   $confirmed_body = ( $event['event_respondent_email_body'] != '' ) ? $event['event_respondent_email_body'] : get_option('eme_respondent_email_body' );
+   if (!empty($event['event_respondent_email_body']))
+      $confirmed_body = $event['event_respondent_email_body'];
+   elseif ($event['event_properties']['event_respondent_email_body_tpl']>0)
+      $confirmed_body = eme_get_template_format($event['event_properties']['event_respondent_email_body_tpl']);
+   else
+      $confirmed_body = get_option('eme_respondent_email_body' );
    $confirmed_body = eme_replace_placeholders($confirmed_body, $event, "text",0,$booking['lang']);
    $confirmed_body = eme_replace_booking_placeholders($confirmed_body, $event, $booking, "text",$booking['lang']);
    $pending_subject = get_option('eme_registration_pending_email_subject' );
    $pending_subject = eme_replace_placeholders($pending_subject, $event, "text",0,$booking['lang']);
    $pending_subject = eme_replace_booking_placeholders($pending_subject, $event, $booking, "text",$booking['lang']);
    $pending_body = ( $event['event_registration_pending_email_body'] != '' ) ? $event['event_registration_pending_email_body'] : get_option('eme_registration_pending_email_body' );
+   if (!empty($event['event_registration_pending_email_body']))
+      $pending_body = $event['event_registration_pending_email_body'];
+   elseif ($event['event_properties']['event_registration_pending_email_body_tpl']>0)
+      $pending_body = eme_get_template_format($event['event_properties']['event_registration_pending_email_body_tpl']);
+   else
+      $pending_body = get_option('eme_registration_pending_email_body' );
    $pending_body = eme_replace_placeholders($pending_body, $event, "text",0,$booking['lang']);
    $pending_body = eme_replace_booking_placeholders($pending_body, $event, $booking, "text",$booking['lang']);
    $denied_subject = get_option('eme_registration_denied_email_subject' );
@@ -1526,7 +1543,12 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $updated_subject = get_option('eme_registration_updated_email_subject' );
    $updated_subject = eme_replace_placeholders($updated_subject, $event, "text",0,$booking['lang']);
    $updated_subject = eme_replace_booking_placeholders($updated_subject, $event, $booking, "text",$booking['lang']);
-   $updated_body = ( $event['event_registration_updated_email_body'] != '' ) ? $event['event_registration_updated_email_body'] : get_option('eme_registration_updated_email_body' );
+   if (!empty($event['event_registration_updated_email_body']))
+      $updated_body = $event['event_registration_updated_email_body'];
+   elseif ($event['event_properties']['event_registration_updated_email_body_tpl']>0)
+      $updated_body = eme_get_template_format($event['event_properties']['event_registration_updated_email_body_tpl']);
+   else
+      $updated_body = get_option('eme_registration_updated_email_body' );
    $updated_body = eme_replace_placeholders($updated_body, $event, "text",0,$booking['lang']);
    $updated_body = eme_replace_booking_placeholders($updated_body, $event, $booking, "text",$booking['lang']);
    $cancelled_subject = get_option('eme_registration_cancelled_email_subject' );
@@ -1536,7 +1558,13 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $cancelled_body = eme_replace_placeholders($cancelled_body, $event, "text",0,$booking['lang']);
    $cancelled_body = eme_replace_booking_placeholders($cancelled_body, $event, $booking, "text",$booking['lang']);
 
-   $contact_body = ( $event['event_contactperson_email_body'] != '' ) ? $event['event_contactperson_email_body'] : get_option('eme_contactperson_email_body' );
+   if (!empty($event['event_contactperson_email_body']))
+      $contact_body = $event['event_contactperson_email_body'];
+   elseif ($event['event_properties']['event_contactperson_email_body_tpl']>0)
+      $contact_body = eme_get_template_format($event['event_properties']['event_contactperson_email_body_tpl']);
+   else
+      $contact_body = get_option('eme_contactperson_email_body' );
+
    $contact_body = eme_replace_placeholders($contact_body, $event, "text",0);
    $contact_body = eme_replace_booking_placeholders($contact_body, $event, $booking, "text");
    $contact_cancelled_body = get_option('eme_contactperson_cancelled_email_body' );
@@ -2090,7 +2118,16 @@ function eme_send_mail_form($event_id=0) {
 <?php admin_show_warnings();?>
    <div id='message' class='updated'><p>
 <?php
-      _e('Warning: using this functionality to send mails to attendees can result in a php timeout, so not everybody will receive the mail then. This depends on the number of attendees, the load on the server, ... . If this happens, use the CSV export link to get the list of all attendees and use mass mailing tools (like OpenOffice) for your mailing.','eme');
+   _e('Warning: using this functionality to send mails to attendees can result in a php timeout, so not everybody will receive the mail then. This depends on the number of attendees, the load on the server, ... . If this happens, use the CSV export link to get the list of all attendees and use mass mailing tools (like OpenOffice) for your mailing.','eme');
+   $all_events=eme_get_events(0,"future");
+   $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
+   $current_userid=get_current_user_id();
+   $templates_array=eme_get_templates_array_by_id();
+   if (is_array($templates_array) && count($templates_array)>0)
+      $templates_array[0]='';
+   else
+      $templates_array[0]=__('No templates defined yet!','eme');
+   ksort($templates_array);
 ?>
    </p></div>
    <form id='send-mail' name='send-mail' action="" method="post">
@@ -2098,14 +2135,8 @@ function eme_send_mail_form($event_id=0) {
    <input type='hidden' name='eme_admin_action' value='send_mail' />
    <input type='hidden' id='onchange' name='onchange' value='0' />
    <select name="event_id" onchange="document.getElementById('onchange').value='1';this.form.submit();">
+   <option value='0' ><?php _e('Select the event','eme') ?></option>
    <?php
-   $all_events=eme_get_events(0,"future");
-   $event_id = isset($_POST ['event_id']) ? intval($_POST ['event_id']) : 0;
-   $current_userid=get_current_user_id();
-   $templates_array=eme_get_templates_array_by_id();
-   $templates_array[0]='';
-   ksort($templates_array);
-   echo "<option value='0' >".__('Select the event','eme')."</option>";
    foreach ( $all_events as $event ) {
       $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")";
       if ($event['event_rsvp'] && current_user_can( get_option('eme_cap_send_other_mails')) ||
@@ -2151,13 +2182,13 @@ function eme_send_mail_form($event_id=0) {
 	   <div id="titlediv" class="form-field form-required"><p>
       <b><?php _e('Subject','eme'); ?></b><br>
       <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'subject_template',$templates_array); ?><br>
-      <?php _e('Or enter your own (if anything is entered here, this takes precedence): ','eme');?>
+      <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?>
       <input type="text" name="subject" value="" /></p>
 	   </div>
 	   <div class="form-field form-required"><p>
 	   <b><?php _e('Message','eme'); ?></b><br>
       <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'message_template',$templates_array); ?><br>
-      <?php _e('Or enter your own (if anything is entered here, this takes precedence): ','eme');?>
+      <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?>
 	   <textarea name="message" value="" rows=10></textarea> </p>
 	   </div>
 	   <div>

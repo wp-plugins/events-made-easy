@@ -61,6 +61,13 @@ function eme_init_event_props($props) {
       $props['min_allowed']=get_option('eme_rsvp_addbooking_min_spaces');
    if (!isset($props['max_allowed']))
       $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
+
+   $template_override=array('event_page_title_format','event_single_event_format','event_contactperson_email_body','event_registration_recorded_ok_html','event_respondent_email_body','event_registration_pending_email_body','event_registration_updated_email_body','event_registration_form_format','event_cancel_form_format');
+   foreach ($template_override as $template) {
+      if (!isset($props[$template]))
+         $props[$template]="";
+   }
+
    return $props;
 }
 
@@ -2602,6 +2609,15 @@ function eme_event_form($event, $title, $element) {
                      add_filter('postbox_classes_'.$screen.'_div_event_cancel_form_format','eme_closed');
                }
 
+               // we can only give one parameter to do_meta_boxes, but we don't want to list the templates each time
+               // so temporary we store the array in the $event var and unset it afterwards
+               $templates_array=eme_get_templates_array_by_id();
+               if (is_array($templates_array) && count($templates_array)>0)
+                  $templates_array[0]='';
+               else
+                  $templates_array[0]=__('No templates defined yet!','eme');
+               ksort($templates_array);
+               $event['templates_array']=$templates_array;
                if ($is_new_event) {
                   // we add the meta boxes only on the page we're currently at, so for duplicate event it is the same as for edit event
                   // see the eme_admin_event_boxes function
@@ -2613,6 +2629,7 @@ function eme_event_form($event, $title, $element) {
                } else {
                   do_meta_boxes('toplevel_page_events-manager',"post",$event);
                }
+               unset($event['templates_array']);
                ?>
                </div>
                <p class="submit">
@@ -3214,6 +3231,8 @@ function eme_meta_box_div_recurrence_date($event){
 
 function eme_meta_box_div_event_page_title_format($event) {
 ?>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_page_title_format'],'eme_prop_event_page_title_format',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
    <textarea name="event_page_title_format" id="event_page_title_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_page_title_format']);?></textarea>
    <br />
    <p><?php _e ( 'The format of the single event title.','eme');?>
@@ -3247,89 +3266,97 @@ function eme_meta_box_div_event_time($event) {
 
 function eme_meta_box_div_event_single_event_format($event) {
 ?>
-   <textarea name="event_single_event_format" id="event_single_event_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_single_event_format']);?></textarea>
-   <br />
    <p><?php _e ( 'The format of the single event page.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_single_event_format'],'eme_prop_event_single_event_format',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_single_event_format" id="event_single_event_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_single_event_format']);?></textarea>
 <?php
 }
 
 function eme_meta_box_div_event_contactperson_email_body($event) {
 ?>
-   <textarea name="event_contactperson_email_body" id="event_contactperson_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_contactperson_email_body']);?></textarea>
-   <br />
    <p><?php _e ( 'The format of the email which will be sent to the contact person.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_contactperson_email_body'],'eme_prop_event_contactperson_email_body',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_contactperson_email_body" id="event_contactperson_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_contactperson_email_body']);?></textarea>
 <?php
 }
 
 function eme_meta_box_div_event_registration_recorded_ok_html($event) {
 ?>
-   <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
-   <br />
    <p><?php _e ( 'The text (html allowed) shown to the user when the booking has been made successfully.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_recorded_ok_html'],'eme_prop_event_registration_recorded_ok_html',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_registration_recorded_ok_html" id="event_registration_recorded_ok_html" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_recorded_ok_html']);?></textarea>
 <?php
 }
 
 function eme_meta_box_div_event_respondent_email_body($event) {
 ?>
-   <textarea name="event_respondent_email_body" id="event_respondent_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_respondent_email_body']);?></textarea>
-   <br />
    <p><?php _e ( 'The format of the email which will be sent to the respondent.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_respondent_email_body'],'eme_prop_event_respondent_email_body',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_respondent_email_body" id="event_respondent_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_respondent_email_body']);?></textarea>
 <?php
 }
 
 function eme_meta_box_div_event_registration_pending_email_body($event) {
 ?>
-   <textarea name="event_registration_pending_email_body" id="event_registration_pending_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_pending_email_body']);?></textarea>
-   <br />
    <p><?php _e ( 'The format of the email which will be sent to the respondent if the registration is pending.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_pending_email_body'],'eme_prop_event_registration_pending_email_body',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_registration_pending_email_body" id="event_registration_pending_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_pending_email_body']);?></textarea>
 <?php
 }
 
 function eme_meta_box_div_event_registration_updated_email_body($event) {
 ?>
-   <textarea name="event_registration_updated_email_body" id="event_registration_updated_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_updated_email_body']);?></textarea>
-   <br />
    <p><?php _e ( 'The format of the email which will be sent to the respondent if the registration has been updated by an admin.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_updated_email_body'],'eme_prop_event_registration_updated_email_body',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_registration_updated_email_body" id="event_registration_updated_email_body" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_updated_email_body']);?></textarea>
 <?php
 }
 
 function eme_meta_box_div_event_registration_form_format($event) {
 ?>
-   <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
-   <br />
    <p><?php _e ( 'The registration form format.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_registration_form_format'],'eme_prop_event_registration_form_format',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_registration_form_format" id="event_registration_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_registration_form_format']);?></textarea>
 <?php
 }
 
 function eme_meta_box_div_event_cancel_form_format($event) {
 ?>
-   <textarea name="event_cancel_form_format" id="event_cancel_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_cancel_form_format']);?></textarea>
-   <br />
    <p><?php _e ( 'The cancel registration form format.','eme');?>
    <br />
    <?php _e ('Only fill this in if you want to override the default settings.', 'eme' );?>
    </p>
+   <?php _e('Either choose from a template: ','eme'); echo eme_ui_select($event['event_properties']['event_cancel_form_format'],'eme_prop_event_cancel_form_format',$event['templates_array']); ?><br>
+   <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?><br>
+   <textarea name="event_cancel_form_format" id="event_cancel_form_format" rows="6" cols="60"><?php echo eme_sanitize_html($event['event_cancel_form_format']);?></textarea>
 <?php
 }
 
