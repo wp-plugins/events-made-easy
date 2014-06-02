@@ -186,7 +186,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
       if (!$message_is_result_of_booking)
          $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
    } else {
-      if ($message_is_result_of_booking && !get_option('eme_rsvp_show_form_after_booking')) {
+      if (!$message_is_result_of_booking || ($message_is_result_of_booking && get_option('eme_rsvp_show_form_after_booking'))) {
          $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
          $ret_string .= eme_replace_formfields_placeholders ($event);
          // add a nonce for extra security
