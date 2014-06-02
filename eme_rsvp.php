@@ -108,6 +108,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $post_arr = array (
                "eme_eventAction" => 'message',
                "eme_message" => $form_result_message,
+               "booking_done" => 1
                );
       } else {
          // booking failed: we add $_POST to the json, so we can pre-fill the form so the user can just correct the mistake
@@ -150,10 +151,14 @@ function eme_add_booking_form($event_id,$show_message=1) {
          return eme_payment_form($event,$booking_id,$form_result_message);
       }
    }
+
+   $message_is_result_of_booking=0;
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
       // due to the double POST javascript, the eme_message is escaped again, so we need stripslashes
       // but the message may contain html, so no html sanitize
       $form_result_message = eme_translate(stripslashes_deep($_POST['eme_message']));
+      if (isset($_POST['booking_done']))
+         $message_is_result_of_booking=1;
    }
 
    $ret_string = "<div id='eme-rsvp-message'>";
@@ -177,23 +182,27 @@ function eme_add_booking_form($event_id,$show_message=1) {
       $min=$min_allowed;
 
    if ($avail_seats == 0 && $min>0) {
-      return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div></div>";
-   }
+      // we show the message concerning 'no more seats' only if it is not after a successful booking
+      if (!$message_is_result_of_booking)
+         $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
+   } else {
+      if ($message_is_result_of_booking && !get_option('eme_rsvp_show_form_after_booking')) {
+         $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
+         $ret_string .= eme_replace_formfields_placeholders ($event);
+         // add a nonce for extra security
+         $ret_string .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
+         // also add a honeypot field: if it gets completed with data, 
+         // it's a bot, since a humand can't see this (using CSS to render it invisible)
+         $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
+            <p>".__('(* marks a required field)', 'eme')."</p>
+            <input type='hidden' name='eme_eventAction' value='add_booking'/>
+            <input type='hidden' name='event_id' value='$event_id'/>
+            </form>";
 
-   $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
-   $ret_string .= eme_replace_formfields_placeholders ($event);
-   // add a nonce for extra security
-   $ret_string .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
-   // also add a honeypot field: if it gets completed with data, 
-   // it's a bot, since a humand can't see this (using CSS to render it invisible)
-   $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
-      <p>".__('(* marks a required field)', 'eme')."</p>
-      <input type='hidden' name='eme_eventAction' value='add_booking'/>
-      <input type='hidden' name='event_id' value='$event_id'/>
-   </form></div>";
- 
-   if (has_filter('eme_add_booking_form_filter')) $ret_string=apply_filters('eme_add_booking_form_filter',$form_html);
-   return $ret_string;
+         if (has_filter('eme_add_booking_form_filter')) $ret_string=apply_filters('eme_add_booking_form_filter',$form_html);
+      }
+   }
+   return $ret_string."</div>";
    
 }
 

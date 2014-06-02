@@ -70,6 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: subjects of mails being send to bookers is now also customizable and multi-lang ready
 * Feature: you can now delete "unused" people (people without bookings, can happen if you delete old events)
 * Feature: you can now select a template for mail message and body when sending after-mails, and for many format settings when creating/editing an event
+* Feature: added an option to no longer show the RSVP form after a successful booking
 * Improvement: a little more polite bad-boy message
 * Improvement: renamed an eme option, no big deal
 * Improvement: all RSVP prices are now showing as floating point, with 2 digits behind the "."
