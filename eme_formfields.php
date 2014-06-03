@@ -14,8 +14,7 @@ function eme_formfields_page() {
       // Insert/Update/Delete Record
       $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME;
       $validation_result = '';
-      if (isset($_POST['action']) && $_POST['action'] == "edit" ) {
-         // formfield update required
+      if (isset($_POST['action']) && $_POST['action'] == "edit") {
          $formfield = array();
          $field_id = intval($_POST['field_id']);
          $formfield['field_name'] = trim(stripslashes($_POST['field_name']));
@@ -23,12 +22,18 @@ function eme_formfields_page() {
          $formfield['field_info'] = trim(stripslashes($_POST['field_info']));
          $formfield['field_tags'] = trim(stripslashes($_POST['field_tags']));
          $db_formfield=eme_get_formfield_byname($formfield['field_name']);
-         if ($db_formfield && $db_formfield['field_id']!=$field_id) {
+         if ($field_id && $db_formfield && $db_formfield['field_id']!=$field_id) {
             $message = __('Error: the field name must be unique.','eme');
             eme_formfields_edit_layout($field_id,$message);
             return;
          } elseif (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
             $message = __('Error: the field value can not be empty for this type of field.','eme');
+            eme_formfields_edit_layout($field_id,$message);
+            return;
+         } elseif (eme_is_multifield($formfield['field_type']) &&
+                   eme_is_multi($formfield['field_info']) && !empty($formfield['field_tags']) && 
+                   count(eme_convert_multi2array($formfield['field_info'])) != count(eme_convert_multi2array($formfield['field_tags']))) {
+            $message = __('Error: if you specify field tags, there need to be exact the same amount of tags as values.','eme');
             eme_formfields_edit_layout($field_id,$message);
             return;
          } else {
@@ -47,6 +52,11 @@ function eme_formfields_page() {
             $validation_result = false;
          } elseif (eme_is_multifield($formfield['field_type']) && empty($formfield['field_info'])) {
             $message = __('Error: the field value can not be empty for this type of field.','eme');
+            $validation_result = false;
+         } elseif (eme_is_multifield($formfield['field_type']) &&
+                   eme_is_multi($formfield['field_info']) && !empty($formfield['field_tags']) && 
+                   count(eme_convert_multi2array($formfield['field_info'])) != count(eme_convert_multi2array($formfield['field_tags']))) {
+            $message = __('Error: if you specify field tags, there need to be exact the same amount of tags as values.','eme');
             $validation_result = false;
          } else {
             $message = __("Successfully added the field", "eme");
