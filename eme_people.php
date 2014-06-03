@@ -39,7 +39,7 @@ function eme_people_page() {
                      $res=eme_delete_all_bookings_for_person_id($person_id);
                      if ($res) {
                         $message.=__("Deleted all bookings made by '".$person['person_name']."'", 'eme');
-                        $message.="<br>";
+                        $message.="<br />";
                      }
                   } elseif (isset($_POST['delete_option']) && $_POST['delete_option'] == 'transfer_assoc_bookings') {
                      $to_person_id=intval($_POST['to_person_id']);
@@ -47,13 +47,13 @@ function eme_people_page() {
                      $res=eme_transfer_all_bookings($person_id,$to_person_id);
                      if ($res) {
                         $message.=__("Transferred all bookings made by '".$person['person_name']."' to '".$to_person['person_name']."'", 'eme');
-                        $message.="<br>";
+                        $message.="<br />";
                      }
                   }
                   $res=eme_delete_person($person_id);
                   if ($res) {
                      $message.=__("Deleted '".$person['person_name']."'", 'eme');
-                     $message.="<br>";
+                     $message.="<br />";
                   }
                }
             }

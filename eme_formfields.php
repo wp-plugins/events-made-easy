@@ -510,7 +510,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
          // #_EMAIL is always required
          $required=1;
       } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
-         $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_del_booking'><br><input type='text' name='captcha_check' />";
+         $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_del_booking'><br /><input type='text' name='captcha_check' />";
          $required_fields_count++;
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
          $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_delbooking_submit_string'))."'/>";
@@ -836,7 +836,7 @@ function eme_replace_formfields_placeholders ($event,$booking="") {
       } elseif (preg_match('/#_COMMENT/', $result)) {
          $replacement = "<textarea name='bookerComment'>$bookerComment</textarea>";
       } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
-         $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_add_booking'><br><input type='text' name='captcha_check' />";
+         $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_add_booking'><br /><input type='text' name='captcha_check' />";
          $required_fields_count++;
       } elseif (($deprecated && preg_match('/#_FIELDNAME(\d+)/', $result, $matches)) || preg_match('/#_FIELDNAME\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);

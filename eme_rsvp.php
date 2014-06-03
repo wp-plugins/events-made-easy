@@ -2189,22 +2189,22 @@ function eme_send_mail_form($event_id=0) {
       </tr>
       </table>
 	   <div id="titlediv" class="form-field form-required"><p>
-      <b><?php _e('Subject','eme'); ?></b><br>
-      <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'subject_template',$templates_array); ?><br>
+      <b><?php _e('Subject','eme'); ?></b><br />
+      <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'subject_template',$templates_array); ?><br />
       <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?>
       <input type="text" name="subject" value="" /></p>
 	   </div>
 	   <div class="form-field form-required"><p>
-	   <b><?php _e('Message','eme'); ?></b><br>
-      <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'message_template',$templates_array); ?><br>
+	   <b><?php _e('Message','eme'); ?></b><br />
+      <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'message_template',$templates_array); ?><br />
       <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?>
 	   <textarea name="message" value="" rows=10></textarea> </p>
 	   </div>
 	   <div>
 	   <?php _e('You can use any placeholders mentioned here:','eme');
-	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('Event placeholders','eme')."</a>";
-	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a> (".__('for ','eme').__('Attendee mails','eme').")";
-	   print "<br><a href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('Booking placeholders','eme')."</a> (".__('for ','eme').__('Booking mails','eme').")";
+	   print "<br /><a href='http://www.e-dynamics.be/wordpress/?cat=25'>".__('Event placeholders','eme')."</a>";
+	   print "<br /><a href='http://www.e-dynamics.be/wordpress/?cat=48'>".__('Attendees placeholders','eme')."</a> (".__('for ','eme').__('Attendee mails','eme').")";
+	   print "<br /><a href='http://www.e-dynamics.be/wordpress/?cat=45'>".__('Booking placeholders','eme')."</a> (".__('for ','eme').__('Booking mails','eme').")";
 	   ?>
 	   </div>
       <br />
@@ -2216,7 +2216,7 @@ function eme_send_mail_form($event_id=0) {
 	   $available_seats = eme_get_available_seats($event['event_id']);
 	   $total_seats = $event ['event_seats'];
 	   if ($total_seats!=$available_seats)
-		   echo "<br><br> <a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>";
+		   echo "<br /><br /> <a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>";
    }
 }
 
@@ -2243,7 +2243,7 @@ function eme_webmoney_form($event,$booking_id) {
    }
    $wm_request->btn_label = 'Pay via Webmoney';
 
-   $form_html = "<br>".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
    $form_html .= $wm_request->SetForm(false);
    return $form_html;
 }
@@ -2259,7 +2259,7 @@ function eme_2co_form($event,$booking_id) {
    $cur=$event['currency'];
    $return_url=eme_payment_return_url($event,$booking_id,1);
 
-   $form_html = "<br>".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='sid' value='$business' >";
    $form_html.="<input type='hidden' name='mode' value='2CO' >";
@@ -2295,7 +2295,7 @@ function eme_fdgg_form($event,$booking_id) {
    $timezone_short="GMT";
 
    require_once('fdgg/fdgg-util_sha2.php');
-   $form_html = "<br>".__("You can pay for this event via First Data. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".__("You can pay for this event via First Data. If you wish to do so, click the button below.",'eme');
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
    $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
@@ -2338,7 +2338,7 @@ function eme_google_form($event,$booking_id) {
                             $price); // Unit price
    $item_1->SetMerchantItemId($booking_id);
    $cart->AddItem($item_1);
-   $form_html = "<br>".__("You can pay for this event via Google Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".__("You can pay for this event via Google Checkout. If you wish to do so, click the button below.",'eme');
    return $form_html.$cart->CheckoutButtonCode("SMALL");
 }
 
@@ -2349,7 +2349,7 @@ function eme_paypal_form($event,$booking_id) {
    $events_page_link = eme_get_events_page(true, false);
    $notification_link = add_query_arg(array('eme_eventAction'=>'paypal_notification'),$events_page_link);
 
-   $form_html = "<br>".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme');
+   $form_html = "<br />".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme');
    require_once "paypal/Paypal.php";
    $p = new Paypal;
 
