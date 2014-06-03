@@ -32,8 +32,8 @@ function eme_options_input_text($title, $name, $description) {
    <tr valign="top" id='<?php echo $name;?>_row'>
       <th scope="row"><?php _e($title, 'eme') ?></th>
        <td>
-         <input name="<?php echo $name ?>" type="text" id="<?php echo $name ?>" style="width: 95%" value="<?php echo eme_sanitize_html($value); ?>" size="45" /><br />
-                  <?php _e($description, 'eme') ?>
+         <input name="<?php echo $name ?>" type="text" id="<?php echo $name ?>" style="width: 95%" value="<?php echo eme_sanitize_html($value); ?>" size="45" />
+                  <?php if (!empty($description)) echo "<br />".$description; ?>
          </td>
       </tr>
    <?php
@@ -43,8 +43,8 @@ function eme_options_input_password($title, $name, $description) {
    <tr valign="top" id='<?php echo $name;?>_row'>
       <th scope="row"><?php _e($title, 'eme') ?></th>
        <td>
-         <input name="<?php echo $name ?>" type="password" id="<?php echo $name ?>" style="width: 95%" value="<?php echo get_option($name); ?>" size="45" /><br />
-                  <?php echo $description; ?>
+         <input name="<?php echo $name ?>" type="password" id="<?php echo $name ?>" style="width: 95%" value="<?php echo get_option($name); ?>" size="45" />
+                  <?php if (!empty($description)) echo "<br />".$description; ?>
          </td>
       </tr>
    <?php
@@ -54,8 +54,8 @@ function eme_options_textarea($title, $name, $description) {
    ?>
    <tr valign="top" id='<?php echo $name;?>_row'>
       <th scope="row"><?php _e($title,'eme')?></th>
-         <td><textarea name="<?php echo $name ?>" id="<?php echo $name ?>" rows="6" style="width: 95%"><?php echo eme_sanitize_html(get_option($name));?></textarea><br />
-            <?php echo $description; ?></td>
+         <td><textarea name="<?php echo $name ?>" id="<?php echo $name ?>" rows="6" style="width: 95%"><?php echo eme_sanitize_html(get_option($name));?></textarea>
+            <?php if (!empty($description)) echo "<br />".$description; ?></td>
       </tr>
    <?php
 }
@@ -71,8 +71,8 @@ function eme_options_radio_binary($title, $name, $description) {
             <th scope="row"><?php _e($title,'eme'); ?></th>
             <td>
             <input id="<?php echo $name ?>_yes" name="<?php echo $name ?>" type="radio" value="1" <?php if($option_value) echo "checked='checked'"; ?> /><?php _e('Yes'); ?> <br />
-            <input  id="<?php echo $name ?>_no" name="<?php echo $name ?>" type="radio" value="0" <?php if(!$option_value) echo "checked='checked'"; ?> /><?php _e('No'); ?> <br />
-            <?php echo $description; ?>
+            <input  id="<?php echo $name ?>_no" name="<?php echo $name ?>" type="radio" value="0" <?php if(!$option_value) echo "checked='checked'"; ?> /><?php _e('No'); ?>
+            <?php if (!empty($description)) echo "<br />".$description; ?>
          </td>
          </tr>
 <?php 
@@ -91,8 +91,8 @@ function eme_options_select($title, $name, $list, $description) {
                     echo "<option value='$key' $selected>$value</option>";
                  }
                ?>
-            </select> <br />
-            <?php echo $description; ?>
+            </select>
+            <?php if (!empty($description)) echo "<br />".$description; ?>
          </td>
          </tr>
 <?php 

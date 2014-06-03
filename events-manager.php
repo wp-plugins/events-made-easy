@@ -2012,7 +2012,7 @@ function admin_show_warnings() {
 
 
 function eme_explain_dbupdate_done() {
-   $advice = sprintf(__("It seems you upgraded Events Made Eeasy, the events database has been updated accordingly. Click <a href='%s'>here</a> to dismiss this message.",'eme'),add_query_arg(array("disable_update_message"=>"true")));
+   $advice = sprintf(__("It seems you upgraded Events Made Easy, the events database has been updated accordingly. Click <a href='%s'>here</a> to dismiss this message.",'eme'),add_query_arg(array("disable_update_message"=>"true")));
    ?>
 <div id="message" class="update-nag"><p> <?php echo $advice; ?> </p></div>
 <?php
