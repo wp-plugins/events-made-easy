@@ -307,6 +307,8 @@ function eme_get_formfield_html($field_id, $entered_val) {
    if (!$formfield) return;
    $field_info = $formfield['field_info'];
    $field_tags = $formfield['field_tags'];
+   if (empty($field_tags))
+      $field_tags=$field_info;
    $deprecated = get_option('eme_deprecated');
    $field_name='FIELD'.$field_id;
    switch($formfield['field_type']) {

@@ -213,7 +213,7 @@ function eme_get_calendar($args="") {
       // Set the date into the key
       $events_titles = array();
       foreach($events as $event) { 
-         $events_titles[] = eme_replace_placeholders($event_title_format, $event);
+         $events_titles[] = eme_replace_placeholders($event_title_format, $event,"text");
       }
       $link_title = implode($event_title_separator_format,$events_titles);
       

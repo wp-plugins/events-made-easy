@@ -63,6 +63,10 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.4.5 =
+* Bugfix: empty custom field tags were not correctly handled
+* Bugfix: make sure the day-hover title in the calendar no longer contains html
+
 = 1.4.4 =
 * Feature: added placeholders #_12HSTARTTIME_NOLEADINGZERO and #_12HENDTIME_NOLEADINGZERO
 * Feature: added filter eme_eval_booking_filter, doing evaluations before the person is entered in the db. One parameter: $event. And $_POST can be used too of course.
