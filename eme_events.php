@@ -2073,8 +2073,8 @@ function eme_events_table($message="",$scope="future") {
             else
                echo "<br />".__('RSVP Info: ','eme').__('Free: ','eme' ).$available_seats_string.", ".__('Max: ','eme').$total_seats_string;
             if ($booked_seats>0) {
-               $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
-               $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
+               $printable_address = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
+               $csv_address = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
                echo " (<a id='booking_printable_".$event['event_id']."' href='$printable_address'>".__('Printable view','eme')."</a>)";
                echo " (<a id='booking_csv_".$event['event_id']."' href='$csv_address'>".__('CSV export','eme')."</a>)";
             }

@@ -1138,8 +1138,8 @@ function eme_bookings_compact_table($event_id) {
    }
    $count_bookings=count($bookings);
    if ($count_bookings>0) { 
-      $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=$event_id");
-      $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=$event_id");
+      $printable_address = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=$event_id");
+      $csv_address = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=$event_id");
       $table = 
       "<div class='wrap'>
             <h4>$count_bookings ".__('bookings so far','eme').":</h4>
@@ -1942,8 +1942,8 @@ function eme_registration_seats_form_table($pending=0) {
              $total_seats = $event ['event_seats'];
              echo "<br />".__('Approved: ','eme' ).$approved_seats.", ".__('Pending: ','eme').$pending_seats.", ".__('Max: ','eme').$total_seats;
              if ($approved_seats>0) {
-                $printable_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
-                $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
+                $printable_address = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
+                $csv_address = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
                 echo " (<a id='booking_printable_".$event['event_id']."'  target='' href='$printable_address'>".__('Printable view','eme')."</a>)";
                 echo " (<a id='booking_csv_".$event['event_id']."'  target='' href='$csv_address'>".__('CSV export','eme')."</a>)";
              }
@@ -2212,7 +2212,7 @@ function eme_send_mail_form($event_id=0) {
 	   </form>
 
    <?php
-	   $csv_address = admin_url("/admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
+	   $csv_address = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
 	   $available_seats = eme_get_available_seats($event['event_id']);
 	   $total_seats = $event ['event_seats'];
 	   if ($total_seats!=$available_seats)
