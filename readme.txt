@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: if people enter field tags for multi-value custom fields, check that the number of tags is the same as the number of values
 * Bugfix: empty custom field tags were not correctly handled
 * Bugfix: make sure the day-hover title in the calendar no longer contains html
+* Bugfix: 24H format placeholders shouldn't return seconds, was never the case but got added in 1.3.0
 
 = 1.4.4 =
 * Feature: added placeholders #_12HSTARTTIME_NOLEADINGZERO and #_12HENDTIME_NOLEADINGZERO
@@ -582,7 +583,3 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: when paypal was active, rsvp field validation results were ignored
 * Bugfix: ampersand character in event title breaks RSS feed
 * Bugfix: make sure that we apply the the_content filter only once
-
-= Older versions =
-* See the Changelog of the Events Manager Extended plugin
-

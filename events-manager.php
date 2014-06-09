@@ -1195,10 +1195,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
 
       } elseif ($event && preg_match('/#_24HSTARTTIME/', $result)) { 
-         $replacement = $event['event_start_time'];
+         $replacement = substr($event['event_start_time'], 0,5);
 
-      } elseif ($event && preg_match('/#_24HENDTIME/', $result)) { 
-         $replacement = $event['event_end_time'];
+      } elseif ($event && preg_match('/#_24HENDTIME$/', $result)) {
+         $replacement = substr($event['event_end_time'], 0,5);
 
       } elseif ($event && preg_match('/#_PAST_FUTURE_CLASS/', $result)) { 
          if (strtotime($event['event_start_date']." ".$event['event_start_time']) > time()) {
