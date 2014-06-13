@@ -431,7 +431,14 @@ function eme_book_seats($event, $send_mail=1) {
 
    // now do regular checks
 
-   $all_required_fields=eme_find_required_formfields($event['event_registration_form_format']);
+   if (!empty($event['event_registration_form_format']))
+      $format = $event['event_registration_form_format'];
+   elseif ($event['event_properties']['event_registration_form_format_tpl']>0)
+      $format = eme_get_template_format($event['event_properties']['event_registration_form_format_tpl']);
+   else
+      $format = get_option('eme_registration_form_format' );
+   $all_required_fields=eme_find_required_formfields($format);
+
    $deprecated=get_option('eme_deprecated');
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];

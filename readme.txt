@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: empty custom field tags were not correctly handled
 * Bugfix: make sure the day-hover title in the calendar no longer contains html
 * Bugfix: 24H format placeholders shouldn't return seconds, was never the case but got added in 1.3.0
+* Bugfix: for the detection of required fields for the RSVP form, I didn't take into account the fact that you can now use templates for the form so the required field detection failed
 
 = 1.4.4 =
 * Feature: added placeholders #_12HSTARTTIME_NOLEADINGZERO and #_12HENDTIME_NOLEADINGZERO
