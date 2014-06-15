@@ -98,8 +98,8 @@ function eme_get_calendar($args="") {
       $iNowMonth= sprintf("%02d",$_SESSION['eme_client_month']);
       $iNowYear= sprintf("%04d",$_SESSION['eme_client_fullyear']);
    } else {
-	// Get current year, month and day
-	list($iNowYear, $iNowMonth, $iNowDay) = explode('-', date('Y-m-d'));
+      // Get current year, month and day
+      list($iNowYear, $iNowMonth, $iNowDay) = explode('-', date('Y-m-d'));
    }
 
    $iSelectedYear = $year;
@@ -107,7 +107,6 @@ function eme_get_calendar($args="") {
    if ($iSelectedMonth == '') $iSelectedMonth = $iNowMonth;
    if ($iSelectedYear == '') $iSelectedYear = $iNowYear;
    $iSelectedMonth = sprintf("%02d",$iSelectedMonth);
-
 
    // Get name and number of days of specified month
    $iTimestamp = mktime(0, 0, 0, $iSelectedMonth, 1, $iSelectedYear);
@@ -174,6 +173,9 @@ function eme_get_calendar($args="") {
       //Go through the events and slot them into the right d-m index
       foreach($events as $event) {
          if ($event ['event_status'] == STATUS_PRIVATE && !is_user_logged_in()) {
+            continue;
+         }
+         if (get_option('eme_cal_hide_past_events') && strtotime($event['event_end_date'])<$now) {
             continue;
          }
 

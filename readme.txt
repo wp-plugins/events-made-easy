@@ -64,6 +64,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.4.6 =
+* Feature: added an option to hide past events (on a day-basis, not hour) in the calendar
 * Improvement: Italian language updates, thanks to Gianluca Granero
 
 = 1.4.5 =
