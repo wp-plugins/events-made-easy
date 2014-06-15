@@ -175,7 +175,7 @@ function eme_get_calendar($args="") {
          if ($event ['event_status'] == STATUS_PRIVATE && !is_user_logged_in()) {
             continue;
          }
-         if (get_option('eme_cal_hide_past_events') && strtotime($event['event_end_date'])<$now) {
+         if (get_option('eme_cal_hide_past_events') && strtotime($event['event_end_date'])<time()) {
             continue;
          }
 
