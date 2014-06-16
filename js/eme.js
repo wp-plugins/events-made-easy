@@ -33,22 +33,36 @@ function update_booking_data () {
  	});
 }
 
+function areyousure(message) {
+   if (!confirm(message)) {
+      return false;
+   } else {
+      return true;
+   }
+}
+
 function areyousuretodeny() {
    if (jQuery("select[name=action]").val() == "denyRegistration") {
-      if (!confirm("Are you sure you want to deny registration for these bookings?")) {
-         return false;
-      } else {
-         return true;
-      }
+      return areyousure("Are you sure you want to deny registration for these bookings?");
    }
    return true;
 }
 
+function areyousuretodeleteevents() {
+   if (jQuery('select[name=eme_admin_action]').val() == "deleteEvents" ||
+         jQuery('select[name=eme_admin_action]').val() == "deleteRecurrence") {
+      return window.confirm(this.title || 'Do you really want to delete these events?');
+   } else {
+      return true;
+   }
+
+}
 jQuery(document).ready( function($) {
     // Managing bookings delete operations 
    jQuery('a.bookingdelbutton').click(remove_booking);
    jQuery('#eme-admin-pendingform').bind("submit", areyousuretodeny);
    jQuery('#eme-admin-changeregform').bind("submit", areyousuretodeny);
+   jQuery('#eme_events_listform').bind("submit", areyousuretodeleteevents);
 
    jQuery('input.select-all').change(function() {
          if (jQuery(this).is(':checked')) {

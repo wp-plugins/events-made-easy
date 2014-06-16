@@ -1991,7 +1991,7 @@ function eme_events_table($message="",$scope="future") {
    if ($events_count>0) {
    ?>
 
-   <form id="eme_events_actions" action="" method="get">
+   <form id="eme_events_listform" action="" method="get">
    <input type='hidden' name='page' value='events-manager' />
    <select name="eme_admin_action">
    <option value="-1" selected="selected"><?php _e ( 'Bulk Actions' ); ?></option>
@@ -2785,14 +2785,6 @@ function eme_admin_general_script() {
 </style>
 <script type="text/javascript">
    //<![CDATA[
-function areyousure(message) {
-   if (!confirm(message)) {
-         return false;
-   } else {
-         return true;
-   }
-}
- 
 function updateIntervalDescriptor () { 
    jQuery(".interval-desc").hide();
    var number = "-plural";

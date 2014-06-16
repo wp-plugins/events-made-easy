@@ -74,17 +74,6 @@ function eme_categories_table_layout($message = "") {
             </div>";
          }
          
-         $table .= <<<EOT
-         <script type="text/javascript">
-         function areyousure(message) {
-            if (!confirm(message)) {
-               return false;
-            } else {
-               return true;
-            }
-         }
-         </script>
-EOT;
          $table .= "
          <div id='col-container'>
          
