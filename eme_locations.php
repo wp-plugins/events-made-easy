@@ -61,7 +61,7 @@ function eme_locations_page() {
          $message = __('You have no right to add a location!','eme');
          eme_locations_table_layout($message);
       }
-   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "deletelocation") { 
+   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "deletelocation" && isset($_POST['locations'])) { 
       $locations = $_POST['locations'];
       foreach($locations as $location_id) {
          $location = eme_get_location(intval($location_id));
@@ -451,7 +451,7 @@ function eme_locations_table_layout($message = "") {
 
                   <div class="tablenav">
                      <div class="alignleft actions">
-                     <input class="button-primary action" type="submit" name="doaction" value="Delete"/>
+                     <input class="button-primary action" type="submit" name="doaction" value="Delete" onclick="return areyousure('<?php _e("Are you sure you want to delete these locations?","eme"); ?>');" />
                      <br class="clear"/> 
                      </div>
                      <br class="clear"/>

@@ -31,7 +31,7 @@ function eme_templates_page() {
          $template['format'] = trim(stripslashes($_POST['format']));
          $template['description'] = trim(stripslashes($_POST['description']));
          $validation_result = $wpdb->insert($templates_table, $template);
-      } elseif ($_POST['eme_admin_action'] == "delete" ) {
+      } elseif ($_POST['eme_admin_action'] == "delete" && isset($_POST['templates'])) {
          // Delete template or multiple
          $templates = $_POST['templates'];
          if (is_array($templates)) {
@@ -75,6 +75,18 @@ function eme_templates_table_layout($message = "") {
             </div>";
          }
          
+         $table .= <<<EOT
+            <script type="text/javascript">
+            function areyousure(message) {
+               if (!confirm(message)) {
+                  return false;
+               } else {
+                  return true;
+               }
+            }
+         </script>
+EOT;
+
          $table .= "
          <div id='col-container'>
          
@@ -109,17 +121,20 @@ function eme_templates_table_layout($message = "") {
                            </tr>
                         ";
                      }
-                     $table .= "
+                     $delete_text=__("Are you sure you want to delete these templates?","eme");
+                     $table .= <<<EOT
                         </tbody>
-                     </table>
-   
-                     <div class='tablenav'>
+                        </table>
+
+                        <div class='tablenav'>
                         <div class='alignleft actions'>
-                        <input class='button-primary action' type='submit' name='doaction2' value='Delete'/>
+                        <input class='button-primary action' type='submit' name='doaction' value='Delete' onclick="return areyousure('$delete_text');" />
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>
-                     </div>";
+                        </div>
+EOT;
+
                   } else {
                         $table .= "<p>".__('No templates have been inserted yet!', 'eme');
                   }

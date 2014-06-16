@@ -2174,6 +2174,15 @@ function eme_events_table($message="",$scope="future") {
                { "sortable": false, "targets": [0,4,7] }
             ]
          } );
+
+         jQuery('form').on('click','input:submit[name=doaction2]',function() {
+             if (jQuery('select[name=eme_admin_action]').val() == "deleteEvents" ||
+                 jQuery('select[name=eme_admin_action]').val() == "deleteRecurrence") {
+               return window.confirm(this.title || 'Do you really want to delete these events?');
+             } else {
+               return true;
+             }
+         });
    } );
    </script>
 

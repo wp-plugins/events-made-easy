@@ -30,13 +30,13 @@ function eme_categories_page() {
          $category = array();
          $category['category_name'] = trim(stripslashes($_POST['category_name']));
          $validation_result = $wpdb->insert($categories_table, $category);
-      } elseif ($_POST['eme_admin_action'] == "delete" ) {
+      } elseif ($_POST['eme_admin_action'] == "delete" && isset($_POST['categories'])) {
          // Delete category or multiple
          $categories = $_POST['categories'];
          if (is_array($categories)) {
             //Run the query if we have an array of category ids
-            if (count($cats > 0)) {
-               $validation_result = $wpdb->query( "DELETE FROM $categories_table WHERE category_id IN ( ". implode(",", $cats) .")" );
+            if (count($categories > 0)) {
+               $validation_result = $wpdb->query( "DELETE FROM $categories_table WHERE category_id IN ( ". implode(",", $categories) .")" );
                if ($validation_result !== false)
                   $message = __("Successfully deleted the selected categories.","eme");
             } else {
@@ -74,6 +74,17 @@ function eme_categories_table_layout($message = "") {
             </div>";
          }
          
+         $table .= <<<EOT
+         <script type="text/javascript">
+         function areyousure(message) {
+            if (!confirm(message)) {
+               return false;
+            } else {
+               return true;
+            }
+         }
+         </script>
+EOT;
          $table .= "
          <div id='col-container'>
          
@@ -108,17 +119,19 @@ function eme_categories_table_layout($message = "") {
                            </tr>
                         ";
                      }
-                     $table .= "
+                     $delete_text=__("Are you sure you want to delete these categories?","eme");
+                     $table .= <<<EOT
                         </tbody>
                      </table>
    
                      <div class='tablenav'>
                         <div class='alignleft actions'>
-                        <input class='button-primary action' type='submit' name='doaction2' value='Delete'/>
+                        <input class='button-primary action' type='submit' name='doaction' value='Delete' onclick="return areyousure('$delete_text');" />
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>
-                     </div>";
+                     </div>
+EOT;
                   } else {
                         $table .= "<p>".__('No categories have been inserted yet!', 'eme');
                   }

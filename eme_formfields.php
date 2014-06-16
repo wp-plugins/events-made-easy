@@ -3,18 +3,25 @@ function eme_formfields_page() {
    global $wpdb;
    
    admin_show_warnings();
-   if (!current_user_can( get_option('eme_cap_forms')) && (isset($_GET['action']) || isset($_POST['action']))) {
+   if (!current_user_can( get_option('eme_cap_forms')) && (isset($_GET['eme_admin_action']) || isset($_POST['eme_admin_action']))) {
       $message = __('You have no right to update form fields!','eme');
       eme_formfields_table_layout($message);
-   } elseif (isset($_GET['action']) && $_GET['action'] == "editformfield") { 
+      return;
+   }
+   
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editformfield") { 
       // edit formfield  
       $field_id = intval($_GET['field_id']);
       eme_formfields_edit_layout($field_id);
-   } else {
-      // Insert/Update/Delete Record
-      $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME;
-      $validation_result = '';
-      if (isset($_POST['action']) && $_POST['action'] == "edit") {
+      return;
+   }
+
+   // Insert/Update/Delete Record
+   $formfields_table = $wpdb->prefix.FORMFIELDS_TBNAME;
+   $validation_result = '';
+   $message = '';
+   if (isset($_POST['eme_admin_action'])) {
+      if ($_POST['eme_admin_action'] == "edit") {
          $formfield = array();
          $field_id = intval($_POST['field_id']);
          $formfield['field_name'] = trim(stripslashes($_POST['field_name']));
@@ -31,16 +38,17 @@ function eme_formfields_page() {
             eme_formfields_edit_layout($field_id,$message);
             return;
          } elseif (eme_is_multifield($formfield['field_type']) &&
-                   eme_is_multi($formfield['field_info']) && !empty($formfield['field_tags']) && 
-                   count(eme_convert_multi2array($formfield['field_info'])) != count(eme_convert_multi2array($formfield['field_tags']))) {
+               eme_is_multi($formfield['field_info']) && !empty($formfield['field_tags']) && 
+               count(eme_convert_multi2array($formfield['field_info'])) != count(eme_convert_multi2array($formfield['field_tags']))) {
             $message = __('Error: if you specify field tags, there need to be exact the same amount of tags as values.','eme');
             eme_formfields_edit_layout($field_id,$message);
             return;
          } else {
-            $message = __("Successfully edited the field", "eme");
             $validation_result = $wpdb->update( $formfields_table, $formfield, array('field_id' => $field_id) );
+            if ($validation_result !== false )
+               $message = __("Successfully edited the field", "eme");
          }
-      } elseif ( isset($_POST['action']) && $_POST['action'] == "add" ) {
+      } elseif ($_POST['eme_admin_action'] == "add" ) {
          // Add a new formfield
          $formfield = array();
          $formfield['field_name'] = trim(stripslashes($_POST['field_name']));
@@ -54,15 +62,16 @@ function eme_formfields_page() {
             $message = __('Error: the field value can not be empty for this type of field.','eme');
             $validation_result = false;
          } elseif (eme_is_multifield($formfield['field_type']) &&
-                   eme_is_multi($formfield['field_info']) && !empty($formfield['field_tags']) && 
-                   count(eme_convert_multi2array($formfield['field_info'])) != count(eme_convert_multi2array($formfield['field_tags']))) {
+               eme_is_multi($formfield['field_info']) && !empty($formfield['field_tags']) && 
+               count(eme_convert_multi2array($formfield['field_info'])) != count(eme_convert_multi2array($formfield['field_tags']))) {
             $message = __('Error: if you specify field tags, there need to be exact the same amount of tags as values.','eme');
             $validation_result = false;
          } else {
-            $message = __("Successfully added the field", "eme");
             $validation_result = $wpdb->insert( $formfields_table, $formfield );
+            if ($validation_result !== false )
+               $message = __("Successfully added the field", "eme");
          }
-      } elseif ( isset($_POST['action']) && $_POST['action'] == "delete" ) {
+      } elseif ($_POST['eme_admin_action'] == "delete" && isset($_POST['formfields'])) {
          // Delete formfield or multiple
          $formfields = $_POST['formfields'];
          if (is_array($formfields)) {
@@ -75,23 +84,22 @@ function eme_formfields_page() {
             //Run the query if we have an array of formfield ids
             if (count($fields > 0)) {
                $validation_result = $wpdb->query( "DELETE FROM $formfields_table WHERE field_id IN (". implode(",", $fields).")" );
-               $message = __("Successfully deleted the field(s)", "eme");
+               if ($validation_result !== false )
+                  $message = __("Successfully deleted the field(s)", "eme");
             } else {
                $validation_result = false;
                $message = __("Couldn't delete the form fields. Incorrect field IDs supplied. Please try again.","eme");
             }
          }
       }
-
-      if (is_numeric($validation_result) ) {
-         eme_formfields_table_layout($message);
-      } elseif ( $validation_result === false ) {
-         eme_formfields_table_layout($message);
+      if ($validation_result !== false ) {
+         $message = (isset($message)) ? $message : __("Successfully {$_POST['eme_admin_action']}ed the field", "eme");
       } else {
-         // no action, just a formfield list
-         eme_formfields_table_layout();   
+         $message = (isset($message)) ? $message : __("There was a problem {$_POST['eme_admin_action']}ing the field, please try again.");
       }
    }
+
+   eme_formfields_table_layout($message);
 } 
 
 function eme_formfields_table_layout($message="") {
@@ -105,13 +113,25 @@ function eme_formfields_table_layout($message="") {
          </div>
          <h2>".__('Form fields', 'eme')."</h2>\n ";   
          
-         if(!empty($message)) {
-            $table .= "
-            <div id='message' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
-               <p>$message</p>
-            </div>";
-         }
+   if(!empty($message)) {
+      $table .= "
+         <div id='message' class='updated fade below-h2' style='background-color: rgb(255, 251, 204);'>
+         <p>$message</p>
+         </div>";
+   }
          
+   $table .= <<<EOT
+      <script type="text/javascript">
+      function areyousure(message) {
+         if (!confirm(message)) {
+            return false;
+         } else {
+            return true;
+         }
+      }
+   </script>
+EOT;
+
          $table .= "
          <div id='col-container'>
          
@@ -119,7 +139,7 @@ function eme_formfields_table_layout($message="") {
             <div id='col-right'>
              <div class='col-wrap'>
                 <form id='bookings-filter' method='post' action='".$destination."'>
-                  <input type='hidden' name='action' value='delete'/>";
+                  <input type='hidden' name='eme_admin_action' value='delete'/>";
                   if (count($formfields)>0) {
                      $table .= "<table class='widefat'>
                         <thead>
@@ -143,23 +163,25 @@ function eme_formfields_table_layout($message="") {
                         $table .= "    
                            <tr>
                            <td><input type='checkbox' class ='row-selector' value='".$this_formfield['field_id']."' name='formfields[]'/></td>
-                           <td><a href='".admin_url("admin.php?page=eme-formfields&amp;action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".$this_formfield['field_id']."</a></td>
-                           <td><a href='".admin_url("admin.php?page=eme-formfields&amp;action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".$this_formfield['field_name']."</a></td>
-                           <td><a href='".admin_url("admin.php?page=eme-formfields&amp;action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".eme_get_fieldtype($this_formfield['field_type'])."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-formfields&amp;eme_admin_action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".$this_formfield['field_id']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-formfields&amp;eme_admin_action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".$this_formfield['field_name']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-formfields&amp;eme_admin_action=editformfield&amp;field_id=".$this_formfield['field_id'])."'>".eme_get_fieldtype($this_formfield['field_type'])."</a></td>
                            </tr>
                         ";
                      }
-                     $table .= "
+                     $delete_text=__("Are you sure you want to delete these form fields?","eme");
+                     $table .= <<<EOT
                         </tbody>
-                     </table>
-   
-                     <div class='tablenav'>
+                        </table>
+
+                        <div class='tablenav'>
                         <div class='alignleft actions'>
-                        <input class='button-primary action' type='submit' name='doaction2' value='Delete'/>
+                        <input class='button-primary action' type='submit' name='doaction' value='Delete' onclick="return areyousure('$delete_text');" />
                         <br class='clear'/>
                         </div>
                         <br class='clear'/>
-                     </div>";
+                        </div>
+EOT;
                   } else {
                         $table .= "<p>".__('No fields defined yet!', 'eme');
                   }
@@ -176,7 +198,7 @@ function eme_formfields_table_layout($message="") {
                      <div id='ajax-response'/>
                   <h3>".__('Add field', 'eme')."</h3>
                       <form name='add' id='add' method='post' action='".$destination."' class='add:the-list: validate'>
-                        <input type='hidden' name='action' value='add' />
+                        <input type='hidden' name='eme_admin_action' value='add' />
                          <div class='form-field form-required'>
                            <label for='field_name'>".__('Field name', 'eme')."</label>
                            <input name='field_name' id='field_name' type='text' value='' size='40' />
@@ -226,7 +248,7 @@ function eme_formfields_edit_layout($field_id,$message = "") {
       <div id='ajax-response'></div>
 
       <form name='editcat' id='editcat' method='post' action='".admin_url("admin.php?page=eme-formfields")."' class='validate'>
-      <input type='hidden' name='action' value='edit' />
+      <input type='hidden' name='eme_admin_action' value='edit' />
       <input type='hidden' name='field_id' value='".$formfield['field_id']."' />
       
       <table class='form-table'>
