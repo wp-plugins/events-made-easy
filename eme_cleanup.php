@@ -46,7 +46,7 @@ function eme_cleanup_form($message = "") {
    <div class="tablenav">
 
    <div class="alignleft actions">
-   <input type="text" id="eme_number" name="eme_number" size=3>
+   <input type="text" id="eme_number" name="eme_number" size=3 />
    <select name="eme_period">
    <option value="day" selected="selected"><?php _e ( 'Day(s)','eme' ); ?></option>
    <option value="week"><?php _e ( 'Week(s)','eme' ); ?></option>

@@ -154,7 +154,7 @@ function eme_ui_radio($option_value, $name, $list,$horizontal = true) {
            $t_value=$value;
         }
         "$t_key" == $option_value ? $selected = "checked='checked' " : $selected = '';
-        $val.= "<input type='radio' id='$name' name='$name' value='".eme_sanitize_html($t_key)."' $selected>".eme_sanitize_html($t_value)."</option>";
+        $val.= "<input type='radio' id='$name' name='$name' value='".eme_sanitize_html($t_key)."' $selected />".eme_sanitize_html($t_value);
         if(!$horizontal)  
            $val .= "<br />\n";
      }
@@ -169,7 +169,7 @@ function eme_ui_checkbox($option_value, $name, $list, $horizontal = true) {
         } else {
            "$key" == $option_value ? $selected = "checked='checked' " : $selected = '';
         }
-        $val.= "<input type='checkbox' name='${name}[]' value='".eme_sanitize_html($key)."' $selected>".eme_sanitize_html($value);
+        $val.= "<input type='checkbox' name='${name}[]' value='".eme_sanitize_html($key)."' $selected />".eme_sanitize_html($value);
         if(!$horizontal)  
            $val .= "<br />\n";
      }

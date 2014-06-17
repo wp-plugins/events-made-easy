@@ -95,7 +95,7 @@ function eme_people_edit_layout($message = "") {
 
       <form name='editperson' id='editperson' method='post' action='".admin_url("admin.php?page=eme-people")."' class='validate'>
       <input type='hidden' name='eme_admin_action' value='confirm_editperson' />
-      <input type='hidden' name='person_id' value='".$person_id."'/>";
+      <input type='hidden' name='person_id' value='".$person_id."' />";
 
    $layout .= "
       <table class='form-table'>
@@ -161,7 +161,7 @@ function eme_people_delete_layout($message = "") {
       </li>
       </ul></fieldset>
       <input type="hidden" name="eme_admin_action" value="confirm_delete_people" />
-      <p class="submit"><input type="submit" name="submit" id="submit" class="button" value="Confirm Deletion"  /></p></div>
+      <p class="submit"><input type="submit" name="submit" id="submit" class="button" value="Confirm Deletion" /></p></div>
       </form>
       <script>
       jQuery(document).ready( function($) {
@@ -500,7 +500,7 @@ function eme_people_table($message="") {
       $search_dest=admin_url("admin.php?page=eme-registration-seats");
       foreach ($persons as $person) {
          $search_url=add_query_arg(array('search'=>$person['person_id']),$search_dest);
-         print "<tr><td><input type='checkbox' class ='row-selector' value='".$person['person_id']."' name='persons[]'/></td>
+         print "<tr><td><input type='checkbox' class ='row-selector' value='".$person['person_id']."' name='persons[]' /></td>
                   <td>[person_id=".$person['person_id']."]</td>
                   <td><a href='".admin_url("admin.php?page=eme-people&amp;eme_admin_action=editperson&amp;person_id=".$person['person_id'])."' title='". __('Click the ID in order to edit the person.','eme')."'>".$person['person_id']."</a></td>
                   <td>".eme_sanitize_html($person['person_name'])."</td>

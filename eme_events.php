@@ -3414,11 +3414,11 @@ function eme_meta_box_div_location_name($event) {
       }
       ?>
       </select>
-      <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>'/>
-      <input type='hidden' name='location-select-town' value='<?php echo eme_trans_sanitize_html($selected_location['location_town'])?>'/>
-      <input type='hidden' name='location-select-address' value='<?php echo eme_trans_sanitize_html($selected_location['location_address'])?>'/>      
-      <input type='hidden' name='location-select-latitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_latitude'])?>'/>      
-      <input type='hidden' name='location-select-longitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_longitude'])?>'/>      
+      <input type='hidden' name='location-select-name' value='<?php echo eme_trans_sanitize_html($selected_location['location_name'])?>' />
+      <input type='hidden' name='location-select-town' value='<?php echo eme_trans_sanitize_html($selected_location['location_town'])?>' />
+      <input type='hidden' name='location-select-address' value='<?php echo eme_trans_sanitize_html($selected_location['location_address'])?>' />      
+      <input type='hidden' name='location-select-latitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_latitude'])?>' />      
+      <input type='hidden' name='location-select-longitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_longitude'])?>' />      
       </td>
    <?php
    } else {

@@ -195,8 +195,8 @@ function eme_add_booking_form($event_id,$show_message=1) {
          // it's a bot, since a humand can't see this (using CSS to render it invisible)
          $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
             <p>".__('(* marks a required field)', 'eme')."</p>
-            <input type='hidden' name='eme_eventAction' value='add_booking'/>
-            <input type='hidden' name='event_id' value='$event_id'/>
+            <input type='hidden' name='eme_eventAction' value='add_booking' />
+            <input type='hidden' name='event_id' value='$event_id' />
             </form>";
 
          if (has_filter('eme_add_booking_form_filter')) $ret_string=apply_filters('eme_add_booking_form_filter',$form_html);
@@ -303,8 +303,8 @@ function eme_delete_booking_form($event_id,$show_message=1) {
    }
 
    $form_html .= "<form id='booking-delete-form' name='booking-delete-form' method='post' action='$destination'>
-      <input type='hidden' name='eme_eventAction' value='delete_booking'/>
-      <input type='hidden' name='event_id' value='$event_id'/>";
+      <input type='hidden' name='eme_eventAction' value='delete_booking' />
+      <input type='hidden' name='event_id' value='$event_id' />";
    $form_html .= wp_nonce_field('del_booking','eme_rsvp_nonce',false,false);
    $form_html .= eme_replace_cancelformfields_placeholders($event);
    $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
@@ -1647,8 +1647,8 @@ function eme_registration_seats_page($pending=0) {
       $ret_string.= __('Send mails for changed registration?','eme') . eme_ui_select_binary(1,"send_mail");
       $ret_string.= eme_replace_formfields_placeholders ($event,$booking);
       $ret_string .= "
-         <input type='hidden' name='eme_admin_action' value='updateRegistration'/>
-         <input type='hidden' name='booking_id' value='$booking_id'/>
+         <input type='hidden' name='eme_admin_action' value='updateRegistration' />
+         <input type='hidden' name='booking_id' value='$booking_id' />
          </form></div>";
       print $ret_string;
       return;
@@ -1663,8 +1663,8 @@ function eme_registration_seats_page($pending=0) {
          $ret_string.= __('Send mails for new registration?','eme') . eme_ui_select_binary(1,"send_mail");
          $ret_string.= eme_replace_formfields_placeholders ($event);
          $ret_string .= "
-            <input type='hidden' name='eme_admin_action' value='addRegistration'/>
-            <input type='hidden' name='event_id' value='$event_id'/>
+            <input type='hidden' name='eme_admin_action' value='addRegistration' />
+            <input type='hidden' name='event_id' value='$event_id' />
             </form></div>";
          print $ret_string;
          return;
@@ -2268,18 +2268,18 @@ function eme_2co_form($event,$booking_id) {
 
    $form_html = "<br />".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
    $form_html.="<form action='$url' method='post'>";
-   $form_html.="<input type='hidden' name='sid' value='$business' >";
-   $form_html.="<input type='hidden' name='mode' value='2CO' >";
-   $form_html.="<input type='hidden' name='return_url' value='$return_url' >";
-   $form_html.="<input type='hidden' name='li_0_type' value='product' >";
-   $form_html.="<input type='hidden' name='li_0_product_id' value='$booking_id' >";
-   $form_html.="<input type='hidden' name='li_0_name' value='$name' >";
-   $form_html.="<input type='hidden' name='li_0_price' value='$price' >";
-   $form_html.="<input type='hidden' name='li_0_quantity' value='$quantity' >";
-   $form_html.="<input type='hidden' name='currency_code' value='$cur' >";
-   $form_html.="<input name='submit' type='submit' value='Pay via 2Checkout' >";
+   $form_html.="<input type='hidden' name='sid' value='$business' />";
+   $form_html.="<input type='hidden' name='mode' value='2CO' />";
+   $form_html.="<input type='hidden' name='return_url' value='$return_url' />";
+   $form_html.="<input type='hidden' name='li_0_type' value='product' />";
+   $form_html.="<input type='hidden' name='li_0_product_id' value='$booking_id' />";
+   $form_html.="<input type='hidden' name='li_0_name' value='$name' />";
+   $form_html.="<input type='hidden' name='li_0_price' value='$price' />";
+   $form_html.="<input type='hidden' name='li_0_quantity' value='$quantity' />";
+   $form_html.="<input type='hidden' name='currency_code' value='$cur' />";
+   $form_html.="<input name='submit' type='submit' value='Pay via 2Checkout' />";
    if (get_option('eme_2co_demo')) {
-      $form_html.="<input type='hidden' name='demo' value='Y' >";
+      $form_html.="<input type='hidden' name='demo' value='Y' />";
    }
    $form_html.="</form>";
    return $form_html;
@@ -2306,20 +2306,20 @@ function eme_fdgg_form($event,$booking_id) {
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
    $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
-   $form_html.="<input type='hidden' name='txntype' value='sale'/>";
+   $form_html.="<input type='hidden' name='txntype' value='sale' />";
    $form_html.="<input type='hidden' name='mode' value='payonly' />";
    $form_html.="<input type='hidden' name='trxOrigin' value='ECI' />";
    $form_html.="<input type='hidden' name='txndatetime' value='$datetime />";
    $form_html.="<input type='hidden' name='hash' value='".fdgg_createHash($store_name . $datetime . $price . $shared_secret)."' />";
-   $form_html.="<input type='hidden' name='storename' value='$store_name'/>";
-   $form_html.="<input type='hidden' name='chargetotal' value='$price'/>";
-   $form_html.="<input type='hidden' name='subtotal' value='$price'/>";
+   $form_html.="<input type='hidden' name='storename' value='$store_name' />";
+   $form_html.="<input type='hidden' name='chargetotal' value='$price' />";
+   $form_html.="<input type='hidden' name='subtotal' value='$price' />";
    $form_html.="<input type='hidden' name='invoicenumber' value='$booking_id' />";
    $form_html.="<input type='hidden' name='oid' value='$booking_id' />";
-   $form_html.="<input type='hidden' name='responseSuccessURL' value='".eme_payment_return_url($event,$booking_id,1)."' >";
-   $form_html.="<input type='hidden' name='responseFailURL' value='".eme_payment_return_url($event,$booking_id,2)."' >";
+   $form_html.="<input type='hidden' name='responseSuccessURL' value='".eme_payment_return_url($event,$booking_id,1)."' />";
+   $form_html.="<input type='hidden' name='responseFailURL' value='".eme_payment_return_url($event,$booking_id,2)."' />";
    $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_ipn' />";
-   $form_html.="<input name='submit' type='submit' value='Pay via First Data' >";
+   $form_html.="<input name='submit' type='submit' value='Pay via First Data' />";
    $form_html.="</form>";
    return $form_html;
 }

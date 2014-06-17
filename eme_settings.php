@@ -359,7 +359,7 @@ function eme_options_page() {
 <?php printf(__( "Please also check <a href='%s'>your profile</a> for some per-user EME settings.", 'eme' ),admin_url('profile.php')); ?>
 </p>
 <form id="eme_options_form" method="post" action="options.php">
-<input type='hidden' name='tab' value='<?php echo $tab;?>'>
+<input type='hidden' name='tab' value='<?php echo $tab;?>' />
 <?php
    settings_fields ( 'eme-options' );
    switch ( $tab ) {

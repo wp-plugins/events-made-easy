@@ -198,7 +198,7 @@ function eme_locations_edit_layout($location, $message = "") {
          <input type="hidden" name="eme_admin_action" value="do_addlocation" />
          <?php } else { ?>
          <input type="hidden" name="eme_admin_action" value="do_editlocation" />
-         <input type="hidden" name="location_ID" value="<?php echo $location['location_id'] ?>"/>
+         <input type="hidden" name="location_ID" value="<?php echo $location['location_id'] ?>" />
          <?php } ?>
          
          <!-- we need titlediv and title for qtranslate as ID -->
@@ -226,7 +226,7 @@ function eme_locations_edit_layout($location, $message = "") {
                <?php _e('Location address', 'eme') ?>
             </h3>
             <div class="inside">
-            <input id="location_address" name="location_address" type="text" value="<?php echo eme_sanitize_html($location['location_address']); ?>" size="40"  />
+            <input id="location_address" name="location_address" type="text" value="<?php echo eme_sanitize_html($location['location_address']); ?>" size="40" />
             </div>
          </div>
  
@@ -235,7 +235,7 @@ function eme_locations_edit_layout($location, $message = "") {
                <?php _e('Location town', 'eme') ?>
             </h3>
             <div class="inside">
-            <input name="location_town" id="location_town" type="text" value="<?php echo eme_sanitize_html($location['location_town']); ?>" size="40"  />
+            <input name="location_town" id="location_town" type="text" value="<?php echo eme_sanitize_html($location['location_town']); ?>" size="40" />
             </div>
          </div>
                         
@@ -246,11 +246,11 @@ function eme_locations_edit_layout($location, $message = "") {
             <div class="inside">
             <table><tr>
             <td><label for="location_latitude"><?php _e('Latitude', 'eme') ?></label></td>
-            <td><input id="location_latitude" name="location_latitude" type="text" value="<?php echo eme_sanitize_html($location['location_latitude']); ?>" size="40"  /></td>
+            <td><input id="location_latitude" name="location_latitude" type="text" value="<?php echo eme_sanitize_html($location['location_latitude']); ?>" size="40" /></td>
             </tr>
             <tr>
             <td><label for="location_longitude"><?php _e('Longitude', 'eme') ?></label></td>
-            <td><input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($location['location_longitude']); ?>" size="40"  /></td>
+            <td><input id="location_longitude" name="location_longitude" type="text" value="<?php echo eme_sanitize_html($location['location_longitude']); ?>" size="40" /></td>
             </tr></table>
             </div>
          </div>
@@ -371,7 +371,7 @@ jQuery(document).ready(function($){
                <?php _e ( 'External link', 'eme' ); ?>
             </h3>
             <div class="inside">
-            <input name="location_url" id="location_url" type="text" value="<?php echo eme_sanitize_html($location['location_url']); ?>" size="40"  />
+            <input name="location_url" id="location_url" type="text" value="<?php echo eme_sanitize_html($location['location_url']); ?>" size="40" />
             <p><?php _e ( 'If this is filled in, the single location URL will point to this url instead of the standard location page.', 'eme' )?></p>
             </div>
          </div>
@@ -402,8 +402,8 @@ function eme_locations_table_layout($message = "") {
          <?php } ?>
          <div class="wrap">
          <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
-            <input type="hidden" name="eme_admin_action" value="addlocation"/>
-            <input type="submit" class="button-primary" name="submit" value="<?php _e('Add location', 'eme');?>">
+            <input type="hidden" name="eme_admin_action" value="addlocation" />
+            <input type="submit" class="button-primary" name="submit" value="<?php _e('Add location', 'eme');?>" />
          </form>
          </div>
 
@@ -411,12 +411,12 @@ function eme_locations_table_layout($message = "") {
          <div id="col-container">
              <div class="col-wrap">
                 <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
-                  <input type="hidden" name="eme_admin_action" value="deletelocation"/>
+                  <input type="hidden" name="eme_admin_action" value="deletelocation" />
                   <?php if (count($locations)>0) : ?>
                   <table class="widefat">
                      <thead>
                         <tr>
-                           <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" class="select-all" value="1"/></th>
+                           <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" class="select-all" value="1" /></th>
                            <th><?php _e('ID', 'eme') ?></th>
                            <th><?php _e('Name', 'eme') ?></th>
                            <th><?php _e('Address', 'eme') ?></th>
@@ -426,7 +426,7 @@ function eme_locations_table_layout($message = "") {
                      </thead>
                      <tfoot>
                         <tr>
-                           <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" class="select-all" value="1"/></th>
+                           <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" class="select-all" value="1" /></th>
                            <th><?php _e('ID', 'eme') ?></th>
                            <th><?php _e('Name', 'eme') ?></th>
                            <th><?php _e('Address', 'eme') ?></th>
@@ -437,7 +437,7 @@ function eme_locations_table_layout($message = "") {
                      <tbody>
                         <?php foreach ($locations as $this_location) : ?>  
                         <tr>
-                           <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id']; ?>" name="locations[]"/></td>
+                           <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id']; ?>" name="locations[]" /></td>
                            <td><?php echo $this_location['location_id']; ?></td>
                            <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=editlocation&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>

@@ -82,19 +82,19 @@ function eme_templates_table_layout($message = "") {
             <div id='col-right'>
              <div class='col-wrap'>
                 <form id='bookings-filter' method='post' action='".$destination."'>
-                  <input type='hidden' name='eme_admin_action' value='delete'/>";
+                  <input type='hidden' name='eme_admin_action' value='delete' />";
                   if (count($templates)>0) {
                      $table .= "<table class='widefat'>
                         <thead>
                            <tr>
-                              <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1'/></th>
+                              <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1' /></th>
                               <th>".__('ID', 'eme')."</th>
                               <th>".__('Format description', 'eme')."</th>
                            </tr>
                         </thead>
                         <tfoot>
                            <tr>
-                              <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1'/></th>
+                              <th class='manage-column column-cb check-column' scope='col'><input type='checkbox' class='select-all' value='1' /></th>
                               <th>".__('ID', 'eme')."</th>
                               <th>".__('Format description', 'eme')."</th>
                            </tr>
@@ -103,7 +103,7 @@ function eme_templates_table_layout($message = "") {
                      foreach ($templates as $this_template) {
                         $table .= "    
                            <tr>
-                           <td><input type='checkbox' class ='row-selector' value='".$this_template['id']."' name='templates[]'/></td>
+                           <td><input type='checkbox' class ='row-selector' value='".$this_template['id']."' name='templates[]' /></td>
                            <td><a href='".admin_url("admin.php?page=eme-templates&amp;eme_admin_action=edittemplate&amp;template_ID=".$this_template['id'])."'>".$this_template['id']."</a></td>
                            <td><a href='".admin_url("admin.php?page=eme-templates&amp;eme_admin_action=edittemplate&amp;template_ID=".$this_template['id'])."'>".$this_template['description']."</a></td>
                            </tr>
@@ -180,13 +180,13 @@ function eme_templates_edit_layout($message = "") {
 
       <form name='edittemplate' id='edittemplate' method='post' action='".admin_url("admin.php?page=eme-templates")."' class='validate'>
       <input type='hidden' name='eme_admin_action' value='edit' />
-      <input type='hidden' name='template_ID' value='".$template['id']."'/>";
+      <input type='hidden' name='template_ID' value='".$template['id']."' />";
       
       $layout .= "
          <table class='form-table'>
             <tr class='form-field form-required'>
                <th scope='row' valign='top'><label for='description'>".__('Template description', 'eme')."</label></th>
-               <td><input type='text' name='description' id='description' value='".eme_sanitize_html($template['description'])."' size='40'  /><br />
+               <td><input type='text' name='description' id='description' value='".eme_sanitize_html($template['description'])."' size='40' /><br />
                  ".__('The description of the template', 'eme')."</td>
             </tr>
             <tr class='form-field form-required'>
