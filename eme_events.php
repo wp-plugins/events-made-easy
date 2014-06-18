@@ -1391,6 +1391,9 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          // this is a correlated subquery, so the FROM clause should specify events_table again, so it will search in the outer query for events_table.event_id
          $conditions[] = "(event_rsvp=0 OR (event_rsvp=1 AND event_seats > (SELECT COALESCE(SUM(booking_seats),0) AS booked_seats FROM $bookings_table WHERE $bookings_table.event_id = $events_table.event_id)))";
       }
+      if (get_option('eme_rsvp_hide_rsvp_ended_events')) {
+         $conditions[] = "(event_rsvp=0 OR (event_rsvp=1 AND (UNIX_TIMESTAMP(CONCAT(event_start_date,' ',event_start_time))-rsvp_number_days*60*60*24-rsvp_number_hours*60*60 > UNIX_TIMESTAMP()) ))";
+      }
    }
    if (preg_match ( "/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $scope )) {
       //$conditions[] = " event_start_date like '$scope'";

@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 59);
+define('EME_DB_VERSION', 60);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -1797,7 +1797,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif (preg_match('/#_IS_RSVP_ENDED/', $result)) {
          if (eme_is_event_rsvp($event)) {
             $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-            if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime )
+            $rsvp_end_datetime = $event_start_datetime - $event['rsvp_number_days']*60*60*24 - $event['rsvp_number_hours']*60*60;
+            if ($rsvp_end_datetime<time())
                $replacement = 1;
             else
                $replacement = 0;
