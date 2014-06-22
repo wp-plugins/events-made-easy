@@ -2057,14 +2057,14 @@ function eme_send_mails_page() {
    $onchange = isset($_POST ['onchange']) ? intval($_POST ['onchange']) : 0;
 
    if (isset($_POST ['message']) && !empty($_POST ['message']))
-      $message = $_POST ['message'];
+      $message = stripslashes_deep($_POST ['message']);
    elseif (isset($_POST ['message_template']) && intval($_POST ['message_template'])>0)
       $message = eme_get_template_format(intval($_POST ['message_template']));
    else
       $message = "";
 
    if (isset($_POST ['subject']) && !empty($_POST ['subject']))
-      $subject = $_POST ['subject'];
+      $subject = stripslashes_deep($_POST ['subject']);
    elseif (isset($_POST ['subject_template']) && intval($_POST ['subject_template'])>0)
       $subject = eme_get_template_format(intval($_POST ['subject_template']));
    else
@@ -2094,9 +2094,9 @@ function eme_send_mails_page() {
                   $tmp_subject = eme_replace_placeholders($subject, $event, "text",0,$attendee['lang']);
 
                   $tmp_message = eme_replace_attendees_placeholders($tmp_message, $event, $attendee, "text",0,$attendee['lang']);
-                  $tmp_message = eme_strip_tags($tmp_message);
                   $tmp_subject = eme_replace_attendees_placeholders($tmp_subject, $event, $attendee, "text",0,$attendee['lang']);
-                  $tmp_subject = eme_strip_tags($tmp_subject);
+                  $tmp_message = eme_translate($tmp_message,$attendee['lang']);
+                  $tmp_subject = eme_translate($tmp_subject,$attendee['lang']);
                   eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
                }
             } elseif ($target == 'bookings') {
@@ -2107,9 +2107,9 @@ function eme_send_mails_page() {
                   $attendee = eme_get_person($booking['person_id']);
                   if ($attendee && is_array($attendee)) {
                      $tmp_message = eme_replace_booking_placeholders($message, $event, $booking, "text",0,$booking['lang']);
-                     $tmp_message = eme_strip_tags($tmp_message);
                      $tmp_subject = eme_replace_booking_placeholders($subject, $event, $booking, "text",0,$booking['lang']);
-                     $tmp_subject = eme_strip_tags($tmp_subject);
+                     $tmp_message = eme_translate($tmp_message,$booking['lang']);
+                     $tmp_subject = eme_translate($tmp_subject,$booking['lang']);
                      eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
                   }
                }
