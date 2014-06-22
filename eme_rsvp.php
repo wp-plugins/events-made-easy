@@ -1649,7 +1649,7 @@ function eme_registration_seats_page($pending=0) {
       $ret_string .= "
          <input type='hidden' name='eme_admin_action' value='updateRegistration' />
          <input type='hidden' name='booking_id' value='$booking_id' />
-         </form></div>";
+         </form>";
       print $ret_string;
       return;
    } else {
@@ -1665,7 +1665,7 @@ function eme_registration_seats_page($pending=0) {
          $ret_string .= "
             <input type='hidden' name='eme_admin_action' value='addRegistration' />
             <input type='hidden' name='event_id' value='$event_id' />
-            </form></div>";
+            </form>";
          print $ret_string;
          return;
 
