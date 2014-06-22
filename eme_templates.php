@@ -205,7 +205,7 @@ function eme_templates_edit_layout($message = "") {
 function eme_get_templates() {
    global $wpdb;
    $templates_table = $wpdb->prefix.TEMPLATES_TBNAME;
-   return $wpdb->get_results("SELECT * FROM $templates_table", ARRAY_A);
+   return $wpdb->get_results("SELECT * FROM $templates_table ORDER BY description", ARRAY_A);
 }
 
 function eme_get_templates_array_by_id() {
