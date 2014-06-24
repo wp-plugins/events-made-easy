@@ -1,0 +1,4457 @@
+# Copyright (C) 2014 
+# This file is distributed under the same license as the package.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
+"POT-Creation-Date: 2014-05-08 18:27:56+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-05-22 16:09+0200\n"
+"Last-Translator: Michael Yunat <Michael.Yunat@gmail.com>\n"
+"Language-Team: \n"
+"Language: uk\n"
+"X-Generator: Poedit 1.6.5\n"
+
+#: captcha_check.php:6
+msgid "You entered an incorrect code. Please fill in the correct code."
+msgstr "Ви ввели неправильний код. Будь ласка, заповніть правильний код."
+
+#: eme_UI_helpers.php:73 eme_UI_helpers.php:110 eme_people.php:278
+#: eme_people.php:391 eme_rsvp.php:1397
+msgid "Yes"
+msgstr "Так"
+
+#: eme_UI_helpers.php:74 eme_UI_helpers.php:109 eme_people.php:278
+#: eme_people.php:391 eme_rsvp.php:1397
+msgid "No"
+msgstr "Ні"
+
+#: eme_attributes.php:57
+msgid "Add attributes here"
+msgstr "Додати атрибути тут"
+
+#: eme_attributes.php:61
+msgid "Attribute Name"
+msgstr "Ім'я атрибута"
+
+#: eme_attributes.php:62
+msgid "Value"
+msgstr "Значення"
+
+#: eme_attributes.php:67
+msgid "Add new tag"
+msgstr "Додати новий тег"
+
+#: eme_attributes.php:81
+msgid "Not defined in templates"
+msgstr "Не визначено в шаблонах"
+
+#: eme_attributes.php:92 eme_attributes.php:113
+msgid "Remove"
+msgstr "Видаляти"
+
+#: eme_attributes.php:124
+msgid ""
+"In order to use attributes, you must define some in your templates, "
+"otherwise they'll never show. Go to Events > Settings to add attribute "
+"placeholders."
+msgstr ""
+"Для того щоб використовувати атрибути, необхідно визначити деякі в шаблонахв "
+"іншому випадку вони ніколи не показують. Перейти до Події> Налаштування, щоб "
+"додати атрибут заповнювачі."
+
+#: eme_attributes.php:137
+msgid ""
+"No attributes defined yet. If you want attributes, you first need to define/"
+"use some in the Settings page. See the section about custom attributes on "
+"the documention site for more info."
+msgstr ""
+"Атрибути не визначені. Якщо ви хочете атрибути, в першу чергу необхідно "
+"визначити/використовувати деякі на сторінці Налаштування. Дивіться розділ "
+"про користувальницьких атрибутів на в documention сайті для отримання "
+"додаткової інформації."
+
+#: eme_calendar.php:306 eme_recurrence.php:287
+msgid "Sunday"
+msgstr "Неділя"
+
+#: eme_calendar.php:306 eme_recurrence.php:287
+msgid "Monday"
+msgstr "Понеділок"
+
+#: eme_calendar.php:306 eme_recurrence.php:287
+msgid "Tuesday"
+msgstr "Вівторок"
+
+#: eme_calendar.php:306 eme_recurrence.php:287
+msgid "Wednesday"
+msgstr "Середа"
+
+#: eme_calendar.php:306 eme_recurrence.php:287
+msgid "Thursday"
+msgstr "Четвер"
+
+#: eme_calendar.php:306 eme_recurrence.php:287
+msgid "Friday"
+msgstr "П'ятниця"
+
+#: eme_calendar.php:306 eme_recurrence.php:287
+msgid "Saturday"
+msgstr "Субота"
+
+#: eme_categories.php:7
+msgid "You have no right to update categories!"
+msgstr "Ви не маєте права на оновлення категорії!"
+
+#: eme_categories.php:40
+msgid "Successfully deleted the selected categories."
+msgstr "Успішно видалений вибрані категорії."
+
+#: eme_categories.php:43 eme_categories.php:47
+msgid ""
+"Couldn't delete the categories. Incorrect category IDs supplied. Please try "
+"again."
+msgstr ""
+"Не вдалося видалити категорії. Неправильні ідентифікатори категорії "
+"поставляються. Будь ласка, спробуйте знову."
+
+#: eme_categories.php:72 events-manager.php:977
+msgid "Categories"
+msgstr "Категорії"
+
+#: eme_categories.php:94 eme_categories.php:101 eme_events.php:1961
+#: eme_formfields.php:118 eme_formfields.php:126 eme_locations.php:404
+#: eme_locations.php:414 eme_people.php:472 eme_rsvp.php:1818
+#: eme_templates.php:96 eme_templates.php:103
+msgid "ID"
+msgstr "ID"
+
+#: eme_categories.php:95 eme_categories.php:102 eme_events.php:1962
+#: eme_events.php:3059 eme_events.php:3111 eme_events.php:3354
+#: eme_formfields.php:119 eme_formfields.php:127 eme_locations.php:405
+#: eme_locations.php:415 eme_people.php:100 eme_people.php:247
+#: eme_people.php:353 eme_people.php:473 eme_rsvp.php:1819 eme_settings.php:14
+#: eme_settings.php:24
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:76
+msgid "Name"
+msgstr "Назва"
+
+#: eme_categories.php:127
+msgid "No categories have been inserted yet!"
+msgstr "Категорія не були вставлені ще!"
+
+#: eme_categories.php:140 eme_categories.php:148
+msgid "Add category"
+msgstr "Додати категорію"
+
+#: eme_categories.php:144 eme_categories.php:186
+msgid "Category name"
+msgstr "Назва категорії"
+
+#: eme_categories.php:146 eme_categories.php:188
+msgid "The name of the category"
+msgstr "Назва категорії"
+
+#: eme_categories.php:168
+msgid "Edit category"
+msgstr "Редагувати категорія"
+
+#: eme_categories.php:191
+msgid "Update category"
+msgstr "Оновлення категорія"
+
+#: eme_cleanup.php:22
+msgid ""
+"Cleanup done: events (and corresponding booking data) older than %d %s(s) "
+"have been removed."
+msgstr ""
+"Очищення зроблено: події (і відповідні дані бронювання) старше %d %s (и) "
+"були видалені."
+
+#: eme_cleanup.php:35
+msgid "Cleanup: remove old events"
+msgstr "Очищення: видалити старі події"
+
+#: eme_cleanup.php:43
+msgid "Remove events older than"
+msgstr "Видалити події старше"
+
+#: eme_cleanup.php:51
+msgid "Day(s)"
+msgstr "День (и)"
+
+#: eme_cleanup.php:52
+msgid "Week(s)"
+msgstr "Тиждень (и)"
+
+#: eme_cleanup.php:53
+msgid "Month(s)"
+msgstr "Місяць (і)"
+
+#: eme_cleanup.php:55 eme_events.php:1952 eme_people.php:463 eme_rsvp.php:1791
+msgid "Apply"
+msgstr "Застосовувати"
+
+#: eme_events.php:79 eme_events.php:437
+msgid "Insert New Event"
+msgstr "Вставте подія"
+
+#: eme_events.php:136
+msgid "Event(s) deleted!"
+msgstr "Подій (я) видалені!"
+
+#: eme_events.php:138
+msgid "You have no right to delete events!"
+msgstr "Ви не маєте права видаляти події!"
+
+#: eme_events.php:165
+msgid "You have no right to insert or update events"
+msgstr "Ви не маєте права вставляти або оновлювати події"
+
+#: eme_events.php:335
+msgid "Ach, there's a problem here:"
+msgstr "Ах, є проблема тут:"
+
+#: eme_events.php:356
+msgid ""
+"Could not create the new location for this event: either you don't have the "
+"right to insert locations or there's a DB problem."
+msgstr ""
+"Не вдалося створити нове місце розташування для цієї події: або ви не маєте "
+"право на розміщення місць або є проблема БД."
+
+#: eme_events.php:370 eme_events.php:378
+msgid "Database insert failed!"
+msgstr "Вставити базу даних не вдалося!"
+
+#: eme_events.php:372 eme_events.php:409
+msgid "New recurrent event inserted!"
+msgstr "Новий повторюване вставлений!"
+
+#: eme_events.php:380
+msgid "New event successfully inserted!"
+msgstr "Нова дата успішно виведений!"
+
+#: eme_events.php:393
+msgid "Recurrence updated!"
+msgstr "Повторення оновлюється!"
+
+#: eme_events.php:396
+msgid "Something went wrong with the recurrence update..."
+msgstr "Щось пішло не так з оновленням повторення ..."
+
+#: eme_events.php:399 eme_events.php:423 eme_events.php:452
+msgid "You have no right to update ' %s'"
+msgstr "Ви не маєте права на оновлення '%s'"
+
+#: eme_events.php:416
+msgid "Updated ' %s'"
+msgstr "Оновлено '%s'"
+
+#: eme_events.php:418
+msgid "Failed to update ' %s'"
+msgstr "Не вдалося оновити '%s'"
+
+#: eme_events.php:440
+msgid "You have no right to add events!"
+msgstr "У вас немає прав на додавання події!"
+
+#: eme_events.php:449
+msgid "Edit Event ' %s'"
+msgstr "Редагувати подію '%s'"
+
+#: eme_events.php:466 eme_locations.php:41
+msgid " (Copy)"
+msgstr "(Копія)"
+
+#: eme_events.php:470
+msgid "Edit event copy ' %s'"
+msgstr "Редагувати копія подію '%s'"
+
+#: eme_events.php:473
+msgid "You have no right to copy ' %s'"
+msgstr "Ви не маєте права копіювати '%s'"
+
+#: eme_events.php:484 eme_events.php:2065
+msgid "Reschedule"
+msgstr "Перенесення"
+
+#: eme_events.php:487
+msgid "You have no right to update"
+msgstr "Ви не маєте права на оновлення"
+
+#: eme_events.php:499
+msgid "Past Events"
+msgstr "Минулі події"
+
+#: eme_events.php:502
+msgid "All Events"
+msgstr "Всі події"
+
+#: eme_events.php:505
+msgid "Future Events"
+msgstr "Майбутні події"
+
+#: eme_events.php:522
+msgid "Please select a page"
+msgstr "Будь ласка, виберіть сторінку"
+
+#: eme_events.php:959 eme_locations.php:752
+msgid "Previous week"
+msgstr "Попередній тиждень"
+
+#: eme_events.php:960 eme_locations.php:753
+msgid "Next week"
+msgstr "Наступного тижня"
+
+#: eme_events.php:977 eme_locations.php:770
+msgid "Previous month"
+msgstr "Попередній місяць"
+
+#: eme_events.php:978 eme_locations.php:771
+msgid "Next month"
+msgstr "Наступний місяць"
+
+#: eme_events.php:986 eme_locations.php:779
+msgid "Previous year"
+msgstr "Попередній рік"
+
+#: eme_events.php:987 eme_locations.php:780
+msgid "Next year"
+msgstr "У майбутньому році"
+
+#: eme_events.php:996 eme_events.php:1005 eme_locations.php:789
+#: eme_locations.php:798
+msgid "Previous day"
+msgstr "Попередній день"
+
+#: eme_events.php:997 eme_events.php:1006 eme_locations.php:790
+#: eme_locations.php:799
+msgid "Next day"
+msgstr "Завтра"
+
+#: eme_events.php:1033
+msgid "Previous page"
+msgstr "Попередня сторінка"
+
+#: eme_events.php:1034
+msgid "Next page"
+msgstr "Наступна сторінка"
+
+#: eme_events.php:1064 eme_events.php:1074
+msgid "Page "
+msgstr "Сторінка"
+
+#: eme_events.php:1882 eme_rsvp.php:1688
+msgid "Past events"
+msgstr "Минулі події"
+
+#: eme_events.php:1883 eme_rsvp.php:1689 eme_rsvp.php:1758
+msgid "All events"
+msgstr "Всі події"
+
+#: eme_events.php:1884 eme_rsvp.php:1690
+msgid "Future events"
+msgstr "Майбутні події"
+
+#: eme_events.php:1896
+msgid "New Event ..."
+msgstr "Подія ..."
+
+#: eme_events.php:1919 eme_events.php:2270
+msgid "Event Status"
+msgstr "Стан події"
+
+#: eme_events.php:1925
+msgid "All categories"
+msgstr "Всі категорії"
+
+#: eme_events.php:1936 eme_rsvp.php:1777
+msgid "Filter"
+msgstr "Фільтр"
+
+#: eme_events.php:1948 eme_people.php:460 eme_rsvp.php:1784
+msgid "Bulk Actions"
+msgstr "Масові дії"
+
+#: eme_events.php:1949
+msgid "Delete selected events"
+msgstr "Видалити вибрані події"
+
+#: eme_events.php:1950
+msgid "Delete selected recurrent events"
+msgstr "Видалити вибрані поточні події"
+
+#: eme_events.php:1963 eme_events.php:2273
+msgid "Status"
+msgstr "Статус"
+
+#: eme_events.php:1965 eme_events.php:3124 eme_events.php:3327
+msgid "Location"
+msgstr "Розташування"
+
+#: eme_events.php:1966 eme_rsvp.php:1820
+msgid "Date and time"
+msgstr "Дата і час"
+
+#: eme_events.php:2003 eme_events.php:2484 eme_locations.php:299
+#: eme_widgets.php:120 eme_widgets.php:252
+msgid "Category"
+msgstr "Категорія"
+
+#: eme_events.php:2020 eme_events.php:2022
+msgid "RSVP Info: "
+msgstr "RSVP інформація:"
+
+#: eme_events.php:2020 eme_events.php:2022
+msgid "Free: "
+msgstr "Безкоштовно:"
+
+#: eme_events.php:2020 eme_rsvp.php:1864
+msgid "Pending: "
+msgstr "В очікуванні:"
+
+#: eme_events.php:2020 eme_events.php:2022 eme_rsvp.php:1864
+msgid "Max: "
+msgstr "Макс:"
+
+#: eme_events.php:2026 eme_rsvp.php:1159 eme_rsvp.php:1868
+msgid "Printable view"
+msgstr "Вид для друку"
+
+#: eme_events.php:2027 eme_rsvp.php:1163 eme_rsvp.php:1869 eme_rsvp.php:2116
+msgid "CSV export"
+msgstr "Експорт CSV"
+
+#: eme_events.php:2039
+msgid "Preview event"
+msgstr "Попередній подія"
+
+#: eme_events.php:2041
+msgid "View event"
+msgstr "Подивитися події"
+
+#: eme_events.php:2046
+msgid "Duplicate this event"
+msgstr "Дублювання це подія"
+
+#: eme_events.php:2054
+msgid "All day"
+msgstr "Весь день"
+
+#: eme_events.php:2189 eme_widgets.php:104
+msgid "Daily"
+msgstr "Щодня"
+
+#: eme_events.php:2189
+msgid "Weekly"
+msgstr "Щотижня"
+
+#: eme_events.php:2189 eme_widgets.php:105
+msgid "Monthly"
+msgstr "Щомісяця"
+
+#: eme_events.php:2189 eme_recurrence.php:335
+msgid "Specific days"
+msgstr "Конкретні дні"
+
+#: eme_events.php:2190
+msgid "Mon"
+msgstr "Понеділок"
+
+#: eme_events.php:2190
+msgid "Tue"
+msgstr "Вівторок"
+
+#: eme_events.php:2190
+msgid "Wed"
+msgstr "Середа"
+
+#: eme_events.php:2190
+msgid "Thu"
+msgstr "Четвер"
+
+#: eme_events.php:2190
+msgid "Fri"
+msgstr "П'ятниця"
+
+#: eme_events.php:2190
+msgid "Sat"
+msgstr "Субота"
+
+#: eme_events.php:2190
+msgid "Sun"
+msgstr "Сонце"
+
+#: eme_events.php:2191
+msgid "first"
+msgstr "перший"
+
+#: eme_events.php:2191
+msgid "second"
+msgstr "другий"
+
+#: eme_events.php:2191
+msgid "third"
+msgstr "третій"
+
+#: eme_events.php:2191
+msgid "fourth"
+msgstr "четвертий"
+
+#: eme_events.php:2191
+msgid "fifth"
+msgstr "п'ятий"
+
+#: eme_events.php:2191
+msgid "last"
+msgstr "останній"
+
+#: eme_events.php:2191
+msgid "Start day"
+msgstr "Почніть день"
+
+#: eme_events.php:2246
+msgid "WARNING: This is a recurrence."
+msgstr "УВАГА: Це рецидив."
+
+#: eme_events.php:2249
+msgid ""
+"Modifying these data all the events linked to this recurrence will be "
+"rescheduled"
+msgstr "Зміна цих даних всі події, пов'язані з цією рецидиву буде перенесено"
+
+#: eme_events.php:2252
+msgid "WARNING: This is a recurring event."
+msgstr "УВАГА: Це повторюється подія."
+
+#: eme_events.php:2253
+msgid ""
+"If you change these data and save, this will become an independent event."
+msgstr "Якщо ви зміните ці дані і зберегти, це стане незалежною подією."
+
+#: eme_events.php:2287
+msgid ""
+"Private events are only visible for logged in users, draft events are not "
+"visible from the front end."
+msgstr ""
+"Є приватні події видно лише зареєстрованим користувачам, проекти події не є "
+"видно від переднього кінця."
+
+#: eme_events.php:2299
+msgid "Recurrence"
+msgstr "Рецидив"
+
+#: eme_events.php:2319 eme_events.php:2341
+msgid "Every"
+msgstr "Кожен"
+
+#: eme_events.php:2323
+msgid "day"
+msgstr "день"
+
+#: eme_events.php:2325
+msgid "days"
+msgstr "днів"
+
+#: eme_events.php:2327
+msgid "week"
+msgstr "тиждень"
+
+#: eme_events.php:2329
+msgid "weeks"
+msgstr "тижні"
+
+#: eme_events.php:2331
+msgid "month"
+msgstr "місяць"
+
+#: eme_events.php:2333
+msgid "months"
+msgstr "місяців"
+
+#: eme_events.php:2338
+msgid ""
+"If you leave this empty, the recurrence start date will be used as a "
+"reference."
+msgstr ""
+"Якщо залишити це порожнім, повторення дата буде використовуватися в якості "
+"посилання."
+
+#: eme_events.php:2348
+msgid "Day of month"
+msgstr "День місяця"
+
+#: eme_events.php:2350
+msgid ""
+"If you use \"Start day\" as day of the month, the event start date will be "
+"used as a reference."
+msgstr ""
+"Якщо ви використовуєте \" Пуск день \"як день місяця, дата початку захід "
+"буде використовуватися в якості посилання."
+
+#: eme_events.php:2356
+msgid "Check if your event happens more than once."
+msgstr "Переконайтеся, що ваш подія відбувається не один раз."
+
+#: eme_events.php:2359
+msgid ""
+"The event start and end date only define the duration of an event in case of "
+"a recurrence."
+msgstr ""
+"Захід дату початку і закінчення тільки визначити тривалість події у випадку "
+"рецидиву."
+
+#: eme_events.php:2371 eme_widgets.php:157 eme_widgets.php:281
+msgid "Author"
+msgstr "Автор"
+
+#: eme_events.php:2374
+msgid "Author of this event: "
+msgstr "Автор цієї події:"
+
+#: eme_events.php:2387
+msgid "Contact Person"
+msgstr "Контактна особа"
+
+#: eme_events.php:2390
+msgid "Contact"
+msgstr "Контакт"
+
+#: eme_events.php:2392 eme_settings.php:522
+msgid "Event author"
+msgstr "Автор подія"
+
+#: eme_events.php:2401
+msgid "RSVP"
+msgstr "RSVP"
+
+#: eme_events.php:2405
+msgid "Enable registration for this event"
+msgstr "Включити реєстрацію для цієї події"
+
+#: eme_events.php:2410
+msgid "Require approval for registration"
+msgstr "Вимагати затвердження для реєстрації"
+
+#: eme_events.php:2413
+msgid "Auto-approve registration upon payment"
+msgstr "Авто-затвердити Реєстрація з оплати"
+
+#: eme_events.php:2416
+msgid "Consider pending registrations as available seats for new bookings"
+msgstr "Розглянемо очікуванні реєстрацій, наявність місць на нових бронювань"
+
+#: eme_events.php:2419
+msgid "Require WP membership for registration"
+msgstr "Вимагати членство WP для реєстрації"
+
+#: eme_events.php:2422 eme_rsvp.php:1125
+msgid "Spaces"
+msgstr "Приміщення"
+
+#: eme_events.php:2423
+msgid "For multiseat events, seperate the values by '||'"
+msgstr "Для Multiseat подій, відокремити значення від '||'"
+
+#: eme_events.php:2426 eme_people.php:349
+msgid "Price: "
+msgstr "Ціна:"
+
+#: eme_events.php:2427
+msgid "For multiprice events, seperate the values by '||'"
+msgstr "Для multiprice подій, відокремити значення від '| |'"
+
+#: eme_events.php:2430
+msgid "Currency: "
+msgstr "Валюта:"
+
+#: eme_events.php:2447 eme_settings.php:530
+msgid "Max number of spaces to book"
+msgstr "Максимальна кількість просторів бронювати"
+
+#: eme_events.php:2448 eme_settings.php:530
+msgid "The maximum number of spaces a person can book in one go."
+msgstr ""
+"Максимальна кількість просторів людина може замовити на одному диханні."
+
+#: eme_events.php:2448 eme_events.php:2452
+msgid "(is multi-compatible)"
+msgstr "(Мульти-сумісний)"
+
+#: eme_events.php:2451 eme_settings.php:529
+msgid "Min number of spaces to book"
+msgstr "Мінімальна кількість просторів бронювати"
+
+#: eme_events.php:2452 eme_settings.php:529
+msgid ""
+"The minimum number of spaces a person can book in one go (it can be 0, for e."
+"g. just an attendee list)."
+msgstr ""
+"Мінімальна кількість просторів людина може замовити за один раз (це може "
+"бути 0, для е. Г. Лише список учасників)."
+
+#: eme_events.php:2455
+msgid "Allow RSVP until "
+msgstr "Дозволити RSVP до"
+
+#: eme_events.php:2458
+msgid " days before the event starts."
+msgstr "днів до початку заходу."
+
+#: eme_events.php:2461
+msgid " hours before the event starts."
+msgstr "годин до початку заходу."
+
+#: eme_events.php:2464
+msgid "Payment methods"
+msgstr "Способи оплати"
+
+#: eme_events.php:2465
+msgid "Paypal"
+msgstr "Paypal"
+
+#: eme_events.php:2466
+msgid "2Checkout"
+msgstr "2Checkout"
+
+#: eme_events.php:2467
+msgid "Webmoney"
+msgstr "Webmoney"
+
+#: eme_events.php:2468
+msgid "Google Checkout"
+msgstr "Google Checkout"
+
+#: eme_events.php:2469
+msgid "First Data"
+msgstr "First Data"
+
+#: eme_events.php:2596
+msgid "Save"
+msgstr "Зберегти"
+
+#: eme_events.php:2598
+msgid "Are you sure you want to delete this event?"
+msgstr "Ви впевнені, що хочете видалити цю подію?"
+
+#: eme_events.php:2599
+msgid "Are you sure you want to delete this recurrence?"
+msgstr "Ви впевнені, що хочете видалити цей рецидив?"
+
+#: eme_events.php:2602 eme_events.php:2604
+msgid "Update"
+msgstr "Оновлення"
+
+#: eme_events.php:2606
+msgid "Delete Event"
+msgstr "Видалити подія"
+
+#: eme_events.php:2608
+msgid "Delete Recurrence"
+msgstr "Видалити рецидиву"
+
+#: eme_events.php:2622
+msgid "The event name"
+msgstr "Ім'я події"
+
+#: eme_events.php:2625 eme_locations.php:617 eme_locations.php:621
+#: eme_locations.php:624
+msgid " is missing!"
+msgstr "не вистачає!"
+
+#: eme_events.php:2628
+msgid ""
+"Since the event is repeated, you must specify an event date for the "
+"recurrence."
+msgstr ""
+"Оскільки захід повторюється, необхідно вказати дату подій для рецидиву."
+
+#: eme_events.php:2631
+msgid ""
+"Since the event contains multiple seat categories (multiseat), you must "
+"specify the price per category (multiprice) as well."
+msgstr ""
+"Оскільки події містить кілька категорій сидіння (Multiseat), необхідно "
+"вказати ціну кожної категорії (multiprice), а також."
+
+#: eme_events.php:2636
+msgid ""
+"Since the event contains multiple seat categories (multiseat), you must "
+"specify the exact same amount of prices (multiprice) as well."
+msgstr ""
+"Оскільки події містить кілька категорій сидіння (Multiseat), необхідно "
+"вказати точне ж кількість цін (multiprice), а також."
+
+#: eme_events.php:2644
+msgid ""
+"Since this is a multiprice event and you decided to limit the max amount of "
+"seats to book (for one booking) per price category, you must specify the "
+"exact same amount of \"max seats to book\" as you did for the prices."
+msgstr ""
+"Оскільки це multiprice захід, і ви вирішили обмежити максимальний розмір "
+"місць для книги (для одного замовлення) в ціновій категорії, ви повинні "
+"вказати точно таку ж суму \"Макс місць книга\", як ви робили цінами."
+
+#: eme_events.php:2650
+msgid ""
+"Since this is a multiprice event and you decided to limit the min amount of "
+"seats to book (for one booking) per price category, you must specify the "
+"exact same amount of \"min seats to book\" as you did for the prices."
+msgstr ""
+"Оскільки це multiprice захід, і ви вирішили обмежити мінімальна сума місць "
+"для книги (для одного замовлення) в ціновій категорії, ви повинні вказати "
+"точно таку ж суму \"хв місць книга\", як ви робили цінами."
+
+#: eme_events.php:2656 eme_locations.php:631
+msgid "Ach, some problems here:"
+msgstr "Ах, деякі проблеми тут:"
+
+#: eme_events.php:3060
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:26
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:40
+msgid "Date"
+msgstr "Дата"
+
+#: eme_events.php:3075
+msgid "Some required fields are missing:"
+msgstr "Деякі обов'язкові поля відсутні:"
+
+#: eme_events.php:3078
+msgid "Since the event is repeated, you must specify an end date"
+msgstr "Оскільки подія повторюється, необхідно вказати дату закінчення"
+
+#: eme_events.php:3112
+msgid "Recurrence dates"
+msgstr "Дати Рекурентні"
+
+#: eme_events.php:3113
+msgid "Event date"
+msgstr "Дата події"
+
+#: eme_events.php:3114
+msgid "Event time"
+msgstr "Час події"
+
+#: eme_events.php:3115
+msgid "Single Event Title Format"
+msgstr "Подія на Назва Формат"
+
+#: eme_events.php:3116
+msgid "Single Event Format"
+msgstr "Одномісний Формат заходу"
+
+#: eme_events.php:3117
+msgid "Contact Person Email Format"
+msgstr "Контактна особа E-mail Формат"
+
+#: eme_events.php:3118
+msgid "Booking recorded html Format"
+msgstr "Бронювання записав форматі HTML"
+
+#: eme_events.php:3119
+msgid "Respondent Email Format"
+msgstr "Відповідач Формат електронної пошти"
+
+#: eme_events.php:3120
+msgid "Registration Pending Email Format"
+msgstr "Реєстрація очікуванні Формат електронної пошти"
+
+#: eme_events.php:3121
+msgid "Registration Updated Email Format"
+msgstr "Реєстрація Оновлено Формат електронної пошти"
+
+#: eme_events.php:3122
+msgid "Registration Form Format"
+msgstr "Реєстраційна форма Формат"
+
+#: eme_events.php:3123
+msgid "Cancel Registration Form Format"
+msgstr "Скасувати Реєстраційна форма Формат"
+
+#: eme_events.php:3125
+msgid "Details"
+msgstr "Деталі"
+
+#: eme_events.php:3126
+msgid "Event image"
+msgstr "Зображення подія"
+
+#: eme_events.php:3128 eme_locations.php:348
+msgid "Attributes"
+msgstr "Атрибути"
+
+#: eme_events.php:3129 eme_locations.php:355
+msgid "External link"
+msgstr "Зовнішнє посилання"
+
+#: eme_events.php:3139
+msgid "The event name. Example: Birthday party"
+msgstr "Ім'я події. Приклад: День народження"
+
+#: eme_events.php:3143 eme_locations.php:197
+msgid "Permalink: "
+msgstr "Постійне посилання:"
+
+#: eme_events.php:3161
+msgid "The event beginning and end date."
+msgstr "Починаючи подій та дата закінчення."
+
+#: eme_events.php:3165
+msgid ""
+"In case of a recurrent event, use the beginning and end date to just "
+"indicate the duration of one event in days. The real start date is "
+"determined by the recurrence scheme being used."
+msgstr ""
+"У випадку рецидивуючого випадку, використовувати початок і кінцеву дати, щоб "
+"просто вказують тривалість однієї події в днях. Реальна дата початку "
+"визначається схемою рецидивів використовується."
+
+#: eme_events.php:3170
+msgid "This event lasts all day"
+msgstr "Ця подія триває весь день"
+
+#: eme_events.php:3182
+msgid "The recurrence beginning and end date."
+msgstr "Рецидив початок і закінчення."
+
+#: eme_events.php:3185
+msgid "Select all the dates you want the event to begin on."
+msgstr "Виберіть всі дати, які ви хочете, щоб подія почнеться."
+
+#: eme_events.php:3194
+msgid "The format of the single event title."
+msgstr "Формат одного заголовка подій."
+
+#: eme_events.php:3196 eme_events.php:3229 eme_events.php:3240
+#: eme_events.php:3251 eme_events.php:3262 eme_events.php:3273
+#: eme_events.php:3284 eme_events.php:3295 eme_events.php:3306
+msgid "Only fill this in if you want to override the default settings."
+msgstr ""
+"Тільки заповнити його, якщо ви хочете, щоб перевизначити параметри за "
+"замовчуванням."
+
+#: eme_events.php:3218
+msgid "The time of the event beginning and end"
+msgstr "Час початку і кінця події"
+
+#: eme_events.php:3227
+msgid "The format of the single event page."
+msgstr "Формат сторінки однієї події."
+
+#: eme_events.php:3238 eme_settings.php:569
+msgid "The format of the email which will be sent to the contact person."
+msgstr "Формат електронній пошті, який буде відправлено до контактної особи."
+
+#: eme_events.php:3249 eme_settings.php:541
+msgid ""
+"The text (html allowed) shown to the user when the booking has been made "
+"successfully."
+msgstr ""
+"Текст (HTML допускається) показується користувачеві, коли замовлення було "
+"зроблено успішно."
+
+#: eme_events.php:3260 eme_settings.php:572
+msgid "The format of the email which will be sent to the respondent."
+msgstr "Формат електронній пошті, яка буде відправлена ​​відповідачу."
+
+#: eme_events.php:3271
+msgid ""
+"The format of the email which will be sent to the respondent if the "
+"registration is pending."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​відповідачу, якщо реєстрація "
+"в черзі."
+
+#: eme_events.php:3282
+msgid ""
+"The format of the email which will be sent to the respondent if the "
+"registration has been updated by an admin."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​відповідачу, якщо реєстрація "
+"була оновлена ​​адміністратором."
+
+#: eme_events.php:3293
+msgid "The registration form format."
+msgstr "Форма формат реєстрації."
+
+#: eme_events.php:3304
+msgid "The cancel registration form format."
+msgstr "Скасувати реєстраційна форма формат."
+
+#: eme_events.php:3364 eme_locations.php:329
+msgid "Map not found"
+msgstr "Карта не знайдено"
+
+#: eme_events.php:3377
+msgid ""
+"The name of the location where the event takes place. You can use the name "
+"of a venue, a square, etc"
+msgstr ""
+"Назва місця, де відбувається подія. Ви можете використовувати ім'я місця "
+"зустрічі, квадрат, і т.д."
+
+#: eme_events.php:3379
+msgid "If you leave this empty, the map will NOT be shown for this event"
+msgstr "Якщо залишити це порожнім, карта не буде відображатися для цієї події"
+
+#: eme_events.php:3387
+msgid "Select a location for your event"
+msgstr "Виберіть місце для Вашого заходу"
+
+#: eme_events.php:3393
+msgid "Address:"
+msgstr "Адреса:"
+
+#: eme_events.php:3398
+msgid ""
+"The address of the location where the event takes place. Example: 21, "
+"Dominick Street"
+msgstr "Адреса місця, де відбувається подія. Приклад: 21,Домінік-стріт"
+
+#: eme_events.php:3402
+msgid "Town:"
+msgstr "Місто:"
+
+#: eme_events.php:3407
+msgid ""
+"The town where the location is located. If you're using the Google Map "
+"integration and want to avoid geotagging ambiguities include the country in "
+"the town field. Example: Verona, Italy."
+msgstr ""
+" Місто, в якому розташування знаходиться Якщо ви використовуєте Google Map "
+"інтеграції і хочете уникнути геотаггінг неясності включають країну в поле "
+"міста. Приклад: Верона, Італія."
+
+#: eme_events.php:3411
+msgid "Latitude:"
+msgstr "Широта:"
+
+#: eme_events.php:3415
+msgid "Longitude:"
+msgstr "Довгота:"
+
+#: eme_events.php:3420
+msgid ""
+"If you're using the Google Map integration and are really serious about the "
+"correct place, use these."
+msgstr "Якщо ви використовуєте інтеграцію Google Map і дійсно серйозно про "
+
+#: eme_events.php:3435
+msgid "Details about the event"
+msgstr "Подробиці про захід"
+
+#: eme_events.php:3445
+msgid "Current image:"
+msgstr "Поточне зображення:"
+
+#: eme_events.php:3463 eme_locations.php:262
+msgid "Set a featured image"
+msgstr "Встановіть ознаками зображення"
+
+#: eme_events.php:3464 eme_locations.php:263
+msgid "Unset featured image"
+msgstr "Відключене ознаками зображення"
+
+#: eme_events.php:3507
+msgid ""
+"If this is filled in, the single event URL will point to this url instead of "
+"the standard event page."
+msgstr ""
+"Якщо це заповнюється, сингл URL подія буде вказувати на цю адресу замість "
+"стандартній сторінці подій."
+
+#: eme_events.php:4024
+msgid "Add an event"
+msgstr "Додати подію"
+
+#: eme_events.php:4032
+msgid ""
+"This page corresponds to <strong>Events Made Easy</strong> events page. Its "
+"content will be overriden by <strong>Events Made Easy</strong>. If you want "
+"to display your content, you can can assign another page to <strong>Events "
+"Made Easy</strong> in the the <a href=' %s'>Settings</a>. "
+msgstr ""
+"Ця сторінка відповідає <strong>Події Зроблено</strong> сторінку "
+"<strong>Easy</strong> подій. Його контент буде перекриватися <strong>Події "
+"Made Easy.</strong> Якщо ви хочете для відображення контенту, ви можете "
+"можете призначити ще одну сторінку на <strong>події Made Easy</strong> в "
+"самих <a href=' %s'>Налаштування</a> . "
+
+#: eme_filters.php:35
+msgid "Select Week"
+msgstr "Вибрати Огляд тижня"
+
+#: eme_filters.php:47
+msgid "Select Month"
+msgstr "Виберіть місяць"
+
+#: eme_filters.php:64
+msgid "Select Year"
+msgstr "Виберіть рік"
+
+#: eme_filters.php:121
+msgid "Select one or more categories"
+msgstr "Виберіть одну або кілька категорій"
+
+#: eme_filters.php:124
+msgid "Select a category"
+msgstr "Виберіть категорію"
+
+#: eme_filters.php:143
+msgid "Select one or more locations"
+msgstr "Виберіть один або кілька місць"
+
+#: eme_filters.php:146
+msgid "Select a location"
+msgstr "Виберіть місце"
+
+#: eme_filters.php:164
+msgid "Select one or more towns"
+msgstr "Виберіть один або кілька міст"
+
+#: eme_filters.php:167
+msgid "Select a town"
+msgstr "Вибрати місто"
+
+#: eme_formfields.php:7
+msgid "You have no right to update form fields!"
+msgstr "Ви не маєте права на оновлення поля форми!"
+
+#: eme_formfields.php:27 eme_formfields.php:46
+msgid "Error: the field name must be unique."
+msgstr "Помилка: ім'я поля має бути унікальним."
+
+#: eme_formfields.php:31 eme_formfields.php:49
+msgid "Error: the field value can not be empty for this type of field."
+msgstr "Помилка: значення поля не може бути порожнім для цього типу області."
+
+#: eme_formfields.php:35
+msgid "Successfully edited the field"
+msgstr "Успішно редагував поле"
+
+#: eme_formfields.php:52
+msgid "Successfully added the field"
+msgstr "Успішно додано поле"
+
+#: eme_formfields.php:68
+msgid "Successfully deleted the field(s)"
+msgstr "Успішно видалений поле (и)"
+
+#: eme_formfields.php:71
+msgid ""
+"Couldn't delete the form fields. Incorrect field IDs supplied. Please try "
+"again."
+msgstr ""
+"Не вдалося видалити поля форми. Неправильні ідентифікатори кріпильні. Будь "
+"ласка, спробуйте знову."
+
+#: eme_formfields.php:96
+msgid "Form fields"
+msgstr "Поля форми"
+
+#: eme_formfields.php:120 eme_formfields.php:128
+msgid "Type"
+msgstr "Тип"
+
+#: eme_formfields.php:154
+msgid "No fields defined yet!"
+msgstr "При цьому поля не визначено ще!"
+
+#: eme_formfields.php:167 eme_formfields.php:183
+msgid "Add field"
+msgstr "Додати поле"
+
+#: eme_formfields.php:171 eme_formfields.php:224
+msgid "Field name"
+msgstr "Ім'я поля"
+
+#: eme_formfields.php:173 eme_formfields.php:228
+msgid "Field type"
+msgstr "Тип поля"
+
+#: eme_formfields.php:176 eme_formfields.php:232
+msgid "Field values"
+msgstr "Значення полів"
+
+#: eme_formfields.php:178 eme_formfields.php:234
+msgid ""
+"Tip: for multivalue field types (like Drop Down), use \"||\" to seperate the "
+"different values (e.g.: a1||a2||a3)"
+msgstr ""
+"Порада: багатозначні поля типів (як падіння вниз), використовуйте \"||\" "
+"відключити різні значення (напр.: А1|А2|А3)"
+
+#: eme_formfields.php:179 eme_formfields.php:238
+msgid "Field tags"
+msgstr "Теги Польові"
+
+#: eme_formfields.php:181 eme_formfields.php:240
+msgid ""
+"For multivalue fields, you can here enter the \"visible\" tags people will "
+"see. If left empty, the field values will be used. Use \"||\" to seperate "
+"the different tags (e.g.: a1||a2||a3)"
+msgstr ""
+"Багатозначні поля, тут ви можете ввести \"видимим\" теги люди див. Якщо "
+"залишити це поле порожнім, то поле буде використовувати значення. "
+"Використання \"||\" для того щоб відокремити різні теги (напр.: А1|А2|А3)"
+
+#: eme_formfields.php:186 eme_formfields.php:248 eme_settings.php:539
+#: eme_settings.php:548 eme_settings.php:549
+msgid "For more information about form fields, see "
+msgstr "Додаткові відомості про поля форми, см."
+
+#: eme_formfields.php:186 eme_formfields.php:248 eme_settings.php:372
+#: eme_settings.php:373 eme_settings.php:441 eme_settings.php:446
+#: eme_settings.php:456 eme_settings.php:483 eme_settings.php:488
+#: eme_settings.php:537 eme_settings.php:539 eme_settings.php:548
+#: eme_settings.php:549 eme_settings.php:569 eme_settings.php:570
+#: eme_settings.php:571 eme_settings.php:572 eme_settings.php:573
+#: eme_settings.php:574 eme_settings.php:575 eme_settings.php:576
+#: eme_settings.php:600 eme_settings.php:601 eme_settings.php:603
+#: eme_settings.php:604
+msgid "the documentation"
+msgstr "документація"
+
+#: eme_formfields.php:204
+msgid "Edit field"
+msgstr "Редагувати поле"
+
+#: eme_formfields.php:214
+msgid ""
+"Warning: changing the field name might result in some answers not being "
+"visible when using the #_BOOKINGS placeholder, since the answers are based "
+"on the field name"
+msgstr ""
+"Попередження: зміни ім'я поля може призвести до деякі відповіді не видно при "
+"використанні заповнювач #_BOOKINGS, так як відповіді засновані на назву поля"
+
+#: eme_formfields.php:244
+msgid "Update field"
+msgstr "Оновлення поля"
+
+#: eme_formfields.php:508 eme_formfields.php:861
+msgid "(Required field)"
+msgstr "(Обов'язкове поле)"
+
+#: eme_formfields.php:524
+msgid "Not all required fields are present in the cancel form."
+msgstr "Не всі обов'язкові поля присутні у скасуванні формі."
+
+#: eme_formfields.php:734 eme_formfields.php:751 eme_formfields.php:852
+msgid "Update booking"
+msgstr "Оновлення бронювання"
+
+#: eme_formfields.php:884 eme_formfields.php:893
+msgid "Not all required fields are present in the booking form."
+msgstr "Не всі обов'язкові поля присутні у формі бронювання."
+
+#: eme_formfields.php:885
+msgid ""
+"Since this is a multiprice event, make sure you changed the setting "
+"'Registration Form Format' for the event to include #_SEATxx placeholders "
+"for each price."
+msgstr ""
+"Так як ця подія multiprice, переконайтеся, що ви змінили налаштування "
+"'Реєстраційна форма Формат' для події включити #_SEATxx заповнювачі  для "
+"кожного ціною. "
+
+#: eme_formfields.php:886
+msgid "See the documentation about multiprice events."
+msgstr "Див документацію про multiprice подій."
+
+#: eme_functions.php:385
+msgid "Public"
+msgstr "Громадський"
+
+#: eme_functions.php:386
+msgid "Private"
+msgstr "Приватний"
+
+#: eme_functions.php:387
+msgid "Draft"
+msgstr "Проект"
+
+#: eme_functions.php:409
+msgid "Australian Dollar"
+msgstr "Австралійський долар"
+
+#: eme_functions.php:410
+msgid "Canadian Dollar"
+msgstr "Канадський долар"
+
+#: eme_functions.php:411
+msgid "Czech Koruna"
+msgstr "Чеська крона"
+
+#: eme_functions.php:412
+msgid "Danish Krone"
+msgstr "Датська Крона"
+
+#: eme_functions.php:413
+msgid "Euro"
+msgstr "Євро"
+
+#: eme_functions.php:414
+msgid "Hong Kong Dollar"
+msgstr "Гонконгський долар"
+
+#: eme_functions.php:415
+msgid "Hungarian Forint"
+msgstr "Угорський форинт"
+
+#: eme_functions.php:416
+msgid "Israeli New Sheqel"
+msgstr "Ізраїльський новий шекель"
+
+#: eme_functions.php:417
+msgid "Japanese Yen"
+msgstr "Японська ієна"
+
+#: eme_functions.php:418
+msgid "Mexican Peso"
+msgstr "Мексиканське песо"
+
+#: eme_functions.php:419
+msgid "Norwegian Krone"
+msgstr "Норвезька крона"
+
+#: eme_functions.php:420
+msgid "New Zealand Dollar"
+msgstr "Новозеландський долар"
+
+#: eme_functions.php:421
+msgid "Philippine Peso"
+msgstr "Філіппінське песо"
+
+#: eme_functions.php:422
+msgid "Polish Zloty"
+msgstr "Польський злотий"
+
+#: eme_functions.php:423
+msgid "Pound Sterling"
+msgstr "Фунт стерлінгів"
+
+#: eme_functions.php:424
+msgid "Singapore Dollar"
+msgstr "Сінгапурський долар"
+
+#: eme_functions.php:425
+msgid "Swedish Krona"
+msgstr "Шведська крона"
+
+#: eme_functions.php:426
+msgid "Swiss Franc"
+msgstr "Швейцарський франк"
+
+#: eme_functions.php:427
+msgid "Thai Baht"
+msgstr "Тайський Бат"
+
+#: eme_functions.php:428
+msgid "U.S. Dollar"
+msgstr "Долар США"
+
+#: eme_functions.php:429
+msgid "Chinese Yuan Renminbi"
+msgstr "Китайський юань"
+
+#: eme_locations.php:33 eme_locations.php:77
+msgid "You have no right to edit this location!"
+msgstr "У вас немає прав на редагування цієї розташування!"
+
+#: eme_locations.php:46
+msgid "You have no right to copy this location!"
+msgstr "Ви не маєте права копіювати це місце!"
+
+#: eme_locations.php:54 eme_locations.php:73
+msgid "You have no right to add a location!"
+msgstr "У вас немає прав на додавання місце!"
+
+#: eme_locations.php:129
+msgid "The location has been added."
+msgstr "Розташування було додано."
+
+#: eme_locations.php:131
+msgid "There has been a problem adding the location."
+msgstr "Там була проблема додавши місце розташування."
+
+#: eme_locations.php:136
+msgid "The location has been updated."
+msgstr "Розташування було оновлено."
+
+#: eme_locations.php:138
+msgid "The location update failed."
+msgstr "Оновлення місцеположення не вдалося."
+
+#: eme_locations.php:167 eme_locations.php:362 eme_locations.php:390
+#: eme_settings.php:405
+msgid "Add location"
+msgstr "Додати місце"
+
+#: eme_locations.php:169 eme_settings.php:407
+msgid "Edit location"
+msgstr "Редагувати розташування"
+
+#: eme_locations.php:191
+msgid "Location name"
+msgstr "Місце Назва"
+
+#: eme_locations.php:210
+msgid "Location address"
+msgstr "Адреса місцезнаходження"
+
+#: eme_locations.php:219
+msgid "Location town"
+msgstr "Розташування міста"
+
+#: eme_locations.php:228
+msgid "Location latitude/longitude"
+msgstr "Розташування широта/довгота"
+
+#: eme_locations.php:232
+msgid "Latitude"
+msgstr "Широта"
+
+#: eme_locations.php:236
+msgid "Longitude"
+msgstr "Довгота"
+
+#: eme_locations.php:244
+msgid "Location image"
+msgstr "Розташування зображення"
+
+#: eme_locations.php:325
+msgid ""
+"Because qtranslate is active, the title of the location will not update "
+"automatically in the balloon, so don't panic there."
+msgstr ""
+"Тому що QTranslate активний, назва місця не буде оновлювати автоматично в "
+"балоні, так що не панікуйте там."
+
+#: eme_locations.php:335
+msgid "Location description"
+msgstr "Опис Розташування"
+
+#: eme_locations.php:342
+msgid "A description of the Location. You may include any kind of info here."
+msgstr "Місцерозташування. Ви можете включити будь-який вид інформації тут."
+
+#: eme_locations.php:359
+msgid ""
+"If this is filled in, the single location URL will point to this url instead "
+"of the standard location page."
+msgstr ""
+"Якщо це заповнюється, сингл URL розташування буде вказувати на цю адресу "
+"замість стандартного сторінці місцезнаходження."
+
+#: eme_locations.php:362
+msgid "Update location"
+msgstr "Оновлення розташування"
+
+#: eme_locations.php:379
+msgid "Add a new location"
+msgstr "Додати нове місце"
+
+#: eme_locations.php:394 events-manager.php:974
+msgid "Locations"
+msgstr "Місця"
+
+#: eme_locations.php:406 eme_locations.php:416
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:82
+msgid "Address"
+msgstr "Адреса"
+
+#: eme_locations.php:407 eme_locations.php:417
+msgid "Town"
+msgstr "Місто"
+
+#: eme_locations.php:429
+msgid "Duplicate this location"
+msgstr "Дублювання це місце"
+
+#: eme_locations.php:444
+msgid "No venues have been inserted yet!"
+msgstr "Ні місця не були вставлені ще!"
+
+#: eme_locations.php:614
+msgid "The location name"
+msgstr "Назва розташування"
+
+#: eme_locations.php:614
+msgid "The location address"
+msgstr "Адреса місцезнаходження"
+
+#: eme_locations.php:614
+msgid "The location town"
+msgstr "Розташування міста"
+
+#: eme_locations.php:1312
+msgid "Your Street Address"
+msgstr "Ваш Вулиця"
+
+#: eme_locations.php:1316
+msgid "Get Directions"
+msgstr "Схема проїзду"
+
+#: eme_people.php:5
+msgid "You have no right to update people!"
+msgstr "Ви не маєте права на оновлення людей!"
+
+#: eme_people.php:21
+msgid "Person info has been updated."
+msgstr "Людина Інформація була оновлена."
+
+#: eme_people.php:23
+msgid "Couldn't update the person. Please try again."
+msgstr "Не вдалося оновити людини. Будь ласка, спробуйте ще раз."
+
+#: eme_people.php:59
+msgid "Couldn't delete the people. Please try again."
+msgstr "Не вдалося видалити людей. Будь ласка, спробуйте ще раз."
+
+#: eme_people.php:82
+msgid "Edit person"
+msgstr "Редагувати людина"
+
+#: eme_people.php:104 eme_people.php:248 eme_people.php:354 eme_people.php:474
+msgid "E-mail"
+msgstr "Електронна пошта"
+
+#: eme_people.php:108 eme_people.php:249 eme_people.php:355 eme_people.php:475
+#: eme_people.php:650 eme_rsvp.php:477 eme_settings.php:16
+msgid "Phone number"
+msgstr "Номер телефону"
+
+#: eme_people.php:112
+msgid "Update person"
+msgstr "Оновлення людина"
+
+#: eme_people.php:123
+msgid "Delete People"
+msgstr "Видалити Люди"
+
+#: eme_people.php:126
+msgid "You have specified these people for deletion:"
+msgstr "Ви вказали цих людей для видалення:"
+
+#: eme_people.php:139
+msgid "What should be done with the bookings done by these people?"
+msgstr "Що має бути зроблено з замовленнями, зроблених цими людьми?"
+
+#: eme_people.php:141
+msgid "Delete associated bookings"
+msgstr "Видалити пов'язані замовлення"
+
+#: eme_people.php:143
+msgid "Transfer associated bookings to:"
+msgstr "Передача пов'язані замовлення на:"
+
+#: eme_people.php:251 eme_people.php:356
+msgid "Seats (Multiprice)"
+msgstr "Сидіння (Multiprice)"
+
+#: eme_people.php:253 eme_people.php:356 eme_rsvp.php:1823 eme_settings.php:17
+msgid "Seats"
+msgstr "Сидіння"
+
+#: eme_people.php:254 eme_people.php:357 eme_rsvp.php:1827
+msgid "Paid"
+msgstr "Сплачений"
+
+#: eme_people.php:255 eme_people.php:358 eme_rsvp.php:479 eme_settings.php:18
+msgid "Comment"
+msgstr "Коментар"
+
+#: eme_people.php:265 eme_people.php:373 eme_rsvp.php:1143
+msgid "(pending)"
+msgstr "(Знаходиться на розгляді)"
+
+#: eme_people.php:350
+msgid "Bookings data"
+msgstr "Дані Попередження"
+
+#: eme_people.php:414
+msgid "Booked"
+msgstr "Замовлений"
+
+#: eme_people.php:420 eme_people.php:422
+msgid "( %s pending)"
+msgstr "( %s заявлений)"
+
+#: eme_people.php:429
+msgid "Available"
+msgstr "Доступний"
+
+#: eme_people.php:448
+msgid "No people have responded to your events yet!"
+msgstr "Жоден народ не відреагували на ваших заходах ще!"
+
+#: eme_people.php:451
+msgid "This table shows the data about the people who responded to your events"
+msgstr "Ця таблиця показує дані про людей, які у відповідь на свої заходи"
+
+#: eme_people.php:461
+msgid "Delete selected"
+msgstr "Видалити обраний"
+
+#: eme_people.php:486
+msgid "Click the ID in order to edit the person."
+msgstr "Натисніть на ID для редагування людини."
+
+#: eme_people.php:490
+msgid "Show all bookings"
+msgstr "Показати всі замовлення"
+
+#: eme_people.php:647
+msgid "Events Made Easy settings"
+msgstr "Події Зроблено Легка настройка"
+
+#: eme_people.php:652
+msgid ""
+"The phone number used by Events Made Easy when the user is indicated as the "
+"contact person for an event."
+msgstr ""
+"Телефонний номер, який використовується Події Made Easy, коли користувач "
+"вказав як контактної особи для події."
+
+#: eme_people.php:655
+msgid "Date format"
+msgstr "Формат дати"
+
+#: eme_people.php:657
+msgid ""
+"The date format used by Events Made Easy in the admin section. If empty the "
+"general WP date format setting will be used."
+msgstr ""
+"Формат дати використовується Події Made Easy в розділ адміністрування. Якщо "
+"порожньо використовуватиметься загальна установка формату дати РГ."
+
+#: eme_people.php:658
+msgid ""
+"<a href=\"http://codex.wordpress.org/Formatting_Date_and_Time"
+"\">Documentation on date and time formatting</a>."
+msgstr ""
+" <a href=\"http://codex.wordpress.org/Formatting_Date_and_Time"
+"\">Документація по даті і форматування часу</a> . "
+
+#: eme_recurrence.php:288
+msgid "the first %s of the month"
+msgstr "перший %s місяця"
+
+#: eme_recurrence.php:288
+msgid "the second %s of the month"
+msgstr "другий %s місяця"
+
+#: eme_recurrence.php:288
+msgid "the third %s of the month"
+msgstr "третій %s місяця"
+
+#: eme_recurrence.php:288
+msgid "the fourth %s of the month"
+msgstr "четвертий %s місяця"
+
+#: eme_recurrence.php:288
+msgid "the fifth %s of the month"
+msgstr "п'ятий %s місяця"
+
+#: eme_recurrence.php:288
+msgid "the last %s of the month"
+msgstr "останні %s місяця"
+
+#: eme_recurrence.php:289
+msgid "From %1$s to %2$s"
+msgstr "С %1$s у %2$s"
+
+#: eme_recurrence.php:291
+msgid "everyday"
+msgstr "повсякденний"
+
+#: eme_recurrence.php:293
+msgid "every %s days"
+msgstr "кожного %s днів"
+
+#: eme_recurrence.php:310 eme_recurrence.php:328
+msgid " and "
+msgstr "і"
+
+#: eme_recurrence.php:312
+msgid "every week"
+msgstr "щотижня"
+
+#: eme_recurrence.php:314
+msgid "every %s weeks"
+msgstr "кожного %s тижні"
+
+#: eme_recurrence.php:330
+msgid "every month"
+msgstr "кожен місяць"
+
+#: eme_recurrence.php:332
+msgid "every %s months"
+msgstr "кожного %s місяців"
+
+#: eme_rsvp.php:20
+msgid "This booking has already been payed for"
+msgstr "Це бронювання вже заплатив за"
+
+#: eme_rsvp.php:32
+msgid "Payment handling"
+msgstr "Супровід послуг"
+
+#: eme_rsvp.php:33
+msgid "The booking price in %s is: %01.2f"
+msgstr "Ціна замовлення %s є: %01.2f"
+
+#: eme_rsvp.php:168 eme_rsvp.php:291
+msgid "Bookings no longer allowed on this date."
+msgstr "Попередження більше не дозволені на цієї дати."
+
+#: eme_rsvp.php:183
+msgid "Bookings no longer possible: no seats available anymore"
+msgstr "Попередження вже неможливо: немає місць доступний більше"
+
+#: eme_rsvp.php:193 eme_rsvp.php:306
+msgid "(* marks a required field)"
+msgstr "(* Знаменує собою Обов'язкове для заповнення поле)"
+
+#: eme_rsvp.php:325
+msgid "This function is not allowed from the admin backend."
+msgstr "Ця функція не допускається з адмін інтерфейсі."
+
+#: eme_rsvp.php:351 eme_rsvp.php:417
+msgid "You entered an incorrect code"
+msgstr "Ви ввели неправильний код"
+
+#: eme_rsvp.php:355 eme_rsvp.php:422
+msgid "You are a bad boy"
+msgstr "Ти поганий хлопчик"
+
+#: eme_rsvp.php:379
+msgid "Booking deleted"
+msgstr "Бронювання видалений"
+
+#: eme_rsvp.php:381 eme_rsvp.php:384
+msgid "There are no bookings associated to this name and e-mail"
+msgstr "Там немає замовлень, пов'язаних з цим ім'ям та електронною поштою"
+
+#: eme_rsvp.php:517
+msgid "Please fill out your name"
+msgstr "Будь ласка, заповніть ваше ім'я"
+
+#: eme_rsvp.php:520
+msgid "Please fill out your e-mail"
+msgstr "Будь ласка, заповніть електронну пошту"
+
+#: eme_rsvp.php:524
+msgid ""
+"Please make sure all of the following required fields are filled out "
+"correctly: %s"
+msgstr ""
+"Будь ласка, переконайтеся, що всі з таких обов'язкових полів заповнюються "
+"правильно: %s"
+
+#: eme_rsvp.php:526
+msgid "Please enter a valid mail address"
+msgstr "Будь ласка, введіть дійсну адресу пошти"
+
+#: eme_rsvp.php:528 eme_rsvp.php:530 eme_rsvp.php:533 eme_rsvp.php:537
+msgid "Please enter a correct number of spaces to reserve"
+msgstr "Будь ласка, введіть правильний кількість прогалин у резерв"
+
+#: eme_rsvp.php:540
+msgid "WP membership is required for registration"
+msgstr "Членство WP потрібно для реєстрації"
+
+#: eme_rsvp.php:586
+msgid "No booker ID found, something is wrong here"
+msgstr "Ні Букер ID знайдено, щось не так тут"
+
+#: eme_rsvp.php:590
+msgid "Booking cannot be made: not enough seats available!"
+msgstr "Бронювання не може бути зроблено: не вистачає вільних місць!"
+
+#: eme_rsvp.php:1100 eme_rsvp.php:1107
+msgid "approved"
+msgstr "затверджений"
+
+#: eme_rsvp.php:1100 eme_rsvp.php:1107
+msgid "pending"
+msgstr "в очікуванні"
+
+#: eme_rsvp.php:1119
+msgid "bookings so far"
+msgstr "замовлення досі"
+
+#: eme_rsvp.php:1124
+msgid "Respondent"
+msgstr "Відповідач"
+
+#: eme_rsvp.php:1130
+msgid "Booked spaces"
+msgstr "Замовлений простору"
+
+#: eme_rsvp.php:1131
+msgid "Available spaces"
+msgstr "Доступні простору"
+
+#: eme_rsvp.php:1137
+msgid "Comment:"
+msgstr "Коментар:"
+
+#: eme_rsvp.php:1169 eme_rsvp.php:1265 eme_rsvp.php:1308
+msgid "No responses yet!"
+msgstr "Немає поки що відповідей!"
+
+#: eme_rsvp.php:1525 eme_rsvp.php:1540
+msgid "Reservation for ' %s' confirmed"
+msgstr "Бронювання на '%s' підтвердженої"
+
+#: eme_rsvp.php:1527
+msgid "Reservation for ' %s' denied"
+msgstr "Бронювання на '%s' відмовлено"
+
+#: eme_rsvp.php:1529
+msgid "Reservation for ' %s' updated"
+msgstr "Бронювання для '%s' оновлено"
+
+#: eme_rsvp.php:1531
+msgid "Reservation for ' %s' cancelled"
+msgstr "Бронювання для '%s' скасований"
+
+#: eme_rsvp.php:1532
+msgid "A reservation has been cancelled for ' %s'"
+msgstr "Обмовка була скасована для '%s'"
+
+#: eme_rsvp.php:1536
+msgid "Approval required for new booking for ' %s'"
+msgstr "Потрібен дозвіл для нового резервування для '%s'"
+
+#: eme_rsvp.php:1537
+msgid "Reservation for ' %s' is pending"
+msgstr "Бронювання на '%s' знаходиться на розгляді"
+
+#: eme_rsvp.php:1539
+msgid "New booking for ' %s'"
+msgstr "Нове замовлення для '%s'"
+
+#: eme_rsvp.php:1561
+msgid "Send mails for changed registration?"
+msgstr "Відправити пошту для зміненій реєстрації?"
+
+#: eme_rsvp.php:1577
+msgid "Send mails for new registration?"
+msgstr "Відправити пошту для реєстрації нового?"
+
+#: eme_rsvp.php:1648
+msgid "Booking updated"
+msgstr "Бронювання оновлюється"
+
+#: eme_rsvp.php:1704
+msgid "Add a registration for an event"
+msgstr "Додати реєстрацію для події"
+
+#: eme_rsvp.php:1712
+msgid "Event"
+msgstr "Подія"
+
+#: eme_rsvp.php:1727
+msgid "Register new booking"
+msgstr "Реєстрація нове замовлення"
+
+#: eme_rsvp.php:1734 events-manager.php:985
+msgid "Pending Approvals"
+msgstr "Сповіщень про затвердження"
+
+#: eme_rsvp.php:1736
+msgid "Change reserved spaces or cancel registrations"
+msgstr "Зміна захищені пробіли або скасувати реєстрацію"
+
+#: eme_rsvp.php:1786
+msgid "Approve registration"
+msgstr "Затвердити реєстрації"
+
+#: eme_rsvp.php:1788
+msgid "Update payed status"
+msgstr "Оновлення оплачується статус"
+
+#: eme_rsvp.php:1789
+msgid "Deny registration"
+msgstr "Заборонити реєстрацію"
+
+#: eme_rsvp.php:1794
+msgid "Send mails to attendees upon changes being made?"
+msgstr "Відправити пошту для відвідувачів на зміни, які вносяться?"
+
+#: eme_rsvp.php:1821
+msgid "Booker"
+msgstr "Бухгалтер"
+
+#: eme_rsvp.php:1822
+msgid "Booking date"
+msgstr "Дата Бронювання"
+
+#: eme_rsvp.php:1824
+msgid "Event price"
+msgstr "Ціна подія"
+
+#: eme_rsvp.php:1825
+msgid "Total price"
+msgstr "Загальна ціна"
+
+#: eme_rsvp.php:1826
+msgid "Unique nbr"
+msgstr "Унікальний NBR"
+
+#: eme_rsvp.php:1856
+msgid ""
+"Click the booking ID in order to see the details and/or edit the booking."
+msgstr ""
+"Натисніть на ID-бронювання, щоб бачити деталі та/або відредагувати "
+"замовлення."
+
+#: eme_rsvp.php:1864
+msgid "Approved: "
+msgstr "Затверджено:"
+
+#: eme_rsvp.php:1884
+msgid "(Multiprice)"
+msgstr "(Multiprice)"
+
+#: eme_rsvp.php:1979
+msgid "Please enter both subject and message for the mail to be sent."
+msgstr ""
+"Будь ласка, введіть як тему і текст повідомлення для пошти для відправки."
+
+#: eme_rsvp.php:2018
+msgid "The mail has been sent."
+msgstr "Лист було надіслано."
+
+#: eme_rsvp.php:2020
+msgid "You do not have the permission to send mails for this event."
+msgstr "Ви не маєте дозвіл на відправку пошти для цієї події."
+
+#: eme_rsvp.php:2034
+msgid "Send Mails to attendees or bookings for a event"
+msgstr "Відправити пошту відвідувачам або замовлення для події"
+
+#: eme_rsvp.php:2038
+msgid ""
+"Warning: using this functionality to send mails to attendees can result in a "
+"php timeout, so not everybody will receive the mail then. This depends on "
+"the number of attendees, the load on the server, ... . If this happens, use "
+"the CSV export link to get the list of all attendees and use mass mailing "
+"tools (like OpenOffice) for your mailing."
+msgstr ""
+"Попередження: використання цієї функції для відправки пошти відвідувачам "
+"може призвести до.PHP тайм-аут, таким чином, не всі будуть отримувати пошту, "
+"то це залежить від кількість учасників, навантаження на сервер, .... Якщо У "
+"цьому випадку використовуйте  експортний посилання CSV, щоб отримати список "
+"всіх учасників і використовувати масові розсилки  інструментів (як "
+"OpenOffice) для розсилки ."
+
+#: eme_rsvp.php:2049
+msgid "Select the event"
+msgstr "Виберіть подію"
+
+#: eme_rsvp.php:2067
+msgid "Select the type of mail"
+msgstr "Виберіть тип поштою"
+
+#: eme_rsvp.php:2070 eme_rsvp.php:2103
+msgid "Attendee mails"
+msgstr "Attendee пошти"
+
+#: eme_rsvp.php:2071 eme_rsvp.php:2104
+msgid "Booking mails"
+msgstr "Бронювання пошти"
+
+#: eme_rsvp.php:2076
+msgid "Select your target audience"
+msgstr "Виберіть вашу цільову аудиторію"
+
+#: eme_rsvp.php:2079
+msgid "All"
+msgstr "Всі"
+
+#: eme_rsvp.php:2080
+msgid "Exclude pending registrations"
+msgstr "Виключити очікують реєстрації"
+
+#: eme_rsvp.php:2081
+msgid "Only pending registrations"
+msgstr "Тільки в очікуванні нових користувачів"
+
+#: eme_rsvp.php:2086
+msgid "Only send mails to attendees who did not pay yet"
+msgstr "Тільки відправляти листи в учасників, які ще не платять"
+
+#: eme_rsvp.php:2093
+msgid "Subject"
+msgstr "Тема"
+
+#: eme_rsvp.php:2097
+msgid "Message"
+msgstr "Повідомлення"
+
+#: eme_rsvp.php:2101
+msgid "You can use any placeholders mentioned here:"
+msgstr "Ви можете використовувати будь заповнювачі згадані тут:"
+
+#: eme_rsvp.php:2102
+msgid "Event placeholders"
+msgstr "Умови для проведення заходів заповнювачі"
+
+#: eme_rsvp.php:2103
+msgid "Attendees placeholders"
+msgstr "Учасники заповнювачі"
+
+#: eme_rsvp.php:2103 eme_rsvp.php:2104
+msgid "for "
+msgstr "для"
+
+#: eme_rsvp.php:2104
+msgid "Booking placeholders"
+msgstr "Резервація заповнювачі"
+
+#: eme_rsvp.php:2108
+msgid "Send Mail"
+msgstr "Написати листа"
+
+#: eme_rsvp.php:2123 eme_rsvp.php:2153 eme_rsvp.php:2185 eme_rsvp.php:2233
+#: eme_rsvp.php:2284
+msgid "Booking for ' %s'"
+msgstr "Бронювання для '%s'"
+
+#: eme_rsvp.php:2143 eme_rsvp.php:2159
+msgid ""
+"You can pay for this event via 2Checkout. If you wish to do so, click the "
+"button below."
+msgstr ""
+"Ви можете оплатити для цієї події через 2Checkout. Якщо ви хочете зробити "
+"це, натисніть кнопку нижче."
+
+#: eme_rsvp.php:2195
+msgid ""
+"You can pay for this event via First Data. If you wish to do so, click the "
+"button below."
+msgstr ""
+"Ви можете заплатити за цією подією за допомогою First Data. Якщо ви хочете "
+"зробити це, натисніть кнопку нижче."
+
+#: eme_rsvp.php:2238
+msgid ""
+"You can pay for this event via Google Checkout. If you wish to do so, click "
+"the button below."
+msgstr ""
+"Ви можете заплатити за цією подією за допомогою Google Checkout. Якщо ви "
+"хочете зробити це, натисніть кнопку нижче."
+
+#: eme_rsvp.php:2249
+msgid ""
+"You can pay for this event via paypal. If you wish to do so, click the 'Pay "
+"via Paypal' button below."
+msgstr ""
+"Ви можете заплатити за цією подією за допомогою PayPal. Якщо ви хочете "
+"зробити це, натисніть кнопку 'Сплатити  через Paypal'кнопку нижче ."
+
+#: eme_rsvp.php:2264
+msgid "Pay via Paypal"
+msgstr "Зверніть через Paypal"
+
+#: eme_settings.php:4
+msgid ""
+"#_RESPNAME (#_RESPEMAIL) will attend #_EVENTNAME on #m #d, #Y. He wants to "
+"reserve #_RESPSPACES space(s).<br/>Now there are #_RESERVEDSPACES space(s) "
+"reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours faithfully,"
+"<br/>Events Manager"
+msgstr ""
+"#_RESPNAME (#_RESPEMAIL) Буде присутня #_EVENTNAME на #м #д, #Ю. Він хоче "
+"резервні #_RESPSPACES простір (и). <br/> Зараз є #_RESERVEDSPACES простір "
+"(и)  захищені, #_AVAILABLESPACES раніше доступні. <br/><br/> З повагою,  <br/"
+"> Події менеджер "
+
+#: eme_settings.php:5
+msgid ""
+"#_RESPNAME (#_RESPEMAIL) has cancelled for #_EVENTNAME on #m #d, #Y. <br/"
+">Now there are #_RESERVEDSPACES space(s) reserved, #_AVAILABLESPACES are "
+"still available.<br/><br/>Yours faithfully,<br/>Events Manager"
+msgstr ""
+"#_RESPNAME (#_RESPEMAIL) Відкинув для #_EVENTNAME на #м #д, #Y. <br/> Зараз "
+"є #_RESERVEDSPACES простір (и) захищені, #_AVAILABLESPACES є  як і раніше "
+"доступні. <br/><br/> З повагою, <br/> Події менеджер "
+
+#: eme_settings.php:6
+msgid ""
+"#_RESPNAME (#_RESPEMAIL) would like to attend #_EVENTNAME on #m #d, #Y. He "
+"wants to reserve #_RESPSPACES space(s).<br/>Now there are #_RESERVEDSPACES "
+"space(s) reserved, #_AVAILABLESPACES are still available.<br/><br/>Yours "
+"faithfully,<br/>Events Manager"
+msgstr ""
+"#_RESPNAME (#_RESPEMAIL) Хотіли б взяти участь #_EVENTNAME на #м #д, #Ю. Він "
+"хоче зарезервувати #_RESPSPACES простір (и). <br/> Зараз є #_RESERVEDSPACES  "
+"простір (и) захищені, #_AVAILABLESPACES раніше доступні. <br/><br/> З "
+"повагою  З повагою, <br/> Події менеджер "
+
+#: eme_settings.php:7
+msgid ""
+"Dear #_RESPNAME,<br/><br/>you have successfully reserved #_RESPSPACES "
+"space(s) for #_EVENTNAME.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr ""
+"Дорогий #_RESPNAME, <br/><br/> Ви успішно захищені #_RESPSPACES простір  "
+"(ів) для #_EVENTNAME. <br/><br/> З повагою, <br/> #_CONTACTPERSON "
+
+#: eme_settings.php:8
+msgid ""
+"Dear #_RESPNAME,<br/><br/>your request to reserve #_RESPSPACES space(s) for "
+"#_EVENTNAME is pending.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr ""
+"Дорогий #_RESPNAME, <br/><br/> Ваш запит зарезервувати #_RESPSPACES простір "
+"(и) для  #_EVENTNAME знаходиться на розгляді. <br/><br/> З повагою, <br/> "
+"#_CONTACTPERSON "
+
+#: eme_settings.php:9
+msgid ""
+"Dear #_RESPNAME,<br/><br/>your request to reserve #_RESPSPACES space(s) for "
+"#_EVENTNAME has been cancelled.<br/><br/>Yours faithfully,<br/"
+">#_CONTACTPERSON"
+msgstr ""
+"Дорогий #_RESPNAME, <br/><br/> Ваш запит зарезервувати #_RESPSPACES простір "
+"(и) для  #_EVENTNAME був скасований. <br/><br/> З повагою, <br/> "
+"#_CONTACTPERSON "
+
+#: eme_settings.php:10
+msgid ""
+"Dear #_RESPNAME,<br/><br/>your request to reserve #_RESPSPACES space(s) for "
+"#_EVENTNAME has been denied.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr ""
+"Дорогий #_RESPNAME, <br/><br/> Ваш запит зарезервувати #_RESPSPACES простір "
+"(и) для  #_EVENTNAME було відмовлено. <br/><br/> З повагою, <br/> "
+"#_CONTACTPERSON "
+
+#: eme_settings.php:11
+msgid ""
+"Dear #_RESPNAME,<br/><br/>your request to reserve #_RESPSPACES space(s) for "
+"#_EVENTNAME has been updated.<br/><br/>Yours faithfully,<br/>#_CONTACTPERSON"
+msgstr ""
+"Дорогий #_RESPNAME, <br/><br/> Ваш запит зарезервувати #_RESPSPACES простір "
+"(и) для  #_EVENTNAME був оновлений. <br/><br/> З повагою, <br/> "
+"#_CONTACTPERSON "
+
+#: eme_settings.php:12
+msgid "Your booking has been recorded"
+msgstr "Ваше замовлення був записаний"
+
+#: eme_settings.php:15 eme_settings.php:25
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: eme_settings.php:50 eme_settings.php:51 events-manager.php:144
+#: events-manager.php:965
+msgid "Events"
+msgstr "Події"
+
+#: eme_settings.php:296
+msgid ""
+"Conversion done, please check your events and restore from backup if you see "
+"any sign of troubles."
+msgstr ""
+"Перетворення зроблено, дивитеся ваші події і відновити з резервної копії, "
+"якщо ви бачите ніяких ознак проблем."
+
+#: eme_settings.php:343
+msgid "Event Manager Options"
+msgstr "Опції Менеджер подія"
+
+#: eme_settings.php:346
+msgid ""
+"Please also check <a href=' %s'>your profile</a> for some per-user EME "
+"settings."
+msgstr ""
+"Будь ласка, перевірте <a href=' %s'>свій профіль</a> протягом деякого "
+"кожного користувача EME  налаштування ."
+
+#: eme_settings.php:356
+msgid "General options"
+msgstr "Загальні параметри"
+
+#: eme_settings.php:359
+msgid "Use dropdown for locations?"
+msgstr "Використовуйте випадаючий список для місць?"
+
+#: eme_settings.php:359
+msgid ""
+"Select yes to select location from a drop-down menu; location selection will "
+"be faster, but you will lose the ability to insert locations with events."
+msgstr ""
+"Виберіть да, щоб вибрати місце розташування з меню, що випадає; Вибір місця "
+"буде бути швидше, але ви втратите можливість вставки місця розташування з "
+"подіями."
+
+#: eme_settings.php:359
+msgid ""
+"When the qtranslate plugin is installed and activated, this setting will be "
+"ignored and always considered 'Yes'."
+msgstr "Коли плагін QTranslate встановлена ​​і активована, то цей параметр буде "
+
+#: eme_settings.php:360
+msgid "Use recurrence?"
+msgstr "Використовуйте повторення?"
+
+#: eme_settings.php:360
+msgid "Select yes to enable the possibility to create recurrent events."
+msgstr "Виберіть да, щоб можливість створювати періодичні події."
+
+#: eme_settings.php:361
+msgid "Use RSVP?"
+msgstr "Використовуйте RSVP?"
+
+#: eme_settings.php:361
+msgid ""
+"Select yes to enable the RSVP feature so people can register for an event "
+"and book places."
+msgstr ""
+"Виберіть да, щоб включити функцію RSVP, щоб люди могли зареєструвати подія і "
+"книжкових місцях."
+
+#: eme_settings.php:362
+msgid "Use categories?"
+msgstr "Використовуйте категорії?"
+
+#: eme_settings.php:362
+msgid "Select yes to enable the category features."
+msgstr "Виберіть да, щоб особливості категорії."
+
+#: eme_settings.php:363
+msgid "Use attributes?"
+msgstr "Використовуйте атрибути?"
+
+#: eme_settings.php:363
+msgid "Select yes to enable the attributes feature."
+msgstr "Виберіть да, щоб атрибути мають."
+
+#: eme_settings.php:364
+msgid "Enable Google Maps integration?"
+msgstr "Включити інтеграцію Google Maps?"
+
+#: eme_settings.php:364
+msgid "Check this option to enable Google Map integration."
+msgstr "Увімкніть цю опцію для інтеграції Google Map."
+
+#: eme_settings.php:365
+msgid "Enable map scroll-wheel zooming?"
+msgstr "Включити карту прокрутки колеса масштабування?"
+
+#: eme_settings.php:365
+msgid ""
+"Yes, enables map scroll-wheel zooming. No, enables scroll-wheel page "
+"scrolling over maps. (It will be necessary to refresh your web browser on a "
+"map page to see the effect of this change.)"
+msgstr ""
+"Так, дозволяє карту прокрутки колеса масштабування. Ні, дозволяє прокрутки "
+"колеса сторінку прокрутки над картами. (Це буде необхідно оновити ваш веб-"
+"браузер на сторінці карти, щоб побачити ефект цієї зміни.)"
+
+#: eme_settings.php:366
+msgid "Always include JS in header?"
+msgstr "Завжди включайте JS в заголовку?"
+
+#: eme_settings.php:366
+msgid ""
+"Some themes are badely designed and can have issues showing the google maps "
+"or advancing in the calendar. If so, try activating this option which will "
+"cause the javascript to always be included in the header of every page (off "
+"by default)."
+msgstr ""
+"Деякі теми badely розроблені і можуть бути проблеми, що показують Google "
+"Maps або наступають в календарі. Якщо так, то спробуйте включенні цієї "
+"опції, які будуть викликати JavaScript, щоб завжди бути включений в "
+"заголовку кожної сторінки (від  за замовчуванням). "
+
+#: eme_settings.php:367
+msgid "Use the client computer clock for the calendar"
+msgstr "Використовуйте клієнт годин комп'ютера для календаря"
+
+#: eme_settings.php:367
+msgid ""
+"Check this option if you want to use the clock of the client as base to "
+"calculate current day for the calendar."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете використовувати годинник клієнта в якості "
+"бази для вирахувати поточний день для календаря."
+
+#: eme_settings.php:368
+msgid "Theme loop protection"
+msgstr "Захист Стиль петля"
+
+#: eme_settings.php:368
+msgid "Simple loop protection (default)"
+msgstr "Захист Простий цикл (за замовчуванням)"
+
+#: eme_settings.php:368
+msgid "Loop protection for older or misbehaving themes"
+msgstr "Захист даних для літніх або погано себе тим"
+
+#: eme_settings.php:368
+msgid "Last attempt at loop protection (if all else fails)"
+msgstr "Остання спроба на захист петлі (якщо все інше не)"
+
+#: eme_settings.php:368
+msgid ""
+"Choose the level of loop protection against the_content filter you want. "
+"Depending on the theme you may need to change this."
+msgstr ""
+"Виберіть рівень захисту контуру проти the_content фільтра ви хочете. Залежно "
+"від теми ви, можливо, буде потрібно змінити це."
+
+#: eme_settings.php:369
+msgid "Delete all EME data when upgrading or deactivating?"
+msgstr "Видалити всі дані EME при оновленні або виключення?"
+
+#: eme_settings.php:369
+msgid ""
+"Check this option if you want to delete all EME data (database tables and "
+"options) when upgrading or deactivating the plugin."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете видалити всі дані EME (таблиць бази даних "
+"і опції) при оновленні або відключення плагіна."
+
+#: eme_settings.php:370
+msgid "Enable shortcodes in widgets"
+msgstr "Включити короткі номери в віджетів"
+
+#: eme_settings.php:370
+msgid ""
+"Check this option if you want to enable the use of shortcodes in widgets "
+"(affects shortcodes of any plugin used in widgets, so use with care)."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете включити використання короткі номери в "
+"віджетах (впливає шорткоди будь-якого плагіна, використовуваного в віджетах, "
+"так що будьте обережні)."
+
+#: eme_settings.php:371
+msgid "Enable placeholders in event notes"
+msgstr "Включити заповнювачі в примітках подій"
+
+#: eme_settings.php:371
+msgid ""
+"Check this option if you want to enable the use of placeholders in the event "
+"notes. By default placeholders in notes are not being touched at all so as "
+"not to interfere with possible format settings for other shortcodes you can/"
+"want to use, so use with care."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете включити використання заповнювачів у "
+"випадку нотаток. За заповнювачів за замовчуванням в примітках не чіпають "
+"взагалі, так як не втручатися в можливі настройки формату для інших короткі "
+"номери ви можете/ хочете використовувати, так що використовуйте з "
+"обережністю ."
+
+#: eme_settings.php:372
+msgid "Allow deprecated placeholders"
+msgstr "Дозволити застаріла заповнювачі"
+
+#: eme_settings.php:372
+msgid "Check this option if you want to use some deprecated placeholders."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете використовувати деякі застарілі "
+"заповнювачі."
+
+#: eme_settings.php:372 eme_settings.php:373
+msgid "For more information, see "
+msgstr "Для отримання додаткової інформації див"
+
+#: eme_settings.php:373
+msgid "Re-enable legacy placeholder syntax"
+msgstr "Повторного включення синтаксис заповнювач спадщина"
+
+#: eme_settings.php:373
+msgid ""
+"Check this option if you want to re-enable the use of the older placeholder "
+"syntax with square brackets. Be aware of the fact that the new placeholder "
+"syntax will not work then."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете повторно включити використання старшого "
+"заповнювача синтаксису в квадратні дужки. Будьте обізнані про те, що новий "
+"заповнювач синтаксис не працюватиме тоді."
+
+#: eme_settings.php:382
+msgid "Permalink options"
+msgstr "Варіанти Постійне посилання"
+
+#: eme_settings.php:385
+msgid "Enable event permalinks if possible?"
+msgstr "Включити постійні подій, якщо це можливо?"
+
+#: eme_settings.php:385
+msgid "If Yes, EME will render SEO permalinks if permalinks are activated."
+msgstr ""
+"Якщо так, EME надаватиме SEO постійні, якщо постійні посилання активуються."
+
+#: eme_settings.php:385
+msgid ""
+"It is necessary to click 'Save Changes' on the WordPress 'Settings/"
+"Permalinks' page before you will see the effect of this change."
+msgstr ""
+"Треба натисніть 'Зберегти зміни'на WordPress 'Налаштування/ Постійні' "
+"сторінку, перш ніж ви побачите ефект зміни."
+
+#: eme_settings.php:386
+msgid "Events permalink prefix"
+msgstr "Події Постійне посилання префікс"
+
+#: eme_settings.php:386
+msgid "The permalink prefix used for events and the calendar."
+msgstr ""
+"Постійне посилання префікс, використовуваний для проведення заходів і в "
+"календарі."
+
+#: eme_settings.php:387
+msgid "Locations permalink prefix"
+msgstr "Місця Постійне посилання префікс"
+
+#: eme_settings.php:387
+msgid "The permalink prefix used for locations."
+msgstr "Постійне посилання префікс, використовуваний для місць."
+
+#: eme_settings.php:396
+msgid "Access rights"
+msgstr "Права доступу"
+
+#: eme_settings.php:397
+msgid ""
+"Tip: Use a plugin like \"User Role Editor\" to add/edit capabilities and "
+"roles."
+msgstr ""
+"Порада: використовувати плагін також, як і \"ролі редактор\" додати/"
+"редагувати можливості і ролей."
+
+#: eme_settings.php:400
+msgid "Add event"
+msgstr "Додати подію"
+
+#: eme_settings.php:400
+msgid "Permission needed to add a new event. Default: %s"
+msgstr "Введено потрібно додати нову подію. За замовчуванням: %s"
+
+#: eme_settings.php:401
+msgid "Author event"
+msgstr "Автор подія"
+
+#: eme_settings.php:401
+msgid "Permission needed to edit own events. Default: %s"
+msgstr "Введено необхідні для редагування власні події. За замовчуванням: %s"
+
+#: eme_settings.php:402
+msgid "Publish event"
+msgstr "Подія Опублікувати"
+
+#: eme_settings.php:402
+msgid "Permission needed to make an event public. Default: %s"
+msgstr "Введено необхідно зробити захід відкритим. За замовчуванням: %s"
+
+#: eme_settings.php:403
+msgid "List events"
+msgstr "Список подій"
+
+#: eme_settings.php:403
+msgid ""
+"Permission needed to just list all events, useful for CSV exports for "
+"bookings and such. Default: %s"
+msgstr ""
+"Введено потрібно просто перерахувати всі події, корисні для експорту CSV для "
+"замовлень і такі замовчуванням:. %s"
+
+#: eme_settings.php:403
+msgid ""
+"All your event admins need this as well, otherwise the menu will not show."
+msgstr ""
+"Всі ваші адміністратори подій це потрібно, а, інакше меню не буде показувати."
+
+#: eme_settings.php:404
+msgid "Edit events"
+msgstr "Редагувати події"
+
+#: eme_settings.php:404
+msgid "Permission needed to edit all events. Default: %s"
+msgstr "Введено необхідні для редагування всі події. За замовчуванням: %s"
+
+#: eme_settings.php:405
+msgid "Permission needed to add locations. Default: %s"
+msgstr "Введено потрібно додати місця розташування. За замовчуванням: %s"
+
+#: eme_settings.php:406
+msgid "Author location"
+msgstr "Автор розташування"
+
+#: eme_settings.php:406
+msgid "Permission needed to edit own locations. Default: %s"
+msgstr "Введено необхідні для редагування власних місцях. За замовчуванням: %s"
+
+#: eme_settings.php:407
+msgid "Permission needed to edit all locations. Default: %s"
+msgstr "Введено необхідні для редагування всі місця. За замовчуванням: %s"
+
+#: eme_settings.php:408
+msgid "Edit categories"
+msgstr "Редагування категорій"
+
+#: eme_settings.php:408
+msgid "Permission needed to edit all categories. Default: %s"
+msgstr "Введено необхідні для редагування всі категорії. За замовчуванням: %s"
+
+#: eme_settings.php:409
+msgid "Edit templates"
+msgstr "Редактор шаблонів"
+
+#: eme_settings.php:409
+msgid "Permission needed to edit all templates. Default: %s"
+msgstr "Введено необхідні для редагування всі шаблони. За замовчуванням: %s"
+
+#: eme_settings.php:410
+msgid "View people"
+msgstr "Переглянути люди"
+
+#: eme_settings.php:410
+msgid "Permission needed to view registered people info. Default: %s"
+msgstr ""
+"Введено необхідних для перегляду зареєстрованих людей інформацію. За "
+"замовчуванням: %s"
+
+#: eme_settings.php:411
+msgid "Approve registrations"
+msgstr "Затвердити реєстрацій"
+
+#: eme_settings.php:411
+msgid "Permission needed to approve pending registrations. Default: %s"
+msgstr "Введено потрібно схвалити очікують реєстрації. За замовчуванням: %s"
+
+#: eme_settings.php:412
+msgid "Edit registrations"
+msgstr "Змінити кількість нових користувачів"
+
+#: eme_settings.php:412
+msgid "Permission needed to edit approved registrations. Default: %s"
+msgstr ""
+"Введено необхідні для редагування затверджені реєстрацій. За замовчуванням: "
+"%s"
+
+#: eme_settings.php:413 events-manager.php:990
+msgid "Send Mails"
+msgstr "Відправити пошту"
+
+#: eme_settings.php:413
+msgid "Permission needed to send mails for own events. Default: %s"
+msgstr ""
+"Введено потрібно відправляти листи для власних подій. За замовчуванням: %s"
+
+#: eme_settings.php:414
+msgid "Send Other Mails"
+msgstr "Надіслати Інші пошту"
+
+#: eme_settings.php:414
+msgid "Permission needed to send mails for any event. Default: %s"
+msgstr ""
+"Введено потрібно відправляти листи для будь-якої події. За замовчуванням: %s"
+
+#: eme_settings.php:415
+msgid "Edit form fields"
+msgstr "Поля форми редагування"
+
+#: eme_settings.php:415
+msgid "Permission needed to edit form fields. Default: %s"
+msgstr "Введено необхідні для редагування поля форми. За замовчуванням: %s"
+
+#: eme_settings.php:416 events-manager.php:996
+msgid "Cleanup"
+msgstr "Прибирання"
+
+#: eme_settings.php:416
+msgid "Permission needed to execute cleanup actions. Default: %s"
+msgstr "Введено необхідно виконати очищення дії. За замовчуванням: %s"
+
+#: eme_settings.php:417
+msgid "Edit settings"
+msgstr "Змінити налаштування"
+
+#: eme_settings.php:417
+msgid "Permission needed to edit settings. Default: %s"
+msgstr "Введено необхідно змінити настройки. За замовчуванням: %s"
+
+#: eme_settings.php:426 eme_settings.php:429 events-manager.php:1982
+msgid "Events page"
+msgstr "Події стор"
+
+#: eme_settings.php:429
+msgid "This option allows you to select which page to use as an events page."
+msgstr ""
+"Ця опція дозволяє вам вибрати, які сторінки для використання як подій "
+"сторінки."
+
+#: eme_settings.php:429
+msgid ""
+"The content of this page (including shortcodes of any kind) will be ignored "
+"completely and dynamically replaced by events data."
+msgstr ""
+"Зміст цієї сторінки (в тому числі короткі номери будь-якого роду) "
+"ігноруватимуться повністю і динамічно замінені на дані події."
+
+#: eme_settings.php:430
+msgid "Show events page in lists?"
+msgstr "Сторінка Показати події в списках?"
+
+#: eme_settings.php:430
+msgid ""
+"Check this option if you want the events page to appear together with other "
+"pages in pages lists."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете, щоб сторінка події з'являтися разом з "
+"іншими в списків сторінок."
+
+#: eme_settings.php:430
+msgid ""
+"This option should no longer be used, it will be deprecated. Using the "
+"[eme_events] shortcode in a self created page is recommended."
+msgstr ""
+"Ця опція не повинна бути більше не використовується, він буде застарілим. "
+"Використання [eme_events] шорткод в себе створив сторінку рекомендується."
+
+#: eme_settings.php:431
+msgid "Display calendar in events page?"
+msgstr "Дисплей календар на сторінці подій?"
+
+#: eme_settings.php:431
+msgid ""
+"This option allows to display the calendar in the events page, instead of "
+"the default list. It is recommended not to display both the calendar widget "
+"and a calendar page."
+msgstr ""
+"Ця опція дозволяє відображати календар на сторінці подій, замість того, щоб "
+"список за замовчуванням. Рекомендується не відображати як віджет календаря і "
+"сторінку календаря."
+
+#: eme_settings.php:432
+msgid "Number of events to show in lists"
+msgstr "Кількість подій, щоб показати в списках"
+
+#: eme_settings.php:432
+msgid ""
+"The number of events to show in a list if no specific limit is specified "
+"(used in the shortcode eme_events, RSS feed, the placeholders #_NEXTEVENTS "
+"and #_PASTEVENTS, ...). Use 0 for no limit."
+msgstr ""
+"Кількість подій, щоб показати в списку, якщо немає спеціальних обмежень не "
+"вказано (використовується в шорткод eme_events, RSS корми, заповнювачі "
+"#_NEXTEVENTS і #_PASTEVENTS, ...). Використовуйте 0 для будь-яких обмежень."
+
+#: eme_settings.php:433
+msgid "State for new event"
+msgstr "Державна для нового події"
+
+#: eme_settings.php:433
+msgid "Initial state for a new event"
+msgstr "Вихідний стан нову подію"
+
+#: eme_settings.php:436
+msgid "Events format"
+msgstr "Формат заходу"
+
+#: eme_settings.php:439
+msgid "Remove leading zeros from minutes?"
+msgstr "Видалити провідні нулі від декількох хвилин?"
+
+#: eme_settings.php:439
+msgid ""
+"PHP date/time functions have no notation to show minutes without leading "
+"zeros. Checking this option will return e.g. 9 for 09 and empty for 00."
+msgstr ""
+"Функції Дата PHP/часу немає позначення, щоб показати хвилин, не наводячи "
+"нулі. Включення цієї опції повернеться, напр 9 для 09 і порожньо 00."
+
+#: eme_settings.php:440
+msgid "Default event list format header"
+msgstr "Список подій замовчуванням заголовок формату"
+
+#: eme_settings.php:440
+msgid ""
+"This content will appear just above your code for the default event list "
+"format. If you leave this empty, the value <code>&lt;ul "
+"class='eme_events_list'&gt;</code> will be used."
+msgstr ""
+"Цей контент з'явиться трохи вище коді для списку за замовчуванням події "
+"форматі. Якщо залишити це порожнім, значення <code><ul  "
+"class='eme_events_list'></code> буде використовуватися. "
+
+#: eme_settings.php:441
+msgid "Default event list format"
+msgstr "Формат списку подій замовчуванням"
+
+#: eme_settings.php:441
+msgid ""
+"The format of any events in a list.<br/>Insert one or more of the following "
+"placeholders: <code>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, "
+"<code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_NOTES</code>.<br/> Use "
+"<code>#_EXCERPT</code> to show <code>#_NOTES</code> until you place a "
+"<code>&lt;!&ndash;&ndash;more&ndash;&ndash;&gt;</code> marker.<br/> Use "
+"<code>#_LINKEDNAME</code> for the event name with a link to the given event "
+"page.<br/> Use <code>#_EVENTPAGEURL</code> to print the event page URL and "
+"make your own customised links.<br/> Use <code>#_LOCATIONPAGEURL</code> to "
+"print the location page URL and make your own customised links.<br/>Use "
+"<code>#_EDITEVENTLINK</code> to add a link to edit page for the event, which "
+"will appear only when a user is logged in.<br/>To insert date and time "
+"values, use <a href=\"http://www.php.net/manual/en/function.date.php\">PHP "
+"time format characters</a> with a <code>#</code> symbol before them, i.e. "
+"<code>#m</code>, <code>#M</code>, <code>#j</code>, etc.<br/> For the end "
+"time, put <code>#@</code> in front of the character, e.g. <code>#@h</code>, "
+"<code>#@i</code>, etc.<br/> You can also create a date format without "
+"prepending <code>#</code> by wrapping it in #_{} or #@_{} (e.g. <code>#_{d/m/"
+"Y}</code>). If there is no end date, the value is not shown.<br/>Use "
+"<code>#_12HSTARTTIME</code> and <code>#_12HENDTIME</code> for AM/PM start-"
+"time/end-time notation, idem <code>#_24HSTARTTIME</code> and "
+"<code>#_24HENDTIME</code>.<br/>Feel free to use HTML tags as <code>li</"
+"code>, <code>br</code> and so on.<br/>For custom attributes, you use "
+"<code>#_ATT{key}{alternative text}</code>, the second braces are optional "
+"and will appear if the attribute is not defined or left blank for that "
+"event. This key will appear as an option when adding attributes to your "
+"event."
+msgstr ""
+"Формат будь-якої події у вигляді списку.<br/>вставити одну або декілька з "
+"наступних заповнювачі: <код>#_EVENTNAME</code>, <code>#_LOCATIONNAME</code>, "
+"<code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_NOTES</code>.<br/> з "
+"допомогою "
+
+#: eme_settings.php:441
+msgid ""
+"Use <code>#_PAST_FUTURE_CLASS</code> to return a class name indicating this "
+"event is future or past (<code>eme-future-event</code> or <code>eme-past-"
+"event</code>), use the returned value in e.g. the li-statement for each "
+"event in the list of events"
+msgstr ""
+"Використання <code>#_PAST_FUTURE_CLASS</code> повернути ім'я класу, який "
+"вказує цей  подія це майбутнє або минуле ( <code>eme-future-event</code> або "
+"<code>eme-past- event</code> ), використовувати повернене значення, "
+"наприклад, в літій-заяву для кожного  подією в список подій "
+
+#: eme_settings.php:441 eme_settings.php:446 eme_settings.php:456
+#: eme_settings.php:483 eme_settings.php:488 eme_settings.php:569
+#: eme_settings.php:570 eme_settings.php:571 eme_settings.php:572
+#: eme_settings.php:573 eme_settings.php:574 eme_settings.php:575
+#: eme_settings.php:576 eme_settings.php:600 eme_settings.php:601
+#: eme_settings.php:603 eme_settings.php:604
+msgid "For all possible placeholders, see "
+msgstr "Для всіх можливих заповнювачів см."
+
+#: eme_settings.php:442
+msgid "Default event list format footer"
+msgstr "За замовчуванням список подій формат підвал"
+
+#: eme_settings.php:442
+msgid ""
+"This content will appear just below your code for the default event list "
+"format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be "
+"used."
+msgstr ""
+"Цей контент з'явиться трохи нижче код для списку за замовчуванням події "
+"форматі. Якщо залишити це порожнім, значення <code></ul></code> буде  "
+"використовуватися ."
+
+#: eme_settings.php:444
+msgid "Single event page title format"
+msgstr "Одна сторінка подією формат заголовка"
+
+#: eme_settings.php:444
+msgid ""
+"The format of a single event page title. Follow the previous formatting "
+"instructions."
+msgstr ""
+"Формат після перегляду однієї сторінки подія титул. Дотримуйтесь попередній "
+"форматування інструкції."
+
+#: eme_settings.php:445
+msgid "Single event html title format"
+msgstr "Одним файлом подія формат заголовка"
+
+#: eme_settings.php:445
+msgid ""
+"The format of a single event html page title. Follow the previous formatting "
+"instructions."
+msgstr ""
+"Формат одного HTML подія заголовок сторінки. Дотримуйтесь попередній "
+"форматування інструкції."
+
+#: eme_settings.php:445 eme_settings.php:447 eme_settings.php:448
+#: eme_settings.php:487
+msgid " The default is: "
+msgstr "За замовчуванням:"
+
+#: eme_settings.php:446
+msgid "Default single event format"
+msgstr "За замовчуванням єдиний формат події"
+
+#: eme_settings.php:446
+msgid ""
+"The format of a single event page.<br/>Follow the previous formatting "
+"instructions. <br/>Use <code>#_MAP</code> to insert a map.<br/>Use "
+"<code>#_CONTACTNAME</code>, <code>#_CONTACTEMAIL</code>, "
+"<code>#_CONTACTPHONE</code> to insert respectively the name, e-mail address "
+"and phone number of the designated contact person. <br/>Use "
+"<code>#_ADDBOOKINGFORM</code> to insert a form to allow the user to respond "
+"to your events reserving one or more places (RSVP).<br/> Use "
+"<code>#_REMOVEBOOKINGFORM</code> to insert a form where users, inserting "
+"their name and e-mail address, can remove their bookings."
+msgstr ""
+"Формат одна подія сторінку. <br/>Виконайте попередній "
+"форматуванняінструкції. <br/>Вставте карту за допомогою <code>#_MAP</code>. "
+"<br/>Використання<code>#_CONTACTNAME</code>, <code>№ _CONTACTEMAIL</"
+"code><code>#_CONTACTPHONE</code> відповідно вставити ім'я, адресу "
+"електронної поштиі телефонного номера призначеного Контактна особа. <br/"
+">Використання<code>#_ADDBOOKINGFORM</code> щоб вставити форму, щоб "
+"користувачі могли відповістидля вашого заходу, бронювання одне або кілька "
+"місць (RSVP). <br/> Використання<code>#_REMOVEBOOKINGFORM</code> щоб "
+"вставити форму де користувачів, вставки"
+
+#: eme_settings.php:446
+msgid ""
+"<br/>Use <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> to insert the "
+"booking form only if the user has not registered yet. Similar use "
+"<code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> to insert the booking removal "
+"form only if the user has already registered before. These two codes only "
+"work for WP users."
+msgstr ""
+" <br/> Використовуйте <code>#_ADDBOOKINGFORM_IF_NOT_REGISTERED</code> "
+"вставити  форму бронювання, тільки якщо користувач ще не зареєстрований. "
+"Подібні використання  <code>#_REMOVEBOOKINGFORM_IF_REGISTERED</code> "
+"вставити видалення бронювання  форми, тільки якщо користувач вже "
+"зареєстрований раніше. Тільки ці два коди  працювати для користувачів WP. "
+
+#: eme_settings.php:446
+msgid ""
+"<br/> Use <code>#_DIRECTIONS</code> to insert a form so people can ask "
+"directions to the event."
+msgstr ""
+" <br/> Використовуйте <code>#_DIRECTIONS</code> вставити форму, щоб люди "
+"могли запитати:  напрямку до події. "
+
+#: eme_settings.php:446
+msgid ""
+"<br/> Use <code>#_CATEGORIES</code> to insert a comma-seperated list of "
+"categories an event is in."
+msgstr ""
+" <br/> Використовуйте <code>#_CATEGORIES</code> вставити запитом порізно "
+"список  категорій подія дюйма "
+
+#: eme_settings.php:446
+msgid ""
+"<br/> Use <code>#_ATTENDEES</code> to get a list of the names attending the "
+"event."
+msgstr ""
+" <br/> Використовуйте <code>#_ATTENDEES</code> отримати список імен, які "
+"беруть участь у  подія ."
+
+#: eme_settings.php:447
+msgid "Monthly period date format"
+msgstr "Щомісячний формат дати період"
+
+#: eme_settings.php:447
+msgid ""
+"The format of the date-string used when you use showperiod=monthly as an "
+"option to &#91;the eme_events] shortcode, also used for monthly pagination. "
+"Use php date() compatible settings."
+msgstr ""
+"Формат дати-рядки, використовуваної при використанні showperiod = щомісяця в "
+"якості опції до [eme_events] короткий номер, а також використовуватися для "
+"щомісячного нумерації сторінок.Використовувати дату PHP () сумісні "
+"налаштувань."
+
+#: eme_settings.php:448
+msgid "Yearly period date format"
+msgstr "Річний формат дати період"
+
+#: eme_settings.php:448
+msgid ""
+"The format of the date-string used when you use showperiod=yearly as an "
+"option to &#91;the eme_events] shortcode, also used for yearly pagination. "
+"Use php date() compatible settings."
+msgstr ""
+"Формат дати-рядки, використовуваної при використанні showperiod = щорічно в "
+"якості опції до [eme_events] короткий номер, а також використовуватися для "
+"щорічного нумерації сторінок.Використовувати дату PHP () сумісні налаштувань."
+
+#: eme_settings.php:449
+msgid "Events page title"
+msgstr "Заголовок сторінки Події"
+
+#: eme_settings.php:449
+msgid "The title on the multiple events page."
+msgstr "Назва на сторінці кілька подій."
+
+#: eme_settings.php:450
+msgid "No events message"
+msgstr "Немає повідомлень події"
+
+#: eme_settings.php:450
+msgid "The message displayed when no events are available."
+msgstr "Повідомлення, яке відображається при ніяких подій не доступні."
+
+#: eme_settings.php:453
+msgid "Events filtering format"
+msgstr "Фільтрація подій формату"
+
+#: eme_settings.php:456
+msgid "Default event list filtering format"
+msgstr "Список подій замовчуванням формат фільтрації"
+
+#: eme_settings.php:456
+msgid ""
+"This defines the layout of the event list filtering form when using the "
+"shortcode <code>[eme_filterform]</code>. Use <code>#_FILTER_CATS</code>, "
+"<code>#_FILTER_LOCS</code>, <code>#_FILTER_TOWNS</code>, "
+"<code>#_FILTER_WEEKS</code>, <code>#_FILTER_MONTHS</code>."
+msgstr ""
+"Це визначає Формат заходу фільтрації списку при використанні форми shortcode "
+"<code>[eme_filterform]</code>. Використовувати <code>#_FILTER_CATS</code>, "
+"<code>#_FILTER_LOCS</code>, <code>#_FILTER_TOWNS</code>, "
+"<code>#_FILTER_WEEKS</code>, <code>#_FILTER_MONTHS</code>."
+
+#: eme_settings.php:465
+msgid "Calendar format"
+msgstr "Формат Календар"
+
+#: eme_settings.php:468
+msgid "Small calendar title"
+msgstr "Малий календар назву"
+
+#: eme_settings.php:468
+msgid ""
+"The format of the title, corresponding to the text that appears when "
+"hovering on an eventful calendar day."
+msgstr ""
+"Формат назвою, відповідним текстом, який з'являється при висіння на "
+"насиченого календарного дня."
+
+#: eme_settings.php:469
+msgid "Small calendar title separator"
+msgstr "Малий календар назва сепаратор"
+
+#: eme_settings.php:469
+msgid ""
+"The separator appearing on the above title when more than one event is "
+"taking place on the same day."
+msgstr ""
+"Сепаратор з'являтися на назві вище, коли більш ніж одна подія проходить в "
+"той же день."
+
+#: eme_settings.php:470
+msgid "Full calendar events format"
+msgstr "Формат повний календар подій"
+
+#: eme_settings.php:470
+msgid ""
+"The format of each event when displayed in the full calendar. Remember to "
+"include <code>li</code> tags before and after the event."
+msgstr ""
+"Формат кожної події при відображенні в повному календарі. Забудьте включають "
+"<code>li</code> теги до і після цієї події ."
+
+#: eme_settings.php:479
+msgid "Locations format"
+msgstr "Місця формат"
+
+#: eme_settings.php:482
+msgid "Default location list format header"
+msgstr "Список за замовчуванням розташування заголовок формату"
+
+#: eme_settings.php:482
+msgid ""
+"This content will appear just above your code for the default location list "
+"format. If you leave this empty, the value <code>&lt;ul "
+"class='eme_locations_list'&gt;</code> will be used.<br/>Used by the "
+"shortcode <code>[eme_locations]</code>"
+msgstr ""
+"Цей контент з'явиться трохи вище коді для списку за замовчуванням "
+"розташування форматі. Якщо залишити це порожнім, значення <code><ul  "
+"class='eme_locations_list'></code> буде використовуватися. <br/> "
+"Використовується «своїх» Короткий <code>[eme_locations]</code> "
+
+#: eme_settings.php:483
+msgid "Default location list item format"
+msgstr "Розташування за замовчуванням формат Елемент списку"
+
+#: eme_settings.php:483
+msgid ""
+"The format of a location in a location list. If you leave this empty, the "
+"value <code>&lt;li class=\\\"location-#_LOCATIONID\\\"&gt;#_LOCATIONNAME&lt;/"
+"li&gt;</code> will be used.<br/>See the documentation for a list of "
+"available placeholders for locations.<br/>Used by the shortcode "
+"<code>[eme_locations]</code>"
+msgstr ""
+"Формат місці в списку місцезнаходження. Якщо залишити це порожнім, значення "
+"<code><li class=\\\"location-#_LOCATIONID\\\">#_LOCATIONNAME</ li></code> "
+"буде використовуватися. <br/> Див документацію для списку  доступних "
+"заповнювачів для місць. <br/> Використовується короткий номер <code> "
+"[eme_locations]</code> "
+
+#: eme_settings.php:484
+msgid "Default location list format footer"
+msgstr "Список за замовчуванням розташування формат підвал"
+
+#: eme_settings.php:484
+msgid ""
+"This content will appear just below your code for the default location list "
+"format. If you leave this empty, the value <code>&lt;/ul&gt;</code> will be "
+"used.<br/>Used by the shortcode <code>[eme_locations]</code>"
+msgstr ""
+"Цей контент з'явиться трохи нижче коді для списку за замовчуванням "
+"розташування форматі. Якщо залишити це порожнім, значення <code></ul></code> "
+"буде  використовуватися. <br/> Використовується короткий номер "
+"<code>[eme_locations]</code> "
+
+#: eme_settings.php:486
+msgid "Single location page title format"
+msgstr "Одна сторінка розташування формат заголовка"
+
+#: eme_settings.php:486
+msgid ""
+"The format of a single location page title.<br/>Follow the previous "
+"formatting instructions."
+msgstr ""
+"Формат після перегляду однієї сторінки, розташування назви. <br/> Проробіть "
+"попередні  інструкції форматування. "
+
+#: eme_settings.php:487
+msgid "Single location html title format"
+msgstr "Одному місці HTML формат заголовка"
+
+#: eme_settings.php:487
+msgid ""
+"The format of a single location html page title.<br/>Follow the previous "
+"formatting instructions."
+msgstr ""
+"Формат одному місці HTML-заголовка. <br/> Проробіть попередні  інструкції "
+"форматування. "
+
+#: eme_settings.php:488
+msgid "Default single location page format"
+msgstr "За замовчуванням один формат сторінки, розташування"
+
+#: eme_settings.php:488
+msgid ""
+"The format of a single location page.<br/>Insert one or more of the "
+"following placeholders: <code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, "
+"<code>#_TOWN</code>, <code>#_DESCRIPTION</code>.<br/> Use <code>#_MAP</code> "
+"to display a map of the event location, and <code>#_IMAGE</code> to display "
+"an image of the location.<br/> Use <code>#_NEXTEVENTS</code> to insert a "
+"list of the upcoming events, <code>#_PASTEVENTS</code> for a list of past "
+"events, <code>#_ALLEVENTS</code> for a list of all events taking place in "
+"this location."
+msgstr ""
+"Формат одному місці сторінки.<br/>вставити одну або декілька з наступних "
+"заповнювачі: <код>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, "
+"<code>#_TOWN</code>, <code>#_</code>.<br/> використовуйте <code>#_MAP</"
+"code>, щоб відобразити карту, місце проведення заходу та <code>#_IMAGE</"
+"code>, щоб відобразити зображення місцевості.<br/> використовуйте "
+"<code>#_NEXTEVENTS</code>, щоб вставити список майбутніх подій, "
+"<code>#_PASTEVENTS</code> список подій, що сталися в минулому, "
+"<code>#_ALLEVENTS</code>, щоб переглянути список всіх подій, що відбуваються "
+"в цьому місці."
+
+#: eme_settings.php:489
+msgid "Default location balloon format"
+msgstr "Формат за замовчуванням розташування куля"
+
+#: eme_settings.php:489
+msgid ""
+"The format of the text appearing in the balloon describing the location in "
+"the map.<br/>Insert one or more of the following placeholders: "
+"<code>#_LOCATIONNAME</code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, "
+"<code>#_DESCRIPTION</code>,<code>#_IMAGE</code>, <code>#_LOCATIONPAGEURL</"
+"code> or <code>#_DIRECTIONS</code>."
+msgstr ""
+"Формат тексту, який з'являється в кулю, що описують розташування карті.<br/"
+">вставити одну або декілька з наступних заповнювачі: <code>#_LOCATIONNAME</"
+"code>, <code>#_ADDRESS</code>, <code>#_TOWN</code>, <code>#_</code>,"
+"<code>#_IMAGE</code>, <code>#_LOCATIONPAGEURL</code> або <code>#_DIRECTIONS</"
+"code>."
+
+#: eme_settings.php:490
+msgid "Default location event list format"
+msgstr "Розташування за замовчуванням формат списку подій"
+
+#: eme_settings.php:490
+msgid ""
+"The format of the events list inserted in the location page through the "
+"<code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</"
+"code> element. <br/> Follow the events formatting instructions"
+msgstr ""
+"Формат заходу список, який вставлений в розташування на сторінці "
+"<code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> та <code>#_ALLEVENTS</"
+"code> елемент. <br/> слідкуйте за подіями інструкції форматування"
+
+#: eme_settings.php:491
+msgid "Default no events message"
+msgstr "Типово нет повідомлення події"
+
+#: eme_settings.php:491
+msgid ""
+"The message to be displayed in the list generated by <code>#_NEXTEVENTS</"
+"code>, <code>#_PASTEVENTS</code> and <code>#_ALLEVENTS</code> when no events "
+"are available."
+msgstr ""
+"Повідомлення, яке буде відображатися в списку, створеному за допомогою "
+"<code>#_NEXTEVENTS</code>, <code>#_PASTEVENTS</code> та <code>#_ALLEVENTS</"
+"code> при відсутності подій "
+
+#: eme_settings.php:500
+msgid "RSS and ICAL feed format"
+msgstr "RSS і ICAL форматі подачі"
+
+#: eme_settings.php:503
+msgid "RSS main title"
+msgstr "RSS основний заголовок"
+
+#: eme_settings.php:503
+msgid "The main title of your RSS events feed."
+msgstr "Головний титул ваших RSS Стрічка подій."
+
+#: eme_settings.php:504
+msgid "RSS main description"
+msgstr "RSS головний опис"
+
+#: eme_settings.php:504
+msgid "The main description of your RSS events feed."
+msgstr "Основний опис ваших RSS Стрічка подій."
+
+#: eme_settings.php:505
+msgid "RSS title format"
+msgstr "RSS назва формату"
+
+#: eme_settings.php:505
+msgid "The format of the title of each item in the events RSS feed."
+msgstr "Формат назви кожного пункту в події канал."
+
+#: eme_settings.php:506
+msgid "RSS description format"
+msgstr "Опис RSS форматі"
+
+#: eme_settings.php:506
+msgid ""
+"The format of the description of each item in the events RSS feed. Follow "
+"the previous formatting instructions."
+msgstr ""
+"Формат опису кожного елемента в події канал. Дотримуйтесь попередні "
+"інструкції форматування."
+
+#: eme_settings.php:507
+msgid "RSS Pubdate usage"
+msgstr "Використання RSS PubDate"
+
+#: eme_settings.php:507
+msgid ""
+"Show the event creation/modification date as PubDate info in the in the "
+"events RSS feed."
+msgstr ""
+"Показати дату створення події/зміни як інформація PubDate в в подій RSS "
+"потік."
+
+#: eme_settings.php:508
+msgid "RSS Pubdate is start date"
+msgstr "RSS PubDate є дата"
+
+#: eme_settings.php:508
+msgid ""
+"If you select this, the pubDate field in RSS will be the event start date, "
+"not the modification date."
+msgstr "Якщо ви виберете цей, поле PubDate в RSS буде подія датане дата зміни."
+
+#: eme_settings.php:509
+msgid "ICAL title format"
+msgstr "ICAL формат заголовка"
+
+#: eme_settings.php:509
+msgid "The format of the title of each item in the events ICAL feed."
+msgstr "Формат назви кожного пункту в подіях ICAL корму."
+
+#: eme_settings.php:510
+msgid "ICAL description format"
+msgstr "ICAL формат опису"
+
+#: eme_settings.php:510
+msgid ""
+"The format of the description of each item in the events ICAL feed. Follow "
+"the previous formatting instructions."
+msgstr ""
+"Формат опису кожного елемента в подіях ICAL корму. Дотримуйтесь попередні "
+"інструкції форматування."
+
+#: eme_settings.php:519
+msgid "RSVP: registrations and bookings"
+msgstr "RSVP: реєстрація та бронювання"
+
+#: eme_settings.php:524
+msgid "Default contact person"
+msgstr "За замовчуванням контактна особа"
+
+#: eme_settings.php:524
+msgid ""
+"Select the default contact person. This user will be employed whenever a "
+"contact person is not explicitly specified for an event"
+msgstr ""
+"Виберіть контакти замовчуванням людини в. Користувач використовуватиметься "
+"щоразу, коли контактна особа не вказаний явно для події"
+
+#: eme_settings.php:525
+msgid "By default enable registrations for new events?"
+msgstr "За замовчуванням дозволяють реєстрацію для нових подій?"
+
+#: eme_settings.php:525
+msgid ""
+"Check this option if you want to enable registrations by default for new "
+"events."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете включити реєстрацію за замовчуванням для "
+"нових подій."
+
+#: eme_settings.php:526
+msgid "By default require approval for registrations?"
+msgstr "За замовчуванням вимагають дозвіл на реєстрацію?"
+
+#: eme_settings.php:526
+msgid ""
+"Check this option if you want by default that new registrations require "
+"approval."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете за замовчуванням, що нових реєстрацій "
+"вимагають схвалення."
+
+#: eme_settings.php:527
+msgid "By default require WP membership to be able to register?"
+msgstr ""
+"За замовчуванням вимагає членство WP, щоб мати можливість зареєструватися?"
+
+#: eme_settings.php:527
+msgid ""
+"Check this option if you want by default that only WP registered users can "
+"book for an event."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете за замовчуванням, що тільки WP "
+"зареєстровані користувачі можуть книги для події."
+
+#: eme_settings.php:528
+msgid "Default number of spaces"
+msgstr "За замовчуванням кількість прогалин"
+
+#: eme_settings.php:528
+msgid "The default number of spaces an event has."
+msgstr "За замовчуванням кількість просторів подія має."
+
+#: eme_settings.php:531
+msgid "By default allow RSVP until this many days before the event starts"
+msgstr ""
+"За замовчуванням не дозволяють RSVP до цього багато днів до початку заходу"
+
+#: eme_settings.php:531
+msgid "By default allow RSVP until this many days before the event starts."
+msgstr ""
+"За замовчуванням не дозволяють RSVP до цього багато днів до початку заходу."
+
+#: eme_settings.php:532
+msgid "By default allow RSVP until this many hours before the event starts"
+msgstr ""
+"За замовчуванням не дозволяють RSVP до цього багато годин до початку заходу"
+
+#: eme_settings.php:532
+msgid "By default allow RSVP until this many hours before the event starts."
+msgstr ""
+"За замовчуванням не дозволяють RSVP до цього багато годин до початку заходу."
+
+#: eme_settings.php:533
+msgid "Use captcha for booking form?"
+msgstr "Використовуйте капчу для форми бронювання?"
+
+#: eme_settings.php:533
+msgid ""
+"Check this option if you want to use a captcha on the booking form, to "
+"thwart spammers a bit."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете використовувати капчу у формі бронювання, "
+"щоб зірвати спамерам небагато."
+
+#: eme_settings.php:534
+msgid "Hide fully booked events?"
+msgstr "Приховати повністю замовлені події?"
+
+#: eme_settings.php:534
+msgid ""
+"Check this option if you want to hide events that are fully booked from the "
+"calendar and events listing in the front."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете, щоб приховати події, які повністю "
+"заброньовані від календаря і подій лістингу в передній."
+
+#: eme_settings.php:535
+msgid "Add booking form submit text"
+msgstr "Додати резервування представити текст"
+
+#: eme_settings.php:535
+msgid "The string of the submit button on the add booking form"
+msgstr "Рядок кнопку відправки на формі додати резервування"
+
+#: eme_settings.php:536
+msgid "Delete booking form submit text"
+msgstr "Форма Видалити бронювання представити текст"
+
+#: eme_settings.php:536
+msgid "The string of the submit button on the delete booking form"
+msgstr "Рядок кнопку відправки на формі видалення резервування"
+
+#: eme_settings.php:537
+msgid "Attendees list format"
+msgstr "Формат списку Учасники"
+
+#: eme_settings.php:537
+msgid ""
+"The format for the attendees list when using the <code>#_ATTENDEES</code> "
+"placeholder."
+msgstr ""
+"Формат списку учасників при використанні <code>#_ATTENDEES</code>  "
+"заповнювач ."
+
+#: eme_settings.php:537 eme_settings.php:539
+msgid "For all placeholders you can use here, see "
+msgstr "Для всіх заповнювачів можна використовувати тут, см."
+
+#: eme_settings.php:538
+msgid "Bookings list header format"
+msgstr "Формат списку Попередження заголовка"
+
+#: eme_settings.php:538
+msgid ""
+"The header format for the bookings list when using the <code>#_BOOKINGS</"
+"code> placeholder."
+msgstr ""
+"Формат заголовка для бронювання список за допомогою <code>#_BOOKINGS</code> "
+"прототип."
+
+#: eme_settings.php:538 eme_settings.php:540 eme_settings.php:681
+#: eme_settings.php:682 eme_settings.php:683 eme_settings.php:684
+msgid " The default is ' %s'"
+msgstr "За замовчуванням '%s'"
+
+#: eme_settings.php:539
+msgid "Bookings list format"
+msgstr "Формат списку Попередження"
+
+#: eme_settings.php:539
+msgid ""
+"The format for the bookings list when using the <code>#_BOOKINGS</code> "
+"placeholder."
+msgstr ""
+"Формат списку Замовте он-лайн при використанні <code>#_BOOKINGS</code>  "
+"заповнювач ."
+
+#: eme_settings.php:540
+msgid "Bookings list footer format"
+msgstr "Формат списку Попередження підвал"
+
+#: eme_settings.php:540
+msgid ""
+"The footer format for the bookings list when using the <code>#_BOOKINGS</"
+"code> placeholder."
+msgstr ""
+"Нижній-формат для бронювання список за допомогою <code>#_BOOKINGS</code> "
+"прототип."
+
+#: eme_settings.php:541
+msgid "Booking recorded message"
+msgstr "Бронювання записане повідомлення"
+
+#: eme_settings.php:545
+msgid "RSVP: form format"
+msgstr "RSVP: формат форми"
+
+#: eme_settings.php:548
+msgid "Form format"
+msgstr "Формат формуляр"
+
+#: eme_settings.php:548
+msgid ""
+"The look and feel of the form for registrations. #_NAME, #_EMAIL and #_SEATS "
+"are obligated fields, if not present then the form will not be shown."
+msgstr ""
+"Зовнішній вигляд і форми для реєстрації. #_NAME, #_EMAIL І #_SEATS "
+"зобов'язані поля, якщо ні то форма не буде показуватися."
+
+#: eme_settings.php:549
+msgid "Cancel form format"
+msgstr "Скасувати формат форми"
+
+#: eme_settings.php:549
+msgid ""
+"The look and feel of the cancel form for registrations. #_NAME and #_EMAIL "
+"are obligated fields, if not present then the form will not be shown."
+msgstr ""
+"Зовнішній вигляд і з скасувати форму для реєстрації. #_name І #_EMAIL "
+"зобов'язані поля, якщо ні то форма не буде показуватися."
+
+#: eme_settings.php:559
+msgid "RSVP: mail options"
+msgstr "Варіанти пошта: RSVP"
+
+#: eme_settings.php:562
+msgid "Enable the RSVP e-mail notifications?"
+msgstr "Увімкніть RSVP повідомлень електронною поштою?"
+
+#: eme_settings.php:562
+msgid ""
+"Check this option if you want to receive an email when someone books places "
+"for your events."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете отримувати по електронній пошті, коли "
+"хтось книги місця для ваших заходів."
+
+#: eme_settings.php:567
+msgid "Send HTML mails"
+msgstr "Надіслати HTML пошти"
+
+#: eme_settings.php:567
+msgid "Check this option if you want to use html in the mails being sent."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете використовувати HTML в листах про їх "
+"відправку."
+
+#: eme_settings.php:568
+msgid "Quick deny send mails"
+msgstr "Швидкий заперечувати відправляти листи"
+
+#: eme_settings.php:568
+msgid ""
+"Check this option if you want to sent mails when denying a registration "
+"while editing an event."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете відправлені листи при відмові в "
+"реєстрації при редагуванні захід."
+
+#: eme_settings.php:569
+msgid "Contact person email format"
+msgstr "Контактна особа по електронній пошті у форматі"
+
+#: eme_settings.php:570
+msgid "Contact person cancelled email format"
+msgstr "Контактна особа скасований формат електронної пошти"
+
+#: eme_settings.php:570
+msgid ""
+"The format of the email which will be sent to the contact person for a "
+"cancellation."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​контактній особі для "
+"скасування."
+
+#: eme_settings.php:571
+msgid "Contact person pending email format"
+msgstr "Контактна особа в очікуванні електронний формат"
+
+#: eme_settings.php:571
+msgid ""
+"The format of the email which will be sent to the contact person if approval "
+"is needed."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​контактній особі, якщо "
+"твердження необхідний."
+
+#: eme_settings.php:572
+msgid "Respondent email format"
+msgstr "Відповідач електронний формат"
+
+#: eme_settings.php:573
+msgid "Registration pending email format"
+msgstr "Реєстрація до електронної пошти формату"
+
+#: eme_settings.php:573
+msgid ""
+"The format of the email which will be sent to the respondent when the event "
+"requires registration approval."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​відповідачу, коли подія "
+"вимагає схвалення реєстрації."
+
+#: eme_settings.php:574
+msgid "Registration cancelled email format"
+msgstr "Реєстрація скасована електронною поштою у форматі"
+
+#: eme_settings.php:574
+msgid ""
+"The format of the email which will be sent to the respondent when the "
+"respondent cancels the registrations for an event."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​відповідачу, коли відповідач "
+"анулює реєстрацію для події."
+
+#: eme_settings.php:575
+msgid "Registration denied email format"
+msgstr "Реєстрація відмовлено електронною поштою у форматі"
+
+#: eme_settings.php:575
+msgid ""
+"The format of the email which will be sent to the respondent when the admin "
+"denies the registration request if the event requires registration approval."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​відповідачу, коли "
+"адміністратор заперечує запит на реєстрацію, якщо подія вимагає схвалення "
+"реєстрації."
+
+#: eme_settings.php:576
+msgid "Registration updated email format"
+msgstr "Реєстрація оновлена ​​електронна пошта формат"
+
+#: eme_settings.php:576
+msgid ""
+"The format of the email which will be sent to the respondent when the admin "
+"updates the registration request."
+msgstr ""
+"Формат електронній пошті, яка буде відправлена ​​відповідачу, коли "
+"адміністратор оновлює запит на реєстрацію."
+
+#: eme_settings.php:577
+msgid "Notification sender name"
+msgstr "Повідомлення ім'я відправника"
+
+#: eme_settings.php:577
+msgid "Insert the display name of the notification sender."
+msgstr "Вставте коротке ім'я відправника повідомлень."
+
+#: eme_settings.php:578
+msgid "Notification sender address"
+msgstr "Повідомлення адреса відправника"
+
+#: eme_settings.php:578
+msgid ""
+"Insert the address of the notification sender. It must correspond with your "
+"Gmail account user"
+msgstr ""
+"Вставте адресу відправника повідомлень. Воно повинно відповідати з вашим "
+"користувач рахунки Gmail"
+
+#: eme_settings.php:579
+msgid "Mail sending method"
+msgstr "Пошта метод відправки"
+
+#: eme_settings.php:579
+msgid "PHP mail function"
+msgstr "Функція пошти PHP"
+
+#: eme_settings.php:579
+msgid "Select the method to send email notification."
+msgstr "Виберіть метод для відправки повідомлень електронною поштою."
+
+#: eme_settings.php:580
+msgid ""
+"The SMTP host. Usually it corresponds to 'localhost'. If you use Gmail, set "
+"this value to 'ssl://smtp.gmail.com:465'."
+msgstr ""
+"Хост SMTP. Зазвичай це відповідає локальним 'localhost'. Якщо ви "
+"використовуєте Gmail, то встановіть значення 'ssl://smtp.gmail.com:465'."
+
+#: eme_settings.php:581
+msgid ""
+"The port through which you e-mail notifications will be sent. Make sure the "
+"firewall doesn't block this port"
+msgstr ""
+"Порт, через який ви повідомлень електронною поштою буде надіслано. "
+"Переконайтеся, що брандмауер не блокує цей порт"
+
+#: eme_settings.php:582
+msgid "Use SMTP authentication?"
+msgstr "Використовувати перевірку автентичності SMTP?"
+
+#: eme_settings.php:582
+msgid ""
+"SMTP authentication is often needed. If you use Gmail, make sure to set this "
+"parameter to Yes"
+msgstr ""
+"SMTP аутентифікації часто вимагається. Якщо ви користуєтеся Gmail, "
+"обов'язково встановіть для цього параметра значення так"
+
+#: eme_settings.php:583
+msgid "SMTP username"
+msgstr "SMTP ім'я користувача"
+
+#: eme_settings.php:583
+msgid "Insert the username to be used to access your SMTP server."
+msgstr ""
+"Вставте ім'я користувача, який буде використовуватися для доступу до вашого "
+"SMTP-сервер."
+
+#: eme_settings.php:584
+msgid "SMTP password"
+msgstr "SMTP пароль"
+
+#: eme_settings.php:584
+msgid "Insert the password to be used to access your SMTP server"
+msgstr ""
+"Вставте пароль, які будуть використовуватися для доступу до вашого SMTP-"
+"сервер"
+
+#: eme_settings.php:585
+msgid "Debug SMTP?"
+msgstr "Налагодження SMTP?"
+
+#: eme_settings.php:585
+msgid ""
+"Check this option if you have issues sending mail via SMTP. Only do this for "
+"debugging purposes and deactivate it afterwards!"
+msgstr ""
+"Позначте цей параметр, якщо у вас виникли проблеми з відправкою пошти через "
+"SMTP. Це робиться тільки для цілей налагодження і відключити його потім!"
+
+#: eme_settings.php:595
+msgid "RSVP: price options"
+msgstr "RSVP: Варіанти цін"
+
+#: eme_settings.php:598
+msgid "Default currency"
+msgstr "Валюта за замовчуванням"
+
+#: eme_settings.php:598
+msgid "Select the default currency for payments."
+msgstr "Виберіть валюту за замовчуванням для платежів."
+
+#: eme_settings.php:599
+msgid "Default price"
+msgstr "Ціна замовчуванням"
+
+#: eme_settings.php:599
+msgid "The default price for an event."
+msgstr "Ціна за замовчуванням для події."
+
+#: eme_settings.php:600
+msgid "Payment form header format"
+msgstr "Формат заголовка Форма оплати"
+
+#: eme_settings.php:600
+msgid ""
+"The format of the text shown above the payment buttons. If left empty, a "
+"standard text will be shown."
+msgstr ""
+"Формат текст, що відображається над кнопками оплати. Якщо залишити порожнім, "
+"стандартний текст буде показаний."
+
+#: eme_settings.php:601
+msgid "Payment form footer format"
+msgstr "Формат Форма оплати підвал"
+
+#: eme_settings.php:601
+msgid "The format of the text shown below the payment buttons. Default: empty."
+msgstr ""
+"Формат текст, що відображається під кнопками оплати. За замовчуванням: "
+"порожньо."
+
+#: eme_settings.php:602
+msgid "Show custom payment return page"
+msgstr "Показати звичай оплата Повернення сторінку"
+
+#: eme_settings.php:602
+msgid ""
+"Check this option if you want to define a custom page format for the sucess "
+"or failure of the payment."
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете визначити власний формат сторінки для "
+"Успіху або невдачі оплати."
+
+#: eme_settings.php:603
+msgid "Payment succes return page format"
+msgstr "Платіжні Succes повернутися формат сторінки"
+
+#: eme_settings.php:603
+msgid "The format of the return page when the payment is succesfull."
+msgstr "Формат повертається сторінці, коли оплата успішним."
+
+#: eme_settings.php:604
+msgid "Payment failure return page format"
+msgstr "Формат відмова Оплата повернення сторінки"
+
+#: eme_settings.php:604
+msgid ""
+"The format of the return page when the payment failed or has been canceled."
+msgstr ""
+"Формат повертається сторінці, коли платіж не пройшов або був скасований."
+
+#: eme_settings.php:605
+msgid "Add booking id to return page info"
+msgstr "Додати резервування ідентифікатор, щоб повернутися сторінка Інформація"
+
+#: eme_settings.php:605
+msgid ""
+"Check this option if you want to add the booking id to the return page. This "
+"will allow you to also use booking placeholders next to the regular event "
+"placeholders, but beware that other people can change the url and see other "
+"booking info then!"
+msgstr ""
+"Увімкніть цю опцію, якщо ви хочете додати ідентифікатор резервування на "
+"зворотний сторінці. Ця дозволить вам також використовувати резервування "
+"заповнювачі поруч з регулярною події заповнювачів, але потрібно враховувати, "
+"що інші люди можуть змінити URL і подивитися інші Інформація про бронювання "
+"тоді!"
+
+#: eme_settings.php:609
+msgid "RSVP: paypal options"
+msgstr "RSVP: Paypal варіанти"
+
+#: eme_settings.php:612
+msgid "PayPal live or test"
+msgstr "PayPal жити чи тест"
+
+#: eme_settings.php:612
+msgid "Paypal Sandbox (for testing)"
+msgstr "Paypal Пісочниця (для тестування)"
+
+#: eme_settings.php:612
+msgid "Paypal Live"
+msgstr "Paypal Онлайн"
+
+#: eme_settings.php:612
+msgid ""
+"Choose wether you want to test paypal in a paypal sandbox or go live and "
+"really use paypal."
+msgstr ""
+"Виберіть, чи хочете ви, щоб перевірити PayPal в PayPal пісочниці або йти "
+"жити і реально використовувати PayPal."
+
+#: eme_settings.php:613
+msgid "PayPal business info"
+msgstr "PayPal інформація Бізнес-"
+
+#: eme_settings.php:613
+msgid "Paypal business ID or email."
+msgstr "Paypal бізнес ID або електронною поштою."
+
+#: eme_settings.php:614
+msgid "Use paypal encryption?"
+msgstr "Використовувати шифрування PayPal?"
+
+#: eme_settings.php:614
+msgid "Select yes to encrypt the paypal button using certificates."
+msgstr "Виберіть да для шифрування кнопку PayPal за допомогою сертифікатів."
+
+#: eme_settings.php:615
+msgid "Paypal public cert"
+msgstr "Paypal публічний сертифікат"
+
+#: eme_settings.php:615
+msgid "Path to paypal public certificate file."
+msgstr "Шлях до Paypal файл відкритого сертифіката."
+
+#: eme_settings.php:616
+msgid "Own public cert"
+msgstr "Власний публічний сертифікат"
+
+#: eme_settings.php:616
+msgid "Path to own public certificate file."
+msgstr "Шлях до власного файл відкритого сертифіката."
+
+#: eme_settings.php:617
+msgid "Own private key"
+msgstr "Власний приватний ключ"
+
+#: eme_settings.php:617
+msgid "Path to own private key file."
+msgstr "Шлях до власного файл із закритим ключем."
+
+#: eme_settings.php:618
+msgid "Certificate ID"
+msgstr "Сертифікат ID"
+
+#: eme_settings.php:618
+msgid "Certificate ID of your cert at paypal."
+msgstr "Сертифікат ID вашого сертифіката на PayPal."
+
+#: eme_settings.php:622
+msgid "RSVP: 2Checkout options"
+msgstr "RSVP: Варіанти 2checkout"
+
+#: eme_settings.php:628
+msgid "2Checkout live or test"
+msgstr "2Checkout жити чи тест"
+
+#: eme_settings.php:628
+msgid "2Checkout Sandbox (for testing)"
+msgstr "2Checkout Пісочниця (для тестування)"
+
+#: eme_settings.php:628
+msgid "2Checkout Live"
+msgstr "2Checkout Онлайн"
+
+#: eme_settings.php:628
+msgid ""
+"Choose wether you want to test 2Checkout in a sandbox or go live and really "
+"use 2Checkout."
+msgstr ""
+"Виберіть, чи хочете ви, щоб перевірити 2Checkout в пісочниці або йти жити і "
+"дійсно використовувати 2Checkout."
+
+#: eme_settings.php:629
+msgid "2Checkout Account number"
+msgstr "Число 2Checkout аккаунт"
+
+#: eme_settings.php:629
+msgid "2Checkout Account number."
+msgstr "2Checkout Номер рахунку."
+
+#: eme_settings.php:630
+msgid "2Checkout Secret"
+msgstr "2Checkout Секрет"
+
+#: eme_settings.php:630
+msgid "2Checkout secret."
+msgstr "2Checkout секрет."
+
+#: eme_settings.php:631 eme_settings.php:644
+msgid "Info: the url for payment notifications is: "
+msgstr "Інформація: URL для повідомлень платіжних є:"
+
+#: eme_settings.php:635
+msgid "RSVP: Webmoney options"
+msgstr "RSVP: Варіанти Webmoney"
+
+#: eme_settings.php:641
+msgid "Webmoney live or test"
+msgstr "Webmoney жити чи тест"
+
+#: eme_settings.php:641
+msgid "Webmoney Sandbox (for testing)"
+msgstr "Webmoney Пісочниця (для тестування)"
+
+#: eme_settings.php:641
+msgid "Webmoney Live"
+msgstr "Webmoney Онлайн"
+
+#: eme_settings.php:641
+msgid ""
+"Choose wether you want to test Webmoney in a sandbox or go live and really "
+"use Webmoney."
+msgstr ""
+"Виберіть, чи хочете ви, щоб перевірити Webmoney в пісочниці або йти жити і "
+"дійсно використовувати Webmoney."
+
+#: eme_settings.php:642
+msgid "Webmoney Purse"
+msgstr "Webmoney гаманець"
+
+#: eme_settings.php:642
+msgid "Webmoney Purse."
+msgstr "Webmoney гаманець."
+
+#: eme_settings.php:643
+msgid "Webmoney Secret"
+msgstr "Webmoney Секрет"
+
+#: eme_settings.php:643
+msgid "Webmoney secret."
+msgstr "Webmoney секрет."
+
+#: eme_settings.php:648
+msgid "RSVP: Google Checkout options"
+msgstr "Варіанти Google Checkout: RSVP"
+
+#: eme_settings.php:651
+msgid "Google Checkout live or test"
+msgstr "Google Checkout в прямому ефірі або тест"
+
+#: eme_settings.php:651
+msgid "Google Checkout Sandbox (for testing)"
+msgstr "Google Checkout Sandbox (для тестування)"
+
+#: eme_settings.php:651
+msgid "Google Checkout Live"
+msgstr "Google Checkout Онлайн"
+
+#: eme_settings.php:651
+msgid ""
+"Choose wether you want to test Google Checkout in a sandbox or go live and "
+"really use Google Checkout."
+msgstr ""
+"Виберіть, чи хочете ви, щоб перевірити Google Checkout в пісочниці або йти "
+"жити і реально використовувати Google Checkout."
+
+#: eme_settings.php:652
+msgid "Google Checkout merchant ID"
+msgstr "Google Checkout купець ID"
+
+#: eme_settings.php:652
+msgid "Google Checkout Merchant ID."
+msgstr "Google Checkout Merchant ID."
+
+#: eme_settings.php:653
+msgid "Google Checkout merchant Key"
+msgstr "Google Checkout купець ключ"
+
+#: eme_settings.php:653
+msgid "Google Checkout Merchant Key."
+msgstr "Google Checkout Merchant Key."
+
+#: eme_settings.php:657
+msgid "RSVP: First Data options"
+msgstr "Варіанти перші дані: RSVP"
+
+#: eme_settings.php:660
+msgid "First Data live or test"
+msgstr "Перші дані жити чи тест"
+
+#: eme_settings.php:660
+msgid "First Data Sandbox (for testing)"
+msgstr "First Data Пісочниця (для тестування)"
+
+#: eme_settings.php:660
+msgid "First Data Live"
+msgstr "First Data Онлайн"
+
+#: eme_settings.php:660
+msgid ""
+"Choose wether you want to test First Data in a sandbox or go live and really "
+"use First Datal."
+msgstr ""
+"Виберіть, чи хочете ви, щоб перевірити First Data в пісочниці або йти жити і "
+"дійсно використовувати перший Datal."
+
+#: eme_settings.php:661
+msgid "First Data Store Name"
+msgstr "Прізвище сховища даних"
+
+#: eme_settings.php:661
+msgid "First Data Store Name."
+msgstr "First Data Назва магазину."
+
+#: eme_settings.php:662
+msgid "First Data Shared Secret"
+msgstr "First Data Shared Secret"
+
+#: eme_settings.php:662
+msgid "First Data Shared Secret."
+msgstr "First Data Shared Secret."
+
+#: eme_settings.php:671
+msgid "Images size"
+msgstr "Зображення розмір"
+
+#: eme_settings.php:674
+msgid "Thumbnail size"
+msgstr "Мініатюра розмір"
+
+#: eme_settings.php:674
+msgid ""
+"Choose thumbnail size to be shown when placeholders involging thumbnails "
+"like e.g. #_EVENTIMAGETHUMB, #_LOCATIONIMAGETHUMB ..."
+msgstr ""
+"Вибрати розмір маленьку картинку, щоб показати, коли заповнювачі involging "
+"ескізияк, наприклад, #_EVENTIMAGETHUMB, #_LOCATIONIMAGETHUMB ..."
+
+#: eme_settings.php:678
+msgid "Map options"
+msgstr "Додаткові можливості"
+
+#: eme_settings.php:681
+msgid "Global map zoom factor"
+msgstr "Глобальний фактор масштабування карти"
+
+#: eme_settings.php:681
+msgid "The zoom factor used for the global map (max: 14)."
+msgstr ""
+"Коефіцієнт масштабування використовується для глобальній карті (макс: 14)."
+
+#: eme_settings.php:682
+msgid "Individual map zoom factor"
+msgstr "Індивідуальний коефіцієнт масштабування карти"
+
+#: eme_settings.php:682
+msgid "The zoom factor used when showing a single map (max: 14)."
+msgstr ""
+"Коефіцієнт масштабування використовується при показі одну карту (макс: 14)."
+
+#: eme_settings.php:683
+msgid "Global map type"
+msgstr "Глобальний тип карти"
+
+#: eme_settings.php:683 eme_settings.php:684
+msgid "Road map view"
+msgstr "Дорожня карта вид"
+
+#: eme_settings.php:683 eme_settings.php:684
+msgid "Google Earth satellite images"
+msgstr "Супутникові зображення Google Планета Земля"
+
+#: eme_settings.php:683 eme_settings.php:684
+msgid "Hybrid: a mixture of normal and satellite views"
+msgstr "Гібридний: суміш нормальних і супутниковими видом"
+
+#: eme_settings.php:683 eme_settings.php:684
+msgid "Terrain: a physical map based on terrain information"
+msgstr "Ландшафт: фізична карта на основі інформації місцевості"
+
+#: eme_settings.php:683
+msgid "The map type used for the global map (max: 14)."
+msgstr "Тип карти використовуються для глобальній карті (макс: 14)."
+
+#: eme_settings.php:684
+msgid "Individual map type"
+msgstr "Автономне Тип карту"
+
+#: eme_settings.php:684
+msgid "The map type used when showing a single map (max: 14)."
+msgstr "Тип карти використовуються при показі одну карту (макс: 14)."
+
+#: eme_settings.php:688
+msgid "Extra html headers"
+msgstr "Додаткові заголовки HTML"
+
+#: eme_settings.php:691
+msgid "Extra event html headers"
+msgstr "HTML Екстра подія заголовки"
+
+#: eme_settings.php:691
+msgid ""
+"Here you can define extra html headers when viewing a single event, "
+"typically used to add meta tags for facebook or SEO. All event placeholders "
+"can be used, but will be stripped from resulting html."
+msgstr ""
+"Тут ви можете визначити додаткові заголовки HTML при перегляді однієї "
+"подіїяк правило, використовується для додавання мета-теги для Facebook або "
+"SEO. Всі заповнювачі подій може бути використаний, але будуть вирізані з "
+"Отриманий HTML."
+
+#: eme_settings.php:692
+msgid "Extra location html headers"
+msgstr "Дуже HTML розташування заголовків"
+
+#: eme_settings.php:692
+msgid ""
+"Here you can define extra html headers when viewing a single location, "
+"typically used to add meta tags for facebook or SEO. All location "
+"placeholders can be used, but will be stripped from resulting html."
+msgstr ""
+"Тут ви можете визначити додаткові заголовки HTML при перегляді в одному "
+"місціяк правило, використовується для додавання мета-теги для Facebook або "
+"SEO. Всі розташування заповнювачі можуть бути використані, але будуть "
+"вирізані з Отриманий HTML."
+
+#: eme_settings.php:696
+msgid "Facebook info"
+msgstr "Інформація facebook"
+
+#: eme_settings.php:699
+msgid "Facebook app id"
+msgstr "Facebook ідентифікатор додатки"
+
+#: eme_settings.php:699
+msgid ""
+"Provide facebook app id. This is needed to be able to import info from a "
+"facebook event when creating a new event."
+msgstr ""
+"Забезпечити facebook ідентифікатор додатки. Це необхідно, щоб мати "
+"можливість імпортувати дані з події facebook при створенні нового події."
+
+#: eme_settings.php:708
+msgid "Save Changes"
+msgstr "Зберегти зміни"
+
+#: eme_templates.php:7
+msgid "You have no right to update templates!"
+msgstr "Ви не маєте права на оновлення шаблонів!"
+
+#: eme_templates.php:42
+msgid "Successfully deleted the template(s)."
+msgstr "Успішно видалений шаблон (и)."
+
+#: eme_templates.php:45 eme_templates.php:49
+msgid ""
+"Couldn't delete the templates. Incorrect template IDs supplied. Please try "
+"again."
+msgstr ""
+"Не вдалося видалити шаблони. Неправильні ідентифікатори шаблонів, що "
+"поставляються. Будь ласка, спробуйте знову."
+
+#: eme_templates.php:74 events-manager.php:980
+msgid "Templates"
+msgstr "Шаблони"
+
+#: eme_templates.php:97 eme_templates.php:104
+msgid "Format description"
+msgstr "Опис Формат"
+
+#: eme_templates.php:129
+msgid "No templates have been inserted yet!"
+msgstr "Жодного шаблона не були вставлені ще!"
+
+#: eme_templates.php:142 eme_templates.php:152
+msgid "Add template"
+msgstr "Додати шаблон"
+
+#: eme_templates.php:146 eme_templates.php:190
+msgid "Template description"
+msgstr "Шаблон опис"
+
+#: eme_templates.php:148
+msgid "Format"
+msgstr "Формат"
+
+#: eme_templates.php:150 eme_templates.php:197
+msgid "The format of the template"
+msgstr "Формат шаблону"
+
+#: eme_templates.php:172
+msgid "Edit template"
+msgstr "Редагувати шаблон"
+
+#: eme_templates.php:192
+msgid "The description of the template"
+msgstr "Опис шаблону"
+
+#: eme_templates.php:195
+msgid "Template format"
+msgstr "Шаблон формату"
+
+#: eme_templates.php:200
+msgid "Update template"
+msgstr "Шаблон оновлення"
+
+#: eme_widgets.php:5 eme_widgets.php:6
+msgid "Events List"
+msgstr "Події Список"
+
+#: eme_widgets.php:89 eme_widgets.php:241
+msgid "Title:"
+msgstr "Назва:"
+
+#: eme_widgets.php:93
+msgid "Number of events"
+msgstr "Кількість подій"
+
+#: eme_widgets.php:97
+msgid "Scope of the events"
+msgstr "Сфера подій"
+
+#: eme_widgets.php:97
+msgid "(See the doc for &#91;events_list] for all possible values)"
+msgstr "(Див. документ для [events_list] для всіх можливих значень)"
+
+#: eme_widgets.php:101
+msgid "Show events per period"
+msgstr "Показати події за період"
+
+#: eme_widgets.php:103 eme_widgets.php:122 eme_widgets.php:135
+#: eme_widgets.php:159 eme_widgets.php:254 eme_widgets.php:267
+#: eme_widgets.php:283
+msgid "Select..."
+msgstr "Виберіть ..."
+
+#: eme_widgets.php:106
+msgid "Yearly"
+msgstr "Річний"
+
+#: eme_widgets.php:110
+msgid "Order of the events"
+msgstr "Порядок подій"
+
+#: eme_widgets.php:112
+msgid "Ascendant"
+msgstr "Висхідний"
+
+#: eme_widgets.php:113
+msgid "Descendant"
+msgstr "Нащадок"
+
+#: eme_widgets.php:133 eme_widgets.php:265
+msgid "Exclude Category"
+msgstr "Виключити Категорія"
+
+#: eme_widgets.php:149
+msgid "Show Ongoing Events?"
+msgstr "Показати Поточні події?"
+
+#: eme_widgets.php:153
+msgid "Show Recurrent Events Only Once?"
+msgstr "Показати повторюваних подій тільки один раз?"
+
+#: eme_widgets.php:163
+msgid "List header format<br />(if empty &lt;ul&gt; is used)"
+msgstr "Формат заголовка Список <br /> (Якщо використовується порожня <ul>)"
+
+#: eme_widgets.php:167
+msgid "List item format"
+msgstr "Формат списку пункт"
+
+#: eme_widgets.php:171
+msgid "List footer format<br />(if empty &lt;/ul&gt; is used)"
+msgstr "Формат списку підвал <br /> (Якщо порожньо </ UL> використовується)"
+
+#: eme_widgets.php:180 eme_widgets.php:181
+msgid "Events Calendar"
+msgstr "Календар подій"
+
+#: eme_widgets.php:245
+msgid "Show Long Events?"
+msgstr "Показати Довгі Події?"
+
+#: events-manager.php:153
+msgid "No events"
+msgstr "Немає подій"
+
+#: events-manager.php:159
+msgid "<li>No events in this location</li>"
+msgstr "<li> Немає подій в цьому місці </li>"
+
+#: events-manager.php:167
+msgid "Send your booking"
+msgstr "Надіслати броні"
+
+#: events-manager.php:168
+msgid "Cancel your booking"
+msgstr "Скасування замовлення"
+
+#: events-manager.php:943
+msgid "events"
+msgstr "події"
+
+#: events-manager.php:968 events-manager.php:1147
+msgid "Edit"
+msgstr "Редагувати"
+
+#: events-manager.php:971
+msgid "Add new"
+msgstr "Додати"
+
+#: events-manager.php:977
+msgid "Event Categories"
+msgstr "Категорії подій"
+
+#: events-manager.php:983
+msgid "People"
+msgstr "Люди"
+
+#: events-manager.php:987
+msgid "Change Registration"
+msgstr "Зміна Реєстрація"
+
+#: events-manager.php:993
+msgid "Form Fields"
+msgstr "Поля форми"
+
+#: events-manager.php:1004
+msgid "Events Made Easy Settings"
+msgstr "Події Легке створення Налаштування"
+
+#: events-manager.php:1004
+msgid "Settings"
+msgstr "Налаштування"
+
+#: events-manager.php:1975
+msgid ""
+"It seems you upgraded Events Made Eeasy, the events database has been "
+"updated accordingly. Click <a href=' %s'>here</a> to dismiss this message."
+msgstr ""
+"Схоже, ви оновилися події змусили Eeasy, база даних подій було оновлюватись. "
+"Натисніть <a href=' %s'>тут</a> , щоб закрити це повідомлення ."
+
+#: events-manager.php:1982
+msgid ""
+"Error: the special events page is not set or no longer exist, please set the "
+"option ' %s' to an existing page or EME will not work correctly!"
+msgstr ""
+"Помилка: сторінка спеціальний події не не встановлений або більше не існує, "
+"будь ласка, встановіть "
+
+#: events-manager.php:1992
+msgid "Donate"
+msgstr "Жертвувати"
+
+#: events-manager.php:1994
+msgid ""
+"If you find this plugin useful to you, please consider making a small "
+"donation to help contribute to my time invested and to further development. "
+"Thanks for your kind support!"
+msgstr ""
+"Якщо ви знайдете цей плагін корисний для вас, будь ласка розглянути питання "
+"про внесення невеликий пожертва, щоб допомогти сприяти мого часу, вкладеного "
+"та для подальшого розвитку. Дякуємо за вашу підтримку!"
+
+#: events-manager.php:2003
+msgid "<a href=\" %s\" title=\"I already donated\">I already donated.</a>"
+msgstr "<a href=\"%s\" title=\"I already donated\">я вже пожертвував.</a>"
+
+#: events-manager.php:2017
+msgid ""
+"<p>Hey, <strong> %s</strong>, welcome to <strong>Events Made Easy</strong>! "
+"We hope you like it around here.</p> \n"
+" <p>Now it's time to insert events lists through <a href=\" %s\" title="
+"\"Widgets page\">widgets</a>, <a href=\" %s\" title=\"Template tags "
+"documentation\">template tags</a> or <a href=\" %s\" title=\"Shortcodes "
+"documentation\">shortcodes</a>.</p>\n"
+" <p>By the way, have you taken a look at the <a href=\" %s\" title=\"Change "
+"settings\">Settings page</a>? That's where you customize the way events and "
+"locations are displayed.</p>\n"
+" <p>What? Tired of seeing this advice? I hear you, <a href=\" %s\" title="
+"\"Don't show this advice again\">click here</a> and you won't see this again!"
+"</p>"
+msgstr ""
+"<p>Гей, <strong> %s</strong>, Ласкаво просимо <strong>Events Made Easy</"
+"strong>! Ми сподіваємося, вам сподобається тут.</p> n<p>тепер настав час "
+"вставити списків подій через <a href=\" %s\" title=\"віджетів на сторінці"
+"\">віджети</a>, <a href=\" %s\" title=\"шаблон теги документація\">шаблон "
+"теги</a> або <a href=\" %s\" title=\"короткі коди документації\">коротких "
+"кодів</a>.</p>n<p>до речі, брали ви подивіться на <a href=\" %s\" title="
+"\"змінити налаштування \" \">сторінці \" налаштування</a>? Ось де ви можете "
+"налаштувати спосіб, подій та місць будуть відображені.</p>\n"
+"<p>для чого? Набридло бачити цю пораду? Я чую тебе, <a href=\" %s\" title="
+"\"більше не показувати цей рада знову\">натисніть тут</a>, Ви не будете "
+"бачити це знову!</p>"
+
+#: events-manager.php:2031
+msgid ""
+"<p><strong>Events Made Easy placeholders warning</strong></p>\n"
+" <p>The legacy placeholders of Events Made Easy have been disabled. More "
+"info can be found in <a href=\" %s\" title=\"Legacy doc\">the documention</"
+"a></p>\n"
+" <p>What? Tired of seeing this advice? I hear you, <a href=\" %s\" title="
+"\"Don't show this advice again\">click here</a> and you won't see this again!"
+"</p>"
+msgstr ""
+"<p><strong>Events Made Easy заповнювачі попередження</strong></p>\n"
+"<p>спадщину підстановки Events Made Easy були відключені. Більш детальну "
+"інформацію можна знайти на <a href=\" %s\" title=\"спадщина doc"
+"\">документації</a></p>\n"
+"<p>для чого? Набридло бачити цю пораду? Я чую тебе, <a href=\" %s\" title="
+"\"більше не показувати цей рада знову\">натисніть тут</a>, Ви не будете "
+"бачити це знову!</p>"
+
+#: events-manager.php:2044
+msgid ""
+"<p><strong>Events Made Easy placeholders warning</strong></p>\n"
+" <p>You have activated the use of legacy placeholder syntax. Please note "
+"that, although it works just fine, you should switch to the new syntax to "
+"avoid issues with regular wordpress shortcodes. More info can be found in <a "
+"href=\" %s\" title=\"Legacy doc\">the documention</a>. This message will go "
+"away when the use of legacy placeholder syntax has been disabled.</p>"
+msgstr ""
+"<p><strong>Events Made Easy заповнювачі попередження</strong></p>\n"
+" <p>Ви активували використання колишніх заповнювача синтаксис. Будь ласка, "
+"зверніть увагу що, хоча вона чудово працює, ви повинні перейти на новий "
+"синтаксис як уникнути проблем з регулярними wordpress коротких номерів. "
+"Більш детальну інформацію можна знайти в<href=\" %s\" title=\"спадщина doc"
+"\">документації</a>. Це повідомлення буде йти геть, коли використання "
+"застарілих заповнювача синтаксис був відключений.</p>"
+
+#: events-manager.php:2056
+msgid ""
+"<p><strong>Events Made Easy placeholders warning</strong></p>\n"
+" <p>The use of deprecated placeholders is still allowed. Please note that, "
+"although these work just fine, you should switch to the new syntax because "
+"these might go away at some time in the future. More info can be found in <a "
+"href=\" %s\" title=\"Deprecated doc\">the documention</a>. This message will "
+"go away when the use of deprecated placeholders has been disabled.</p>"
+msgstr ""
+"<p><strong>Events Made Easy заповнювачі попередження</strong></p>\n"
+" <p>використання застарілої заповнювачів і раніше дозволено. Зверніть увагу, "
+"що, хоча ці роботи просто чудово, ви повинні перейти на новий синтаксис, так "
+"як це можуть піти на деякий час у майбутньому. Більш детальну інформацію "
+"можна знайти в<href=\" %s\" title=\"Deprecated doc\">документації</a>. Це "
+"повідомлення ідіть, коли використання застарілої заповнювачі був відключений."
+"</p>"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:164
+msgid ""
+"The Events Made Easy Frontend Submit plugin is an extension to the Events "
+"Made Easy plugin, which has to be installed and activated first. The plugin "
+"has been deactivated."
+msgstr ""
+"Events Made Easy Frontend уявити плагін є продовженням подій Made Easy "
+"плагін, який повинен бути встановлений та активований перший. Плагін був "
+"відключений."
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:191
+msgid "Please enter a name for the event"
+msgstr "Будь ласка, введіть ім'я для події"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:197
+msgid "Enter the event's start date"
+msgstr "Введіть дату початку заходу"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:222
+msgid "Check the start's date and time"
+msgstr "Перевірте дату і час початку в"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:226
+msgid "Check the end's date and time"
+msgstr "Перевірте дату і час кінця в"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:230
+msgid "The event's end must be <strong>after</strong> the event's start"
+msgstr "Кінець заходи повинні бути <strong>після</strong> початку заходу"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:236
+msgid "Please enter a description for the event"
+msgstr "Будь ласка, введіть опис для події"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:242
+msgid "Please select an Event Category"
+msgstr "Будь ласка, виберіть Категорія події"
+
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:350
+#: extras/plugins/events-made-easy-frontend-submit/events-made-easy-frontend-submit.php:363
+msgid "Basic Configuration is Missing"
+msgstr "Базова конфігурація відсутня,"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:5
+msgid "Event Information"
+msgstr "Інформація про подію"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:8
+msgid "Event Name"
+msgstr "Назва події"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:8
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:14
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:24
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:56
+msgid "required"
+msgstr "вимагається"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:14
+msgid "Select the Event Category"
+msgstr "Виберіть Категорія події"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:21
+msgid "Date & Time"
+msgstr "Дата і Час"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:24
+msgid "Start"
+msgstr "Початок"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:31
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:45
+msgid "Time"
+msgstr "Час"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:38
+msgid "End"
+msgstr "Кінець"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:56
+msgid "Description"
+msgstr "Опис"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:62
+msgid "Contact E-mail"
+msgstr "Адреса електронної пошти"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:68
+msgid "Event Web Page"
+msgstr "Подія веб-сторінки"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:73
+msgid "Location Information"
+msgstr "Відомості про місцезнаходження"
+
+#: extras/plugins/events-made-easy-frontend-submit/templates/form.php:88
+msgid "City or Town"
+msgstr "Місто"
