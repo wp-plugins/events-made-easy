@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added an option to hide events (from lists and calendar) which RSVP registration period has already ended
 * Bugfix: using custom fields and/or html when re-sending mails didn't work as expected
 * Improvement: Italian language updates, thanks to Gianluca Granero
+* Improvement: Ukranian language updates, thanks to Michael Yunat (michael.yunat@gmail.com, see also http://www.iphostmonitor.com )
 
 = 1.4.5 =
 * Feature: added placeholders #_EVENTPRINTBOOKINGSLINK and #_EVENTPRINTBOOKINGSURL, showing either a link or just the URL to the printable bookings list, if you have the correct permissions
