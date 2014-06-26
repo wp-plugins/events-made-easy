@@ -1829,14 +1829,6 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    if (! empty ( $events )) {
       //$wpdb->print_error(); 
       foreach ( $events as $this_event ) {
-         if ($this_event['event_status'] == STATUS_PRIVATE && !is_user_logged_in()) {
-            continue;
-         }
-         // if we're not in the admin itf, we don't want draft events
-         if (!is_admin() && $this_event['event_status'] == STATUS_DRAFT) {
-            continue;
-         }
-         
          $this_event = eme_get_event_data($this_event);
          array_push ( $inflated_events, $this_event );
       }
