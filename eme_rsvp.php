@@ -1459,7 +1459,15 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
-      } else {
+      } elseif (preg_match('/#_FIELDVALUE\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $formfield = eme_get_formfield_byid($field_id);
+         $replacement = eme_convert_array2multi($answers);
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
+       } else {
          $found = 0;
       }
 
