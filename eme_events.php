@@ -2635,11 +2635,12 @@ function eme_event_form($event, $title, $element) {
                // we can only give one parameter to do_meta_boxes, but we don't want to list the templates each time
                // so temporary we store the array in the $event var and unset it afterwards
                $templates_array=eme_get_templates_array_by_id();
+               // the first element is something empty or a "no templates" string, but we need to keep the array indexes
+               // so we concatenate using "+", not array_merge
                if (is_array($templates_array) && count($templates_array)>0)
-                  $templates_array[0]='';
+                  $templates_array=array(0=>'')+$templates_array;
                else
-                  $templates_array[0]=__('No templates defined yet!','eme');
-               ksort($templates_array);
+                  $templates_array=array(0=>__('No templates defined yet!','eme'));
                $event['templates_array']=$templates_array;
                if ($is_new_event) {
                   // we add the meta boxes only on the page we're currently at, so for duplicate event it is the same as for edit event
