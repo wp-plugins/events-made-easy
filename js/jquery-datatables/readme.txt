@@ -1,1 +1,1 @@
-Datatables version: 1.9.4
+Datatables version: 1.10.0-beta.3.dev
