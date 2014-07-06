@@ -3581,7 +3581,7 @@ function eme_admin_map_script() {
    if (!get_option('eme_gmap_is_active' ))
       return;
 ?>
-<script src="//maps.google.com/maps/api/js?v=3.1&amp;sensor=false" type="text/javascript"></script>
+<script src="//maps.google.com/maps/api/js?v=3.16&amp;sensor=false" type="text/javascript"></script>
 <script type="text/javascript">
          //<![CDATA[
           function loadMap(location, town, address) {
