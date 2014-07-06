@@ -219,6 +219,6 @@ function loadMapScript() {
 //	script.setAttribute("type", "text/javascript");
 //	document.documentElement.firstChild.appendChild(script);
 	script.type = "text/javascript";
-	script.src = location.protocol + "//maps.google.com/maps/api/js?v=3.1&sensor=false&callback=loadGMap";
+	script.src = location.protocol + "//maps.google.com/maps/api/js?v=3.16&sensor=false&callback=loadGMap";
 	document.body.appendChild(script);
 }
