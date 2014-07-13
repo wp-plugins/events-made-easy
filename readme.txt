@@ -63,6 +63,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.4.7 =
+* Bugfix: First Data setting was not being saved when selecting it as payment method for an event
+
 = 1.4.6 =
 * Feature: added an option to hide past events (on a day-basis, not hour) in the calendar
 * Feature: added an option to hide events (from lists and calendar) which RSVP registration period has already ended

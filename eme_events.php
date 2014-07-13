@@ -279,6 +279,7 @@ function eme_events_page() {
       $event['use_2co'] = (isset ($_POST['use_2co']) && is_numeric($_POST['use_2co'])) ? $_POST['use_2co']:0;
       $event['use_webmoney'] = (isset ($_POST['use_webmoney']) && is_numeric($_POST['use_webmoney'])) ? $_POST['use_webmoney']:0;
       $event['use_google'] = (isset ($_POST['use_google']) && is_numeric($_POST['use_google'])) ? $_POST['use_google']:0;
+      $event['use_fdgg'] = (isset ($_POST['use_fdgg']) && is_numeric($_POST['use_fdgg'])) ? $_POST['use_fdgg']:0;
       $event['price'] = isset ($_POST['price']) ? $_POST['price']:0;
       if (preg_match("/\|\|/",$event['price'])) {
          $multiprice=preg_split("/\|\|/",$event['price']);
