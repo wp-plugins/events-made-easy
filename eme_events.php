@@ -977,6 +977,8 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
 
    $prev_text = "";
    $next_text = "";
+   $limit_start=0;
+   $limit_end=0;
    // for browsing: if limit=0,paging=1 and only for this_week,this_month or today
    if ($paging==1 && $limit==0) {
       $scope_offset=0;
@@ -1045,13 +1047,6 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $prev_text = __('Previous day','eme');
          $next_text = __('Next day','eme');
       }
-
-      // to prevent going on indefinitely and thus allowing search bots to go on for ever,
-      // we stop providing links if there are no more events left
-      if (eme_count_events_older_than($limit_start) == 0)
-         $prev_text = "";
-      if (eme_count_events_newer_than($limit_end) == 0)
-         $next_text = "";
    }
    // We request $limit+1 events, so we know if we need to show the pagination link or not.
    if ($limit==0) {
@@ -1063,6 +1058,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
 
    // get the paging output ready
    $pagination_top = "<div id='events-pagination-top'> ";
+   $nav_hidden_class="style='visibility:hidden;'";
    if ($paging==1 && $limit>0) {
       // for normal paging and there're no events, we go back to offset=0 and try again
       if ($events_count==0) {
@@ -1092,25 +1088,26 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          }
       }
 
-      $left_nav_hidden_class="";
-      $right_nav_hidden_class="";
+      // we always provide the text, so everything stays in place (but we just hide it if needed, and change the link to empty
+      // to prevent going on indefinitely and thus allowing search bots to go on for ever
       if ($events_count > $limit) {
          $forward = $offset + $limit;
          $backward = $offset - $limit;
          if ($backward < 0)
-            $left_nav_hidden_class="style='visibility:hidden;'";
-         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url)."'>&lt;&lt; $prev_text</a>";
-         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url)."'>$next_text &gt;&gt;</a>";
+            $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
+         else
+            $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url)."'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url)."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
       if ($events_count <= $limit && $offset>0) {
          $forward = 0;
          $backward = $offset - $limit;
          if ($backward < 0)
-            $left_nav_hidden_class="style='visibility:hidden;'";
-         $right_nav_hidden_class="style='visibility:hidden;'";
-         $pagination_top.= "<a class='eme_nav_left' $left_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
-         $pagination_top.= "<a class='eme_nav_right' $right_nav_hidden_class href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url) ."'>$next_text &gt;&gt;</a>";
+            $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
+         else
+            $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$backward),$this_page_url)."'>&lt;&lt; $prev_text</a>";
+         $pagination_top.= "<a class='eme_nav_right' $nav_hidden_class href='#'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
    }
@@ -1118,10 +1115,19 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $this_page_url=$_SERVER['REQUEST_URI'];
       // remove the offset info
       $this_page_url= remove_query_arg('eme_offset',$this_page_url);
-      if ($prev_text != "")
+
+      // to prevent going on indefinitely and thus allowing search bots to go on for ever,
+      // we stop providing links if there are no more events left
+      if (eme_count_events_older_than($limit_start) == 0)
+         $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
+      else
          $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$prev_offset),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
-      if ($next_text != "")
+
+      if (eme_count_events_newer_than($limit_end) == 0)
+         $pagination_top.= "<a class='eme_nav_right' $nav_hidden_class href='#'>$next_text &gt;&gt;</a>";
+      else
          $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$next_offset),$this_page_url) ."'>$next_text &gt;&gt;</a>";
+
       $pagination_top.= "<span class='eme_nav_center'>$scope_text</span>";
    }
    $pagination_top.= "</div>";
