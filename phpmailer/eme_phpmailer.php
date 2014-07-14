@@ -37,6 +37,16 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
             $mail->Host = get_option('eme_smtp_host');
          else
             $mail->Host = "localhost";
+
+         if (strstr($mail->Host,'ssl://')) {
+            $mail->SMTPSecure="ssl";
+            $mail->Host = str_replace("ssl://","",$mail->Host);
+         }
+         if (strstr($mail->Host,'tls://')) {
+            $mail->SMTPSecure="tls";
+            $mail->Host = str_replace("tls://","",$mail->Host);
+         }
+
          if (get_option('eme_smtp_port'))
             $mail->port = get_option('eme_smtp_port');
          else
