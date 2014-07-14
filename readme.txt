@@ -64,6 +64,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.4.7 =
+* Feature: added template functionality to the calendar as well (new option template_id to the shortcode eme_calendar, for templating entries in the full calendar)
 * Feature: support tls when sending mail via smtp by prepending 'tls://' to the hostname (typically for port 587) 
 * Bugfix: First Data setting was not being saved when selecting it as payment method for an event
 * Bugfix: added FDGG lib

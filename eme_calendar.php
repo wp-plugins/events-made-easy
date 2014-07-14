@@ -10,7 +10,8 @@ function eme_get_calendar_shortcode($atts) {
          'long_events' => 0,
          'author' => '',
          'contact_person' => '',
-         'location_id' => ''
+         'location_id' => '',
+         'template_id' => 0
       ), $atts)); 
    $echo = ($echo==="true" || $echo==="1") ? true : $echo;
    $full = ($full==="true" || $full==="1") ? true : $full;
@@ -57,7 +58,7 @@ function eme_get_calendar_shortcode($atts) {
       }
    }
 
-   $result = eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}&notcategory={$notcategory}");
+   $result = eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}&notcategory={$notcategory}&template_id={$template_id}");
    return $result;
 }
 
@@ -78,7 +79,8 @@ function eme_get_calendar($args="") {
       'long_events' => 0,
       'author' => '',
       'contact_person' => '',
-      'location_id' => ''
+      'location_id' => '',
+      'template_id' => 0
    );
    $r = wp_parse_args( $args, $defaults );
    extract( $r );
@@ -207,7 +209,11 @@ function eme_get_calendar($args="") {
    }
 
    // we found all the events for the wanted days, now get them in the correct format with a good link
-   $event_format = get_option('eme_full_calendar_event_format'); 
+   if ($template_id)
+      $event_format = eme_get_template_format($template_id);
+   else
+      $event_format = get_option('eme_full_calendar_event_format' );
+
    $event_title_format = get_option('eme_small_calendar_event_title_format');
    $event_title_separator_format = get_option('eme_small_calendar_event_title_separator');
    $cells = array() ;
@@ -221,6 +227,7 @@ function eme_get_calendar($args="") {
       
       $cal_day_link = eme_calendar_day_url($day_key);
       // Let's add the possible options
+      // template_id is not being used per event
       if (!empty($location_id))
          $cal_day_link = add_query_arg( array( 'location_id' => $location_id ), $cal_day_link );
       if (!empty($category))
@@ -345,12 +352,12 @@ function eme_get_calendar($args="") {
          jQuery('#eme-calendar-".$random." a.prev-month').click(function(e){
             e.preventDefault();
             tableDiv = jQuery('#eme-calendar-".$random."');
-            loadCalendar(tableDiv, '$full', '$long_events','$iPrevMonth','$iPrevYear','$category','$author','$contact_person','$location_id','$notcategory');
+            loadCalendar(tableDiv, '$full', '$long_events','$iPrevMonth','$iPrevYear','$category','$author','$contact_person','$location_id','$notcategory','$template_id');
          } );
          jQuery('#eme-calendar-".$random." a.next-month').click(function(e){
             e.preventDefault();
             tableDiv = jQuery('#eme-calendar-".$random."');
-            loadCalendar(tableDiv, '$full', '$long_events','$iNextMonth','$iNextYear','$category','$author','$contact_person','$location_id','$notcategory');
+            loadCalendar(tableDiv, '$full', '$long_events','$iNextMonth','$iNextYear','$category','$author','$contact_person','$location_id','$notcategory','$template_id');
          } );
          </script>";
 
@@ -384,7 +391,7 @@ function eme_ajaxize_calendar() {
    if ($eme_need_calendar_js || $load_js_in_header) {
 ?>
    <script type='text/javascript'>
-      function loadCalendar(tableDiv, fullcalendar, showlong_events, month, year, cat_chosen, author_chosen, contact_person_chosen, location_chosen, not_cat_chosen) {
+      function loadCalendar(tableDiv, fullcalendar, showlong_events, month, year, cat_chosen, author_chosen, contact_person_chosen, location_chosen, not_cat_chosen,template_chosen) {
          if (fullcalendar === undefined) {
              fullcalendar = 0;
          }
@@ -400,6 +407,7 @@ function eme_ajaxize_calendar() {
          author_chosen = (typeof author_chosen == 'undefined')? '' : author_chosen;
          contact_person_chosen = (typeof contact_person_chosen == 'undefined')? '' : contact_person_chosen;
          location_chosen = (typeof location_chosen == 'undefined')? '' : location_chosen;
+         template_chosen = (typeof template_chosen == 'undefined')? 0 : template_chosen;
          jQuery.post(self.location.href, {
             eme_ajaxCalendar: 'true',
             calmonth: parseInt(month,10),
@@ -410,7 +418,8 @@ function eme_ajaxize_calendar() {
             notcategory: not_cat_chosen,
             author: author_chosen,
             contact_person: contact_person_chosen,
-            location_id: location_chosen <?php echo $jquery_override_lang; ?>
+            location_id: location_chosen,
+            template_id: template_chosen <?php echo $jquery_override_lang; ?>
          }, function(data){
             tableDiv.replaceWith(data);
          });
