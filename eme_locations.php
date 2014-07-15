@@ -483,18 +483,8 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
       if ($events) {
          foreach ($events as $event) {
             $location_id=$event['location_id'];
-            if ($location_id && $event['location_name'] != "") {
-               $this_location = eme_new_location();
-               $this_location['location_id'] = $location_id;
-               $this_location['location_name'] = $event['location_name'];
-               $this_location['location_address'] = $event['location_address'];
-               $this_location['location_town'] = $event['location_town'];
-               $this_location['location_latitude'] = $event['location_latitude'];
-               $this_location['location_longitude'] = $event['location_longitude'];
-               $this_location['location_description'] = $event['location_description'];
-               $this_location['location_category_ids'] = $event['location_category_ids'];
-               $this_location['location_url'] = $event['location_url'];
-               $this_location['location_slug'] = $event['location_slug'];
+            if ($location_id) {
+               $this_location = eme_get_location($location_id);
                // the key is based on the location name first and the location id (if different locations have the same name)
                // using this method we can then sort on the name
                $locations[$this_location['location_name'].$location_id]=$this_location;
