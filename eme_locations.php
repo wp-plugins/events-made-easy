@@ -487,7 +487,8 @@ function eme_get_locations($eventful = false, $scope="all", $category = '', $off
                $this_location = eme_get_location($location_id);
                // the key is based on the location name first and the location id (if different locations have the same name)
                // using this method we can then sort on the name
-               $locations[$this_location['location_name'].$location_id]=$this_location;
+               if ($this_location['location_name']!='')
+                  $locations[$this_location['location_name'].$location_id]=$this_location;
             }
          }
          // sort on the key (name/id pair)
@@ -731,12 +732,18 @@ function eme_insert_location($location) {
    }
 }
 
-function eme_delete_location($location) {
+function eme_delete_location($location_id) {
    global $wpdb;  
+
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME;
-   $sql = "DELETE FROM $table_name WHERE location_id = '$location';";
+   $sql = $wpdb->prepare("DELETE FROM $table where location_id=%d",$location_id);
+   $wpdb->query( $sql );
+
+   $events_table = $wpdb->prefix.EVENTS_TBNAME;
+   $sql = $wpdb->prepare("UPDATE $events_table SET location_id=0 WHERE location_id = %d",$location_id);
    $wpdb->query($sql);
-   $image_basename= IMAGE_UPLOAD_DIR."/location-".$location['location_id'];
+
+   $image_basename= IMAGE_UPLOAD_DIR."/location-".$location_id;
    eme_delete_image_files($image_basename);
 }
 
