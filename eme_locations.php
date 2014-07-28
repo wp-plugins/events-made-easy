@@ -287,23 +287,22 @@ jQuery(document).ready(function($){
         $('#eme_location_image_example' ).attr("src",'');
   });
   $('#location_image_button').click(function(e) {
-    var button = $(this);
-    var _orig_send_attachment = wp.media.editor.send.attachment;
-    var eme_custom_media = true;
+    e.preventDefault();
 
-    wp.media.editor.send.attachment = function(props, attachment){
-      if ( eme_custom_media ) {
-        $('#location_image_url').val(attachment.url);
-        $('#location_image_id').val(attachment.id);
-        $('#eme_location_image_example' ).attr("src",attachment.url);
-      } else {
-        return _orig_send_attachment.apply( this, [props, attachment] );
-      };
-      eme_custom_media = false;
-    }
-
-    wp.media.editor.open(button);
-    return false;
+    var custom_uploader = wp.media({
+        title: '<?php _e ( 'Select the image to be used as featured image', 'eme' )?>',
+        button: {
+            text: '<?php _e ( 'Set featured image', 'eme' )?>'
+        },
+        multiple: false  // Set this to true to allow multiple files to be selected
+    })
+    .on('select', function() {
+        var attachment = custom_uploader.state().get('selection').first().toJSON();
+        $('#event_image_url').val(attachment.url);
+        $('#event_image_id').val(attachment.id);
+        $('#eme_event_image_example' ).attr("src",attachment.url);
+    })
+    .open();
   });
 });
 </script>
