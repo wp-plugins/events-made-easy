@@ -211,6 +211,10 @@ function eme_add_booking_form_shortcode($atts) {
    return eme_add_booking_form($id);
 }
 
+function eme_add_multibooking_form_shortcode($atts) {
+   extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
+}
+
 function eme_booking_list_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
    $event = eme_get_event(intval($id));

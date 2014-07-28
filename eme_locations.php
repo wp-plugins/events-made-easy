@@ -1381,7 +1381,8 @@ function eme_single_location_map($location,$width=0,$height=0) {
 
    $gmap_is_active = get_option('eme_gmap_is_active'); 
    $map_text = addslashes(eme_replace_locations_placeholders(get_option('eme_location_baloon_format'), $location));
-   $map_text = preg_replace("/\r\n|\n\r|\n/","<br />",$map_text);
+   # no newlines allowed, otherwise no map is shown
+   $map_text = preg_replace("/\r\n?|\n\r?/","<br />",$map_text);
    // if gmap is not active: we don't show the map
    // if the location name is empty: we don't show the map. But that can never happen since it's checked when creating the location
    if ($gmap_is_active) {
