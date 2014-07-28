@@ -3555,6 +3555,10 @@ jQuery(document).ready(function($){
         button: {
             text: '<?php _e ( 'Set featured image', 'eme' )?>'
         },
+        // Tell the modal to show only images.
+        library: {
+                type: 'image'
+        },
         multiple: false  // Set this to true to allow multiple files to be selected
     })
     .on('select', function() {
