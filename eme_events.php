@@ -4081,7 +4081,7 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
    if ($event['event_end_time'] != "00:00:00") {
       $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
       $endstring=strtotime($event['event_end_date']." ".$event['event_end_time']);
-      if ($endstring<=$startstring) {
+      if ($endstring<$startstring) {
          $event['event_end_date']=date("Y-m-d",strtotime($event['event_start_date'])+86400);
       }
    }
