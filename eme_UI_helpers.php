@@ -98,7 +98,7 @@ function eme_options_select($title, $name, $list, $description) {
 <?php 
 }
 
-function eme_ui_select_binary ($option_value, $name, $required) {
+function eme_ui_select_binary ($option_value, $name, $required=0) {
    if ($required)
       $required_att="required='required'";
    else
@@ -117,7 +117,7 @@ function eme_ui_select_binary ($option_value, $name, $required) {
    return $val;
 }
 
-function eme_ui_select($option_value, $name, $list, $required) {
+function eme_ui_select($option_value, $name, $list, $required=0) {
    if ($required)
       $required_att="required='required'";
    else
@@ -139,7 +139,7 @@ function eme_ui_select($option_value, $name, $list, $required) {
    return $val;
 }
 
-function eme_ui_multiselect($option_value, $name, $list, $size=3, $required) {
+function eme_ui_multiselect($option_value, $name, $list, $size=3, $required=0) {
    if ($required)
       $required_att="required='required'";
    else
@@ -158,7 +158,7 @@ function eme_ui_multiselect($option_value, $name, $list, $size=3, $required) {
    return $val;
 }
 
-function eme_ui_radio($option_value, $name, $list,$horizontal = true, $required) {
+function eme_ui_radio($option_value, $name, $list,$horizontal = true, $required=0) {
    if ($required)
       $required_att="required='required'";
    else
@@ -181,7 +181,7 @@ function eme_ui_radio($option_value, $name, $list,$horizontal = true, $required)
    return $val;
 }
 
-function eme_ui_checkbox($option_value, $name, $list, $horizontal = true, $required_att) {
+function eme_ui_checkbox($option_value, $name, $list, $horizontal = true, $required=0) {
    if ($required)
       $required_att="required='required'";
    else

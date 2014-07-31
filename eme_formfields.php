@@ -980,8 +980,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       } elseif (preg_match('/#_PHONE/', $result)) {
          $replacement = "<input $required_att type='text' name='${var_prefix}bookerPhone${var_postfix}' value='$bookerPhone' />";
       } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
-         $required=1;
-         $replacement = eme_ui_select($bookedSeats,"${var_prefix}bookedSeats${var_postfix}",$booked_places_options,$required);
+         $replacement = eme_ui_select($bookedSeats,"${var_prefix}bookedSeats${var_postfix}",$booked_places_options);
          $required_fields_count++;
       } elseif (($deprecated && preg_match('/#_(SEATS|SPACES)(\d+)/', $result, $matches)) ||
                  preg_match('/#_(SEATS|SPACES)\{(\d+)\}/', $result, $matches)) {
@@ -995,11 +994,10 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
          else
             $entered_val=0;
 
-         $required=1;
          if (eme_is_multi($event['event_seats']) || eme_is_multi($event['price']))
-            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options[$field_id-1],$required);
+            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options[$field_id-1]);
          else
-            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options,$required);
+            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT/', $result)) {
          $replacement = "<textarea $required_att name='${var_prefix}bookerComment${var_postfix}'>$bookerComment</textarea>";
