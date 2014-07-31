@@ -1515,6 +1515,14 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $now = date("Y-m-d");
          $replacement = eme_daydifference($now,$event['event_end_date']);
 
+      } elseif ($event && preg_match('/#_HOURS_TILL_START/', $result)) {
+         $now = date("Y-m-d H:i");
+         $replacement = eme_hourdifference($now,$event['event_start_date']." ".$event['event_start_time']);
+
+      } elseif ($event && preg_match('/#_HOURS_TILL_END/', $result)) {
+         $now = date("Y-m-d H:i");
+         $replacement = eme_hourdifference($now,$event['event_end_date']." ".$event['event_end_time']);
+
       } elseif ($event && preg_match('/#_EVENTPRICE$|#_PRICE$/', $result)) {
          $field = "price";
          if ($event[$field])

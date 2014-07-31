@@ -66,6 +66,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.4.7 =
 * Feature: added template functionality to the calendar as well (new option template_id to the shortcode eme_calendar, for templating entries in the full calendar)
 * Feature: support tls when sending mail via smtp by prepending 'tls://' to the hostname (typically for port 587) 
+* Feature: new placeholders #_HOURS_TILL_START and #_HOURS_TILL_END
+* Feature: new shortcode eme_add_multibooking_form that lets you use either a comma-seperated list of event id’s or a recurrence id for which you want to do multiple bookings in one go. It also has a template id for the header, entry and footer of the form list. More info in the doc.
 * Improvement: better image selection code for the featured image (since WP doesn't play nice with the 'insert from url', I needed to remove this)
 * Improvement: show the compact bookings table only when not editing a recurrence
 * Bugfix: eme_locations shortcode wasn't showing anything for option eventful=1

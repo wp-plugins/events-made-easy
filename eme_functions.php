@@ -376,6 +376,13 @@ function eme_daydifference($date1,$date2) {
    return round($DateDifference/86400);
 }
 
+function eme_hourdifference($date1,$date2) {
+   $ConvertToTimeStamp_Date1 = strtotime($date1);
+   $ConvertToTimeStamp_Date2 = strtotime($date2);
+   $DateDifference = intval($ConvertToTimeStamp_Date2) - intval($ConvertToTimeStamp_Date1);
+   return round($DateDifference/3600);
+}
+
 function eme_delete_image_files($image_basename) {
    $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
    foreach($mime_types as $type) {
