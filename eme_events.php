@@ -582,7 +582,12 @@ function eme_events_page_content() {
          return $format;
       }
    } elseif (get_query_var('eme_pmt_id')) {
-      $page_body = eme_payment_form("",get_query_var('eme_pmt_id'));
+      $payment_id=intval(get_query_var('eme_pmt_id'));
+      $booking_ids = eme_get_payment_booking_ids($payment_id);
+      if (count($booking_ids)==1)
+         $page_body = eme_payment_form("",$payment_id);
+      else
+         $page_body = eme_multipayment_form($payment_id);
       return $page_body;
    }
 
@@ -1846,7 +1851,6 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
 
 function eme_get_event($event_id) {
    global $wpdb;
-   $event_id = intval($event_id);
 
    if (!$event_id) {
       return eme_new_event();
@@ -1854,7 +1858,12 @@ function eme_get_event($event_id) {
 
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $conditions = array ();
-   $conditions[] = "event_id = $event_id";
+   if (is_array($event_id)) {
+      $conditions[] = "event_id IN (".join(',',$event_id).")";
+   } else {
+      $event_id = intval($event_id);
+      $conditions[] = "event_id = $event_id";
+   }
 
    // if we're not in the admin itf, we don't want draft events
    if (!is_admin()) {
@@ -1872,16 +1881,23 @@ function eme_get_event($event_id) {
       $where = " WHERE " . $where;
    $sql = "SELECT * FROM $events_table
       $where";
-   
-   //$wpdb->show_errors(true);
-   $event = $wpdb->get_row ( $sql, ARRAY_A );
-   //$wpdb->print_error();
-   if (!$event) {
-      return eme_new_event();
-   }
 
-   $event = eme_get_event_data($event);
-   return $event;
+   if (!is_array($event_id)) {
+      //$wpdb->show_errors(true);
+      $event = $wpdb->get_row ( $sql, ARRAY_A );
+      //$wpdb->print_error();
+      if (!$event) {
+         return eme_new_event();
+      }
+      $event = eme_get_event_data($event);
+      return $event;
+   } else {
+      $events = $wpdb->get_results ( $sql, ARRAY_A );
+      foreach ( $events as $key=>$event ) {
+         $events[$key] = eme_get_event_data($event);
+      }
+      return $events;
+   }
 }
 
 function eme_get_event_data($event) {

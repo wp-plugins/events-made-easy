@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 60);
+define('EME_DB_VERSION', 61);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -116,6 +116,7 @@ define('TEMPLATES_TBNAME', 'eme_templates');
 define('FORMFIELDS_TBNAME', 'eme_formfields');
 define('FIELDTYPES_TBNAME', 'eme_fieldtypes');
 define('ANSWERS_TBNAME', 'eme_answers');
+define('PAYMENTS_TBNAME', 'eme_payments');
 define('DEFAULT_EVENT_PAGE_NAME', 'Events');
 define('MIN_CAPABILITY', 'edit_posts');   // Minimum user level to edit own events
 define('AUTHOR_CAPABILITY', 'publish_posts');   // Minimum user level to put an event in public/private state
@@ -317,6 +318,7 @@ include("eme_cleanup.php");
 include("eme_formfields.php");
 include("eme_shortcodes.php");
 include("eme_actions.php");
+include("eme_payments.php");
 
 require_once("phpmailer/eme_phpmailer.php") ;
 //require_once("phpmailer/language/phpmailer.lang-en.php") ;
@@ -424,6 +426,7 @@ function _eme_uninstall($force_drop=0) {
       eme_drop_table(FORMFIELDS_TBNAME);
       eme_drop_table(FIELDTYPES_TBNAME);
       eme_drop_table(ANSWERS_TBNAME);
+      eme_drop_table(PAYMENTS_TBNAME);
       eme_delete_events_page();
       eme_options_delete();
       eme_metabox_options_delete();
@@ -465,6 +468,7 @@ function eme_create_tables() {
    eme_create_templates_table($charset,$collate);
    eme_create_formfields_table($charset,$collate);
    eme_create_answers_table($charset,$collate);
+   eme_create_payments_table($charset,$collate);
 }
 
 function eme_drop_table($table) {
@@ -947,6 +951,22 @@ function eme_create_answers_table($charset,$collate) {
          $wpdb->query("ALTER TABLE ".$table_name." DROP PRIMARY KEY");
          $wpdb->query("ALTER TABLE ".$table_name." ADD KEY (booking_id)");
       }
+   }
+}
+
+function eme_create_payments_table($charset,$collate) {
+   global $wpdb;
+   $db_version = get_option('eme_version');
+   $table_name = $wpdb->prefix.PAYMENTS_TBNAME;
+
+   if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+      $sql = "CREATE TABLE ".$table_name." (
+         id int(11) NOT NULL auto_increment,
+         creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
+         booking_ids text NOT NULL,
+         UNIQUE KEY  (id)
+         ) $charset $collate;";
+      maybe_create_table($table_name,$sql);
    }
 }
 
