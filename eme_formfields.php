@@ -958,23 +958,26 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       }
 
       if (preg_match('/#_NAME/', $result)) {
-         $replacement = "<input required='required' type='text' name='${var_prefix}bookerName${var_postfix}' value='$bookerName' $readonly />";
-         if (!$eme_multibooking)
+         if (!$eme_multibooking) {
+            $replacement = "<input required='required' type='text' name='${var_prefix}bookerName${var_postfix}' value='$bookerName' $readonly />";
             $required_fields_count++;
-         // #_NAME is always required
-         $required=1;
+            // #_NAME is always required
+            $required=1;
+         }
       } elseif (preg_match('/#_HTML5_EMAIL/', $result)) {
-         $replacement = "<input required='required' type='email' name='${var_prefix}bookerEmail${var_postfix}' value='$bookerEmail' $readonly />";
-         if (!$eme_multibooking)
+         if (!$eme_multibooking) {
+            $replacement = "<input required='required' type='email' name='${var_prefix}bookerEmail${var_postfix}' value='$bookerEmail' $readonly />";
             $required_fields_count++;
-         // #_EMAIL is always required
-         $required=1;
+            // #_EMAIL is always required
+            $required=1;
+         }
       } elseif (preg_match('/#_EMAIL/', $result)) {
-         $replacement = "<input required='required' type='text' name='${var_prefix}bookerEmail${var_postfix}' value='$bookerEmail' $readonly />";
-         if (!$eme_multibooking)
+         if (!$eme_multibooking) {
+            $replacement = "<input required='required' type='text' name='${var_prefix}bookerEmail${var_postfix}' value='$bookerEmail' $readonly />";
             $required_fields_count++;
-         // #_EMAIL is always required
-         $required=1;
+            // #_EMAIL is always required
+            $required=1;
+         }
       } elseif (preg_match('/#_HTML5_PHONE/', $result)) {
          $replacement = "<input $required_att type='tel' name='${var_prefix}bookerPhone${var_postfix}' value='$bookerPhone' />";
       } elseif (preg_match('/#_PHONE/', $result)) {
@@ -1000,7 +1003,8 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
             $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options);
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT/', $result)) {
-         $replacement = "<textarea $required_att name='${var_prefix}bookerComment${var_postfix}'>$bookerComment</textarea>";
+         if (!$eme_multibooking)
+            $replacement = "<textarea $required_att name='${var_prefix}bookerComment${var_postfix}'>$bookerComment</textarea>";
       } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
          if (!$eme_multibooking) {
             $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_add_booking'><br /><input required='required' type='text' name='captcha_check' />";
