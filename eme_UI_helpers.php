@@ -98,8 +98,13 @@ function eme_options_select($title, $name, $list, $description) {
 <?php 
 }
 
-function eme_ui_select_binary ($option_value, $name) {
-   $val = "<select name='$name'>";
+function eme_ui_select_binary ($option_value, $name, $required) {
+   if ($required)
+      $required_att="required='required'";
+   else
+      $required_att="";
+
+   $val = "<select $required_att name='$name'>";
    $selected_YES="";
    $selected_NO="";
    if ($option_value==1)
@@ -112,68 +117,88 @@ function eme_ui_select_binary ($option_value, $name) {
    return $val;
 }
 
-function eme_ui_select($option_value, $name, $list) {
-     $val = "<select id='$name' name='$name'>";
-     foreach($list as $key => $value) {
-        if (is_array($value)) {
-           $t_key=$value[0];
-           $t_value=$value[1];
-        } else {
-           $t_key=$key;
-           $t_value=$value;
-        }
-        "$t_key" == $option_value ? $selected = "selected='selected' " : $selected = '';
-        $val.= "<option value='".eme_sanitize_html($t_key)."' $selected>".eme_sanitize_html($t_value)."</option>";
-     }
-     $val.=" </select>";
-     return $val;
+function eme_ui_select($option_value, $name, $list, $required) {
+   if ($required)
+      $required_att="required='required'";
+   else
+      $required_att="";
+
+   $val = "<select $required_att id='$name' name='$name'>";
+   foreach($list as $key => $value) {
+      if (is_array($value)) {
+         $t_key=$value[0];
+         $t_value=$value[1];
+      } else {
+         $t_key=$key;
+         $t_value=$value;
+      }
+      "$t_key" == $option_value ? $selected = "selected='selected' " : $selected = '';
+      $val.= "<option value='".eme_sanitize_html($t_key)."' $selected>".eme_sanitize_html($t_value)."</option>";
+   }
+   $val.=" </select>";
+   return $val;
 }
 
-function eme_ui_multiselect($option_value, $name, $list, $size=3) {
-     $val = "<select multiple='multiple' name='${name}[]' size='$size'>";
-     foreach($list as $key => $value) {
-        if (is_array($option_value)) {
-           in_array($key,$option_value) ? $selected = "selected='selected' " : $selected = '';
-        } else {
-           "$key" == $option_value ? $selected = "selected='selected' " : $selected = '';
-        }
-        $val.= "<option value='".eme_sanitize_html($key)."' $selected>".eme_sanitize_html($value)."</option>";
-     }
-     $val.=" </select>";
-     return $val;
+function eme_ui_multiselect($option_value, $name, $list, $size=3, $required) {
+   if ($required)
+      $required_att="required='required'";
+   else
+      $required_att="";
+
+   $val = "<select $required_att multiple='multiple' name='${name}[]' size='$size'>";
+   foreach($list as $key => $value) {
+      if (is_array($option_value)) {
+         in_array($key,$option_value) ? $selected = "selected='selected' " : $selected = '';
+      } else {
+         "$key" == $option_value ? $selected = "selected='selected' " : $selected = '';
+      }
+      $val.= "<option value='".eme_sanitize_html($key)."' $selected>".eme_sanitize_html($value)."</option>";
+   }
+   $val.=" </select>";
+   return $val;
 }
 
-function eme_ui_radio($option_value, $name, $list,$horizontal = true) {
-     $val = "";
-     foreach($list as $key => $value) {
-        if (is_array($value)) {
-           $t_key=$value[0];
-           $t_value=$value[1];
-        } else {
-           $t_key=$key;
-           $t_value=$value;
-        }
-        "$t_key" == $option_value ? $selected = "checked='checked' " : $selected = '';
-        $val.= "<input type='radio' id='$name' name='$name' value='".eme_sanitize_html($t_key)."' $selected />".eme_sanitize_html($t_value);
-        if(!$horizontal)  
-           $val .= "<br />\n";
-     }
-     return $val;
+function eme_ui_radio($option_value, $name, $list,$horizontal = true, $required) {
+   if ($required)
+      $required_att="required='required'";
+   else
+      $required_att="";
+
+   $val = "";
+   foreach($list as $key => $value) {
+      if (is_array($value)) {
+         $t_key=$value[0];
+         $t_value=$value[1];
+      } else {
+         $t_key=$key;
+         $t_value=$value;
+      }
+      "$t_key" == $option_value ? $selected = "checked='checked' " : $selected = '';
+      $val.= "<input $required_att type='radio' id='$name' name='$name' value='".eme_sanitize_html($t_key)."' $selected />".eme_sanitize_html($t_value);
+      if(!$horizontal)  
+         $val .= "<br />\n";
+   }
+   return $val;
 }
 
-function eme_ui_checkbox($option_value, $name, $list, $horizontal = true) {
-     $val = "";
-     foreach($list as $key => $value) {
-        if (is_array($option_value)) {
-           in_array($key,$option_value) ? $selected = "checked='checked' " : $selected = '';
-        } else {
-           "$key" == $option_value ? $selected = "checked='checked' " : $selected = '';
-        }
-        $val.= "<input type='checkbox' name='${name}[]' value='".eme_sanitize_html($key)."' $selected />".eme_sanitize_html($value);
-        if(!$horizontal)  
-           $val .= "<br />\n";
-     }
-     return $val;
+function eme_ui_checkbox($option_value, $name, $list, $horizontal = true, $required_att) {
+   if ($required)
+      $required_att="required='required'";
+   else
+      $required_att="";
+
+   $val = "";
+   foreach($list as $key => $value) {
+      if (is_array($option_value)) {
+         in_array($key,$option_value) ? $selected = "checked='checked' " : $selected = '';
+      } else {
+         "$key" == $option_value ? $selected = "checked='checked' " : $selected = '';
+      }
+      $val.= "<input $required_att type='checkbox' name='${name}[]' value='".eme_sanitize_html($key)."' $selected />".eme_sanitize_html($value);
+      if(!$horizontal)  
+         $val .= "<br />\n";
+   }
+   return $val;
 }
 
 ?>
