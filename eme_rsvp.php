@@ -155,8 +155,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
    $format_entry = eme_get_template_format($template_id_entry);
    $format_footer = eme_get_template_format($template_id_footer);
 
-   if (!$format_header || !$format_entry || !$format_footer)
-      return;
    $events=eme_get_event($event_ids);
 
    // rsvp not active or no rsvp for this event, then return
@@ -316,7 +314,8 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 
 function eme_add_booking_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0), $atts));
-   return eme_add_booking_form($id);
+   if ($id)
+      return eme_add_booking_form($id);
 }
 
 function eme_add_multibooking_form_shortcode($atts) {
@@ -325,7 +324,8 @@ function eme_add_multibooking_form_shortcode($atts) {
    if ($recurrence_id) {
       $ids=eme_get_recurrence_eventids($recurrence_id);
    }
-   return eme_add_multibooking_form($ids,$template_id_header,$template_id_entry,$template_id_footer);
+   if ($ids && $template_id_header && $template_id_entry && $template_id_footer)
+      return eme_add_multibooking_form($ids,$template_id_header,$template_id_entry,$template_id_footer);
 }
 
 function eme_booking_list_shortcode($atts) {
