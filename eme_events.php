@@ -564,7 +564,7 @@ function eme_events_page_content() {
    $format_footer = ( $format_footer != '' ) ?  $format_footer : "</ul>";
 
    if (get_query_var('eme_pmt_result') && get_option('eme_payment_show_custom_return_page')) {
-      // show the result of a payment
+      // show the result of a payment, but not for a multi-booking payment result
       $result=get_query_var('eme_pmt_result');
       if ($result == 'succes') {
          $format = get_option('eme_payment_succes_format');
@@ -573,8 +573,16 @@ function eme_events_page_content() {
       }
       if (get_option('eme_payment_add_bookingid_to_return') && get_query_var('eme_pmt_id') && get_query_var('event_id')) {
          $event = eme_get_event(intval(get_query_var('event_id')));
-         $booking = eme_get_booking(intval(get_query_var('eme_pmt_id')));
-         return eme_replace_booking_placeholders($format,$event,$booking);
+         $payment_id=intval(get_query_var('eme_pmt_id'));
+         $booking_ids = eme_get_payment_booking_ids($payment_id);
+         if ($booking_ids) {
+            // since each booking is for a different event, we can't know which one to show
+            // so we show only the first one
+            $booking = eme_get_booking($booking_ids[0]);
+            return eme_replace_booking_placeholders($format,$event,$booking);
+         } else {
+            return;
+         }
       } elseif (get_query_var('event_id')) {
          $event = eme_get_event(intval(get_query_var('event_id')));
          return eme_replace_placeholders($format,$event);
