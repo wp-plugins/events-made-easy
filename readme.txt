@@ -67,6 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added template functionality to the calendar as well (new option template_id to the shortcode eme_calendar, for templating entries in the full calendar)
 * Feature: support tls when sending mail via smtp by prepending 'tls://' to the hostname (typically for port 587) 
 * Improvement: better image selection code for the featured image (since WP doesn't play nice with the 'insert from url', I needed to remove this)
+* Improvement: show the compact bookings table only when not editing a recurrence
 * Bugfix: eme_locations shortcode wasn't showing anything for option eventful=1
 * Bugfix: First Data setting was not being saved when selecting it as payment method for an event
 * Bugfix: added FDGG lib

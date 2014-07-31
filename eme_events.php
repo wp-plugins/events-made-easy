@@ -509,7 +509,7 @@ function eme_events_page() {
       $recurrence = eme_get_recurrence ( $recurrence_ID );
       if (current_user_can( get_option('eme_cap_edit_events')) ||
           (current_user_can( get_option('eme_cap_author_event')) && ($recurrence['event_author']==$current_userid || $recurrence['event_contactperson_id']==$current_userid))) {
-         $title = __ ( "Reschedule", 'eme' ) . " '" . $recurrence['event_name'] . "'";
+         $title = __ ( "Edit Recurrence", 'eme' ) . " '" . $recurrence['event_name'] . "'";
          eme_event_form ( $recurrence, $title, $recurrence_ID );
       } else {
          $feedback_message = __('You have no right to update','eme'). " '" . $recurrence['event_name'] . "' !";
@@ -2132,7 +2132,7 @@ function eme_events_table($message="",$scope="future") {
             ?>
                <b><?php echo $recurrence_desc; ?>
             <br />
-            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php _e ( 'Reschedule', 'eme' ); ?></a></b>
+            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php _e ( 'Edit Recurrence', 'eme' ); ?></a></b>
             <?php
             }
             ?>
@@ -2547,7 +2547,8 @@ function eme_event_form($event, $title, $element) {
                               <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout','eme' ); ?><br />
                               <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'First Data','eme' ); ?><br />
                            </p>
-                           <?php if ($event['event_rsvp']) {
+                           <?php if ($event['event_rsvp'] && $pref != "recurrence") {
+                                 // show the compact bookings table only when not editing a recurrence
                                  eme_bookings_compact_table ( $event['event_id'] );
                               }
                            ?>
