@@ -1467,6 +1467,13 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = $thumb_url;
          }
 
+      } elseif ($event && preg_match('/#_EVENTATT\{(.+)\}\{(.+)\}/', $result, $matches)) {
+         $tmp_event_id=intval($matches[1]);
+         $tmp_event_attkey=$matches[2];
+         $tmp_event = eme_get_event($tmp_event_id);
+         if (isset($tmp_event['event_attributes'][$tmp_event_attkey]))
+            $replacement = $tmp_event['event_attributes'][$tmp_event_attkey];
+
       } elseif ($event && preg_match('/#_EVENTPAGEURL\{(.+)\}/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
          $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
