@@ -7,7 +7,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
    if (!eme_is_event_rsvp($event)) {
       return;
    }
-   
+
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only) {
       // we require a user to be WP registered to be able to book
@@ -82,7 +82,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
       return;
    }
 
-   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_booking' && isset($_POST['eme_message']) && isset($_POST['booking_id'])) {
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_booking' && isset($_POST['eme_message']) && isset($_POST['payment_id'])) {
       $payment_id = intval($_POST['payment_id']);
       // verify the nonce, to make sure people didn't mess with the booking id
       if (!isset($_POST['eme_payment_nonce']) || !wp_verify_nonce($_POST['eme_payment_nonce'], 'eme_payment_id'.$payment_id)) {
