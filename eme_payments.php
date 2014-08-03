@@ -686,7 +686,7 @@ function eme_get_payment_booking_ids($payment_id) {
 function eme_get_booking_payment_id($booking_id) {
    global $wpdb;
    $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
-   $sql = $wpdb->prepare("SELECT id FROM $payments_table WHERE FIND_IN_SET(%d,booking_ids)",$booking_id);
+   $sql = $wpdb->prepare("SELECT id FROM $payments_table WHERE FIND_IN_SET(%d,booking_ids) ORDER BY id DESC LIMIT 1",$booking_id);
    return $wpdb->get_var($sql);
 }
 

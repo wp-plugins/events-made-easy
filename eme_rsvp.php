@@ -278,10 +278,10 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 
    foreach ($events as $event) {
       $event_id=$event['event_id'];
-      $ret_string .= "<input type='hidden' name='event_id[]' value='$event_id' />";
       $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
       if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
-         $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
+         //$ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
+         continue;
       }
 
       // you can book the available number of seats, with a max of x per time
@@ -297,9 +297,10 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 
       if ($avail_seats == 0 && $min>0) {
          // we show the message concerning 'no more seats' only if it is not after a successful booking
-         if (!$message_is_result_of_booking)
-            $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
+         //if (!$message_is_result_of_booking)
+         //   $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
       } else {
+         $ret_string .= "<input type='hidden' name='event_id[]' value='$event_id' />";
          if (!$message_is_result_of_booking || ($message_is_result_of_booking && get_option('eme_rsvp_show_form_after_booking'))) {
             // regular formfield replacement here, but indicate that it is for multibooking
             $ret_string .= eme_replace_formfields_placeholders ($event,"",$format_entry,1);
@@ -511,6 +512,7 @@ function eme_cancel_seats($event) {
 function eme_multibook_seats($events, $send_mail=1, $format) {
    global $current_user;
    $booking_ids = array();
+   $result="";
 
    // check for spammers as early as possible
    if (isset($_POST['honeypot_check'])) {
@@ -638,33 +640,33 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
 
       if (!$bookerName) {
          // if any required field is empty: return an error
-         $result = __('Please fill out your name','eme');
+         $result .= __('Please fill out your name','eme');
       } elseif (!$bookerEmail) {
          // if any required field is empty: return an error
-         $result = __('Please fill out your e-mail','eme');
+         $result .= __('Please fill out your e-mail','eme');
       } elseif (count($missing_required_fields)>0) {
          // if any required field is empty: return an error
          $missing_required_fields_string=join(", ",$missing_required_fields);
-         $result = sprintf(__('Please make sure all of the following required fields are filled out correctly: %s','eme'),$missing_required_fields_string);
+         $result .= sprintf(__('Please make sure all of the following required fields are filled out correctly: %s','eme'),$missing_required_fields_string);
       } elseif (!filter_var($bookerEmail,FILTER_VALIDATE_EMAIL)) {
-         $result = __('Please enter a valid mail address','eme');
+         $result .= __('Please enter a valid mail address','eme');
       } elseif (!eme_is_multi($min_allowed) && $bookedSeats < $min_allowed) {
-         $result = __('Please enter a correct number of spaces to reserve','eme');
+         $result .= __('Please enter a correct number of spaces to reserve','eme');
       } elseif (eme_is_multi($min_allowed) && eme_is_multi($event['event_seats']) && $bookedSeats_mp < eme_convert_multi2array($min_allowed)) {
-         $result = __('Please enter a correct number of spaces to reserve','eme');
+         $result .= __('Please enter a correct number of spaces to reserve','eme');
       } elseif (!eme_is_multi($max_allowed) && $max_allowed>0 && $bookedSeats>$max_allowed) {
          // we check the max, but only is max_allowed>0, max_allowed=0 means no limit
-         $result = __('Please enter a correct number of spaces to reserve','eme');
+         $result .= __('Please enter a correct number of spaces to reserve','eme');
       } elseif (eme_is_multi($max_allowed) && eme_is_multi($event['event_seats']) && eme_get_multitotal($max_allowed)>0 && $bookedSeats_mp >  eme_convert_multi2array($max_allowed)) {
          // we check the max, but only is the total max_allowed>0, max_allowed=0 means no limit
          // currently we don't support 0 as being no limit per array element
-         $result = __('Please enter a correct number of spaces to reserve','eme');
+         $result .= __('Please enter a correct number of spaces to reserve','eme');
       } elseif (!is_admin() && $registration_wp_users_only && !$booker_wp_id) {
          // spammers might get here, but we catch them
-         $result = __('WP membership is required for registration','eme');
+         $result .= __('WP membership is required for registration','eme');
       } elseif (is_array($eval_filter_return) && !$eval_filter_return[0]) {
          // the result of own eval rules
-         $result = $eval_filter_return[1];
+         $result .= $eval_filter_return[1];
       } else {
          $language=eme_detect_lang();
          if (eme_is_multi($event['event_seats']))
@@ -685,7 +687,7 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
                   $eval_filter_return=array(0=>1,1=>'');
                if (is_array($eval_filter_return) && !$eval_filter_return[0]) {
                   // the result of own eval rules failed, so let's use that as a result
-                  $result = $eval_filter_return[1];
+                  $result .= $eval_filter_return[1];
                } else {
                   // if the user enters a new phone number, update it
                   if ($booker['person_phone'] != $bookerPhone) {
@@ -717,11 +719,11 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
                   $booking_ids[]=$booking_id;
                }
             } else {
-               $result = __('No booker ID found, something is wrong here','eme');
+               $result .= __('No booker ID found, something is wrong here','eme');
                unset($_POST['bookings'][$event_id]['bookedSeats']);
             }
          } else {
-            $result = __('Booking cannot be made: not enough seats available!', 'eme');
+            $result .= __('Booking cannot be made: not enough seats available!', 'eme');
             // here we only unset the number of seats entered, so the user doesn't have to fill in the rest again
             unset($_POST['bookings'][$event_id]['bookedSeats']);
          }
@@ -737,6 +739,7 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
 function eme_book_seats($event, $send_mail=1) {
    global $current_user;
    $booking_id = 0;
+   $result="";
 
    // check for spammers as early as possible
    if (isset($_POST['honeypot_check'])) {
