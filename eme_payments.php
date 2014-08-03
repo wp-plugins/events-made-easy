@@ -657,6 +657,11 @@ function eme_event_needs_payment ($event) {
 function eme_create_payment($booking_ids) {
    global $wpdb;
    $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
+
+   // some safety
+   if (!$booking_ids)
+      return false;
+
    $payment=array();
    $payment['booking_ids']=$booking_ids;
    $payment['creation_date_gmt']=current_time('mysql', true);
