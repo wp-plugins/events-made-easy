@@ -33,9 +33,9 @@ function eme_add_booking_form($event_id,$show_message=1) {
       $booking_res = eme_book_seats($event);
       $form_result_message = $booking_res[0];
       $booking_id_done=$booking_res[1];
-      $payment_id = eme_create_payment($booking_id_done);
       $post_string="{";
       if ($booking_id_done && eme_event_needs_payment($event)) {
+         $payment_id = eme_create_payment($booking_id_done);
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
          // by default the nonce is valid for 24 hours
@@ -189,10 +189,10 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       $booking_res = eme_multibook_seats($events,1,$format_entry);
       $form_result_message = $booking_res[0];
       $booking_ids_done=$booking_res[1];
-      $payment_id = eme_create_payment($booking_ids_done);
       $post_string="{";
       // let's decide for the first event wether or not payment is needed
       if ($booking_ids_done && eme_event_needs_payment($events[0])) {
+         $payment_id = eme_create_payment($booking_ids_done);
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
          // by default the nonce is valid for 24 hours
