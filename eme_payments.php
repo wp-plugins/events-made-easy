@@ -104,7 +104,7 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
 
 function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
-   $price=eme_payment_extra_charge($price,get_option('eme_webmoney_cost'));
+   $price+=eme_payment_extra_charge($price,get_option('eme_webmoney_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -140,7 +140,7 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
 
 function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
-   $price=eme_payment_extra_charge($price,get_option('eme_2co_cost'));
+   $price+=eme_payment_extra_charge($price,get_option('eme_2co_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -177,7 +177,7 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
 
 function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
-   $price=eme_payment_extra_charge($price,get_option('eme_fdgg_cost'));
+   $price+=eme_payment_extra_charge($price,get_option('eme_fdgg_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -226,7 +226,7 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
 function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
-   $price=eme_payment_extra_charge($price,get_option('eme_google_cost'));
+   $price+=eme_payment_extra_charge($price,get_option('eme_google_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -258,7 +258,7 @@ function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
 function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
-   $price=eme_payment_extra_charge($price,get_option('eme_paypal_cost'));
+   $price+=eme_payment_extra_charge($price,get_option('eme_paypal_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -676,9 +676,9 @@ function eme_get_booking_payment_id($booking_id) {
 function eme_payment_extra_charge($price,$extra) {
    if (strstr($extra,"%")) {
       $extra=str_replace("%","",$extra);
-      return sprintf("%01.2f",$price+($price*$extra/100));
+      return sprintf("%01.2f",$price*$extra/100);
    } else {
-      return $price+$extra;
+      return sprintf("%01.2f",$extra);
    }
 }
 

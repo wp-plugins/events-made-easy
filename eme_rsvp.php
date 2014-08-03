@@ -1748,6 +1748,9 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             $price = $total_prices[$field_id];
             $replacement = sprintf("%01.2f",$price);
          }
+      } elseif (preg_match('/#_CHARGE\{(.+)\}$/', $result, $matches)) {
+         $price = eme_get_total_booking_price($event,$booking);
+         $replacement = eme_payment_extra_charge($price,get_option('eme_'.$matches[1].'_cost'));
       } elseif (preg_match('/#_RESPSPACES$|#_SPACES$|#_BOOKEDSEATS$/', $result)) {
          $replacement = eme_get_multitotal($booking['booking_seats']);
       } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)/', $result)) {
