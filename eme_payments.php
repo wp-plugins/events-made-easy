@@ -104,7 +104,8 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
 
 function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
-   $price+=eme_payment_extra_charge($price,get_option('eme_webmoney_cost'));
+   $charge=eme_payment_extra_charge($price,get_option('eme_webmoney_cost'));
+   $price+=$charge;
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -131,16 +132,19 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    if (get_option('eme_webmoney_demo')) {
       $wm_request->sim_mode = WM_ALL_SUCCESS;
    }
-   $wm_request->btn_label = 'Pay via Webmoney';
+   $wm_request->btn_label = __('Pay via Webmoney','eme');
 
-   $form_html = "<br />".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"Webmoney");
+   if ($charge>0)
+      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"Webmoney",$charge,$event['currency']);
    $form_html .= $wm_request->SetForm(false);
    return $form_html;
 }
 
 function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
-   $price+=eme_payment_extra_charge($price,get_option('eme_2co_cost'));
+   $charge=eme_payment_extra_charge($price,get_option('eme_2co_cost'));
+   $price+=$charge;
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -156,7 +160,10 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    $quantity=1;
    $cur=$event['currency'];
 
-   $form_html = "<br />".__("You can pay for this event via 2Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"2Checkout");
+   if ($charge>0)
+      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"2Checkout",$charge,$event['currency']);
+   $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='sid' value='$business' />";
    $form_html.="<input type='hidden' name='mode' value='2CO' />";
@@ -167,7 +174,7 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='li_0_price' value='$price' />";
    $form_html.="<input type='hidden' name='li_0_quantity' value='$quantity' />";
    $form_html.="<input type='hidden' name='currency_code' value='$cur' />";
-   $form_html.="<input name='submit' type='submit' value='Pay via 2Checkout' />";
+   $form_html.="<input name='submit' type='submit' value='".__('Pay via 2Checkout','eme')."' />";
    if (get_option('eme_2co_demo')) {
       $form_html.="<input type='hidden' name='demo' value='Y' />";
    }
@@ -177,7 +184,8 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
 
 function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
-   $price+=eme_payment_extra_charge($price,get_option('eme_fdgg_cost'));
+   $charge=eme_payment_extra_charge($price,get_option('eme_fdgg_cost'));
+   $price+=$charge;
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -201,7 +209,10 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $timezone_short="GMT";
 
    require_once('fdgg/fdgg-util_sha2.php');
-   $form_html = "<br />".__("You can pay for this event via First Data. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"First Data");
+   if ($charge>0)
+      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"First Data",$charge,$event['currency']);
+   $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
    $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
@@ -218,7 +229,7 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='responseSuccessURL' value='$success_link' />";
    $form_html.="<input type='hidden' name='responseFailURL' value='$fail_link' />";
    $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_notification' />";
-   $form_html.="<input name='submit' type='submit' value='Pay via First Data' />";
+   $form_html.="<input name='submit' type='submit' value='".__('Pay via First Data','eme')."' />";
    $form_html.="</form>";
    return $form_html;
 }
@@ -226,7 +237,8 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
 function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
-   $price+=eme_payment_extra_charge($price,get_option('eme_google_cost'));
+   $charge=eme_payment_extra_charge($price,get_option('eme_google_cost'));
+   $price+=$charge;
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -251,14 +263,17 @@ function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
                             $price); // Unit price
    $item_1->SetMerchantItemId($payment_id);
    $cart->AddItem($item_1);
-   $form_html = "<br />".__("You can pay for this event via Google Checkout. If you wish to do so, click the button below.",'eme');
+   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"Google Checkout");
+   if ($charge>0)
+      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"Google Checkout",$charge,$event['currency']);
    return $form_html.$cart->CheckoutButtonCode("SMALL");
 }
 
 function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
-   $price+=eme_payment_extra_charge($price,get_option('eme_paypal_cost'));
+   $charge=eme_payment_extra_charge($price,get_option('eme_paypal_cost'));
+   $price+=$charge;
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -271,7 +286,9 @@ function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    }
    $notification_link = add_query_arg(array('eme_eventAction'=>'paypal_notification'),$events_page_link);
 
-   $form_html = "<br />".__("You can pay for this event via paypal. If you wish to do so, click the 'Pay via Paypal' button below.",'eme');
+   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"PayPal");
+   if ($charge>0)
+      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"PayPal",$charge,$event['currency']);
    require_once "paypal/Paypal.php";
    $p = new Paypal;
 
