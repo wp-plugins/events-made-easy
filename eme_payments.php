@@ -104,6 +104,7 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
 
 function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
+   $price=eme_payment_extra_charge($price,get_option('eme_webmoney_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -139,6 +140,7 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
 
 function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
+   $price=eme_payment_extra_charge($price,get_option('eme_2co_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -175,6 +177,7 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
 
 function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
+   $price=eme_payment_extra_charge($price,get_option('eme_fdgg_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -214,7 +217,7 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='oid' value='$payment_id' />";
    $form_html.="<input type='hidden' name='responseSuccessURL' value='$success_link' />";
    $form_html.="<input type='hidden' name='responseFailURL' value='$fail_link' />";
-   $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_ipn' />";
+   $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_notification' />";
    $form_html.="<input name='submit' type='submit' value='Pay via First Data' />";
    $form_html.="</form>";
    return $form_html;
@@ -223,6 +226,7 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
 function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
+   $price=eme_payment_extra_charge($price,get_option('eme_google_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -254,6 +258,7 @@ function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
 function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
+   $price=eme_payment_extra_charge($price,get_option('eme_paypal_cost'));
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
       $success_link = get_permalink($post->ID);
@@ -666,6 +671,15 @@ function eme_get_booking_payment_id($booking_id) {
    $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
    $sql = $wpdb->prepare("SELECT id FROM $payments_table WHERE FIND_IN_SET(%d,booking_ids)",$booking_id);
    return $wpdb->get_var($sql);
+}
+
+function eme_payment_extra_charge($price,$extra) {
+   if (strstr($extra,"%")) {
+      $extra=str_replace("%","",$extra);
+      return sprintf("%01.2f",$price+($price*$extra/100));
+   } else {
+      return $price+$extra;
+   }
 }
 
 ?>
