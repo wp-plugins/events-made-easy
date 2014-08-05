@@ -2140,7 +2140,7 @@ function eme_events_table($message="",$scope="future") {
             ?>
                <b><?php echo $recurrence_desc; ?>
             <br />
-            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php _e ( 'Edit Recurrence', 'eme' ); ?></a></b>
+            <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_recurrence&amp;recurrence_id=".$event['recurrence_id']); ?>"><?php print sprintf (__( 'Edit Recurrence ID %d', 'eme' ),$event['recurrence_id']); ?></a></b>
             <?php
             }
             ?>

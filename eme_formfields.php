@@ -576,39 +576,6 @@ function eme_replace_multibooking_formfields_placeholders ($format) {
 
    $eme_captcha_for_booking=get_option('eme_captcha_for_booking');
 
-   // first we do the custom attributes, since these can contain other placeholders
-   preg_match_all("/#(ESC|URL)?_ATT\{.+?\}(\{.+?\})?/", $format, $results);
-   foreach($results[0] as $resultKey => $result) {
-      $need_escape = 0;
-      $need_urlencode = 0;
-      $orig_result = $result;
-      if (strstr($result,'#ESC')) {
-         $result = str_replace("#ESC","#",$result);
-         $need_escape=1;
-      } elseif (strstr($result,'#URL')) {
-         $result = str_replace("#URL","#",$result);
-         $need_urlencode=1;
-      }
-      $replacement = "";
-      //Strip string of placeholder and just leave the reference
-      $attRef = substr( substr($result, 0, strpos($result, '}')), 6 );
-      if (isset($event['event_attributes'][$attRef])) {
-         $replacement = $event['event_attributes'][$attRef];
-      }
-      if( trim($replacement) == ''
-            && isset($results[2][$resultKey])
-            && $results[2][$resultKey] != '' ) {
-         //Check to see if we have a second set of braces;
-         $replacement = substr( $results[2][$resultKey], 1, strlen(trim($results[2][$resultKey]))-2 );
-      }
-
-      if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
-      if ($need_urlencode)
-         $replacement = rawurlencode($replacement);
-      $format = str_replace($orig_result, $replacement ,$format );
-   }
-
    // the 2 placeholders that can contain extra text are treated seperately first
    // the question mark is used for non greedy (minimal) matching
    if (preg_match('/#_CAPTCHAHTML\{.+\}/', $format)) {

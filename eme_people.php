@@ -178,7 +178,7 @@ function eme_people_delete_layout($message = "") {
    <?php
 }
 
-function eme_global_map_json($eventful = false, $scope = "all", $category = '', $offset = 0) {
+function eme_global_map_json($eventful = false, $scope = "all", $category = '', $map_id, $offset = 0) {
    $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
    $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
 
@@ -217,6 +217,8 @@ function eme_global_map_json($eventful = false, $scope = "all", $category = '', 
    $json .= $zoom_factor;
    $json .= '","maptype":"' ;
    $json .= $maptype;
+   $json .= '","map_id":"' ;
+   $json .= $map_id;
    $json .= '"}' ;
    echo $json;
 }

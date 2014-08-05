@@ -867,7 +867,8 @@ function eme_global_map($atts) {
             $next_text = "";
       }
 
-      $result = "<div id='eme_global_map' style='width: {$width}px; height: {$height}px'>map</div>";
+      $id_base = preg_replace("/\D/","_",microtime(1));
+      $result = "<div id='eme_global_map_$id_base' style='width: {$width}px; height: {$height}px'>map</div>";
       // get the paging output ready
       if ($paging==1) {
          $pagination_top = "<div id='locations-pagination-top'> ";
@@ -884,11 +885,14 @@ function eme_global_map($atts) {
          $result = $pagination_top.$result.$pagination_bottom;
       }
 
+      $eventful_string="eventful_".$id_base;
+      $scope_string="scope_".$id_base;
+      $category_string="category_".$id_base;
       $result .= "<script type='text/javascript'>
          <!--// 
-      eventful = '$eventful';
-      scope = '$scope';
-      category = '$category';
+      $eventful_string = '$eventful';
+      $scope_string = '$scope';
+      $category_string = '$category';
       events_page_link = '$events_page_link';
          //-->
          </script>";
@@ -900,7 +904,7 @@ function eme_global_map($atts) {
       $firstletter="A";
       foreach($locations as $location) {
          if ($show_locations) {
-            $loc_list.="<li id='location-". $location['location_id'].
+            $loc_list.="<li id='location-". $location['location_id']."_$id_base".
                            "' style='list-style-type: upper-alpha'><a>".
                            $location['location_name']."</a></li>";
          }
@@ -909,11 +913,11 @@ function eme_global_map($atts) {
             $loc_list .= "<ol id='eme_events_list'>"; 
             foreach ($events as $event) {
                if ($show_locations)
-                  $loc_list.="<li id='location-". $location['location_id'].
+                  $loc_list.="<li id='location-". $location['location_id']."_$id_base".
                            "' style='list-style-type: none'>- <a>".
                            $event['event_name']."</a></li>";
                else
-                  $loc_list.="<li id='location-". $location['location_id'].
+                  $loc_list.="<li id='location-". $location['location_id']."_$id_base".
                            "' style='list-style-type: none'>$firstletter. <a>".
                            $event['event_name']."</a></li>";
             }

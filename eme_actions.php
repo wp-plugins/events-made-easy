@@ -75,9 +75,10 @@ function eme_actions_init() {
 
    if (isset($_GET['query']) && $_GET['query'] == 'GlobalMapData') {
       $eventful = isset($_GET['eventful'])?$_GET['eventful']:false;
+      $map_id = isset($_GET['map_id'])?$_GET['map_id']:0;
       $eventful = ($eventful==="true" || $eventful==="1") ? true : $eventful;
       $eventful = ($eventful==="false" || $eventful==="0") ? false : $eventful;
-      eme_global_map_json((bool)$eventful,$_GET['scope'],$_GET['category']);
+      eme_global_map_json((bool)$eventful,$_GET['scope'],$_GET['category'],$map_id);
       exit();
    }
 

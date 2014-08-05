@@ -320,7 +320,7 @@ function eme_add_booking_form_shortcode($atts) {
 }
 
 function eme_add_multibooking_form_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id'=>0,'recurrence_id'=>0,'template_id_header'=>0,'template_id_entry'=>0,'template_id_footer'=>0), $atts));
+   extract ( shortcode_atts ( array ('id'=>0,'recurrence_id'=>0,'template_id_header'=>0,'template_id'=>0,'template_id_footer'=>0), $atts));
    $ids=explode(",", $id);
    if ($recurrence_id) {
       $ids=eme_get_recurrence_eventids($recurrence_id);
