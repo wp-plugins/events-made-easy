@@ -899,7 +899,7 @@ function eme_global_map($atts) {
       //$result .= "<script src='".EME_PLUGIN_URL."eme_global_map.js' type='text/javascript'></script>";
 
       // we add the list if wanted (only for "before" or "after")
-      $locations = eme_get_locations((bool)$eventful,$scope,$category,0);
+      $locations = eme_get_locations((bool)$eventful,$scope,$category,$scope_offset);
       $loc_list = "<div id='eme_div_locations_list'><ol id='eme_locations_list'>"; 
       $firstletter="A";
       foreach($locations as $location) {
