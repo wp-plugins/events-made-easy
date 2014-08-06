@@ -75,7 +75,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: show the compact bookings table only when not editing a recurrence
 * Bugfix: eme_locations shortcode wasn't showing anything for option eventful=1
 * Bugfix: First Data setting was not being saved when selecting it as payment method for an event
-* Bugfix: added FDGG lib
+* Bugfix: added FDGG lib (First Data lib, was missing)
 * Bugfix: take into account lonely CR's when creating the javascript balloon text
 * Bugfix: when updating an event, the end time was not allowed to be equal to the start time
 
