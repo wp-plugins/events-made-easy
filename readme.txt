@@ -72,6 +72,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: new event placeholder #_EVENTATT, taking 2 arguments: eventid and attribute key. This allows to get the non-default value for an attribute from another event. E.g, for eventid 3 and attribute "my_att": #_EVENTATT{3}{my_att}
 * Feature: added the possibility to define an extra charge when paying via a payment provider. Also added an extra rsvp placeholder so you can show the extra cost being added per payment provider: #_CHARGE{google}, #_CHARGE{fdgg}, #_CHARGE{2co}, #_CHARGE{paypal}, #_CHARGE{webmoney}
 * Feature: now more than one global map can be shown on the same page
+* Feature: added event placeholders #_STARTDATE, #_STARTTIME, #_ENDDATE and #_ENDTIME, resulting in a easy way to get the start/end date and time for the event in the current WP settings format, without needed to use the other possible date/time placeholders
 * Improvement: better image selection code for the featured image (since WP doesn't play nice with the 'insert from url', I needed to remove this)
 * Improvement: show the compact bookings table only when not editing a recurrence
 * Bugfix: eme_locations shortcode wasn't showing anything for option eventful=1
