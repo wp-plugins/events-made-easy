@@ -68,7 +68,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: support tls when sending mail via smtp by prepending 'tls://' to the hostname (typically for port 587) 
 * Feature: new placeholders #_HOURS_TILL_START and #_HOURS_TILL_END
 * Feature: new shortcode eme_add_multibooking_form that lets you use either a comma-seperated list of event id’s or a recurrence id for which you want to do multiple bookings in one go. It also has a template id for the header, entry and footer of the form list. More info in the doc.
-* Feature: add new placeholder #_EVENTATT, taking 2 arguments: eventid and attribute key. This allows to get the non-default value for an attribute from another event. E.g, for eventid 3 and attribute "my_att": #_EVENTATT{3}{my_att}
+* Feature: new rsvp placeholder #_MULTIBOOKING_EVENT_INFO, returns a list of the events booked for (name, date and hour), one per line
+* Feature: new event placeholder #_EVENTATT, taking 2 arguments: eventid and attribute key. This allows to get the non-default value for an attribute from another event. E.g, for eventid 3 and attribute "my_att": #_EVENTATT{3}{my_att}
 * Feature: added the possibility to define an extra charge when paying via a payment provider. Also added an extra rsvp placeholder so you can show the extra cost being added per payment provider: #_CHARGE{google}, #_CHARGE{fdgg}, #_CHARGE{2co}, #_CHARGE{paypal}, #_CHARGE{webmoney}
 * Feature: now more than one global map can be shown on the same page
 * Improvement: better image selection code for the featured image (since WP doesn't play nice with the 'insert from url', I needed to remove this)

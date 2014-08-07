@@ -35,7 +35,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
       $booking_id_done=$booking_res[1];
       $post_string="{";
       if ($booking_id_done && eme_event_needs_payment($event)) {
-         $payment_id = eme_create_payment($booking_id_done);
+         $payment_id = eme_get_booking_payment_id($booking_id_done);
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
          // by default the nonce is valid for 24 hours
@@ -193,6 +193,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       // let's decide for the first event wether or not payment is needed
       if ($booking_ids_done && eme_event_needs_payment($events[0])) {
          $payment_id = eme_create_payment($booking_ids_done);
+         $payment_id = eme_get_bookings_payment_id($booking_ids_done);
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
          // by default the nonce is valid for 24 hours
@@ -710,7 +711,6 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
                   } else {
                      $action="";
                   }
-                  if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
 
                   // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
                   foreach($_POST['bookings'][$event_id] as $key=>$value) {
@@ -731,6 +731,12 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
    }
 
    $booking_ids_done=join(',',$booking_ids);
+
+   // the payment needs to be created before the mail is sent, otherwise you can't send a link to the payment ...
+   if ($booking_ids_done && eme_event_needs_payment($events[0]))
+      eme_create_payment($booking_ids_done);
+   if ($send_mail) eme_email_rsvp_booking($booking_ids[0],$action);
+
    $res = array(0=>$result,1=>$booking_ids_done);
    return $res;
 }
@@ -928,6 +934,9 @@ function eme_book_seats($event, $send_mail=1) {
                   eme_update_phone($booker,$bookerPhone);
                }
                $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
+               if ($booking_id && eme_event_needs_payment($event))
+                  eme_create_payment($booking_id);
+
                $booking = eme_get_booking ($booking_id);
                if (!empty($event['event_registration_recorded_ok_html']))
                   $format = $event['event_registration_recorded_ok_html'];
@@ -1068,12 +1077,16 @@ function eme_get_booked_multiseats_by_person_event_id($person_id,$event_id) {
    return $result;
 }
 
-function eme_get_event_id_by_booking_id($booking_id) {
+function eme_get_event_by_booking_id($booking_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT DISTINCT event_id FROM $bookings_table WHERE booking_id = %d",$booking_id);
-   $result = $wpdb->get_var($sql);
-   return $result;
+   $event_id = $wpdb->get_var($sql);
+   if ($event_id)
+      $event = eme_get_event($event_id);
+   else
+      $event = eme_new_event();
+   return $event;
 }
 
 function eme_get_event_ids_by_booker_id($person_id) {
@@ -1686,6 +1699,11 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
    preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
    $person  = eme_get_person ($booking['person_id']);
    $answers = eme_get_answers($booking['booking_id']);
+   $payment_id = eme_get_booking_payment_id($booking['booking_id']);
+   $booking_ids= eme_get_payment_booking_ids($payment_id);
+   $is_multibooking=0;
+   if (count($booking_ids)>0)
+      $is_multibooking=1;
 
    usort($placeholders[0],'sort_stringlenth');
    foreach($placeholders[0] as $result) {
@@ -1722,8 +1740,19 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
                 $replacement = $seats[$field_id];
          }
       } elseif (preg_match('/#_TOTALPRICE$/', $result)) {
-         $price = eme_get_total_booking_price($event,$booking);
-         $replacement = sprintf("%01.2f",$price);
+         if ($is_multibooking && $payment_id) {
+            // returns the price for all bookings in the payment id related to this booking
+            $price = eme_get_payment_total_booking_price($payment_id);
+            $replacement = sprintf("%01.2f",$price);
+         } else {
+            $price = eme_get_total_booking_price($event,$booking);
+            $replacement = sprintf("%01.2f",$price);
+         }
+      } elseif (preg_match('/#_MULTIBOOKING_EVENT_INFO$/', $result)) {
+         if ($is_multibooking && $payment_id) {
+            // returns a list of the events booked for (name, date and hour), one per line
+            $replacement = eme_get_payment_event_info($payment_id);
+         }
       } elseif (preg_match('/#_BOOKINGPRICEPERSEAT$/', $result)) {
          $price = eme_get_seat_booking_price($event,$booking);
          $replacement = sprintf("%01.2f",$price);
@@ -1771,7 +1800,8 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_TRANSFER_NBR_BE97/', $result)) {
          $replacement = $booking['transfer_nbr_be97'];
       } elseif (preg_match('/#_PAYMENT_URL/', $result)) {
-         $replacement = eme_payment_url($booking['booking_id']);
+         if ($payment_id)
+            $replacement = eme_payment_url($payment_id);
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {
@@ -2622,6 +2652,19 @@ function eme_get_total_booking_price($event,$booking) {
    }
    return $price;
 }
+
+function eme_get_payment_total_booking_price($payment_id) {
+   $price=0;
+   $booking_ids=eme_get_payment_booking_ids($payment_id);
+   foreach ($booking_ids as $booking_id) {
+      $booking = eme_get_booking($booking_id);
+      $event=eme_get_event($booking['event_id']);
+      if (!$booking['booking_payed'] && is_array($event) && eme_event_needs_payment($event))
+         $price += eme_get_total_booking_price($event,$booking);
+   }
+   return $price;
+}
+
 
 function eme_get_seat_booking_price($event,$booking) {
    $price=0;

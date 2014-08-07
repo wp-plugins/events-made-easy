@@ -1213,6 +1213,17 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
          }
 
+      } elseif ($event && preg_match('/#_STARTDATE/', $result)) { 
+         $replacement = eme_localised_date($event['event_start_date']);
+
+      } elseif ($event && preg_match('/#_STARTTIME/', $result)) { 
+         $replacement = eme_localised_time($event['event_start_time']);
+
+      } elseif ($event && preg_match('/#_ENDDATE/', $result)) { 
+         $replacement = eme_localised_date($event['event_end_date']);
+
+      } elseif ($event && preg_match('/#_ENDTIME/', $result)) { 
+         $replacement = eme_localised_time($event['event_end_time']);
 
       } elseif ($event && preg_match('/#_24HSTARTTIME/', $result)) { 
          $replacement = substr($event['event_start_time'], 0,5);

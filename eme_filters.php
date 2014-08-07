@@ -1,7 +1,5 @@
 <?php
 
-
-
 function eme_filter_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('multiple' => 0, 'multisize' => 5, 'scope_count' => 12, 'submit' => 'Submit', 'fields'=> 'all', 'category' => '', 'notcategory' => '', 'template_id' => 0 ), $atts ) );
    $multiple = ($multiple==="true" || $multiple==="1") ? true : $multiple;

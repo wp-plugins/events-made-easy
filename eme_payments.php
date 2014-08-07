@@ -7,11 +7,8 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
    $ret_string .= "</div>";
 
-   if (empty($event)) {
-      $event_id=eme_get_event_id_by_booking_id($booking_id);
-      if ($event_id)
-         $event = eme_get_event($event_id);
-   }
+   if (empty($event))
+      $event = eme_get_event_by_booking_id($booking_id);
 
    $cur = $event['currency'];
    $booking_ids = eme_get_payment_booking_ids($payment_id);
@@ -68,21 +65,14 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
    $ret_string .= "</div>";
 
-   $total_price=0;
+   $total_price=eme_get_payment_total_booking_price($payment_id);
    $booking_ids = eme_get_payment_booking_ids($payment_id);
-   $cur = get_option('eme_default_currency');
-   foreach ($booking_ids as $booking_id) {
-      $booking = eme_get_booking($booking_id);
-      $event=eme_get_event($booking['event_id']);
-      $cur = $event['currency'];
-      if (!is_array($booking))
-         return $ret_string."<div class='eme-invalid-booking'>".__('This booking is invalid!','eme')."</div>";
-      if ($booking['booking_payed'])
-         return $ret_string."<div class='eme-already-payed'>".__('This booking has already been payed for','eme')."</div>";
+   if (!$booking_ids)
+      return $ret_string;
 
-      if (is_array($event) && eme_event_needs_payment($event))
-         $total_price += eme_get_total_booking_price($event,$booking);
-   }
+   // we take the currency of the first event in the series
+   $event=eme_get_event_by_booking_id($booking_ids[0]);
+   $cur = $event['currency'];
 
    $ret_string .= "<div id='eme-payment-handling' class='eme-payment-handling'>".__('Payment handling','eme')."</div>";
    $ret_string .= "<div id='eme-payment-price-info' class='eme-payment-price-info'>".sprintf(__("The booking price in %s is: %01.2f",'eme'),$cur,$total_price)."</div>";
@@ -384,8 +374,7 @@ function eme_paypal_notification() {
       $booking_ids=eme_get_payment_booking_ids($payment_id);
       foreach ($booking_ids as $booking_id) {
          $booking=eme_get_booking($booking_id);
-         $event_id = eme_get_event_id_by_booking_id($booking_id);
-         $event = eme_get_event($event_id);
+         $event = eme_get_event_by_booking_id($booking_id);
          if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
             eme_update_booking_payed($booking_id,1,1);
          else
@@ -487,8 +476,7 @@ function eme_google_notification() {
           $booking_ids=eme_get_payment_booking_ids($payment_id);
           foreach ($booking_ids as $booking_id) {
              $booking=eme_get_booking($booking_id);
-             $event_id = eme_get_event_id_by_booking_id($booking_id);
-             $event = eme_get_event($event_id);
+             $event = eme_get_event_by_booking_id($booking_id);
              if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
                 eme_update_booking_payed($booking_id,1,1);
              else
@@ -567,8 +555,7 @@ function eme_2co_notification() {
 #$booking=eme_get_booking($booking_id);
 #$event = eme_get_event($booking['event_id']);
          $booking=eme_get_booking($booking_id);
-         $event_id = eme_get_event_id_by_booking_id($booking_id);
-         $event = eme_get_event($event_id);
+         $event = eme_get_event_by_booking_id($booking_id);
          if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
             eme_update_booking_payed($booking_id,1,1);
          else
@@ -596,8 +583,7 @@ function eme_webmoney_notification() {
          $booking_ids=eme_get_payment_booking_ids($payment_id);
          foreach ($booking_ids as $booking_id) {
             $booking=eme_get_booking($booking_id);
-            $event_id = eme_get_event_id_by_booking_id($booking_id);
-            $event = eme_get_event($event_id);
+            $event = eme_get_event_by_booking_id($booking_id);
             if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
                eme_update_booking_payed($booking_id,1,1);
             else
@@ -637,8 +623,7 @@ function eme_fdgg_notification() {
       $booking_ids=eme_get_payment_booking_ids($payment_id);
       foreach ($booking_ids as $booking_id) {
          $booking=eme_get_booking($booking_id);
-         $event_id = eme_get_event_id_by_booking_id($booking_id);
-         $event = eme_get_event($event_id);
+         $event = eme_get_event_by_booking_id($booking_id);
          if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
             eme_update_booking_payed($booking_id,1,1);
          else
@@ -695,6 +680,13 @@ function eme_get_booking_payment_id($booking_id) {
    return $wpdb->get_var($sql);
 }
 
+function eme_get_bookings_payment_id($booking_ids) {
+   global $wpdb;
+   $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
+   $sql = $wpdb->prepare("SELECT id FROM $payments_table WHERE booking_ids = %s",$booking_ids);
+   return $wpdb->get_var($sql);
+}
+
 function eme_payment_extra_charge($price,$extra) {
    if (strstr($extra,"%")) {
       $extra=str_replace("%","",$extra);
@@ -702,6 +694,17 @@ function eme_payment_extra_charge($price,$extra) {
    } else {
       return sprintf("%01.2f",$extra);
    }
+}
+
+function eme_get_payment_event_info($payment_id) {
+   $booking_ids=eme_get_payment_booking_ids($payment_id);
+   $result="";
+   $format="#_EVENTNAME (#_STARTDATE #_STARTTIME)";
+   foreach ($booking_ids as $booking_id) {
+      $event=eme_get_event($booking_id);
+      $result.=eme_replace_placeholders($format,$event,"text");
+   }
+   return $result;
 }
 
 ?>
