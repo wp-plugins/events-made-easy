@@ -796,7 +796,7 @@ function eme_global_map($atts) {
       $next_text = "";
       $scope_offset=0;
       // for browsing: if paging=1 and only for this_week,this_month or today
-      if ($paging==1) {
+      if ($eventful && $paging==1) {
          if (isset($_GET['eme_offset']))
             $scope_offset=$_GET['eme_offset'];
          $prev_offset=$scope_offset-1;
@@ -811,8 +811,8 @@ function eme_global_map($atts) {
             $scope_text = date_i18n (get_option('date_format'),$start_day+$scope_offset*7*86400)."--".date_i18n (get_option('date_format'),$end_day+$scope_offset*7*86400);
             $prev_text = __('Previous week','eme');
             $next_text = __('Next week','eme');
-         }
-         elseif ($scope=="this_month") {
+
+         } elseif ($scope=="this_month") {
             // "first day of this month, last day of this month" works for newer versions of php (5.3+), but for compatibility:
             // the year/month should be based on the first of the month, so if we are the 13th, we substract 12 days to get to day 1
             // Reason: monthly offsets needs to be calculated based on the first day of the current month, not the current day,
@@ -829,8 +829,8 @@ function eme_global_map($atts) {
             $scope_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$scope_offset month")-$day_offset*86400);
             $prev_text = __('Previous month','eme');
             $next_text = __('Next month','eme');
-         }
-         elseif ($scope=="this_year") {
+
+         } elseif ($scope=="this_year") {
             $year=date('Y', strtotime("$scope_offset year")-$day_offset*86400);
             $limit_start = "$year-01-01";
             $limit_end   = "$year-12-31";
@@ -838,22 +838,16 @@ function eme_global_map($atts) {
             $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime("$scope_offset year")-$day_offset*86400);
             $prev_text = __('Previous year','eme');
             $next_text = __('Next year','eme');
-         }
-         elseif ($scope=="today") {
+
+         } elseif ($scope=="today") {
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
-            $limit_start = $scope;
-            $limit_end   = $scope;
-            //$prev_text = date_i18n (get_option('date_format'), strtotime("$prev_offset days"));
-            //$next_text = date_i18n (get_option('date_format'), strtotime("$next_offset days"));
             $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
-         }
-         elseif ($scope=="tomorrow") {
+
+         } elseif ($scope=="tomorrow") {
             $scope_offset++;
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
-            $limit_start = $scope;
-            $limit_end   = $scope;
             $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');

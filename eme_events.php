@@ -968,12 +968,6 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       }
    }
 
-   if ($limit>0 && $paging==1 && isset($_GET['eme_offset'])) {
-      $offset=intval($_GET['eme_offset']);
-   } else {
-      $offset=0;
-   }
-
    // for registered users: we'll add a list of event_id's for that user only
    $extra_conditions = "";
    if ($user_registered_only == 1 && is_user_logged_in()) {
@@ -993,6 +987,11 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    $limit_start=0;
    $limit_end=0;
    // for browsing: if limit=0,paging=1 and only for this_week,this_month or today
+   if ($limit>0 && $paging==1 && isset($_GET['eme_offset'])) {
+      $limit_offset=intval($_GET['eme_offset']);
+   } else {
+      $limit_offset=0;
+   }
    if ($paging==1 && $limit==0) {
       $scope_offset=0;
       if (isset($_GET['eme_offset']))
@@ -1011,10 +1010,18 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          //$prev_text = date_i18n (get_option('date_format'),$start_day+$prev_offset*7*86400)."--".date_i18n (get_option('date_format'),$end_day+$prev_offset*7*86400);
          //$next_text = date_i18n (get_option('date_format'),$start_day+$next_offset*7*86400)."--".date_i18n (get_option('date_format'),$end_day+$next_offset*7*86400);
          $scope_text = date_i18n (get_option('date_format'),$start_day+$scope_offset*7*86400)." -- ".date_i18n (get_option('date_format'),$end_day+$scope_offset*7*86400);
+
+         $prev_limit_start = date('Y-m-d',$start_day+($scope_offset-1)*7*86400);
+         $prev_limit_end   = date('Y-m-d',$end_day+($scope_offset-1)*7*86400);
+         $prev_scope = "$prev_limit_start--$prev_limit_end";
          $prev_text = __('Previous week','eme');
+
+         $next_limit_start = date('Y-m-d',$start_day+($scope_offset+1)*7*86400);
+         $next_limit_end   = date('Y-m-d',$end_day+($scope_offset+1)*7*86400);
+         $next_scope = "$next_limit_start--$next_limit_end";
          $next_text = __('Next week','eme');
-      }
-      elseif ($scope=="this_month") {
+
+      } elseif ($scope=="this_month") {
          // "first day of this month, last day of this month" works for newer versions of php (5.3+), but for compatibility:
          // the year/month should be based on the first of the month, so if we are the 13th, we substract 12 days to get to day 1
          // Reason: monthly offsets needs to be calculated based on the first day of the current month, not the current day,
@@ -1029,43 +1036,69 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          //$prev_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$prev_offset month")-$day_offset*86400);
          //$next_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$next_offset month")-$day_offset*86400);
          $scope_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$scope_offset month")-$day_offset*86400);
+
+         $year=date('Y', strtotime("$scope_offset-1 month")-$day_offset*86400);
+         $month=date('m', strtotime("$scope_offset-1 month")-$day_offset*86400);
+         $number_of_days_month=eme_days_in_month($month,$year);
+         $limit_start = "$year-$month-01";
+         $limit_end   = "$year-$month-$number_of_days_month";
+         $prev_scope = "$limit_start--$limit_end";
          $prev_text = __('Previous month','eme');
+
+         $year=date('Y', strtotime("$scope_offset+1 month")-$day_offset*86400);
+         $month=date('m', strtotime("$scope_offset+1 month")-$day_offset*86400);
+         $number_of_days_month=eme_days_in_month($month,$year);
+         $limit_start = "$year-$month-01";
+         $limit_end   = "$year-$month-$number_of_days_month";
+         $next_scope = "$limit_start--$limit_end";
          $next_text = __('Next month','eme');
-      }
-      elseif ($scope=="this_year") {
+
+      } elseif ($scope=="this_year") {
          $year=date('Y')+$scope_offset;
          $limit_start = "$year-01-01";
          $limit_end   = "$year-12-31";
          $scope = "$limit_start--$limit_end";
          $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime($limit_start));
+
+         $year=date('Y')+$scope_offset-1;
+         $limit_start = "$year-01-01";
+         $limit_end   = "$year-12-31";
+         $prev_scope = "$limit_start--$limit_end";
          $prev_text = __('Previous year','eme');
+
+         $year=date('Y')+$scope_offset+1;
+         $limit_start = "$year-01-01";
+         $limit_end   = "$year-12-31";
+         $next_scope = "$limit_start--$limit_end";
          $next_text = __('Next year','eme');
-      }
-      elseif ($scope=="today") {
+
+      } elseif ($scope=="today") {
          $scope = date('Y-m-d',strtotime("$scope_offset days"));
-         $limit_start = $scope;
-         $limit_end   = $scope;
-         //$prev_text = date_i18n (get_option('date_format'), strtotime("$prev_offset days"));
-         //$next_text = date_i18n (get_option('date_format'), strtotime("$next_offset days"));
          $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
+
+         $prev_scope = date('Y-m-d',strtotime("$scope_offset-1 days"));
          $prev_text = __('Previous day','eme');
+
+         $next_scope = date('Y-m-d',strtotime("$scope_offset+1 days"));
          $next_text = __('Next day','eme');
-      }
-      elseif ($scope=="tomorrow") {
+
+      } elseif ($scope=="tomorrow") {
          $scope_offset++;
          $scope = date('Y-m-d',strtotime("$scope_offset days"));
-         $limit_start = $scope;
-         $limit_end   = $scope;
          $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
+
+         $prev_scope = date('Y-m-d',strtotime("$scope_offset-1 days"));
          $prev_text = __('Previous day','eme');
+
+         $next_scope = date('Y-m-d',strtotime("$scope_offset+1 days"));
          $next_text = __('Next day','eme');
       }
    }
    // We request $limit+1 events, so we know if we need to show the pagination link or not.
    if ($limit==0) {
-      $events = eme_get_events ( 0, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
+      $events = eme_get_events ( 0, $scope, $order, $limit_offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
    } else {
-      $events = eme_get_events ( $limit+1, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
+      $events = eme_get_events ( $limit+1, $scope, $order, $limit_offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
    }
    $events_count=count($events);
 
@@ -1075,8 +1108,8 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    if ($paging==1 && $limit>0) {
       // for normal paging and there're no events, we go back to offset=0 and try again
       if ($events_count==0) {
-         $offset=0;
-         $events = eme_get_events ( $limit+1, $scope, $order, $offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
+         $limit_offset=0;
+         $events = eme_get_events ( $limit+1, $scope, $order, $limit_offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
          $events_count=count($events);
       }
       $prev_text=__('Previous page','eme');
@@ -1129,17 +1162,33 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       // remove the offset info
       $this_page_url= remove_query_arg('eme_offset',$this_page_url);
 
+      // we add possible fields from the filter section
+      $eme_filters["eme_eventAction"]=1;
+      $eme_filters["eme_cat_filter"]=1;
+      $eme_filters["eme_loc_filter"]=1;
+      $eme_filters["eme_town_filter"]=1;
+      $eme_filters["eme_scope_filter"]=1;
+      foreach ($_REQUEST as $key => $item) {
+         if (isset($eme_filters[$key])) {
+            # if you selected multiple items, $item is an array, but rawurlencode needs a string
+            if (is_array($item)) $item=join(',',eme_sanitize_request($item));
+            $this_page_url=add_query_arg(array($key=>$item),$this_page_url);
+         }
+      }
+
       // to prevent going on indefinitely and thus allowing search bots to go on for ever,
       // we stop providing links if there are no more events left
-      if (eme_count_events_older_than($limit_start) == 0)
-         $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
-      else
+      $prev_events=eme_get_events ( 0, $prev_scope, $order, 0, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
+      $next_events=eme_get_events ( 0, $next_scope, $order, 0, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
+      if (count($prev_events)>0)
          $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$prev_offset),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
-
-      if (eme_count_events_newer_than($limit_end) == 0)
-         $pagination_top.= "<a class='eme_nav_right' $nav_hidden_class href='#'>$next_text &gt;&gt;</a>";
       else
+         $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
+
+      if (count($next_events)>0)
          $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$next_offset),$this_page_url) ."'>$next_text &gt;&gt;</a>";
+      else
+         $pagination_top.= "<a class='eme_nav_right' $nav_hidden_class href='#'>$next_text &gt;&gt;</a>";
 
       $pagination_top.= "<span class='eme_nav_center'>$scope_text</span>";
    }
@@ -1246,24 +1295,24 @@ function eme_get_events_list_shortcode($atts) {
 
    // the filter list overrides the settings
    if (isset($_REQUEST['eme_eventAction']) && $_REQUEST['eme_eventAction'] == 'filter') {
-      if (isset($_REQUEST['eme_scope_filter'])) {
+      if (isset($_REQUEST['eme_scope_filter']) && !empty($_REQUEST['eme_scope_filter'])) {
          $scope = eme_sanitize_request($_REQUEST['eme_scope_filter']);
       }
 
-      if (isset($_REQUEST['eme_loc_filter'])) {
+      if (isset($_REQUEST['eme_loc_filter']) && !empty($_REQUEST['eme_loc_filter'])) {
          if (is_array($_REQUEST['eme_loc_filter']))
             $location_id=join(',',eme_sanitize_request($_REQUEST['eme_loc_filter']));
          else
             $location_id=eme_sanitize_request($_REQUEST['eme_loc_filter']);
       }
-      if (isset($_REQUEST['eme_town_filter'])) {
+      if (isset($_REQUEST['eme_town_filter']) && !empty($_REQUEST['eme_town_filter'])) {
          $towns=eme_sanitize_request($_REQUEST['eme_town_filter']);
          if (empty($location_id))
             $location_id = join(',',eme_get_town_location_ids($towns));
          else
             $location_id .= ",".join(',',eme_get_town_location_ids($towns));
       }
-      if (isset($_REQUEST['eme_cat_filter'])) {
+      if (isset($_REQUEST['eme_cat_filter']) && !empty($_REQUEST['eme_cat_filter'])) {
          if (is_array($_REQUEST['eme_cat_filter']))
             $category=join(',',eme_sanitize_request($_REQUEST['eme_cat_filter']));
          else
