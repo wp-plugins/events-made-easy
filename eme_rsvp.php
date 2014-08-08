@@ -326,8 +326,8 @@ function eme_add_multibooking_form_shortcode($atts) {
    if ($recurrence_id) {
       $ids=eme_get_recurrence_eventids($recurrence_id);
    }
-   if ($ids && $template_id_header && $template_id_entry && $template_id_footer)
-      return eme_add_multibooking_form($ids,$template_id_header,$template_id_entry,$template_id_footer);
+   if ($ids && $template_id_header && $template_id && $template_id_footer)
+      return eme_add_multibooking_form($ids,$template_id_header,$template_id,$template_id_footer);
 }
 
 function eme_booking_list_shortcode($atts) {
@@ -1874,7 +1874,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             foreach ($bookings as $tmp_booking) {
                $tmp_event=eme_get_event_by_booking_id($tmp_booking['booking_id']);
                $tmp_res= eme_replace_placeholders($template, $tmp_event, "text", 0);
-               $res.= eme_replace_booking_placeholders($tmp_res,$tmp_event,$tmp_booking,"text");
+               $res.= eme_replace_booking_placeholders($tmp_res,$tmp_event,$tmp_booking,"text")."\n";
             }
          }
          $replacement = $res;
