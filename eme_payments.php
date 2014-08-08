@@ -7,13 +7,12 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
    $ret_string .= "</div>";
 
-   if (empty($event))
-      $event = eme_get_event_by_booking_id($booking_id);
-
-   $cur = $event['currency'];
    $booking_ids = eme_get_payment_booking_ids($payment_id);
    $booking_id = $booking_ids[0];
    $booking = eme_get_booking($booking_id);
+   if (empty($event))
+      $event = eme_get_event($booking['booking_id']);
+   $cur = $event['currency'];
    if (!is_array($booking))
       return $ret_string;
    if ($booking['booking_payed'])
@@ -694,17 +693,6 @@ function eme_payment_extra_charge($price,$extra) {
    } else {
       return sprintf("%01.2f",$extra);
    }
-}
-
-function eme_get_payment_event_info($payment_id) {
-   $booking_ids=eme_get_payment_booking_ids($payment_id);
-   $result="";
-   $format="#_EVENTNAME (#_STARTDATE #_STARTTIME)";
-   foreach ($booking_ids as $booking_id) {
-      $event=eme_get_event($booking_id);
-      $result.=eme_replace_placeholders($format,$event,"text");
-   }
-   return $result;
 }
 
 ?>

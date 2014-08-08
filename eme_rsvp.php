@@ -1592,6 +1592,23 @@ function eme_get_bookings_for($event_ids,$pending_approved=0,$only_unpayed=0) {
    return $wpdb->get_results($sql, ARRAY_A);
 }
 
+function eme_get_bookings($booking_ids) {
+   global $wpdb; 
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
+   
+   $bookings = array();
+   if (!$booking_ids)
+      return $bookings;
+   
+   if (is_array($booking_ids)) {
+      $where="booking_id IN (".join(",",$booking_ids).")";
+   } else {
+      $where="booking_id = $booking_ids";
+   }
+   $sql = "SELECT * FROM $bookings_table WHERE $where";
+   return $wpdb->get_results($sql, ARRAY_A);
+}
+
 function eme_get_attendees_for($event_id,$pending_approved=0,$only_unpayed=0) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
@@ -1700,10 +1717,15 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
    $person  = eme_get_person ($booking['person_id']);
    $answers = eme_get_answers($booking['booking_id']);
    $payment_id = eme_get_booking_payment_id($booking['booking_id']);
-   $booking_ids= eme_get_payment_booking_ids($payment_id);
    $is_multibooking=0;
-   if (count($booking_ids)>0)
-      $is_multibooking=1;
+   $booking_ids=array();
+   $bookings=array();
+   if ($payment_id) {
+      $booking_ids = eme_get_payment_booking_ids($payment_id);
+      $bookings = eme_get_bookings($booking_ids);
+      if (count($bookings)>1)
+         $is_multibooking=1;
+   }
 
    usort($placeholders[0],'sort_stringlenth');
    foreach($placeholders[0] as $result) {
@@ -1740,19 +1762,8 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
                 $replacement = $seats[$field_id];
          }
       } elseif (preg_match('/#_TOTALPRICE$/', $result)) {
-         if ($is_multibooking && $payment_id) {
-            // returns the price for all bookings in the payment id related to this booking
-            $price = eme_get_payment_total_booking_price($payment_id);
-            $replacement = sprintf("%01.2f",$price);
-         } else {
-            $price = eme_get_total_booking_price($event,$booking);
-            $replacement = sprintf("%01.2f",$price);
-         }
-      } elseif (preg_match('/#_MULTIBOOKING_EVENT_INFO$/', $result)) {
-         if ($is_multibooking && $payment_id) {
-            // returns a list of the events booked for (name, date and hour), one per line
-            $replacement = eme_get_payment_event_info($payment_id);
-         }
+         $price = eme_get_total_booking_price($event,$booking);
+         $replacement = sprintf("%01.2f",$price);
       } elseif (preg_match('/#_BOOKINGPRICEPERSEAT$/', $result)) {
          $price = eme_get_seat_booking_price($event,$booking);
          $replacement = sprintf("%01.2f",$price);
@@ -1843,6 +1854,32 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
+      } elseif (preg_match('/#_MULTIBOOKING_SEATS$/', $result)) {
+         if ($is_multibooking) {
+            // returns the total of all seats for all bookings in the payment id related to this booking
+            $replacement = eme_get_payment_total_booking_seats($payment_id);
+         }
+      } elseif (preg_match('/#_MULTIBOOKING_TOTALPRICE$/', $result)) {
+         if ($is_multibooking) {
+            // returns the price for all bookings in the payment id related to this booking
+            $price = eme_get_payment_total_booking_price($payment_id);
+            $replacement = sprintf("%01.2f",$price);
+         }
+      } elseif (preg_match('/#_MULTIBOOKING_DETAILS_TEMPLATE\{(\d+)\}$/', $result, $matches)) {
+         $template_id = intval($matches[1]);
+         $template=eme_get_template_format($template_id);
+         $res="";
+         if ($template && $is_multibooking) {
+            // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+            foreach ($bookings as $tmp_booking) {
+               $tmp_event=eme_get_event_by_booking_id($tmp_booking['booking_id']);
+               $tmp_res= eme_replace_placeholders($template, $tmp_event, "text", 0);
+               $res.= eme_replace_booking_placeholders($tmp_res,$tmp_event,$tmp_booking,"text");
+            }
+         }
+         $replacement = $res;
+      } elseif (preg_match('/#_IS_MULTIBOOKING/', $result)) {
+         $replacement=$is_multibooking;
        } else {
          $found = 0;
       }
@@ -2655,9 +2692,9 @@ function eme_get_total_booking_price($event,$booking) {
 
 function eme_get_payment_total_booking_price($payment_id) {
    $price=0;
-   $booking_ids=eme_get_payment_booking_ids($payment_id);
-   foreach ($booking_ids as $booking_id) {
-      $booking = eme_get_booking($booking_id);
+   $booking_ids = eme_get_payment_booking_ids($payment_id);
+   $bookings = eme_get_bookings($booking_ids);
+   foreach ($bookings as $booking) {
       $event=eme_get_event($booking['event_id']);
       if (!$booking['booking_payed'] && is_array($event) && eme_event_needs_payment($event))
          $price += eme_get_total_booking_price($event,$booking);
@@ -2665,6 +2702,15 @@ function eme_get_payment_total_booking_price($payment_id) {
    return $price;
 }
 
+function eme_get_payment_total_booking_seats($payment_id) {
+   $seats=0;
+   $booking_ids = eme_get_payment_booking_ids($payment_id);
+   $bookings = eme_get_bookings($booking_ids);
+   foreach ($bookings as $booking) {
+      $seats += $booking['booking_seats'];
+   }
+   return $seats;
+}
 
 function eme_get_seat_booking_price($event,$booking) {
    $price=0;
