@@ -3870,7 +3870,7 @@ function eme_rss() {
          $author="";
       }
       if (isset($_GET['contact_person'])) {
-         $author=$_GET['contact_person'];
+         $contact_person=$_GET['contact_person'];
       } else {
          $contact_person="";
       }
