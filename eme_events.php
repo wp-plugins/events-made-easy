@@ -1010,15 +1010,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          //$prev_text = date_i18n (get_option('date_format'),$start_day+$prev_offset*7*86400)."--".date_i18n (get_option('date_format'),$end_day+$prev_offset*7*86400);
          //$next_text = date_i18n (get_option('date_format'),$start_day+$next_offset*7*86400)."--".date_i18n (get_option('date_format'),$end_day+$next_offset*7*86400);
          $scope_text = date_i18n (get_option('date_format'),$start_day+$scope_offset*7*86400)." -- ".date_i18n (get_option('date_format'),$end_day+$scope_offset*7*86400);
-
-         $prev_limit_start = date('Y-m-d',$start_day+($scope_offset-1)*7*86400);
-         $prev_limit_end   = date('Y-m-d',$end_day+($scope_offset-1)*7*86400);
-         $prev_scope = "$prev_limit_start--$prev_limit_end";
          $prev_text = __('Previous week','eme');
-
-         $next_limit_start = date('Y-m-d',$start_day+($scope_offset+1)*7*86400);
-         $next_limit_end   = date('Y-m-d',$end_day+($scope_offset+1)*7*86400);
-         $next_scope = "$next_limit_start--$next_limit_end";
          $next_text = __('Next week','eme');
 
       } elseif ($scope=="this_month") {
@@ -1036,21 +1028,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          //$prev_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$prev_offset month")-$day_offset*86400);
          //$next_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$next_offset month")-$day_offset*86400);
          $scope_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$scope_offset month")-$day_offset*86400);
-
-         $year=date('Y', strtotime("$scope_offset-1 month")-$day_offset*86400);
-         $month=date('m', strtotime("$scope_offset-1 month")-$day_offset*86400);
-         $number_of_days_month=eme_days_in_month($month,$year);
-         $limit_start = "$year-$month-01";
-         $limit_end   = "$year-$month-$number_of_days_month";
-         $prev_scope = "$limit_start--$limit_end";
          $prev_text = __('Previous month','eme');
-
-         $year=date('Y', strtotime("$scope_offset+1 month")-$day_offset*86400);
-         $month=date('m', strtotime("$scope_offset+1 month")-$day_offset*86400);
-         $number_of_days_month=eme_days_in_month($month,$year);
-         $limit_start = "$year-$month-01";
-         $limit_end   = "$year-$month-$number_of_days_month";
-         $next_scope = "$limit_start--$limit_end";
          $next_text = __('Next month','eme');
 
       } elseif ($scope=="this_year") {
@@ -1059,38 +1037,24 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $limit_end   = "$year-12-31";
          $scope = "$limit_start--$limit_end";
          $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime($limit_start));
-
-         $year=date('Y')+$scope_offset-1;
-         $limit_start = "$year-01-01";
-         $limit_end   = "$year-12-31";
-         $prev_scope = "$limit_start--$limit_end";
          $prev_text = __('Previous year','eme');
-
-         $year=date('Y')+$scope_offset+1;
-         $limit_start = "$year-01-01";
-         $limit_end   = "$year-12-31";
-         $next_scope = "$limit_start--$limit_end";
          $next_text = __('Next year','eme');
 
       } elseif ($scope=="today") {
          $scope = date('Y-m-d',strtotime("$scope_offset days"));
+         $limit_start = $scope;
+         $limit_end   = $scope;
          $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
-
-         $prev_scope = date('Y-m-d',strtotime("$scope_offset-1 days"));
          $prev_text = __('Previous day','eme');
-
-         $next_scope = date('Y-m-d',strtotime("$scope_offset+1 days"));
          $next_text = __('Next day','eme');
 
       } elseif ($scope=="tomorrow") {
          $scope_offset++;
          $scope = date('Y-m-d',strtotime("$scope_offset days"));
+         $limit_start = $scope;
+         $limit_end   = $scope;
          $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
-
-         $prev_scope = date('Y-m-d',strtotime("$scope_offset-1 days"));
          $prev_text = __('Previous day','eme');
-
-         $next_scope = date('Y-m-d',strtotime("$scope_offset+1 days"));
          $next_text = __('Next day','eme');
       }
    }
@@ -1178,14 +1142,14 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
 
       // to prevent going on indefinitely and thus allowing search bots to go on for ever,
       // we stop providing links if there are no more events left
-      $prev_events=eme_get_events ( 0, $prev_scope, $order, 0, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
-      $next_events=eme_get_events ( 0, $next_scope, $order, 0, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
-      if (count($prev_events)>0)
+      $older_events=eme_get_events ( 1, "--".$limit_start, $order, 0, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
+      $newer_events=eme_get_events ( 1, "++".$limit_end, $order, 0, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
+      if (count($older_events)>0)
          $pagination_top.= "<a class='eme_nav_left' href='".add_query_arg(array('eme_offset'=>$prev_offset),$this_page_url) ."'>&lt;&lt; $prev_text</a>";
       else
          $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
 
-      if (count($next_events)>0)
+      if (count($newer_events)>0)
          $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$next_offset),$this_page_url) ."'>$next_text &gt;&gt;</a>";
       else
          $pagination_top.= "<a class='eme_nav_right' $nav_hidden_class href='#'>$next_text &gt;&gt;</a>";
@@ -1464,12 +1428,22 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = "(event_rsvp=0 OR (event_rsvp=1 AND (UNIX_TIMESTAMP(CONCAT(event_start_date,' ',event_start_time))-rsvp_number_days*60*60*24-rsvp_number_hours*60*60 > UNIX_TIMESTAMP()) ))";
       }
    }
+
    if (preg_match ( "/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $scope )) {
       //$conditions[] = " event_start_date like '$scope'";
       if ($show_ongoing)
          $conditions[] = " ((event_start_date LIKE '$scope') OR (event_start_date <= '$scope' AND event_end_date >= '$scope'))";
       else
          $conditions[] = " (event_start_date LIKE '$scope') ";
+   } elseif (preg_match ( "/^--([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $scope, $matches )) {
+         $limit_start = $matches[1];
+         if ($show_ongoing)
+            $conditions[] = " (event_start_date < '$limit_start') ";
+         else
+            $conditions[] = " (event_end_date < '$limit_start') ";
+   } elseif (preg_match ( "/^\+\+([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $scope, $matches )) {
+         $limit_start = $matches[1];
+         $conditions[] = " (event_start_date > '$limit_start') ";
    } elseif (preg_match ( "/^0000-([0-9]{2})$/", $scope, $matches )) {
       $year=date('Y');
       $month=$matches[1];

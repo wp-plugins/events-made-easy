@@ -841,6 +841,8 @@ function eme_global_map($atts) {
 
          } elseif ($scope=="today") {
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
+            $limit_start = $scope;
+            $limit_end   = $scope;
             $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
@@ -848,6 +850,8 @@ function eme_global_map($atts) {
          } elseif ($scope=="tomorrow") {
             $scope_offset++;
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
+            $limit_start = $scope;
+            $limit_end   = $scope;
             $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
@@ -855,9 +859,11 @@ function eme_global_map($atts) {
 
          // to prevent going on indefinitely and thus allowing search bots to go on for ever,
          // we stop providing links if there are no more events left
-         if (eme_count_events_older_than($limit_start) == 0)
+         $older_events=eme_get_events ( 1, "--".$limit_start, "ASC", 0, $location['location_id'], $category);
+         $newer_events=eme_get_events ( 1, "++".$limit_end, "ASC", 0, $location['location_id'], $category);
+         if (count($older_events) == 0)
             $prev_text = "";
-         if (eme_count_events_newer_than($limit_end) == 0)
+         if (count($newer_events) == 0)
             $next_text = "";
       }
 
