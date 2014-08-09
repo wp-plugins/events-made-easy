@@ -3,10 +3,12 @@ function eme_option_items($array, $saved_value) {
    $output = "";
    foreach($array as $key => $item) {
       $selected ='';
-      if ($key == $saved_value)
-         $selected = "selected='selected'";
+      if (is_array($saved_value)) {
+         in_array($key,$saved_value) ? $selected = "selected='selected' " : $selected = '';
+      } else {
+         "$key" == $saved_value ? $selected = "selected='selected' " : $selected = '';
+      }
       $output .= "<option value='$key' $selected >$item</option>\n";
-   
    } 
    echo $output;
 }

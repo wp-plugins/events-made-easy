@@ -37,6 +37,11 @@ class WP_Widget_eme_list extends WP_Widget {
       if ( $title)
          echo $args['before_title'] . $title . $args['after_title'];
 
+      if (is_array($category))
+         $category=expand(',',$category);
+      if (is_array($notcategory))
+         $notcategory=expand(',',$notcategory);
+
       $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,0,$notcategory,$recurrence_only_once);
       if ($events_list == get_option('eme_no_events_message' ))
          echo $events_list;
@@ -83,6 +88,10 @@ class WP_Widget_eme_list extends WP_Widget {
       $recurrence_only_once = empty( $instance['recurrence_only_once'] ) ? '' : eme_sanitize_html($instance['recurrence_only_once']);
       $authorid = empty( $instance['authorid'] ) ? '' : eme_sanitize_html($instance['authorid']);
       $categories = eme_get_categories();
+      foreach ($categories as $cat) {
+         $id=$cat['category_id'];
+         $option_categories[$id]=$cat['category_name'];
+      }
       $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
 ?>
   <p>
@@ -118,27 +127,17 @@ class WP_Widget_eme_list extends WP_Widget {
 ?>
   <p>
     <label for="<?php echo $this->get_field_id('category'); ?>"><?php _e('Category','eme'); ?>:</label><br />
-    <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?></option>
+    <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-         <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$category);
       ?>
     </select>
   </p>
   <p>
     <label for="<?php echo $this->get_field_id('notcategory'); ?>"><?php _e('Exclude Category','eme'); ?>:</label><br />
-    <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?></option>
+    <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-         <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $notcategory,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$notcategory);
       ?>
     </select>
   </p>
@@ -200,10 +199,12 @@ class WP_Widget_eme_calendar extends WP_Widget {
          $authinfo=get_userdata($instance['authorid']);
          $author=$authinfo->user_login;
       }
-      echo $args['before_widget'];
-      if ( $title)
-         echo $args['before_title'] . $title . $args['after_title'];
-      
+
+      if (is_array($category))
+         $category=expand(',',$category);
+      if (is_array($notcategory))
+         $notcategory=expand(',',$notcategory);
+
       $options=array();
       $options['title'] = $title;
       $options['long_events'] = $long_events;
@@ -218,11 +219,18 @@ class WP_Widget_eme_calendar extends WP_Widget {
           $options['year'] = date("Y");
       }
       $options['author'] = $author;
+
+      echo $args['before_widget'];
+      if ( $title)
+         echo $args['before_title'] . $title . $args['after_title'];
       eme_get_calendar($options);
       echo $args['after_widget'];
    }
    
    public function update( $new_instance, $old_instance ) {
+      // before the merge, let's set the values of those elements that are checkboxes (not returned in the POST if not selected)
+      if (!isset($new_instance['long_events']))
+         $new_instance['long_events']=false;
       $instance = array_merge($old_instance,$new_instance);
       $instance['title'] = strip_tags($instance['title']);
       return $instance;
@@ -237,6 +245,10 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $long_events = isset( $instance['long_events'] ) ? eme_sanitize_html($instance['long_events']) : false;
       $authorid = isset( $instance['authorid'] ) ? eme_sanitize_html($instance['authorid']) : '';
       $categories = eme_get_categories();
+      foreach ($categories as $cat) {
+         $id=$cat['category_id'];
+         $option_categories[$id]=$cat['category_name'];
+      }
 ?>
   <p>
    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
@@ -251,27 +263,17 @@ class WP_Widget_eme_calendar extends WP_Widget {
   ?>
   <p>
     <label for="<?php echo $this->get_field_id('category'); ?>"><?php _e('Category','eme'); ?>:</label><br />
-   <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?>   </option>
+   <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-      <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$category);
       ?>
    </select>
   </p>
   <p>
     <label for="<?php echo $this->get_field_id('notcategory'); ?>"><?php _e('Exclude Category','eme'); ?>:</label><br />
-   <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?>   </option>
+   <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-      <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $notcategory,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$notcategory);
       ?>
    </select>
   </p>
