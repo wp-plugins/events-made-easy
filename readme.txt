@@ -77,6 +77,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: now more than one global map can be shown on the same page
 * Feature: added event placeholders #_STARTDATE, #_STARTTIME, #_ENDDATE and #_ENDTIME, resulting in a easy way to get the start/end date and time for the event in the current WP settings format, without needed to use the other possible date/time placeholders
 * Feature: 2 new event scopes: ++YYYY-MM-DD (all events starting later than YYYY-MM-DD) and --YYYY-MM-DD (all events ending before YYYY-MM-DD)
+* Feature: mail subjects for the contact person can now also be changed in the settings
 * Improvement: better image selection code for the featured image (since WP doesn't play nice with the 'insert from url', I needed to remove this)
 * Improvement: show the compact bookings table only when not editing a recurrence
 * Bugfix: eme_locations shortcode wasn't showing anything for option eventful=1
