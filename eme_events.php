@@ -2798,6 +2798,7 @@ function eme_admin_general_script() {
    eme_admin_general_css();
    ?>
 <script src="<?php echo EME_PLUGIN_URL; ?>js/eme.js" type="text/javascript"></script>
+<script src="<?php echo EME_PLUGIN_URL; ?>js/jquery-mousewheel/jquery.mousewheel.min.js" type="text/javascript"></script>
 <script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.plugin.min.js" type="text/javascript"></script>
 <script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.min.js" type="text/javascript"></script>
 <?php
