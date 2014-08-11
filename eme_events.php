@@ -2805,7 +2805,8 @@ function eme_admin_general_script() {
    
    // all the rest below is needed on 3 pages only (for now), so we return if not there
    global $plugin_page;
-   if ( !in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
+   //if ( !in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
+   if ( !in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {
       return;
    }
 
@@ -2817,24 +2818,7 @@ function eme_admin_general_script() {
    
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
-   $locale_code = preg_replace( "/_/","-", $locale_code );
-   $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-   // for english, no translation code is needed
-   if (!file_exists($locale_file)) {
-      $locale_code = substr ( $locale_code, 0, 2 );
-      $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-   }
-   if ($locale_code != "en_US" && file_exists($locale_file)) {
 ?>
-<script src="<?php echo $locale_file_url ?>" type="text/javascript"></script>
-<?php
-   }
-?>
-<style type='text/css' media='all'>
-   @import "<?php echo EME_PLUGIN_URL; ?>js/jquery-datepick/jquery.datepick.css";
-</style>
 <script type="text/javascript">
    //<![CDATA[
 function updateIntervalDescriptor () { 
@@ -3646,6 +3630,9 @@ function eme_meta_box_div_event_url($event) {
 
 function eme_admin_map_script() {
    global $plugin_page;
+   if ( !in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-locations') ) ) {
+      return;
+   }
    if (!get_option('eme_gmap_is_active' ))
       return;
 ?>
@@ -3782,7 +3769,7 @@ function eme_admin_map_script() {
             if ($use_select_for_locations &&
                (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) { ?>
                eme_SelectdisplayAddress();
-            <?php } elseif ($plugin_page != 'eme-new_event') { ?>
+            <?php } elseif ($plugin_page == 'eme-locations' && (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation'))) { ?>
                eme_displayAddress(0);
             <?php } ?>
 
@@ -4185,14 +4172,31 @@ function eme_admin_enqueue_js(){
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
    }
-   if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
+   //if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
+   if ( in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
-      wp_enqueue_style('jquery-ui-autocomplete',EME_PLUGIN_URL."js/jquery-autocomplete/jquery.autocomplete.css");
+      //wp_enqueue_style('jquery-ui-autocomplete',EME_PLUGIN_URL."js/jquery-autocomplete/jquery.autocomplete.css");
+      wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
       wp_enqueue_script('jquery-ui-autocomplete');
+      // jquery ui locales are with dashes, not underscores
+      $locale_code = get_locale();
+      $locale_code = preg_replace( "/_/","-", $locale_code );
+      $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+      // for english, no translation code is needed)
+      if ($locale_code != "en-US") {
+         if (!file_exists($locale_file)) {
+            $locale_code = substr ( $locale_code, 0, 2 );
+            $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+            $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+         }
+         if (file_exists($locale_file))
+            wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
+      }
    }
    if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager','eme-people') ) ) {
       wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
-      wp_enqueue_script('datatables-clearsearch',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js",array( 'jquery-datatables' ));
+      wp_enqueue_script('datatables-clearsearch',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
    }
 }
 
