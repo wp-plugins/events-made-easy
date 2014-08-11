@@ -208,7 +208,6 @@ function eme_locations_edit_layout($location, $message = "") {
             </h3>
             <div class="inside">
            <input name="location_name" id="title" type="text" value="<?php echo eme_sanitize_html($location['location_name']); ?>" size="40" />
-           <input type="hidden" name="translated_location_name" value="<?php echo eme_trans_sanitize_html($location['location_name']); ?>" />
            <?php if ($action=="edit") {
                     _e ('Permalink: ', 'eme' );
                     echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix')).$location['location_id']."/";
@@ -1460,11 +1459,6 @@ function eme_locations_autocomplete() {
 
    if ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) {
       ?>
-      <link rel="stylesheet" href="<?php echo EME_PLUGIN_URL; ?>js/jquery-autocomplete/jquery.autocomplete.css" type="text/css"/>
-
-      <script src="<?php echo EME_PLUGIN_URL; ?>js/jquery-autocomplete/lib/jquery.bgiframe.min.js" type="text/javascript"></script>
-      <script src="<?php echo EME_PLUGIN_URL; ?>js/jquery-autocomplete/lib/jquery.ajaxQueue.js" type="text/javascript"></script> 
-      <script src="<?php echo EME_PLUGIN_URL; ?>js/jquery-autocomplete/jquery.autocomplete.min.js" type="text/javascript"></script>
 
       <script type="text/javascript">
       //<![CDATA[
@@ -1475,49 +1469,61 @@ function eme_locations_autocomplete() {
          }
 
          var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>; 
+         var use_select_for_locations = <?php echo $use_select_for_locations; ?>; 
 
-         <?php if (!$use_select_for_locations) { ?>
-         jQuery("input#location_name").autocomplete("<?php echo EME_PLUGIN_URL; ?>locations-search.php", {
-            width: 260,
-            selectFirst: false,
-            formatItem: function(row) {
-               item = eval("(" + row + ")");
-               return htmlDecode(item.name)+'<br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small>';
-            },
-            formatResult: function(row) {
-               item = eval("(" + row + ")");
-               return htmlDecode(item.name);
-            } 
-         });
-         jQuery('input#location_name').result(function(event,data,formatted) {
-            item = eval("(" + data + ")"); 
-            jQuery('input#location_address').val(item.address);
-            jQuery('input#location_town').val(item.town);
-            jQuery('input#location_latitude').val(item.latitude);
-            jQuery('input#location_longitude').val(item.longitude);
-            if(gmap_enabled) {
-               loadMapLatLong(item.name, item.town, item.address, item.latitude,item.longitude);
-            } 
-         });
-         <?php } else { ?>
-         jQuery('#location-select-id').change(function() {
-            jQuery.getJSON("<?php echo EME_PLUGIN_URL; ?>locations-search.php",{id: jQuery(this).val()}, function(data){
-               eventLocation = data.name;
-               eventAddress = data.address;
-               eventTown = data.town;
-               eventLat = data.latitude;
-               eventLong = data.longitude;
-               jQuery("input[name='location-select-name']").val(eventLocation);
-               jQuery("input[name='location-select-address']").val(eventAddress); 
-               jQuery("input[name='location-select-town']").val(eventTown); 
-               jQuery("input[name='location-select-latitude']").val(eventLat); 
-               jQuery("input[name='location-select-longitude']").val(eventLong); 
+         if (!use_select_for_locations) {
+          jQuery("input[name=location_name]").autocomplete({
+            source: function(request, response) {
+                         jQuery.ajax({ url: "<?php echo EME_PLUGIN_URL; ?>locations-search.php",
+                                  data: { q: request.term},
+                                  dataType: "json",
+                                  type: "GET",
+                                  success: function(data){
+                                                response(jQuery.map(data, function(item) {
+                                                      return {
+                                                         label: item.name,
+                                                         name: htmlDecode(item.name),
+                                                         address: item.address,
+                                                         town: item.town,
+                                                         latitude: item.latitude,
+                                                         longitude: item.longitude,
+                                                      };
+                                                }));
+                                           }
+                                 });
+                    },
+            select:function(evt, ui) {
+                         // when a product is selected, populate related fields in this form
+                         jQuery('input[name=location_name]').val(ui.item.name);
+                         jQuery('input#location_address').val(ui.item.address);
+                         jQuery('input#location_town').val(ui.item.town);
+                         jQuery('input#location_latitude').val(ui.item.latitude);
+                         jQuery('input#location_longitude').val(ui.item.longitude);
+                         if(gmap_enabled) {
+                            loadMapLatLong(ui.item.name, ui.item.town, ui.item.address, ui.item.latitude, ui.item.longitude);
+                         }
+                         return false;
+                   },
+            minLength: 2
+          }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return jQuery( "<li></li>" )
+            .append("<a>"+htmlDecode(item.name)+'<br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small></a>')
+            .appendTo( ul );
+          };
+         } else {
+          jQuery('#location-select-id').change(function() {
+            jQuery.getJSON("<?php echo EME_PLUGIN_URL; ?>locations-search.php",{id: jQuery(this).val()}, function(item){
+               jQuery("input[name='location-select-name']").val(item.name);
+               jQuery("input[name='location-select-address']").val(item.address); 
+               jQuery("input[name='location-select-town']").val(item.town); 
+               jQuery("input[name='location-select-latitude']").val(item.latitude); 
+               jQuery("input[name='location-select-longitude']").val(item.longitude); 
                if(gmap_enabled) {
-                  loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
+                  loadMapLatLong(item.name, item.town, item.address, item.latitude, item.longitude);
                }
             })
-         });
-          <?php } ?>
+          });
+         }
       });   
       //]]> 
 

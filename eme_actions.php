@@ -102,7 +102,6 @@ function eme_actions_init() {
 add_action('init','eme_actions_init');
 
 function eme_actions_admin_init() {
-   eme_enqueue_js();
    eme_options_register();
 
    // let the admin know the DB has been updated
@@ -120,6 +119,8 @@ function eme_actions_admin_init() {
    eme_handle_get();
 }
 add_action('admin_init','eme_actions_admin_init');
+
+add_action('admin_enqueue_scripts','eme_admin_enqueue_js');
 
 function eme_actions_widgets_init() {
    register_widget( 'WP_Widget_eme_list' );

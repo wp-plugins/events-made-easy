@@ -3,33 +3,49 @@ var emefs_autocomplete_url = "/wp-content/plugins/events-manager-extended/locati
 var emefs_gmap_enabled = 1;
 var emefs_gmap_hasSelectedLocation = 0;
 
-var emefs_autocomplete_options = {
-	width: 260,
-	selectFirst: false,
-	formatItem: function(row) {
-		item = eval("(" + row + ")");
-		return htmlDecode(item.name)+'<br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small>';
-	},
-	formatResult: function(row) {
-		item = eval("(" + row + ")");
-		return htmlDecode(item.name);
-	} 
-};
-
 function htmlDecode(value){
 	return jQuery('<div/>').html(value).text(); 
 }
 
 function emefs_deploy(show24Hours) {
 
-	jQuery("input#location_name").autocomplete(emefs_autocomplete_url, emefs_autocomplete_options);
-	
-	jQuery('input#location_name').result(function(event,data,formatted) {
-		item = eval("(" + data + ")"); 
-		jQuery('input#location_address').val(item.address);
-		jQuery('input#location_town').val(item.town);
-		emefs_displayAddress();
-	});
+        jQuery("input#location_name").autocomplete({
+            source: function(request, response) {
+                         jQuery.ajax({ url: emefs_autocomplete_url,
+                                  data: { q: request.term},
+                                  dataType: "json",
+                                  type: "GET",
+                                  success: function(data){
+                                                response(jQuery.map(data, function(item) {
+                                                      return {
+                                                         label: item.name,
+                                                         name: htmlDecode(item.name),
+                                                         address: item.address,
+                                                         town: item.town,
+                                                         latitude: item.latitude,
+                                                         longitude: item.longitude,
+                                                      };
+                                                }));
+                                           }
+                                 });
+                    },
+            select:function(evt, ui) {
+                         // when a product is selected, populate related fields in this form
+                         jQuery('input#location_name').val(ui.item.name);
+                         jQuery('input#location_address').val(ui.item.address);
+                         jQuery('input#location_town').val(ui.item.town);
+                         jQuery('input#location_latitude').val(ui.item.latitude);
+                         jQuery('input#location_longitude').val(ui.item.longitude);
+                         emefs_displayAddress();
+                         return false;
+                   },
+            minLength: 1
+        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return jQuery( "<li></li>" )
+            .append("<a>"+htmlDecode(item.name)+'<br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small></a>')
+            .appendTo( ul );
+        };
+
 	
 	jQuery("#event_start_date, #event_end_date").datepicker({ dateFormat: 'yy-mm-dd' });
 	jQuery('#event_start_time, #event_end_time').timeEntry({ hourText: 'Hour', minuteText: 'Minute', show24Hours: show24Hours, spinnerImage: '' });
@@ -86,7 +102,7 @@ function emefs_loadMap(location, town, address){
 				});
 				var emefs_infowindow = new google.maps.InfoWindow({
 					content: '<strong>' + location +'</strong><p>' + address + '</p><p>' + town + '</p>'
-	      		});
+	      		        });
 				emefs_infowindow.open(emefs_map,emefs_marker);
 				jQuery('input#location_latitude').val(results[0].geometry.location.lat());
 				jQuery('input#location_longitude').val(results[0].geometry.location.lng());

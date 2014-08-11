@@ -872,7 +872,7 @@ function eme_template_redir() {
       }
    }
 
-   // Enqueing jQuery script to make sure it's loaded
+   // Enqueue jQuery script to make sure it's loaded
    wp_enqueue_script ( 'jquery' );
 }
 
@@ -3438,16 +3438,17 @@ function eme_meta_box_div_location_name($event) {
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
       $use_select_for_locations=1;
    }
+   $gmap_is_active = get_option('eme_gmap_is_active' );
    $location = eme_get_location ( $event['location_id'] );
 ?>
    <table id="eme-location-data">
-   <tr>
    <?php
    if($use_select_for_locations) {
       $location_0 = eme_new_location();
       $location_0['location_id']=0;
       $locations = eme_get_locations();
    ?>
+      <tr>
       <th><?php _e('Location','eme') ?></th>
       <td> 
       <select name="location-select-id" id='location-select-id' size="1">
@@ -3472,30 +3473,45 @@ function eme_meta_box_div_location_name($event) {
       <input type='hidden' name='location-select-latitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_latitude'])?>' />      
       <input type='hidden' name='location-select-longitude' value='<?php echo eme_trans_sanitize_html($selected_location['location_longitude'])?>' />      
       </td>
+      <?php
+      if ($gmap_is_active) {
+      ?>
+         <td>
+         <div id='eme-admin-map-not-found'>
+         <p>
+         <?php _e ( 'Map not found','eme' ); ?>
+         </p>
+         </div>
+         <div id='eme-admin-location-map'></div></td>
+      <?php
+      }
+      ?>
+      </tr>
+       <tr >
+       <td colspan='2'  rowspan='5' style='vertical-align: top'>
+       <?php _e ( 'Select a location for your event', 'eme' )?>
+       </td>
+       </tr>
    <?php
    } else {
    ?>
+      <tr>
       <th><?php _e ( 'Name','eme' )?>&nbsp;</th>
-      <td><input name="translated_location_name" type="hidden" value="<?php echo eme_trans_sanitize_html($location['location_name'])?>" /><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($location['location_name'])?>" /></td>
-   <?php
-   }
-   $gmap_is_active = get_option('eme_gmap_is_active' );
-   if ($gmap_is_active) {
-      ?>
-      <td rowspan='6'>
-      <div id='eme-admin-map-not-found'>
-      <p>
-      <?php _e ( 'Map not found','eme' ); ?>
-      </p>
-      </div>
-      <div id='eme-admin-location-map'></div></td>
+      <td><input id="location_name" type="text" name="location_name" value="<?php echo eme_trans_sanitize_html($location['location_name'])?>" /></td>
       <?php
-   }
-   // end of IF_GMAP_ACTIVE ?>
-   </tr>
-   <?php
-   if (!$use_select_for_locations) {
-   ?>
+      if ($gmap_is_active) {
+      ?>
+         <td rowspan='6'>
+         <div id='eme-admin-map-not-found'>
+         <p>
+         <?php _e ( 'Map not found','eme' ); ?>
+         </p>
+         </div>
+         <div id='eme-admin-location-map'></div></td>
+      <?php
+      }
+      ?>
+      </tr>
       <tr>
       <td colspan='2'>
       <?php _e ( 'The name of the location where the event takes place. You can use the name of a venue, a square, etc', 'eme' );?>
@@ -3503,16 +3519,6 @@ function eme_meta_box_div_location_name($event) {
       <?php _e ( 'If you leave this empty, the map will NOT be shown for this event', 'eme' );?>
       </td>
       </tr>
-    <?php
-    } else {
-    ?>
-       <tr >
-       <td colspan='2'  rowspan='5' style='vertical-align: top'>
-       <?php _e ( 'Select a location for your event', 'eme' )?>
-       </td>
-       </tr>
-    <?php } ?>
-    <?php if (!$use_select_for_locations) { ?> 
        <tr>
        <th><?php _e ( 'Address:', 'eme' )?> &nbsp;</th>
        <td><input id="location_address" type="text" name="location_address" value="<?php echo $location['location_address']; ?>" /></td>
@@ -3544,7 +3550,9 @@ function eme_meta_box_div_location_name($event) {
        <?php _e ( 'If you\'re using the Google Map integration and are really serious about the correct place, use these.', 'eme' )?>
        </td>
        </tr>
-    <?php } ?>
+    <?php
+    }
+    ?>
     </table>
 <?php
 }
@@ -3693,6 +3701,13 @@ function eme_admin_map_script() {
          }
       
          function loadMapLatLong(location, town, address, lat, long) {
+            if (lat === undefined) {
+               lat = 0;
+            }
+            if (long === undefined) {
+               long = 0;
+            }
+               
             if (lat != 0 && long != 0) {
                var latlng = new google.maps.LatLng(lat, long);
                var myOptions = {
@@ -3705,7 +3720,6 @@ function eme_admin_map_script() {
                   },
                   mapTypeId: google.maps.MapTypeId.ROADMAP
                }
-               jQuery("#eme-admin-location-map").show();
                var map = new google.maps.Map(document.getElementById("eme-admin-location-map"), myOptions);
                var marker = new google.maps.Marker({
                   map: map, 
@@ -3722,7 +3736,37 @@ function eme_admin_map_script() {
             }
          }
  
+         function eme_displayAddress(ignore_coord){
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            if (gmap_enabled) {
+               eventLocation = jQuery("input[name=location_name]").val();
+               eventTown = jQuery("input#location_town").val();
+               eventAddress = jQuery("input#location_address").val();
+               if (ignore_coord) {
+                  loadMapLatLong(eventLocation, eventTown, eventAddress);
+               } else {
+                  eventLat = jQuery("input#location_latitude").val();
+                  eventLong = jQuery("input#location_longitude").val();
+                  loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
+               }
+            }
+         }
+
+         function eme_SelectdisplayAddress(){
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            if (gmap_enabled) {
+               eventLocation = jQuery("input[name='location-select-name']").val(); 
+               eventTown = jQuery("input[name='location-select-town']").val();
+               eventAddress = jQuery("input[name='location-select-address']").val(); 
+               eventLat = jQuery("input[name='location-select-latitude']").val();
+               eventLong = jQuery("input[name='location-select-longitude']").val();
+               loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
+            }
+         }
+
          jQuery(document).ready(function() {
+            jQuery("#eme-admin-location-map").hide();
+            jQuery('#eme-admin-map-not-found').show();
             <?php 
             $use_select_for_locations = get_option('eme_use_select_for_locations');
             // qtranslate there? Then we need the select
@@ -3730,96 +3774,35 @@ function eme_admin_map_script() {
                $use_select_for_locations=1;
             }
 
-            // if we're creating a new event, or editing an event *AND*
-            // the use_select_for_locations options is on or qtranslate is installed
+            // if we're editing an event *AND* the use_select_for_locations var is set
             // then we do the select thing
-            // We check on the new/edit event because this javascript is also executed for editing locations, and then we don't care
+            // We check on the edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
-            if (
-               ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || ( $plugin_page == 'eme-new_event')) && $use_select_for_locations) { ?>
-               eventLocation = jQuery("input[name='location-select-name']").val(); 
-               eventTown = jQuery("input[name='location-select-town']").val();
-               eventAddress = jQuery("input[name='location-select-address']").val(); 
-               eventLat = jQuery("input[name='location-select-latitude']").val();
-               eventLong = jQuery("input[name='location-select-longitude']").val();
-            <?php } else { ?>
-               eventLocation = jQuery("input[name='translated_location_name']").val(); 
-               eventTown = jQuery("input#location_town").val(); 
-               eventAddress = jQuery("input#location_address").val();
-               eventLat = jQuery("input#location_latitude").val();
-               eventLong = jQuery("input#location_longitude").val();
+            // For new events we do nothing if the use_select_for_locations var is set, because there's nothing to show.
+            if ($use_select_for_locations &&
+               (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) { ?>
+               eme_SelectdisplayAddress();
+            <?php } elseif ($plugin_page != 'eme-new_event') { ?>
+               eme_displayAddress(0);
             <?php } ?>
 
-            loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, eventLong);
-         
-            jQuery("input[name='location_name']").focus(function(){
-               eventLocation = jQuery("input[name='location_name']").val();
+            jQuery("input[name='location_name']").change(function(){
+               eme_displayAddress(0);
             });
-
-            jQuery("input[name='location_name']").blur(function(){
-               newEventLocation = jQuery("input[name='location_name']").val();
-               eventTown = jQuery("input#location_town").val(); 
-               eventAddress = jQuery("input#location_address").val();
-               eventLat = jQuery("input#location_latitude").val();
-               eventLong = jQuery("input#location_longitude").val();
-               if (newEventLocation != eventLocation) {
-                  loadMapLatLong(newEventLocation, eventTown, eventAddress, eventLat, eventLong); 
-               }
+            jQuery("input#location_town").change(function(){
+               eme_displayAddress(1);
             });
-            jQuery("input#location_town").focus(function(){
-               eventTown = jQuery("input#location_town").val(); 
+            jQuery("input#location_address").change(function(){
+               eme_displayAddress(1);
             });
-            jQuery("input#location_town").blur(function(){
-               eventLocation = jQuery("input[name='translated_location_name']").val(); 
-               newEventTown = jQuery("input#location_town").val();
-               eventAddress = jQuery("input#location_address").val();
-               eventLat = jQuery("input#location_latitude").val();
-               eventLong = jQuery("input#location_longitude").val();
-               if (newEventTown != eventTown) {
-                  loadMap(eventLocation, newEventTown, eventAddress); 
-               }
+            jQuery("input#location_latitude").change(function(){
+               eme_displayAddress(0);
             });
-            jQuery("input#location_address").focus(function(){
-               eventAddress = jQuery("input#location_address").val();
+            jQuery("input#location_longitude").change(function(){
+               eme_displayAddress(0);
             });
-            jQuery("input#location_address").blur(function(){
-               eventLocation = jQuery("input[name='translated_location_name']").val(); 
-               eventTown = jQuery("input#location_town").val(); 
-               newEventAddress = jQuery("input#location_address").val();
-               eventLat = jQuery("input#location_latitude").val();
-               eventLong = jQuery("input#location_longitude").val();
-               if (newEventAddress != eventAddress) {
-                  loadMap(eventLocation, eventTown, newEventAddress); 
-               }
-            });
-            jQuery("input#location_latitude").focus(function(){
-               eventLat = jQuery("input#location_latitude").val();
-            });
-            jQuery("input#location_latitude").blur(function(){
-               eventLocation = jQuery("input[name='translated_location_name']").val(); 
-               eventTown = jQuery("input#location_town").val(); 
-               eventAddress = jQuery("input#location_address").val();
-               newLat = jQuery("input#location_latitude").val();
-               eventLong = jQuery("input#location_longitude").val();
-               if (newLat != eventLat) {
-                  loadMapLatLong(eventLocation, eventTown, eventAddress, newLat, eventLong); 
-               }
-            });
-            jQuery("input#location_longitude").focus(function(){
-               eventLong = jQuery("input#location_longitude").val();
-            });
-            jQuery("input#location_longitude").blur(function(){
-               eventLocation = jQuery("input[name='translated_location_name']").val(); 
-               eventTown = jQuery("input#location_town").val(); 
-               eventAddress = jQuery("input#location_address").val();
-               eventLat = jQuery("input#location_latitude").val();
-               newLong = jQuery("input#location_longitude").val();
-               if (newLong != eventLong) {
-                  loadMapLatLong(eventLocation, eventTown, eventAddress, eventLat, newLong); 
-               }
-            });
-            }); 
-            jQuery(document).unload(function() {
+         }); 
+         jQuery(document).unload(function() {
             GUnload();
          });
           //]]>
@@ -4196,18 +4179,20 @@ function eme_alert_events_page() {
    }
 }
 
-function eme_enqueue_js(){
+function eme_admin_enqueue_js(){
    global $plugin_page;
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
    }
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
-      wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js");
+      wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
+      wp_enqueue_style('jquery-ui-autocomplete',EME_PLUGIN_URL."js/jquery-autocomplete/jquery.autocomplete.css");
+      wp_enqueue_script('jquery-ui-autocomplete');
    }
    if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager','eme-people') ) ) {
-      wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js");
-      wp_enqueue_script('datatables-clearsearch',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
+      wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
+      wp_enqueue_script('datatables-clearsearch',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js",array( 'jquery-datatables' ));
    }
 }
 
