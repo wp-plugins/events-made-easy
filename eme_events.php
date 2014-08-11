@@ -4119,6 +4119,7 @@ function eme_db_update_event($event,$event_id,$event_is_part_of_recurrence=0) {
       }
    }
 
+   if (has_filter('eme_event_preupdate_filter')) $event=apply_filters('eme_event_preupdate_filter',$event);
    $wpdb->show_errors(true);
    if ($wpdb->update ( $table_name, $event, $where ) === false) {
       $wpdb->print_error();

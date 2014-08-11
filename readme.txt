@@ -79,6 +79,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: 2 new event scopes: ++YYYY-MM-DD (all events starting later than YYYY-MM-DD) and --YYYY-MM-DD (all events ending before YYYY-MM-DD)
 * Feature: mail subjects for the contact person can now also be changed in the settings
 * Feature: you can now select multiple categories in the widget. Multiple selected categories will be OR'd together (see the events placeholder)
+* Feature: added new filter eme_event_preupdate_filter, taking place just before the event is updated in the DB (the update companion of eme_event_preinsert_filter)
 * Improvement: better image selection code for the featured image (since WP doesn't play nice with the 'insert from url', I needed to remove this)
 * Improvement: show the compact bookings table only when not editing a recurrence
 * Bugfix: eme_locations shortcode wasn't showing anything for option eventful=1
