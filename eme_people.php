@@ -538,7 +538,7 @@ function eme_people_table($message="") {
                   // So we give the 2 options
                ?> 
                "stateLoadParams": function (settings, data) {
-                  data.oSearch.sSearch = "<?php echo $search; ?>";
+                  data.search.search = "<?php echo $search; ?>";
                },
                "search": {
                   "search":  "<?php echo $search; ?>"

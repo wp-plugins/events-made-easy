@@ -2446,7 +2446,7 @@ function eme_registration_seats_form_table($pending=0) {
                // So we give the 2 options
             ?> 
             "stateLoadParams": function (settings, data) {
-               data.oSearch.sSearch = "<?php echo $search; ?>";
+               data.search.search = "<?php echo $search; ?>";
             },
             "search": {
                "search":  "<?php echo $search; ?>"
