@@ -2784,32 +2784,8 @@ function eme_closed($data) {
    return $data;
 }
 
-function eme_admin_general_css() {
-   echo "<link rel='stylesheet' href='".EME_PLUGIN_URL."events_manager.css' type='text/css'/>\n";
-   $file_name= get_stylesheet_directory()."/eme.css";
-   if (file_exists($file_name)) {
-      echo "<link rel='stylesheet' href='".get_stylesheet_directory_uri()."/eme.css' type='text/css'/>\n";
-   }
-   echo "<link rel='stylesheet' href='".EME_PLUGIN_URL."js/jquery-datatables/css/jquery.dataTables.css' type='text/css'/>\n";
-}
-
 // General script to make sure hidden fields are shown when containing data
-function eme_admin_general_script() {
-   eme_admin_general_css();
-   ?>
-<script src="<?php echo EME_PLUGIN_URL; ?>js/eme.js" type="text/javascript"></script>
-<script src="<?php echo EME_PLUGIN_URL; ?>js/jquery-mousewheel/jquery.mousewheel.min.js" type="text/javascript"></script>
-<script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.plugin.min.js" type="text/javascript"></script>
-<script src="<?php echo EME_PLUGIN_URL; ?>js/timeentry/jquery.timeentry.min.js" type="text/javascript"></script>
-<?php
-   
-   // all the rest below is needed on 3 pages only (for now), so we return if not there
-   global $plugin_page;
-   //if ( !in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
-   if ( !in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {
-      return;
-   }
-
+function eme_admin_event_script() {
    // check if the user wants AM/PM or 24 hour notation
    $time_format = get_option('time_format');
    $show24Hours = 'true';
@@ -2821,372 +2797,61 @@ function eme_admin_general_script() {
 ?>
 <script type="text/javascript">
    //<![CDATA[
-function updateIntervalDescriptor () { 
-   jQuery(".interval-desc").hide();
-   var number = "-plural";
-   if (jQuery('input#recurrence-interval').val() == 1 || jQuery('input#recurrence-interval').val() == "") {
-      number = "-singular";
-   }
-   var descriptor = "span#interval-"+jQuery("select#recurrence-frequency").val()+number;
-   jQuery(descriptor).show();
-}
-function updateIntervalSelectors () {
-   jQuery('p.alternate-selector').hide();
-   jQuery('p#'+ jQuery('select#recurrence-frequency').val() + "-selector").show();
-   //jQuery('p.recurrence-tip').hide();
-   //jQuery('p#'+ jQuery(this).val() + "-tip").show();
-}
-function updateShowHideRecurrence () {
-   if(jQuery('input#event-recurrence').attr("checked")) {
-      jQuery("#event_recurrence_pattern").fadeIn();
-      jQuery("span#event-date-recursive-explanation").show();
-      jQuery("div#div_recurrence_date").show();
-      jQuery("p#recurrence-tip").hide();
-      jQuery("p#recurrence-tip-2").show();
-   } else {
-      jQuery("#event_recurrence_pattern").hide();
-      jQuery("span#event-date-recursive-explanation").hide();
-      jQuery("div#div_recurrence_date").hide();
-      jQuery("p#recurrence-tip").show();
-      jQuery("p#recurrence-tip-2").hide();
-   }
+var show24Hours = <?php echo $show24Hours;?>;
+var locale_code = '<?php echo $locale_code;?>';
+function eme_event_page_title_format(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHideRecurrenceSpecificDays () {
-   if (jQuery('select#recurrence-frequency').val() == "specific") {
-      jQuery("div#recurrence-intervals").hide();
-      jQuery("input#localised-rec-end-date").hide();
-      jQuery("span#recurrence-dates-explanation").hide();
-      jQuery("span#recurrence-dates-explanation-specificdates").show();
-      jQuery("#localised-rec-start-date").datepick('option','multiSelect',999);
-   } else {
-      jQuery("div#recurrence-intervals").show();
-      jQuery("input#localised-rec-end-date").show();
-      jQuery("span#recurrence-dates-explanation").show();
-      jQuery("span#recurrence-dates-explanation-specificdates").hide();
-      jQuery("#localised-rec-start-date").datepick('option','multiSelect',0);
-   }
+function eme_single_event_format(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHideRsvp () {
-   if (jQuery('input#rsvp-checkbox').attr("checked")) {
-      jQuery("div#rsvp-data").fadeIn();
-      jQuery("div#div_event_contactperson_email_body").fadeIn();
-      jQuery("div#div_event_registration_recorded_ok_html").fadeIn();
-      jQuery("div#div_event_respondent_email_body").fadeIn();
-      jQuery("div#div_event_registration_pending_email_body").fadeIn();
-      jQuery("div#div_event_registration_updated_email_body").fadeIn();
-      jQuery("div#div_event_registration_form_format").fadeIn();
-      jQuery("div#div_event_cancel_form_format").fadeIn();
-   } else {
-      jQuery("div#rsvp-data").fadeOut();
-      jQuery("div#div_event_contactperson_email_body").fadeOut();
-      jQuery("div#div_event_registration_recorded_ok_html").fadeOut();
-      jQuery("div#div_event_respondent_email_body").fadeOut();
-      jQuery("div#div_event_registration_pending_email_body").fadeOut();
-      jQuery("div#div_event_registration_updated_email_body").fadeOut();
-      jQuery("div#div_event_cancel_form_format").fadeOut();
-   }
+function eme_contactperson_email_body(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHideTime () {
-   if (jQuery('input#eme_prop_all_day').attr("checked")) {
-      jQuery("div#div_event_time").hide();
-   } else {
-      jQuery("div#div_event_time").show();
-   }
+function eme_respondent_email_body(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHideCustomReturnPage () {
-   if (jQuery('input[name=eme_payment_show_custom_return_page]').attr("checked")) {
-         jQuery('tr#eme_payment_succes_format_row').show();
-         jQuery('tr#eme_payment_fail_format_row').show();
-         jQuery('tr#eme_payment_add_bookingid_to_return_row').show(); 
-   } else {
-         jQuery('tr#eme_payment_succes_format_row').hide();
-         jQuery('tr#eme_payment_fail_format_row').hide();
-         jQuery('tr#eme_payment_add_bookingid_to_return_row').hide(); 
-   }
+function eme_registration_recorded_ok_html(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHidePaypalSEncrypt () {
-   if (jQuery('input[name=eme_paypal_s_encrypt]').attr("checked")) {
-         jQuery('tr#eme_paypal_s_pubcert_row').show(); 
-         jQuery('tr#eme_paypal_s_privkey_row').show();
-         jQuery('tr#eme_paypal_s_paypalcert_row').show();
-         jQuery('tr#eme_paypal_s_certid_row').show();
-   } else {
-         jQuery('tr#eme_paypal_s_pubcert_row').hide(); 
-         jQuery('tr#eme_paypal_s_privkey_row').hide();
-         jQuery('tr#eme_paypal_s_paypalcert_row').hide();
-         jQuery('tr#eme_paypal_s_certid_row').hide();
-   }
+function eme_registration_pending_email_body(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHideRsvpMailNotify () {
-   if (jQuery('input[name=eme_rsvp_mail_notify_is_active]').attr("checked")) {
-      jQuery("table#rsvp_mail_notify-data").show();
-   } else {
-      jQuery("table#rsvp_mail_notify-data").hide();
-   }
+function eme_registration_updated_email_body(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_registration_updated_email_body' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHideRsvpMailSendMethod () {
-   if (jQuery('select[name=eme_rsvp_mail_send_method]').val() == "smtp") {
-         jQuery('tr#eme_smtp_host_row').show();
-         jQuery('tr#eme_smtp_port').show(); 
-         jQuery('tr#eme_rsvp_mail_SMTPAuth_row').show();
-         jQuery('tr#eme_smtp_username_row').show(); 
-         jQuery('tr#eme_smtp_password_row').show(); 
-   } else {
-         jQuery('tr#eme_smtp_host_row').hide();
-         jQuery('tr#eme_smtp_port').hide(); 
-         jQuery('tr#eme_rsvp_mail_SMTPAuth_row').hide();
-         jQuery('tr#eme_smtp_username_row').hide(); 
-         jQuery('tr#eme_smtp_password_row').hide();
-   }
+function eme_registration_form_format(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
 
-function updateShowHideRsvpMailSMTPAuth () {
-   if (jQuery('input[name=eme_rsvp_mail_SMTPAuth]').attr("checked")) {
-         jQuery('tr#eme_smtp_username_row').show(); 
-         jQuery('tr#eme_smtp_password_row').show(); 
-   } else {
-         jQuery('tr#eme_smtp_username_row').hide(); 
-         jQuery('tr#eme_smtp_password_row').hide();
-   }
+function eme_cancel_form_format(){
+   var tmp_value='<?php echo rawurlencode(get_option('eme_cancel_form_format' )); ?>';
+   tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
+   return tmp_value;
 }
-
-jQuery(document).ready( function() {
-   jQuery("#div_recurrence_date").hide();
-   jQuery("#localised-start-date").show();
-   jQuery("#localised-end-date").show();
-   jQuery("#start-date-to-submit").hide();
-   jQuery("#end-date-to-submit").hide(); 
-   jQuery("#rec-start-date-to-submit").hide();
-   jQuery("#rec-end-date-to-submit").hide(); 
-
-   jQuery.datepick.setDefaults( jQuery.datepick.regional["<?php echo $locale_code; ?>"] );
-   jQuery.datepick.setDefaults({
-      changeMonth: true,
-      changeYear: true
-   });
-   jQuery("#localised-start-date").datepick({ altField: "#start-date-to-submit", altFormat: "yyyy-mm-dd" });
-   jQuery("#localised-end-date").datepick({ altField: "#end-date-to-submit", altFormat: "yyyy-mm-dd" });
-   jQuery("#localised-rec-start-date").datepick({ altField: "#rec-start-date-to-submit", altFormat: "yyyy-mm-dd" });
-   jQuery("#localised-rec-end-date").datepick({ altField: "#rec-end-date-to-submit", altFormat: "yyyy-mm-dd" });
-
-   jQuery("#start-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?> });
-   jQuery("#end-time").timeEntry({spinnerImage: '', show24Hours: <?php echo $show24Hours; ?>});
-
-   // if any of event_single_event_format,event_page_title_format,event_contactperson_email_body,event_respondent_email_body,event_registration_pending_email_body, event_registration_form_format, event_registration_updated_email_body
-   // is empty: display default value on focus, and if the value hasn't changed from the default: empty it on blur
-
-   jQuery('textarea#event_page_title_format').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   }); 
-   jQuery('textarea#event_page_title_format').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   }); 
-   jQuery('textarea#event_single_event_format').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   }); 
-   jQuery('textarea#event_single_event_format').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_single_event_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   }); 
-   jQuery('textarea#event_contactperson_email_body').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   });
-   jQuery('textarea#event_contactperson_email_body').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_contactperson_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   }); 
-   jQuery('textarea#event_respondent_email_body').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   }); 
-   jQuery('textarea#event_respondent_email_body').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_respondent_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   }); 
-   jQuery('textarea#event_registration_recorded_ok_html').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   });
-   jQuery('textarea#event_registration_recorded_ok_html').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_recorded_ok_html' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   });
-   jQuery('textarea#event_registration_pending_email_body').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   });
-   jQuery('textarea#event_registration_pending_email_body').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   });
-   jQuery('textarea#event_registration_updated_email_body').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   });
-   jQuery('textarea#event_registration_updated_email_body').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_pending_email_body' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   });
-   jQuery('textarea#event_registration_form_format').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   }); 
-   jQuery('textarea#event_registration_form_format').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_registration_form_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   }); 
-   jQuery('textarea#event_cancel_form_format').focus(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_cancel_form_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == '') {
-         jQuery(this).val(tmp_value);
-      }
-   }); 
-   jQuery('textarea#event_cancel_form_format').blur(function(){
-      var tmp_value='<?php echo rawurlencode(get_option('eme_cancel_form_format' )); ?>';
-      tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
-      if (jQuery(this).val() == tmp_value) {
-         jQuery(this).val('');
-      }
-   }); 
-
-
-   updateIntervalDescriptor(); 
-   updateIntervalSelectors();
-   updateShowHideRecurrence();
-   updateShowHideRsvp();
-   updateShowHideRecurrenceSpecificDays();
-   updateShowHideTime();
-   jQuery('input#event-recurrence').change(updateShowHideRecurrence);
-   jQuery('input#rsvp-checkbox').change(updateShowHideRsvp);
-   jQuery('input#eme_prop_all_day').change(updateShowHideTime);
-   // recurrency elements
-   jQuery('input#recurrence-interval').keyup(updateIntervalDescriptor);
-   jQuery('select#recurrence-frequency').change(updateIntervalDescriptor);
-   jQuery('select#recurrence-frequency').change(updateIntervalSelectors);
-   jQuery('select#recurrence-frequency').change(updateShowHideRecurrenceSpecificDays);
-
-   // for the eme-options pages
-   updateShowHideCustomReturnPage();
-   updateShowHidePaypalSEncrypt();
-   updateShowHideRsvpMailNotify ();
-   updateShowHideRsvpMailSendMethod ();
-   updateShowHideRsvpMailSMTPAuth ();
-   jQuery('input[name=eme_payment_show_custom_return_page]').change(updateShowHideCustomReturnPage);
-   jQuery('input[name=eme_paypal_s_encrypt]').change(updateShowHidePaypalSEncrypt);
-   jQuery('input[name=eme_rsvp_mail_notify_is_active]').change(updateShowHideRsvpMailNotify);
-   jQuery('select[name=eme_rsvp_mail_send_method]').change(updateShowHideRsvpMailSendMethod);
-   jQuery('input[name=eme_rsvp_mail_SMTPAuth]').change(updateShowHideRsvpMailSMTPAuth);
-
-   // Add a "+" to the collapsable postboxes
-   //jQuery('.postbox h3').prepend('<a class="togbox">+</a> ');
-
-   // hiding or showing notes according to their content 
-   //          if(jQuery("textarea[@name=event_notes]").val()!="") {
-      //    jQuery("textarea[@name=event_notes]").parent().parent().removeClass('closed');
-      // }
-   //jQuery('#event_notes h3').click( function() {
-   //       jQuery(jQuery(this).parent().get(0)).toggleClass('closed');
-        //});
-
-   // users cannot submit the event form unless some fields are filled
-   function validateEventForm() {
-      var errors = "";
-      var recurring = jQuery("input[name=repeated_event]:checked").val();
-      //requiredFields= new Array('event_name', 'localised_event_start_date', 'location_name','location_address','location_town');
-      var requiredFields = ['event_name', 'localised_event_start_date'];
-      var localisedRequiredFields = {'event_name':"<?php _e ( 'Name', 'eme' )?>",
-                      'localised_event_start_date':"<?php _e ( 'Date', 'eme' )?>"
-                     };
-      
-      var missingFields = [];
-      var i;
-      for (i in requiredFields) {
-         if (jQuery("input[name=" + requiredFields[i]+ "]").val() == 0) {
-            missingFields.push(localisedRequiredFields[requiredFields[i]]);
-            jQuery("input[name=" + requiredFields[i]+ "]").css('border','2px solid red');
-         } else {
-            jQuery("input[name=" + requiredFields[i]+ "]").css('border','1px solid #DFDFDF');
-         }
-      }
-   
-      if (missingFields.length > 0) {
-         errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
-      }
-      if (recurring && jQuery("input#localised-rec-end-date").val() == "" && jQuery("select#recurrence-frequency").val() != "specific") {
-         errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
-         jQuery("input#localised-rec-end-date").css('border','2px solid red');
-      } else {
-         jQuery("input#localised-rec-end-date").css('border','1px solid #DFDFDF');
-      }
-      if (errors != "") {
-         alert(errors);
-         return false;
-      }
-      return true;
-   }
-
-   jQuery('#eventForm').bind("submit", validateEventForm);
-});
 
 //]]>
 </script>
@@ -4183,6 +3848,12 @@ function eme_alert_events_page() {
 
 function eme_admin_enqueue_js(){
    global $plugin_page;
+   wp_enqueue_script('eme',EME_PLUGIN_URL."js/eme.js",array( 'jquery' ));
+   wp_enqueue_style('eme',EME_PLUGIN_URL.'events_manager.css');
+   $file_name= get_stylesheet_directory()."/eme.css";
+   if (file_exists($file_name)) {
+      wp_enqueue_style('eme2',get_stylesheet_directory_uri().'/eme.css');
+   }
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
@@ -4209,9 +3880,22 @@ function eme_admin_enqueue_js(){
             wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
       }
    }
+   if ( in_array( $plugin_page, array('eme-new_event', 'events-manager') ) ) {
+      wp_enqueue_script( 'jquery-mousewheel', EME_PLUGIN_URL.'js/jquery-mousewheel/jquery.mousewheel.min.js', array('jquery'));
+      wp_enqueue_script( 'jquery-plugin-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.plugin.min.js');
+      wp_enqueue_script( 'jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js');
+      wp_enqueue_script( 'eme-events',EME_PLUGIN_URL."js/eme_admin_events.js",array( 'jquery' ));
+      // some inline js that gets shown at the top
+      eme_admin_event_script();
+      eme_admin_event_boxes();
+   }
+   if ( in_array( $plugin_page, array('eme-options') ) ) {
+      wp_enqueue_script('eme-options',EME_PLUGIN_URL."js/eme_admin_options.js",array( 'jquery' ));
+   }
    if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager','eme-people') ) ) {
       wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
       wp_enqueue_script('datatables-clearsearch',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
+      wp_enqueue_style('jquery-datatables',EME_PLUGIN_URL.'js/jquery-datatables/css/jquery.dataTables.css');
    }
 }
 

@@ -1001,35 +1001,26 @@ function eme_create_events_submenu () {
       // Add a submenu to the custom top-level menu: 
       // edit event also needs just "add" as capability, otherwise you will not be able to edit own created events
       $plugin_page = add_submenu_page('events-manager', __('Edit'),__('Edit'),get_option('eme_cap_list_events'),'events-manager','eme_events_page');
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
+      //add_action( 'admin_head-'. $plugin_page, 'eme_admin_events_script' );
+      //add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
       $plugin_page = add_submenu_page('events-manager', __('Add new', 'eme'), __('Add new','eme'), get_option('eme_cap_add_event'), 'eme-new_event', "eme_new_event_page");
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
+      //add_action( 'admin_head-'. $plugin_page, 'eme_admin_events_script' ); 
+      //add_action( 'admin_head-'. $plugin_page, 'eme_admin_event_boxes' );
       $plugin_page = add_submenu_page('events-manager', __('Locations', 'eme'), __('Locations', 'eme'), get_option('eme_cap_add_locations'), 'eme-locations', "eme_locations_page");
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       if (get_option('eme_categories_enabled')) {
          $plugin_page = add_submenu_page('events-manager', __('Event Categories','eme'),__('Categories','eme'), get_option('eme_cap_categories'), "eme-categories", 'eme_categories_page');
-         add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       }
       $plugin_page = add_submenu_page('events-manager', __('Templates','eme'),__('Templates','eme'), get_option('eme_cap_templates'), "eme-templates", 'eme_templates_page');
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       if (get_option('eme_rsvp_enabled')) {
          $plugin_page = add_submenu_page('events-manager', __('People', 'eme'), __('People', 'eme'), get_option('eme_cap_people'), 'eme-people', "eme_people_page");
-         add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
          $plugin_page = add_submenu_page('events-manager', __('Pending Approvals', 'eme'), __('Pending Approvals', 'eme'), get_option('eme_cap_approve'), 'eme-registration-approval', "eme_registration_approval_page");
-         add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
          $plugin_page = add_submenu_page('events-manager', __('Change Registration', 'eme'), __('Change Registration', 'eme'), get_option('eme_cap_registrations'), 'eme-registration-seats', "eme_registration_seats_page");
-         add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
          if (get_option('eme_rsvp_mail_notify_is_active')) {
             $plugin_page = add_submenu_page('events-manager', __('Send Mails', 'eme'), __('Send Mails', 'eme'), get_option('eme_cap_send_mails'), 'eme-send-mails', "eme_send_mails_page");
-            add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' ); 
          }
          $plugin_page = add_submenu_page('events-manager', __('Form Fields','eme'),__('Form Fields','eme'), get_option('eme_cap_forms'), "eme-formfields", 'eme_formfields_page');
-         add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
       }
       $plugin_page = add_submenu_page('events-manager', __('Cleanup', 'eme'), __('Cleanup', 'eme'), get_option('eme_cap_cleanup'), 'eme-cleanup', "eme_cleanup_page");
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
 
       # just in case: make sure the Settings page can be reached if something is not correct with the security settings
       if (get_option('eme_cap_settings') =='')
@@ -1037,7 +1028,7 @@ function eme_create_events_submenu () {
       else
          $cap_settings=get_option('eme_cap_settings');
       $plugin_page = add_submenu_page('events-manager', __('Events Made Easy Settings','eme'),__('Settings','eme'), $cap_settings, "eme-options", 'eme_options_page');
-      add_action( 'admin_head-'. $plugin_page, 'eme_admin_general_script' );
+      //add_action( 'admin_head-'. $plugin_page, 'eme_admin_options_script' );
       // do some option checking after the options have been updated
       // add_action( 'load-'. $plugin_page, 'eme_admin_options_save');
    }

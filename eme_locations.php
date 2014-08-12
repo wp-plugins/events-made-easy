@@ -1504,7 +1504,7 @@ function eme_locations_autocomplete() {
                          }
                          return false;
                    },
-            minLength: 2
+            minLength: 1
           }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
             return jQuery( "<li></li>" )
             .append("<a>"+htmlDecode(item.name)+'<br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small></a>')

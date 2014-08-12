@@ -568,17 +568,14 @@ class EMEFS {
 	public static function registerAssets() {
 		global $emefs_config;
 
-		wp_register_script( 'jquery-ui-datepicker', EME_PLUGIN_URL.'js/jquery-ui-datepicker/ui.datepicker.js', array('jquery-ui-core'));
-		wp_register_script( 'jquery-plugin-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.plugin.min.js', array('jquery'));
+      wp_register_script( 'jquery-datepick',EME_PLUGIN_URL.'js/jquery-datepick/jquery.datepick.js',array( 'jquery' ));
+		wp_register_script( 'jquery-mousewheel', EME_PLUGIN_URL.'js/jquery-mousewheel/jquery.mousewheel.min.js', array('jquery'));
+		wp_register_script( 'jquery-plugin-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.plugin.min.js', array('jquery-mousewheel'));
 		wp_register_script( 'jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js', array('jquery-plugin-timeentry'));
 		
 		wp_register_script( 'google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
 		
-		wp_register_script( 'jquery-autocomplete-bgiframe', EME_PLUGIN_URL.'js/jquery-autocomplete/lib/jquery.bgiframe.min.js', array('jquery'));
-		wp_register_script( 'jquery-autocomplete-ajaxqueue', EME_PLUGIN_URL.'js/jquery-autocomplete/lib/jquery.ajaxQueue.js', array('jquery'));
-		wp_register_script( 'jquery-autocomplete', EME_PLUGIN_URL.'js/jquery-autocomplete/jquery.autocomplete.min.js', array('jquery', 'jquery-autocomplete-bgiframe', 'jquery-autocomplete-ajaxqueue'));
-		
-		wp_register_script( 'emefs', WP_PLUGIN_URL.'/events-made-easy-frontend-submit/emefs.js', array('jquery-ui-datepicker', 'jquery-timeentry', 'jquery-autocomplete', 'google-maps'));
+		wp_register_script( 'emefs', WP_PLUGIN_URL.'/events-made-easy-frontend-submit/emefs.js', array('jquery-datepick', 'jquery-timeentry', 'jquery-ui-autocomplete', 'google-maps'));
       	
 		$style_filename = locate_template(array(
 			'events-made-easy-frontend-submit/style.css',
@@ -595,8 +592,7 @@ class EMEFS {
 		
 		wp_register_style( 'emefs', $style_filename );
 		wp_register_style( 'emefs-internal', WP_PLUGIN_URL.'/events-made-easy-frontend-submit/templates/style.internal.css');
-		wp_register_style( 'jquery-ui-datepicker', EME_PLUGIN_URL.'js/jquery-ui-datepicker/ui.datepicker.css');
-		wp_register_style( 'jquery-autocomplete', EME_PLUGIN_URL.'js/jquery-autocomplete/jquery.autocomplete.css');
+      wp_register_style('jquery-datepick', EME_PLUGIN_URL.'js/jquery-datepick/jquery.datepick.css');
 		
 	}
 	
@@ -621,7 +617,6 @@ class EMEFS {
 			wp_enqueue_style('emefs');
 			wp_enqueue_style('emefs-internal');
 			wp_enqueue_style('jquery-ui-datepicker');
-			wp_enqueue_style('jquery-autocomplete');
 		}
 	}
 
