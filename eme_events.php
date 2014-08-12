@@ -2323,22 +2323,22 @@ function eme_event_form($event, $title, $element) {
    jQuery(document).ready( function() {
    var dateFormat = jQuery("#localised-start-date").datepick( "option", "dateFormat" );
 
-   var loc_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_start_date']); ?>);
+   var loc_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,n,j',$event['event_start_date']); ?>);
    jQuery("#localised-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_start_date));
 
-   var loc_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['event_end_date']); ?>);
+   var loc_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,n,j',$event['event_end_date']); ?>);
    jQuery("#localised-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_end_date));
    <?php if ($pref == "recurrence" && $event['recurrence_freq'] == 'specific') { ?>
       var mydates = [];
       <?php foreach (explode(',',$event['recurrence_specific_days']) as $specific_day) { ?>
-	      mydates.push(jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$specific_day); ?>));
+	      mydates.push(jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,n,j',$specific_day); ?>));
       <?php } ?>
       jQuery("#localised-rec-start-date").datepick("setDate", mydates);
    <?php } else { ?>
-      var rec_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_start_date']); ?>);
+      var rec_start_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,n,j',$event['recurrence_start_date']); ?>);
       jQuery("#localised-rec-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_start_date));
    <?php } ?>
-   var rec_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,m,d',$event['recurrence_end_date']); ?>);
+   var rec_end_date = jQuery.datepick.newDate(<?php echo eme_convert_date_format('Y,n,j',$event['recurrence_end_date']); ?>);
    jQuery("#localised-rec-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_end_date));
  });
 </script>
