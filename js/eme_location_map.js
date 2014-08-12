@@ -116,7 +116,7 @@ function loadGMap() {
                      jQuery('li#location-'+item.location_id+"_"+data.map_id+' a').click(function() {
                            infowindow.setContent(balloon_content);
                            infowindow.open(map,marker);
-                           jQuery(window).scrollTop(jQuery(divname).position().top);
+                           //jQuery(window).scrollTop(jQuery(divs[i]).position().top);
                      });
                   }
                   google.maps.event.addListener(marker, "click", function() {
