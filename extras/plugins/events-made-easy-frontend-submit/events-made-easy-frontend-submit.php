@@ -576,7 +576,6 @@ class EMEFS {
 		wp_register_script( 'google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
 		
 		wp_register_script( 'emefs', WP_PLUGIN_URL.'/events-made-easy-frontend-submit/emefs.js', array('jquery-datepick', 'jquery-timeentry', 'jquery-ui-autocomplete', 'google-maps'));
-      	
 		$style_filename = locate_template(array(
 			'events-made-easy-frontend-submit/style.css',
 			'emefs/style.css',
@@ -593,7 +592,6 @@ class EMEFS {
 		wp_register_style( 'emefs', $style_filename );
 		wp_register_style( 'emefs-internal', WP_PLUGIN_URL.'/events-made-easy-frontend-submit/templates/style.internal.css');
       wp_register_style('jquery-datepick', EME_PLUGIN_URL.'js/jquery-datepick/jquery.datepick.css');
-		
 	}
 	
 	/**
@@ -604,6 +602,21 @@ class EMEFS {
 	public static function printScripts() {
 		if (!is_admin()) {
 			wp_enqueue_script( 'emefs' );
+         // jquery ui locales are with dashes, not underscores
+         $locale_code = get_locale();
+         $locale_code = preg_replace( "/_/","-", $locale_code );
+         $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+         $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+         // for english, no translation code is needed)
+         if ($locale_code != "en-US") {
+            if (!file_exists($locale_file)) {
+               $locale_code = substr ( $locale_code, 0, 2 );
+               $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+               $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+            }
+            if (file_exists($locale_file))
+               wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
+         }
 		}
 	}
 	
@@ -616,7 +629,7 @@ class EMEFS {
 		if (!is_admin()) {
 			wp_enqueue_style('emefs');
 			wp_enqueue_style('emefs-internal');
-			wp_enqueue_style('jquery-ui-datepicker');
+			wp_enqueue_style('jquery-datepick');
 		}
 	}
 
