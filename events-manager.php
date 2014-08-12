@@ -299,7 +299,7 @@ add_filter('query_vars','eme_insertMyRewriteQueryVars');
 // (like eg. the load_textdomain). Some includes do stuff based on _GET
 // so they need the correct info before doing stuff
 include("captcha_check.php");
-include("eme_settings.php");
+include("eme_options.php");
 include("eme_functions.php");
 include("eme_filters.php");
 include("eme_events.php");

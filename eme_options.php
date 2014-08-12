@@ -347,10 +347,10 @@ function eme_admin_tabs( $current = 'homepage' ) {
                  );
     echo '<div id="icon-themes" class="icon32"><br /></div>';
     echo '<h2 class="nav-tab-wrapper">';
-    $eme_settings_url=admin_url("admin.php?page=eme-options");
+    $eme_options_url=admin_url("admin.php?page=eme-options");
     foreach( $tabs as $tab => $name ){
         $class = ( $tab == $current ) ? ' nav-tab-active' : '';
-        echo "<a class='nav-tab$class' href='$eme_settings_url&tab=$tab'>$name</a>";
+        echo "<a class='nav-tab$class' href='$eme_options_url&tab=$tab'>$name</a>";
     }
     echo '</h2>';
 }
