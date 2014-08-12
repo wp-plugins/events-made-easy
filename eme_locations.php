@@ -867,7 +867,7 @@ function eme_global_map($atts) {
       }
 
       $id_base = preg_replace("/\D/","_",microtime(1));
-      $result = "<div id='eme_global_map_$id_base' style='width: {$width}px; height: {$height}px'>map</div>";
+      $result = "<div id='eme_global_map_$id_base' class='eme_global_map' style='width: {$width}px; height: {$height}px'>map</div>";
       // get the paging output ready
       if ($paging==1) {
          $pagination_top = "<div id='locations-pagination-top'> ";
@@ -895,17 +895,16 @@ function eme_global_map($atts) {
       events_page_link = '$events_page_link';
          //-->
          </script>";
-      //$result .= "<script src='".EME_PLUGIN_URL."eme_global_map.js' type='text/javascript'></script>";
 
       // we add the list if wanted (only for "before" or "after")
       $locations = eme_get_locations((bool)$eventful,$scope,$category,$scope_offset);
-      $loc_list = "<div id='eme_div_locations_list'><ol id='eme_locations_list'>"; 
+      $loc_list = "<div id='eme_div_locations_list_$id_base' class='eme_div_locations_list'><ol id='eme_locations_list_$id_base' class='eme_locations_list'>"; 
       $firstletter="A";
       foreach($locations as $location) {
          if ($show_locations) {
             $loc_list.="<li id='location-". $location['location_id']."_$id_base".
                            "' style='list-style-type: upper-alpha'><a>".
-                           $location['location_name']."</a></li>";
+                           eme_trans_sanitize_html($location['location_name'])."</a></li>";
          }
          if ($show_events) {
             $events = eme_get_events(0,$scope,"ASC",$scope_offset,$location['location_id'], $category);
@@ -914,11 +913,11 @@ function eme_global_map($atts) {
                if ($show_locations)
                   $loc_list.="<li id='location-". $location['location_id']."_$id_base".
                            "' style='list-style-type: none'>- <a>".
-                           $event['event_name']."</a></li>";
+                           eme_trans_sanitize_html($event['event_name'])."</a></li>";
                else
                   $loc_list.="<li id='location-". $location['location_id']."_$id_base".
                            "' style='list-style-type: none'>$firstletter. <a>".
-                           $event['event_name']."</a></li>";
+                           eme_trans_sanitize_html($event['event_name'])."</a></li>";
             }
             $loc_list.= "</ol>"; 
          }

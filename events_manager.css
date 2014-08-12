@@ -143,15 +143,15 @@ div#eme-admin-location-map {
    margin-right: 8px;
 }
 /* for google maps to work ok in IE, we need at least 690px as max-width for the images */
-#eme_global_map img,
+.eme_global_map img,
 .eme-location-map img {
 	max-width: none !important;
 	background: none !important;
 }
-.eme_events_list, #eme_locations_list {
+.eme_events_list, .eme_locations_list {
    clear:both;
 }
-#eme_locations_list li {
+.eme_locations_list li {
    cursor:default;
 }
 
