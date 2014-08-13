@@ -3892,6 +3892,9 @@ function eme_admin_enqueue_js(){
    if ( in_array( $plugin_page, array('eme-options') ) ) {
       wp_enqueue_script('eme-options',EME_PLUGIN_URL."js/eme_admin_options.js",array( 'jquery' ));
    }
+   if ( in_array( $plugin_page, array('eme-send-mails') ) ) {
+      wp_enqueue_script('eme-options',EME_PLUGIN_URL."js/eme_admin_send_mails.js",array( 'jquery' ));
+   }
    if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager','eme-people') ) ) {
       wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
       wp_enqueue_script('datatables-clearsearch',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");

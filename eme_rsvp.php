@@ -1954,7 +1954,7 @@ function eme_email_rsvp_booking($booking_id,$action="") {
    $contact = eme_get_contact ($event);
    $contact_email = $contact->user_email;
    $contact_name = $contact->display_name;
-   $mail_type=get_option('eme_rsvp_send_html')?"html":"text";
+   $mail_text_html=get_option('eme_rsvp_send_html')?"html":"text";
    
    $confirmed_subject = get_option('eme_respondent_email_subject' );
    $confirmed_subject = eme_replace_placeholders($confirmed_subject, $event, "text",0,$booking['lang']);
@@ -1965,8 +1965,8 @@ function eme_email_rsvp_booking($booking_id,$action="") {
       $confirmed_body = eme_get_template_format($event['event_properties']['event_respondent_email_body_tpl']);
    else
       $confirmed_body = get_option('eme_respondent_email_body' );
-   $confirmed_body = eme_replace_placeholders($confirmed_body, $event, $mail_type,0,$booking['lang']);
-   $confirmed_body = eme_replace_booking_placeholders($confirmed_body, $event, $booking, $mail_type,$booking['lang']);
+   $confirmed_body = eme_replace_placeholders($confirmed_body, $event, $mail_text_html,0,$booking['lang']);
+   $confirmed_body = eme_replace_booking_placeholders($confirmed_body, $event, $booking, $mail_text_html,$booking['lang']);
    $pending_subject = get_option('eme_registration_pending_email_subject' );
    $pending_subject = eme_replace_placeholders($pending_subject, $event, "text",0,$booking['lang']);
    $pending_subject = eme_replace_booking_placeholders($pending_subject, $event, $booking, "text",$booking['lang']);
@@ -1977,14 +1977,14 @@ function eme_email_rsvp_booking($booking_id,$action="") {
       $pending_body = eme_get_template_format($event['event_properties']['event_registration_pending_email_body_tpl']);
    else
       $pending_body = get_option('eme_registration_pending_email_body' );
-   $pending_body = eme_replace_placeholders($pending_body, $event, $mail_type,0,$booking['lang']);
-   $pending_body = eme_replace_booking_placeholders($pending_body, $event, $booking, $mail_type,$booking['lang']);
+   $pending_body = eme_replace_placeholders($pending_body, $event, $mail_text_html,0,$booking['lang']);
+   $pending_body = eme_replace_booking_placeholders($pending_body, $event, $booking, $mail_text_html,$booking['lang']);
    $denied_subject = get_option('eme_registration_denied_email_subject' );
    $denied_subject = eme_replace_placeholders($denied_subject, $event, "text",0,$booking['lang']);
    $denied_subject = eme_replace_booking_placeholders($denied_subject, $event, $booking, "text",$booking['lang']);
    $denied_body = get_option('eme_registration_denied_email_body' );
-   $denied_body = eme_replace_placeholders($denied_body, $event, $mail_type,0,$booking['lang']);
-   $denied_body = eme_replace_booking_placeholders($denied_body, $event, $booking, $mail_type,$booking['lang']);
+   $denied_body = eme_replace_placeholders($denied_body, $event, $mail_text_html,0,$booking['lang']);
+   $denied_body = eme_replace_booking_placeholders($denied_body, $event, $booking, $mail_text_html,$booking['lang']);
    $updated_subject = get_option('eme_registration_updated_email_subject' );
    $updated_subject = eme_replace_placeholders($updated_subject, $event, "text",0,$booking['lang']);
    $updated_subject = eme_replace_booking_placeholders($updated_subject, $event, $booking, "text",$booking['lang']);
@@ -1994,14 +1994,14 @@ function eme_email_rsvp_booking($booking_id,$action="") {
       $updated_body = eme_get_template_format($event['event_properties']['event_registration_updated_email_body_tpl']);
    else
       $updated_body = get_option('eme_registration_updated_email_body' );
-   $updated_body = eme_replace_placeholders($updated_body, $event, $mail_type,0,$booking['lang']);
-   $updated_body = eme_replace_booking_placeholders($updated_body, $event, $booking, $mail_type,$booking['lang']);
+   $updated_body = eme_replace_placeholders($updated_body, $event, $mail_text_html,0,$booking['lang']);
+   $updated_body = eme_replace_booking_placeholders($updated_body, $event, $booking, $mail_text_html,$booking['lang']);
    $cancelled_subject = get_option('eme_registration_cancelled_email_subject' );
    $cancelled_subject = eme_replace_placeholders($cancelled_subject, $event, "text",0,$booking['lang']);
    $cancelled_subject = eme_replace_booking_placeholders($cancelled_subject, $event, $booking, "text",$booking['lang']);
    $cancelled_body = get_option('eme_registration_cancelled_email_body' );
-   $cancelled_body = eme_replace_placeholders($cancelled_body, $event, $mail_type,0,$booking['lang']);
-   $cancelled_body = eme_replace_booking_placeholders($cancelled_body, $event, $booking, $mail_type,$booking['lang']);
+   $cancelled_body = eme_replace_placeholders($cancelled_body, $event, $mail_text_html,0,$booking['lang']);
+   $cancelled_body = eme_replace_booking_placeholders($cancelled_body, $event, $booking, $mail_text_html,$booking['lang']);
 
    $contact_subject = get_option('eme_contactperson_email_subject' );
    $contact_subject = eme_replace_placeholders($contact_subject, $event, "text",0);
@@ -2012,20 +2012,20 @@ function eme_email_rsvp_booking($booking_id,$action="") {
       $contact_body = eme_get_template_format($event['event_properties']['event_contactperson_email_body_tpl']);
    else
       $contact_body = get_option('eme_contactperson_email_body' );
-   $contact_body = eme_replace_placeholders($contact_body, $event, $mail_type,0);
-   $contact_body = eme_replace_booking_placeholders($contact_body, $event, $booking, $mail_type);
+   $contact_body = eme_replace_placeholders($contact_body, $event, $mail_text_html,0);
+   $contact_body = eme_replace_booking_placeholders($contact_body, $event, $booking, $mail_text_html);
    $contact_cancelled_subject = get_option('eme_contactperson_cancelled_email_subject' );
    $contact_cancelled_subject = eme_replace_placeholders($contact_cancelled_subject, $event, "text",0,$booking['lang']);
    $contact_cancelled_subject = eme_replace_booking_placeholders($contact_cancelled_subject, $event, $booking, "text",$booking['lang']);
    $contact_cancelled_body = get_option('eme_contactperson_cancelled_email_body' );
-   $contact_cancelled_body = eme_replace_placeholders($contact_cancelled_body, $event, $mail_type,0,$booking['lang']);
-   $contact_cancelled_body = eme_replace_booking_placeholders($contact_cancelled_body, $event, $booking, $mail_type,$booking['lang']);
+   $contact_cancelled_body = eme_replace_placeholders($contact_cancelled_body, $event, $mail_text_html,0,$booking['lang']);
+   $contact_cancelled_body = eme_replace_booking_placeholders($contact_cancelled_body, $event, $booking, $mail_text_html,$booking['lang']);
    $contact_pending_subject = get_option('eme_contactperson_pending_email_subject' );
    $contact_pending_subject = eme_replace_placeholders($contact_pending_subject, $event, "text",0,$booking['lang']);
    $contact_pending_subject = eme_replace_booking_placeholders($contact_pending_subject, $event, $booking, "text",$booking['lang']);
    $contact_pending_body = get_option('eme_contactperson_pending_email_body' );
-   $contact_pending_body = eme_replace_placeholders($contact_pending_body, $event, $mail_type,0,$booking['lang']);
-   $contact_pending_body = eme_replace_booking_placeholders($contact_pending_body, $event, $booking, $mail_type,$booking['lang']);
+   $contact_pending_body = eme_replace_placeholders($contact_pending_body, $event, $mail_text_html,0,$booking['lang']);
+   $contact_pending_body = eme_replace_booking_placeholders($contact_pending_body, $event, $booking, $mail_text_html,$booking['lang']);
 
    // possible translations are handled last 
    $contact_body = eme_translate($contact_body); 
@@ -2511,7 +2511,7 @@ function eme_send_mails_page() {
    if (!$onchange && $event_id>0 && $action == 'send_mail') {
       $pending_approved = isset($_POST ['pending_approved']) ? $_POST ['pending_approved'] : 0;
       $only_unpayed = isset($_POST ['only_unpayed']) ? $_POST ['only_unpayed'] : 0;
-      $target = isset($_POST ['target']) ? $_POST ['target'] : 'attendees';
+      $eme_mail_type = isset($_POST ['eme_mail_type']) ? $_POST ['eme_mail_type'] : 'attendees';
 	   if (empty($subject) || empty($message)) {
 		   print "<div id='message' class='error'><p>".__('Please enter both subject and message for the mail to be sent.','eme')."</p></div>";
 	   } else {
@@ -2524,45 +2524,45 @@ function eme_send_mails_page() {
 			   $contact = eme_get_contact ($event);
 			   $contact_email = $contact->user_email;
 			   $contact_name = $contact->display_name;
-            $mail_type=get_option('eme_rsvp_send_html')?"html":"text";
+            $mail_text_html=get_option('eme_rsvp_send_html')?"html":"text";
 
-            if ($target == 'attendees') {
+            if ($eme_mail_type == 'attendees') {
                $attendees = eme_get_attendees_for($event_id,$pending_approved,$only_unpayed);
                foreach ( $attendees as $attendee ) {
                   $tmp_subject = eme_replace_placeholders($subject, $event, "text",0,$attendee['lang']);
-                  $tmp_message = eme_replace_placeholders($message, $event, $mail_type,0,$attendee['lang']);
+                  $tmp_message = eme_replace_placeholders($message, $event, $mail_text_html,0,$attendee['lang']);
                   $tmp_subject = eme_replace_attendees_placeholders($tmp_subject, $event, $attendee, "text",0,$attendee['lang']);
-                  $tmp_message = eme_replace_attendees_placeholders($tmp_message, $event, $attendee, $mail_type,0,$attendee['lang']);
+                  $tmp_message = eme_replace_attendees_placeholders($tmp_message, $event, $attendee, $mail_text_html,0,$attendee['lang']);
                   $tmp_subject = eme_translate($tmp_subject,$attendee['lang']);
                   $tmp_message = eme_translate($tmp_message,$attendee['lang']);
                   eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
                }
-            } elseif ($target == 'bookings') {
+            } elseif ($eme_mail_type == 'bookings') {
                $bookings = eme_get_bookings_for($event_id,$pending_approved,$only_unpayed);
                foreach ( $bookings as $booking ) {
                   $tmp_subject = eme_replace_placeholders($subject, $event, "text",0,$booking['lang']);
-                  $tmp_message = eme_replace_placeholders($message, $event, $mail_type,0,$booking['lang']);
+                  $tmp_message = eme_replace_placeholders($message, $event, $mail_text_html,0,$booking['lang']);
                   $attendee = eme_get_person($booking['person_id']);
                   if ($attendee && is_array($attendee)) {
                      $tmp_subject = eme_replace_booking_placeholders($subject, $event, $booking, "text",0,$booking['lang']);
-                     $tmp_message = eme_replace_booking_placeholders($message, $event, $booking, $mail_type,0,$booking['lang']);
+                     $tmp_message = eme_replace_booking_placeholders($message, $event, $booking, $mail_text_html,0,$booking['lang']);
                      $tmp_subject = eme_translate($tmp_subject,$booking['lang']);
                      $tmp_message = eme_translate($tmp_message,$booking['lang']);
                      eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
                   }
                }
-            } elseif ($target == 'all_wp') {
+            } elseif ($eme_mail_type == 'all_wp') {
                $wp_users = get_users();
                $subject = eme_replace_placeholders($subject, $event, "text");
-               $message = eme_replace_placeholders($message, $event, $mail_type);
+               $message = eme_replace_placeholders($message, $event, $mail_text_html);
                foreach ( $wp_users as $wp_user ) {
                   eme_send_mail($subject,$message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
                }
-            } elseif ($target == 'all_wp_not_registered') {
+            } elseif ($eme_mail_type == 'all_wp_not_registered') {
                $wp_users = get_users();
                $attendee_wp_ids = eme_get_wp_ids_for($event_id);
                $subject = eme_replace_placeholders($subject, $event, "text");
-               $message = eme_replace_placeholders($message, $event, $mail_type);
+               $message = eme_replace_placeholders($message, $event, $mail_text_html);
                foreach ( $wp_users as $wp_user ) {
                   if (!in_array($wp_user->ID,$attendee_wp_ids))
                      eme_send_mail($subject,$message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
@@ -2626,7 +2626,8 @@ function eme_send_mail_form($event_id=0) {
       <tr>
 	   <td><label><?php _e('Select the type of mail','eme'); ?></td>
       <td>
-           <select name="target">
+           <select name="eme_mail_type" required='required'>
+           <option value=''></option>
            <option value='attendees'><?php _e('Attendee mails','eme'); ?></option>
            <option value='bookings'><?php _e('Booking mails','eme'); ?></option>
            <option value='all_wp'><?php _e('Mail to all WP users','eme'); ?></option>
@@ -2634,7 +2635,7 @@ function eme_send_mail_form($event_id=0) {
            </select>
       </td>
       </tr>
-      <tr>
+      <tr id="eme_pending_approved_row">
 	   <td><label><?php _e('Select your target audience','eme'); ?></td>
       <td>
            <select name="pending_approved">
@@ -2644,7 +2645,7 @@ function eme_send_mail_form($event_id=0) {
            </select></p><p>
       </td>
       </tr>
-      <tr>
+      <tr id="eme_only_unpayed_row">
       <td><?php _e('Only send mails to attendees who did not pay yet','eme'); ?>&nbsp;</td>
       <td>
            <input type="checkbox" name="only_unpayed" value="1" />
