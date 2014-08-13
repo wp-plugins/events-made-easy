@@ -1632,7 +1632,8 @@ function eme_get_attendees_for($event_id,$pending_approved=0,$only_unpayed=0) {
 }
 
 function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,$template_id_footer=0) {
-   $attendees = eme_get_attendees_for($event['event_id']);
+   $ignore_pending=get_option('eme_attendees_list_ignore_pending');
+   $attendees = eme_get_attendees_for($event['event_id'],$ignore_pending);
    $format=get_option('eme_attendees_list_format');
    $eme_format_header="<ul class='eme_bookings_list_ul'>";
    $eme_format_footer="</ul>";
@@ -1671,8 +1672,8 @@ function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,
 }
 
 function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$template_id_footer=0) {
-   global $wpdb; 
-   $bookings=eme_get_bookings_for($event['event_id']);
+   $ignore_pending=get_option('eme_bookings_list_ignore_pending');
+   $bookings=eme_get_bookings_for($event['event_id'],$ignore_pending);
    $format=get_option('eme_bookings_list_format');
    $eme_format_header=get_option('eme_bookings_list_header_format');
    $eme_format_footer=get_option('eme_bookings_list_footer_format');

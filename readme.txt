@@ -83,6 +83,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: mail subjects for the contact person can now also be changed in the settings
 * Feature: you can now select multiple categories in the widget. Multiple selected categories will be OR'd together (see the events placeholder)
 * Feature: added new filter eme_event_preupdate_filter, taking place just before the event is updated in the DB (the update companion of eme_event_preinsert_filter)
+* Feature: added a global option to ignore pending users when using the #_ATTENDEES or #_BOOKINGS placeholders.
 * Improvement: better image selection code for the featured image (since WP doesn't play nice with the 'insert from url', I needed to remove this)
 * Improvement: show the compact bookings table only when not editing a recurrence
 * Bugfix: eme_locations shortcode wasn't showing anything for option eventful=1
