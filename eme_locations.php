@@ -949,7 +949,7 @@ function eme_display_single_location($location_id,$template_id=0) {
    if ($template_id) {
       $single_location_format= eme_get_template_format($template_id);
    } else {
-      $single_location_format = get_option('eme_location_list_format_item');
+      $single_location_format = get_option('eme_single_location_format');
    }
    $page_body = eme_replace_locations_placeholders ($single_location_format, $location);
    return $page_body;

@@ -93,6 +93,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: take into account lonely CR's when creating the javascript balloon text
 * Bugfix: when updating an event, the end time was not allowed to be equal to the start time
 * Bugfix: corrected contact_person as option for eme_rss_link (and documented it)
+* Bugfix: the shortcode eme_location used the wrong default format (should be the one specified in the settings called "Default single location page format")
 
 = 1.4.6 =
 * Feature: added an option to hide past events (on a day-basis, not hour) in the calendar
