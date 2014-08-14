@@ -257,6 +257,7 @@ function eme_csv_booking_report($event_id) {
    $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $out = fopen('php://output', 'w');
    $line=array();
+   $line[]=__('ID', 'eme');
    $line[]=__('Name', 'eme');
    $line[]=__('E-mail', 'eme');
    $line[]=__('Phone number', 'eme');
@@ -265,18 +266,24 @@ function eme_csv_booking_report($event_id) {
    else
       $line[]=__('Seats', 'eme');
    $line[]=__('Paid', 'eme');
+   $line[]=__('Booking date','eme');
+   $line[]=__('Total price','eme');
+   $line[]=__('Unique nbr','eme');
    $line[]=__('Comment', 'eme');
    foreach($answer_columns as $col) {
       $line[]=$col['field_name'];
    }
    fputcsv2($out,$line);
    foreach($bookings as $booking) {
+      $localised_booking_date = eme_localised_date($booking['creation_date']);
+      $localised_booking_time = eme_localised_time($booking['creation_date']);
       $person = eme_get_person ($booking['person_id']);
       $line=array();
       $pending_string="";
       if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
          $pending_string=__('(pending)','eme');
       }
+      $line[]=$booking['booking_id'];
       $line[]=$person['person_name'];
       $line[]=$person['person_email'];
       $line[]=$person['person_phone'];
@@ -289,6 +296,9 @@ function eme_csv_booking_report($event_id) {
          $line[]=$booking['booking_seats']." ".$pending_string;
       }
       $line[]=$booking['booking_payed']? __('Yes'): __('No');
+      $line[]=$localised_booking_date." ".$localised_booking_time;
+      $line[]=eme_get_total_booking_price($event,$booking);
+      $line[]=$booking['transfer_nbr_be97'];
       $line[]=$booking['booking_comment'];
       $answers = eme_get_answers($booking['booking_id']);
       foreach($answer_columns as $col) {
@@ -363,14 +373,18 @@ function eme_printable_booking_report($event_id) {
          <h2><?php _e('Bookings data', 'eme');?></h2>
          <table id="eme_printable_table">
             <tr>
+               <th scope='col' class='eme_print_name'><?php _e('ID', 'eme')?></th>
                <th scope='col' class='eme_print_name'><?php _e('Name', 'eme')?></th>
                <th scope='col' class='eme_print_email'><?php _e('E-mail', 'eme')?></th>
                <th scope='col' class='eme_print_phone'><?php _e('Phone number', 'eme')?></th> 
                <th scope='col' class='eme_print_seats'><?php if ($is_multiprice) _e('Seats (Multiprice)', 'eme'); else _e('Seats', 'eme'); ?></th>
                <th scope='col' class='eme_print_paid'><?php _e('Paid', 'eme')?></th>
+               <th scope='col' class='eme_print_booking_date'><?php _e('Booking date', 'eme')?></th>
+               <th scope='col' class='eme_print_total_price'><?php _e('Total price', 'eme')?></th>
+               <th scope='col' class='eme_print_unique_nbr'><?php _e('Unique nbr', 'eme')?></th>
                <th scope='col' class='eme_print_comment'><?php _e('Comment', 'eme')?></th> 
             <?php
-            $nbr_columns=6;
+            $nbr_columns=10;
             foreach($answer_columns as $col) {
                $class="eme_print_formfield".$formfield[$col['field_name']];
                print "<th scope='col' class='$class'>".$col['field_name']."</th>";
@@ -380,6 +394,8 @@ function eme_printable_booking_report($event_id) {
             </tr>
             <?php
             foreach($bookings as $booking) {
+               $localised_booking_date = eme_localised_date($booking['creation_date']);
+               $localised_booking_time = eme_localised_time($booking['creation_date']);
                $person = eme_get_person ($booking['person_id']);
                $pending_string="";
                if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {
@@ -387,6 +403,7 @@ function eme_printable_booking_report($event_id) {
                }
                 ?>
             <tr>
+               <td class='eme_print_id'><?php echo $booking['booking_id']?></td> 
                <td class='eme_print_name'><?php echo $person['person_name']?></td> 
                <td class='eme_print_email'><?php echo $person['person_email']?></td>
                <td class='eme_print_phone'><?php echo $person['person_phone']?></td>
@@ -402,6 +419,9 @@ function eme_printable_booking_report($event_id) {
                ?>
                </td>
                <td class='eme_print_paid'><?php if ($booking['booking_payed']) _e('Yes'); else _e('No'); ?></td>
+               <td class='eme_print_booking_date'><?php echo $localised_booking_date." ".$localised_booking_time; ?></td>
+               <td class='eme_print_total_price'><?php echo eme_get_total_booking_price($event,$booking); ?></td>
+               <td class='eme_print_unique_nbr'><?php echo $booking['transfer_nbr_be97']; ?></td>
                <td class='eme_print_comment'><?=$booking['booking_comment'] ?></td> 
                <?php
                   $answers = eme_get_answers($booking['booking_id']);
