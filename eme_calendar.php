@@ -10,7 +10,8 @@ function eme_get_calendar_shortcode($atts) {
          'long_events' => 0,
          'author' => '',
          'contact_person' => '',
-         'location_id' => ''
+         'location_id' => '',
+         'template_id' => 0
       ), $atts)); 
    $echo = ($echo==="true" || $echo==="1") ? true : $echo;
    $full = ($full==="true" || $full==="1") ? true : $full;
@@ -57,10 +58,9 @@ function eme_get_calendar_shortcode($atts) {
       }
    }
 
-   $result = eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}&notcategory={$notcategory}");
+   $result = eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}&notcategory={$notcategory}&template_id={$template_id}");
    return $result;
 }
-add_shortcode('events_calendar', 'eme_get_calendar_shortcode');
 
 function eme_get_calendar($args="") {
    global $wp_locale;
@@ -79,7 +79,8 @@ function eme_get_calendar($args="") {
       'long_events' => 0,
       'author' => '',
       'contact_person' => '',
-      'location_id' => ''
+      'location_id' => '',
+      'template_id' => 0
    );
    $r = wp_parse_args( $args, $defaults );
    extract( $r );
@@ -95,251 +96,88 @@ function eme_get_calendar($args="") {
 
    if (get_option('eme_use_client_clock')) {
       // these come from client unless their clock is wrong
-      $curr_day= (int) $_SESSION['eme_client_mday'];
-      $curr_month= (int) $_SESSION['eme_client_month'];
-      $curr_year= (int) $_SESSION['eme_client_fullyear'];
+      $iNowDay= sprintf("%02d",$_SESSION['eme_client_mday']);
+      $iNowMonth= sprintf("%02d",$_SESSION['eme_client_month']);
+      $iNowYear= sprintf("%04d",$_SESSION['eme_client_fullyear']);
    } else {
-      $curr_day= (int) date('j');
-      $curr_month= (int) date('m');
-      $curr_year= (int) date('Y');
+      // Get current year, month and day
+      list($iNowYear, $iNowMonth, $iNowDay) = explode('-', date('Y-m-d'));
    }
-   if ($month == '') $month = $curr_month;
-   if ($year == '') $year = $curr_year;
-   // let's get the day of the month, based on choosen month/year AND current day
-   $date = mktime(0,0,0, (int) $month, (int) $curr_day, (int) $year); 
-   $day = date('d', $date); 
 
+   $iSelectedYear = $year;
+   $iSelectedMonth = $month;
+   if ($iSelectedMonth == '') $iSelectedMonth = $iNowMonth;
+   if ($iSelectedYear == '') $iSelectedYear = $iNowYear;
+   $iSelectedMonth = sprintf("%02d",$iSelectedMonth);
+
+   // Get name and number of days of specified month
+   $iTimestamp = mktime(0, 0, 0, $iSelectedMonth, 1, $iSelectedYear);
+   list($sMonthName, $iDaysInMonth) = explode('-', date('F-t', $iTimestamp));
    // Get friendly month name
    if ($full) {
-      $month_name = date_i18n('F', strtotime("$year-$month-$day"));
+      list($sMonthName, $iDaysInMonth) = explode('-', date_i18n('F-t', $iTimestamp));
    } else {
-      $month_name = date_i18n('M', strtotime("$year-$month-$day"));
+      list($sMonthName, $iDaysInMonth) = explode('-', date_i18n('M-t', $iTimestamp));
    }
-
    // take into account some locale info: some always best show full month name, some show month after year, some have a year suffix
    $locale_code = substr ( get_locale (), 0, 2 );
    $showMonthAfterYear=0;
    $yearSuffix="";
    switch($locale_code) { 
       case "hu": $showMonthAfterYear=1;break;
-      case "ja": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
-      case "ko": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="년";break;
-      case "zh": $showMonthAfterYear=1;$month_name = date_i18n('F', strtotime("$year-$month-$day"));$yearSuffix="年";break;
+      case "ja": $showMonthAfterYear=1;$sMonthName = date_i18n('F', $iTimestamp);$yearSuffix="年";break;
+      case "ko": $showMonthAfterYear=1;$sMonthName = date_i18n('F', $iTimestamp);$yearSuffix="년";break;
+      case "zh": $showMonthAfterYear=1;$sMonthName = date_i18n('F', $iTimestamp);$yearSuffix="年";break;
    }
    if ($showMonthAfterYear)
-         $cal_datestring="$year$yearSuffix $month_name";
+         $cal_datestring="$iSelectedYear$yearSuffix $sMonthName";
    else
-         $cal_datestring="$month_name $year$yearSuffix";
+         $cal_datestring="$sMonthName $iSelectedYear$yearSuffix";
 
-   // Get the first day of the month 
-   $month_start = mktime(0,0,0, (int) $month, 1, (int) $year);
-   // Determine day of the week the month starts on.
-   $month_start_day = date('D', $month_start);
-
-   switch($month_start_day){ 
-      case "Sun": $offset = 0; break; 
-      case "Mon": $offset = 1; break; 
-      case "Tue": $offset = 2; break; 
-      case "Wed": $offset = 3; break; 
-      case "Thu": $offset = 4; break; 
-      case "Fri": $offset = 5; break; 
-      case "Sat": $offset = 6; break;
+   // Get previous year and month
+   $iPrevYear = $iSelectedYear;
+   $iPrevMonth = $iSelectedMonth - 1;
+   if ($iPrevMonth <= 0) {
+	   $iPrevYear--;
+	   $iPrevMonth = 12; // set to December
    }
+   $iPrevMonth = sprintf("%02d",$iPrevMonth);
 
-   $offset -= $start_of_week;
-   if($offset<0)
-      $offset += 7;
-   
-   // determine how many days are in the last month. 
-   if($month == 1) { 
-      $num_days_last = eme_days_in_month(12, ($year -1)); 
-   } else { 
-     $num_days_last = eme_days_in_month(($month-1), $year); 
+   // Get next year and month
+   $iNextYear = $iSelectedYear;
+   $iNextMonth = $iSelectedMonth + 1;
+   if ($iNextMonth > 12) {
+	   $iNextYear++;
+	   $iNextMonth = 1;
    }
-   // determine how many days are in the current month. 
-   $num_days_current = eme_days_in_month($month, $year);
-   // Build an array for the current days 
-   // in the month 
-   for($i = 1; $i <= $num_days_current; $i++){ 
-      $num_days_array[] = $i; 
-   }
-   // Build an array for the number of days 
-   // in last month 
-   for($i = 1; $i <= $num_days_last; $i++){ 
-       $num_days_last_array[] = $i; 
-   }
-   // If the $offset from the starting day of the 
-   // week happens to be Sunday, $offset would be 0, 
-   // so don't need an offset correction. 
+   $iNextMonth = sprintf("%02d",$iNextMonth);
 
-   if($offset > 0){ 
-       $offset_correction = array_slice($num_days_last_array, -$offset, $offset); 
-       $new_count = array_merge($offset_correction, $num_days_array); 
-       $offset_count = count($offset_correction); 
-   } 
+   // Get number of days of previous month
+   $iPrevDaysInMonth = (int)date('t', mktime(0, 0, 0, $iPrevMonth, $iNowDay, $iPrevYear));
 
-   // The else statement is to prevent building the $offset array. 
-   else { 
-       $offset_count = 0; 
-       $new_count = $num_days_array;
-   }
-   // count how many days we have with the two 
-   // previous arrays merged together 
-   $current_num = count($new_count); 
+   // Get numeric representation of the day of the week of the first day of specified (current) month
+   // remember: first day of week is a Sunday
+   // if you want the day of the week to begin on Monday: start_of_week=1, Tuesday: start_of_week=2, etc ...
+   // So, if e.g. the month starts on a Sunday and start_of_week=1 (Monday), then $iFirstDayDow is 6
+   $iFirstDayDow = (int)date('w', mktime(0, 0, 0, $iSelectedMonth, 1, $iSelectedYear)) - $start_of_week;
+   if ($iFirstDayDow<0) $iFirstDayDow+=7;
 
-   // Since we will have 5 HTML table rows (TR) 
-   // with 7 table data entries (TD) 
-   // we need to fill in 35 TDs 
-   // so, we will have to figure out 
-   // how many days to appened to the end 
-   // of the final array to make it 35 days. 
+   // On what day the previous month begins
+   $iPrevShowFrom = $iPrevDaysInMonth - $iFirstDayDow + 1;
 
-   if($current_num > 35){ 
-      $num_weeks = 6; 
-      $outset = (42 - $current_num); 
-   } elseif($current_num < 35){ 
-      $num_weeks = 5; 
-      $outset = (35 - $current_num); 
-   } 
-   if($current_num == 35){ 
-      $num_weeks = 5; 
-      $outset = 0; 
-   } 
-   // Outset Correction 
-   for($i = 1; $i <= $outset; $i++){ 
-      $new_count[] = $i; 
-   }
-   // Now let's "chunk" the $all_days array 
-   // into weeks. Each week has 7 days 
-   // so we will array_chunk it into 7 days. 
-   $weeks = array_chunk($new_count, 7); 
-
-   // the real links are created via jquery when clicking on the prev-month or next-month class-links
-   $previous_link = "<a class='prev-month' href=\"#\">&lt;&lt;</a>"; 
-   $next_link = "<a class='next-month' href=\"#\">&gt;&gt;</a>";
-
-   $random = (rand(100,200));
-   $full ? $class = 'eme-calendar-full' : $class='eme-calendar';
-   $calendar="<div class='$class' id='eme-calendar-$random'>";
-   
-   $weekdays = array(__('Sunday'),__('Monday'),__('Tuesday'),__('Wednesday'),__('Thursday'),__('Friday'),__('Saturday'));
-   $n = 0 ;
-   while( $n < $start_of_week ) {
-      $last_day = array_shift($weekdays);
-      $weekdays[]= $last_day; 
-      $n++;
-   }
-
-   $days_initials = "";
-   foreach($weekdays as $weekday) {
-      if ($full)
-         $days_initials .= "<td>".$wp_locale->get_weekday_abbrev($weekday)."</td>";
-      else
-         $days_initials .= "<td>".$wp_locale->get_weekday_initial($weekday)."</td>";
-   } 
-
-   if ($full) {
-      $fullclass = 'fullcalendar';
-      $head = "<td class='month_name' colspan='7'>$previous_link $next_link $cal_datestring</td>\n";
-   } else {
-      $fullclass='';
-      $head = "<td>$previous_link</td><td class='month_name' colspan='5'>$cal_datestring</td><td>$next_link</td>\n";
-   }
-   // Build the heading portion of the calendar table
-   $calendar .=  "<table class='eme-calendar-table $fullclass'>\n".
-                 "<thead>\n<tr>\n".$head."</tr>\n</thead>\n".
-                 "<tr class='days-names'>\n".$days_initials."</tr>\n";
-
-   // Now we break each key of the array
-   // into a week and create a new table row for each 
-   // week with the days of that week in the table data 
-
-   $i = 0; 
-   foreach ($weeks as $week) { 
-      $calendar .= "<tr>\n"; 
-      foreach ($week as $d) { 
-         if ($i < $offset_count) { //if it is PREVIOUS month
-            $t_month = date('m',strtotime("previous month"));
-            $t_year = date('Y',strtotime("previous month"));
-            $text_dayofweek=date('D', strtotime("$t_year-$t_month-$d"));
-            $calendar .= "<td class='$text_dayofweek eventless-pre'>$d</td>\n"; 
-         }
-         if (($i >= $offset_count) && ($i < ($num_weeks * 7) - $outset)) {
-            // if it is THIS month
-            $text_dayofweek=date('D', strtotime("$year-$month-$d"));
-            if($d == $curr_day && $month == $curr_month && $year == $curr_year) {
-               $calendar .= "<td class='$text_dayofweek eventless-today'>$d</td>\n"; 
-            } else { 
-               $calendar .= "<td class='$text_dayofweek eventless'>$d</td>\n"; 
-            } 
-         } elseif(($outset > 0)) {
-            //if it is NEXT month
-            $t_month = date('m',strtotime("next month"));
-            $t_year = date('Y',strtotime("next month"));
-            $text_dayofweek=date('D', strtotime("$t_year-$t_month-$d"));
-            if(($i >= ($num_weeks * 7) - $outset)) { 
-               $calendar .= "<td class='$text_dayofweek eventless-post'>$d</td>\n"; 
-            } 
-         } 
-         $i++; 
-      } 
-      $calendar .= "</tr>\n";
-   } 
-   
-   $calendar .= " </table>\n</div>";
-
-   // calc prev/next month/year
-   if ($month == 1) {
-      $month_pre=12;
-      $month_post=2;
-      $year_pre=$year-1;
-      $year_post=$year;
-   } elseif($month == 12) {
-      $month_pre=11;
-      $month_post=1;
-      $year_pre=$year;
-      $year_post=$year+1;
-   } else {
-      $month_pre=$month-1;
-      $month_post=$month+1;
-      $year_pre=$year;
-      $year_post=$year;
-   }
-
-   // we generate the onclick javascript per calendar div
-   // this is important if more than one calendar exists on the page
-   $calendar .= "<script type='text/javascript'>
-         \$j_eme_calendar=jQuery.noConflict();
-         \$j_eme_calendar('#eme-calendar-".$random." a.prev-month').click(function(e){
-            e.preventDefault();
-            tableDiv = \$j_eme_calendar('#eme-calendar-".$random."');
-            loadCalendar(tableDiv, '$full', '$long_events','$month_pre','$year_pre','$category','$author','$contact_person','$location_id','$notcategory');
-         } );
-         \$j_eme_calendar('#eme-calendar-".$random." a.next-month').click(function(e){
-            e.preventDefault();
-            tableDiv = \$j_eme_calendar('#eme-calendar-".$random."');
-            loadCalendar(tableDiv, '$full', '$long_events','$month_post','$year_post','$category','$author','$contact_person','$location_id','$notcategory');
-         } );
-         </script>";
-   
-   // we'll look for events in the requested month and 7 days before and after
-   $number_of_days_pre=eme_days_in_month($month_pre, $year_pre);
-   $limit_pre=date("Y-m-d", mktime(0,0,0, (int) $month_pre, $number_of_days_pre-7 , (int) $year_pre));
-   $limit_post=date("Y-m-d", mktime(0,0,0, (int) $month_post, 7 , (int) $year_post));
-   $events = eme_get_events(0, "$limit_pre--$limit_post", "ASC", 0, $location_id, $category , $author , $contact_person, 1, $notcategory );
-
-
-//----- DEBUG ------------
-//foreach($events as $event) { //DEBUG
-// $calendar .= ("$event->event_day / $event->event_month_n - $event->event_name<br />");
-//}
-// ------------------
+  // we'll look for events in the requested month and 7 days before and after
+   $calbegin="$iPrevYear-$iPrevMonth-$iPrevShowFrom";
+   $calend="$iNextYear-$iNextMonth-07";
+   $events = eme_get_events(0, "$calbegin--$calend", "ASC", 0, $location_id, $category , $author , $contact_person, 1, $notcategory );
 
    $eventful_days= array();
-   if($events){   
+   if ($events) {   
       //Go through the events and slot them into the right d-m index
       foreach($events as $event) {
          if ($event ['event_status'] == STATUS_PRIVATE && !is_user_logged_in()) {
+            continue;
+         }
+         if (get_option('eme_cal_hide_past_events') && strtotime($event['event_end_date'])<time()) {
             continue;
          }
 
@@ -370,24 +208,26 @@ function eme_get_calendar($args="") {
       }
    }
 
-   $event_format = get_option('eme_full_calendar_event_format'); 
+   // we found all the events for the wanted days, now get them in the correct format with a good link
+   if ($template_id)
+      $event_format = eme_get_template_format($template_id);
+   else
+      $event_format = get_option('eme_full_calendar_event_format' );
+
    $event_title_format = get_option('eme_small_calendar_event_title_format');
    $event_title_separator_format = get_option('eme_small_calendar_event_title_separator');
    $cells = array() ;
-   foreach($eventful_days as $day_key => $events) {
+   foreach ($eventful_days as $day_key => $events) {
       // Set the date into the key
-      $event_date = explode('-', $day_key);
-      $cells[$day_key]['day'] = ltrim($event_date[2],'0');
-      $cells[$day_key]['month'] = $event_date[1];
-      $cells[$day_key]['year'] = $event_date[0];
       $events_titles = array();
       foreach($events as $event) { 
-         $events_titles[] = eme_replace_placeholders($event_title_format, $event);
+         $events_titles[] = eme_replace_placeholders($event_title_format, $event,"text");
       }
       $link_title = implode($event_title_separator_format,$events_titles);
       
       $cal_day_link = eme_calendar_day_url($day_key);
       // Let's add the possible options
+      // template_id is not being used per event
       if (!empty($location_id))
          $cal_day_link = add_query_arg( array( 'location_id' => $location_id ), $cal_day_link );
       if (!empty($category))
@@ -399,38 +239,134 @@ function eme_get_calendar($args="") {
       if (!empty($contact_person))
          $cal_day_link = add_query_arg( array( 'contact_person' => $contact_person ), $cal_day_link );
 
-      $cells[$day_key]['cell'] = "<a title='$link_title' href='$cal_day_link'>{$cells[$day_key]['day']}</a>";
+      $event_date = explode('-', $day_key);
+      $event_day = ltrim($event_date[2],'0');
+      $cells[$day_key] = "<a title='$link_title' href='$cal_day_link'>$event_day</a>";
       if ($full) {
-         $cells[$day_key]['cell'] .= "<ul class='eme-calendar-day-event'>";
+         $cells[$day_key] .= "<ul class='eme-calendar-day-event'>";
       
          foreach($events as $event) {
-            $cells[$day_key]['cell'] .= eme_replace_placeholders($event_format, $event);
+            $cells[$day_key] .= eme_replace_placeholders($event_format, $event);
          } 
-         $cells[$day_key]['cell'] .= "</ul>";
-         }
-   }
-
-   // The calendar html is now generated, now replace the eventless days with eventfull when needed
-   // preg_replace is needed, because the first class for each day is the weekday, and we want to keep that info
-   if($events){
-      foreach($cells as $cell) {
-         if ($cell['month'] == $month_pre && $cell['year'] == $year_pre) {
-            $calendar=preg_replace("/<td class='(...) eventless-pre'>".$cell['day']."<\/td>/","<td class='$1 eventful-pre event-day-".$cell['day']."'>".$cell['cell']."</td>",$calendar);
-         } elseif ($cell['month'] == $month_post && $cell['year'] == $year_post) {
-            $calendar=preg_replace("/<td class='(...) eventless-post'>".$cell['day']."<\/td>/","<td class='$1 eventful-post event-day-".$cell['day']."'>".$cell['cell']."</td>",$calendar);
-         } elseif ($cell['day'] == $day && $cell['month'] == $month && $day == $curr_day && $month == $curr_month) {
-            $calendar=preg_replace("/<td class='(...) eventless-today'>".$cell['day']."<\/td>/","<td class='$1 eventful-today event-day-".$cell['day']."'>".$cell['cell']."</td>",$calendar);
-         } elseif ($cell['month'] == $month && $cell['year'] == $year) {
-            $calendar=preg_replace("/<td class='(...) eventless'>".$cell['day']."<\/td>/","<td class='$1 eventful event-day-".$cell['day']."'>".$cell['cell']."</td>",$calendar);
-            }
+         $cells[$day_key] .= "</ul>";
       }
    }
+
+   // If previous month
+   $isPreviousMonth = ($iFirstDayDow > 0);
+
+   // Initial day on the calendar
+   $iCalendarDay = ($isPreviousMonth) ? $iPrevShowFrom : 1;
+
+   $isNextMonth = false;
+   $sCalTblRows = '';
+
+   // Generate rows for the calendar
+   for ($i = 0; $i < 6; $i++) { // 6-weeks range
+	   if ($isNextMonth) continue;
+	   $sCalTblRows .= "<tr>";
+	   for ($j = 0; $j < 7; $j++) { // 7 days a week
+
+         // we need the calendar day with 2 digits for the planned events
+         $iCalendarDay_padded = sprintf("%02d",$iCalendarDay);
+         if ($isPreviousMonth) $calstring="$iPrevYear-$iPrevMonth-$iCalendarDay_padded";
+         elseif ($isNextMonth) $calstring="$iNextYear-$iNextMonth-$iCalendarDay_padded";
+         else $calstring="$iSelectedYear-$iSelectedMonth-$iCalendarDay_padded";
+
+		   // each day in the calendar has the name of the day as a class by default
+		   $sClass = date('D', strtotime($calstring));
+
+		   if (isset($cells[$calstring])) {
+			   if ($isPreviousMonth)
+				   $sClass .= " eventful-pre event-day-$iCalendarDay";
+			   elseif ($isNextMonth)
+				   $sClass .= " eventful-post event-day-$iCalendarDay";
+			   elseif ($calstring == "$iNowYear-$iNowMonth-$iNowDay")
+				   $sClass .= " eventful-today event-day-$iCalendarDay";
+			   else
+				   $sClass .= " eventful event-day-$iCalendarDay";
+			   $sCalTblRows .= '<td class="'.$sClass.'">'.$cells[$calstring]. "</td>\n";
+		   } else {
+			   if ($isPreviousMonth)
+				   $sClass .= " eventless-pre";
+			   elseif ($isNextMonth)
+				   $sClass .= " eventless-post";
+			   elseif ($calstring == "$iNowYear-$iNowMonth-$iNowDay")
+				   $sClass .= " eventless-today";
+			   else
+				   $sClass .= " eventless";
+			   $sCalTblRows .= '<td class="'.$sClass.'">'.$iCalendarDay. "</td>\n";
+		   }
+
+		   // Next day
+		   $iCalendarDay++;
+		   if ($isPreviousMonth && $iCalendarDay > $iPrevDaysInMonth) {
+			   $isPreviousMonth = false;
+			   $iCalendarDay = 1;
+		   }
+		   if (!$isPreviousMonth && !$isNextMonth && $iCalendarDay > $iDaysInMonth) {
+			   $isNextMonth = true;
+			   $iCalendarDay = 1;
+		   }
+	   }
+	   $sCalTblRows .= "</tr>\n";
+   }
+
+   $weekdays = array(__('Sunday'),__('Monday'),__('Tuesday'),__('Wednesday'),__('Thursday'),__('Friday'),__('Saturday'));
+   $sCalDayNames="";
+   // respect the beginning of the week offset
+   for ($i=$start_of_week; $i<$start_of_week+7; $i++) {
+	   $j=$i;
+	   if ($j==7) $j-=7;
+      if ($full)
+         $sCalDayNames.= "<td>".$wp_locale->get_weekday_abbrev($weekdays[$j])."</td>";
+      else
+         $sCalDayNames.= "<td>".$wp_locale->get_weekday_initial($weekdays[$j])."</td>";
+   }
+
+   // the real links are created via jquery when clicking on the prev-month or next-month class-links
+   $previous_link = "<a class='prev-month' href=\"#\">&lt;&lt;</a>"; 
+   $next_link = "<a class='next-month' href=\"#\">&gt;&gt;</a>";
+
+   $random = (rand(100,200));
+   $full ? $class = 'eme-calendar-full' : $class='eme-calendar';
+   $calendar="<div class='$class' id='eme-calendar-$random'>";
+   
+   if ($full) {
+      $fullclass = 'fullcalendar';
+      $head = "<td class='month_name' colspan='7'>$previous_link $next_link $cal_datestring</td>\n";
+   } else {
+      $fullclass='';
+      $head = "<td>$previous_link</td><td class='month_name' colspan='5'>$cal_datestring</td><td>$next_link</td>\n";
+   }
+   // Build the heading portion of the calendar table
+   $calendar .=  "<table class='eme-calendar-table $fullclass'>\n".
+                 "<thead>\n<tr>\n".$head."</tr>\n</thead>\n".
+                 "<tr class='days-names'>\n".$sCalDayNames."</tr>\n";
+   $calendar .= $sCalTblRows;
+   $calendar .=  "</table>\n</div>";
+
+   // we generate the onclick javascript per calendar div
+   // this is important if more than one calendar exists on the page
+   $calendar .= "<script type='text/javascript'>
+         jQuery('#eme-calendar-".$random." a.prev-month').click(function(e){
+            e.preventDefault();
+            tableDiv = jQuery('#eme-calendar-".$random."');
+            loadCalendar(tableDiv, '$full', '$long_events','$iPrevMonth','$iPrevYear','$category','$author','$contact_person','$location_id','$notcategory','$template_id');
+         } );
+         jQuery('#eme-calendar-".$random." a.next-month').click(function(e){
+            e.preventDefault();
+            tableDiv = jQuery('#eme-calendar-".$random."');
+            loadCalendar(tableDiv, '$full', '$long_events','$iNextMonth','$iNextYear','$category','$author','$contact_person','$location_id','$notcategory','$template_id');
+         } );
+         </script>";
 
    $output=$calendar;
    if ($echo)
       echo $output; 
    else
       return $output;
+
 }
 
 function eme_days_in_month($month, $year) {
@@ -440,18 +376,9 @@ function eme_days_in_month($month, $year) {
 function eme_ajaxize_calendar() {
    global $eme_need_calendar_js;
 
-   if (function_exists('qtrans_getLanguage')) {
-      // if permalinks are on, $_GET doesn't contain lang as a parameter
-      // so we get it like this to be sure
-      $language=qtrans_getLanguage();
+   $language = eme_detect_lang();
+   if (!empty($language)) {
       $jquery_override_lang=", lang: '".$language."'";
-   } elseif (defined('ICL_LANGUAGE_CODE')) {
-      // if permalinks are on, $_GET doesn't contain lang as a parameter
-      // so we get it like this to be sure
-      $language=ICL_LANGUAGE_CODE;
-      $jquery_override_lang=", lang: '".$language."'";
-   } elseif (isset($_GET['lang'])) {
-      $jquery_override_lang=", lang: '".$_GET['lang']."'";
    } else {
       $jquery_override_lang="";
    }
@@ -464,9 +391,7 @@ function eme_ajaxize_calendar() {
    if ($eme_need_calendar_js || $load_js_in_header) {
 ?>
    <script type='text/javascript'>
-      $j_eme_calendar=jQuery.noConflict();
-
-      function loadCalendar(tableDiv, fullcalendar, showlong_events, month, year, cat_chosen, author_chosen, contact_person_chosen, location_chosen, not_cat_chosen) {
+      function loadCalendar(tableDiv, fullcalendar, showlong_events, month, year, cat_chosen, author_chosen, contact_person_chosen, location_chosen, not_cat_chosen,template_chosen) {
          if (fullcalendar === undefined) {
              fullcalendar = 0;
          }
@@ -482,7 +407,8 @@ function eme_ajaxize_calendar() {
          author_chosen = (typeof author_chosen == 'undefined')? '' : author_chosen;
          contact_person_chosen = (typeof contact_person_chosen == 'undefined')? '' : contact_person_chosen;
          location_chosen = (typeof location_chosen == 'undefined')? '' : location_chosen;
-         $j_eme_calendar.post(self.location.href, {
+         template_chosen = (typeof template_chosen == 'undefined')? 0 : template_chosen;
+         jQuery.post(self.location.href, {
             eme_ajaxCalendar: 'true',
             calmonth: parseInt(month,10),
             calyear: parseInt(year,10),
@@ -492,7 +418,8 @@ function eme_ajaxize_calendar() {
             notcategory: not_cat_chosen,
             author: author_chosen,
             contact_person: contact_person_chosen,
-            location_id: location_chosen <?php echo $jquery_override_lang; ?>
+            location_id: location_chosen,
+            template_id: template_chosen <?php echo $jquery_override_lang; ?>
          }, function(data){
             tableDiv.replaceWith(data);
          });
@@ -502,34 +429,19 @@ function eme_ajaxize_calendar() {
 <?php
    }
 }
-add_action('wp_footer', 'eme_ajaxize_calendar');
 
 function eme_filter_calendar_ajax() {
-   if(isset($_POST['eme_ajaxCalendar']) && $_POST['eme_ajaxCalendar'] == true) {
-      (isset($_POST['full']) && $_POST['full']) ? $full = 1 : $full = 0;
-      (isset($_POST['long_events']) && $_POST['long_events']) ? $long_events = 1 : $long_events = 0;
-      (isset($_POST['category'])) ? $category = $_POST['category'] : $category = 0;
-      (isset($_POST['notcategory'])) ? $notcategory = $_POST['notcategory'] : $notcategory = 0;
-      (isset($_POST['calmonth'])) ? $month = eme_sanitize_request($_POST['calmonth']) : $month = ''; 
-      (isset($_POST['calyear'])) ? $year = eme_sanitize_request($_POST['calyear']) : $year = ''; 
-      (isset($_POST['author'])) ? $author = eme_sanitize_request($_POST['author']) : $author = ''; 
-      (isset($_POST['contact_person'])) ? $contact_person = eme_sanitize_request($_POST['contact_person']) : $contact_person = ''; 
-      (isset($_POST['location_id'])) ? $location_id = eme_sanitize_request($_POST['location_id']) : $location_id = '';
+   (isset($_POST['full']) && $_POST['full']) ? $full = 1 : $full = 0;
+   (isset($_POST['long_events']) && $_POST['long_events']) ? $long_events = 1 : $long_events = 0;
+   (isset($_POST['category'])) ? $category = $_POST['category'] : $category = 0;
+   (isset($_POST['notcategory'])) ? $notcategory = $_POST['notcategory'] : $notcategory = 0;
+   (isset($_POST['calmonth'])) ? $month = eme_sanitize_request($_POST['calmonth']) : $month = ''; 
+   (isset($_POST['calyear'])) ? $year = eme_sanitize_request($_POST['calyear']) : $year = ''; 
+   (isset($_POST['author'])) ? $author = eme_sanitize_request($_POST['author']) : $author = ''; 
+   (isset($_POST['contact_person'])) ? $contact_person = eme_sanitize_request($_POST['contact_person']) : $contact_person = ''; 
+   (isset($_POST['location_id'])) ? $location_id = eme_sanitize_request($_POST['location_id']) : $location_id = '';
 
-      // make sure we use the correct charset in the return
-      header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
-
-      // prevent caching
-      header("Expires: Wed, 1 Jan 1997 00:00:00 GMT");
-      header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-      header("Cache-Control: no-store, no-cache, must-revalidate");
-      header("Cache-Control: post-check=0, pre-check=0", false);
-      header("Pragma: no-cache");
-
-      eme_get_calendar('echo=1&full='.$full.'&long_events='.$long_events.'&category='.$category.'&month='.$month.'&year='.$year.'&author='.$author.'&contact_person='.$contact_person.'&location_id='.$location_id.'&notcategory='.$notcategory);
-      die();
-   }
+   eme_get_calendar('echo=1&full='.$full.'&long_events='.$long_events.'&category='.$category.'&month='.$month.'&year='.$year.'&author='.$author.'&contact_person='.$contact_person.'&location_id='.$location_id.'&notcategory='.$notcategory);
 }
-add_action('init','eme_filter_calendar_ajax');
 
 ?>
