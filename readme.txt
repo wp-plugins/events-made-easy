@@ -2,9 +2,9 @@
 Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
-Requires at least: 3.5
-Tested up to: 3.9.1
-Stable tag: 1.4.6
+Requires at least: 3.8
+Tested up to: 3.9.2
+Stable tag: 1.5.0
 
 Manage and display events, recurring events, locations and maps, widgets, RSVP, ICAL and RSS feeds, payment gateways support. SEO compatible.
              
@@ -63,8 +63,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.4.7 =
-* Incompatible change: due to some changes in the code, 2 CSS variables changed too: no longer using a container id but using a real css class name:
+= 1.5.0 =
+* Incompatible change: due to some changes in the code, 2 CSS id's changed too: no longer using a container id but using a real css class name:
   #eme_global_map img becomes .eme_global_map
   #eme_locations_list becomes .eme_locations_list
 * Feature: added template functionality to the calendar as well (new option template_id to the shortcode eme_calendar, for templating entries in the full calendar)
