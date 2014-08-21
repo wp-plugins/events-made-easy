@@ -63,6 +63,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.1 =
+* Bugfix: multiple categories in widgets wasn't working
+
 = 1.5.0 =
 * Incompatible change: due to some changes in the code, 2 CSS id's changed too: no longer using a container id but using a real css class name:
   #eme_global_map img becomes .eme_global_map
