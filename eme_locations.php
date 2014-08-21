@@ -738,7 +738,7 @@ function eme_delete_location($location_id) {
    global $wpdb;  
 
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME;
-   $sql = $wpdb->prepare("DELETE FROM $table where location_id=%d",$location_id);
+   $sql = $wpdb->prepare("DELETE FROM $table_name where location_id=%d",$location_id);
    $wpdb->query( $sql );
 
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
