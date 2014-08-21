@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
-"POT-Creation-Date: 2014-08-19 19:07:48+00:00\n"
+"POT-Creation-Date: 2014-08-21 21:25:45+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -111,8 +111,8 @@ msgid "Categories"
 msgstr ""
 
 #: eme_categories.php:90 eme_categories.php:97 eme_events.php:2062
-#: eme_formfields.php:136 eme_formfields.php:144 eme_locations.php:422
-#: eme_locations.php:432 eme_people.php:260 eme_people.php:376
+#: eme_formfields.php:136 eme_formfields.php:144 eme_locations.php:423
+#: eme_locations.php:433 eme_people.php:260 eme_people.php:376
 #: eme_people.php:513 eme_rsvp.php:2342 eme_templates.php:91
 #: eme_templates.php:98
 msgid "ID"
@@ -120,7 +120,7 @@ msgstr ""
 
 #: eme_categories.php:91 eme_categories.php:98 eme_events.php:2063
 #: eme_events.php:2874 eme_events.php:3148 eme_formfields.php:137
-#: eme_formfields.php:145 eme_locations.php:423 eme_locations.php:433
+#: eme_formfields.php:145 eme_locations.php:424 eme_locations.php:434
 #: eme_options.php:22 eme_options.php:32 eme_people.php:103 eme_people.php:261
 #: eme_people.php:377 eme_people.php:514 eme_rsvp.php:2343
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:76
@@ -303,37 +303,37 @@ msgstr ""
 msgid "Please select a page"
 msgstr ""
 
-#: eme_events.php:1013 eme_locations.php:811
+#: eme_events.php:1013 eme_locations.php:812
 msgid "Previous week"
 msgstr ""
 
-#: eme_events.php:1014 eme_locations.php:812
+#: eme_events.php:1014 eme_locations.php:813
 msgid "Next week"
 msgstr ""
 
-#: eme_events.php:1031 eme_locations.php:829
+#: eme_events.php:1031 eme_locations.php:830
 msgid "Previous month"
 msgstr ""
 
-#: eme_events.php:1032 eme_locations.php:830
+#: eme_events.php:1032 eme_locations.php:831
 msgid "Next month"
 msgstr ""
 
-#: eme_events.php:1040 eme_locations.php:838
+#: eme_events.php:1040 eme_locations.php:839
 msgid "Previous year"
 msgstr ""
 
-#: eme_events.php:1041 eme_locations.php:839
+#: eme_events.php:1041 eme_locations.php:840
 msgid "Next year"
 msgstr ""
 
-#: eme_events.php:1048 eme_events.php:1057 eme_locations.php:846
-#: eme_locations.php:855
+#: eme_events.php:1048 eme_events.php:1057 eme_locations.php:847
+#: eme_locations.php:856
 msgid "Previous day"
 msgstr ""
 
-#: eme_events.php:1049 eme_events.php:1058 eme_locations.php:847
-#: eme_locations.php:856
+#: eme_events.php:1049 eme_events.php:1058 eme_locations.php:848
+#: eme_locations.php:857
 msgid "Next day"
 msgstr ""
 
@@ -413,7 +413,7 @@ msgstr ""
 msgid "Date and time"
 msgstr ""
 
-#: eme_events.php:2104 eme_events.php:2595 eme_locations.php:317
+#: eme_events.php:2104 eme_events.php:2595 eme_locations.php:318
 #: eme_widgets.php:129 eme_widgets.php:265
 msgid "Category"
 msgstr ""
@@ -771,8 +771,8 @@ msgstr ""
 msgid "The event name"
 msgstr ""
 
-#: eme_events.php:2745 eme_locations.php:639 eme_locations.php:643
-#: eme_locations.php:646
+#: eme_events.php:2745 eme_locations.php:640 eme_locations.php:644
+#: eme_locations.php:647
 msgid " is missing!"
 msgstr ""
 
@@ -808,7 +808,7 @@ msgid ""
 "exact same amount of \"min seats to book\" as you did for the prices."
 msgstr ""
 
-#: eme_events.php:2777 eme_locations.php:653
+#: eme_events.php:2777 eme_locations.php:654
 msgid "Ach, some problems here:"
 msgstr ""
 
@@ -868,11 +868,11 @@ msgstr ""
 msgid "Event image"
 msgstr ""
 
-#: eme_events.php:2891 eme_locations.php:366
+#: eme_events.php:2891 eme_locations.php:367
 msgid "Attributes"
 msgstr ""
 
-#: eme_events.php:2892 eme_locations.php:373
+#: eme_events.php:2892 eme_locations.php:374
 msgid "External link"
 msgstr ""
 
@@ -880,7 +880,7 @@ msgstr ""
 msgid "The event name. Example: Birthday party"
 msgstr ""
 
-#: eme_events.php:2906 eme_locations.php:212
+#: eme_events.php:2906 eme_locations.php:213
 msgid "Permalink: "
 msgstr ""
 
@@ -975,7 +975,7 @@ msgstr ""
 msgid "The cancel registration form format."
 msgstr ""
 
-#: eme_events.php:3131 eme_events.php:3156 eme_locations.php:347
+#: eme_events.php:3131 eme_events.php:3156 eme_locations.php:348
 msgid "Map not found"
 msgstr ""
 
@@ -1036,19 +1036,19 @@ msgstr ""
 msgid "Current image:"
 msgstr ""
 
-#: eme_events.php:3244 eme_locations.php:277
+#: eme_events.php:3244 eme_locations.php:278
 msgid "Set a featured image"
 msgstr ""
 
-#: eme_events.php:3245 eme_locations.php:278
+#: eme_events.php:3245 eme_locations.php:279
 msgid "Unset featured image"
 msgstr ""
 
-#: eme_events.php:3260 eme_locations.php:292
+#: eme_events.php:3260 eme_locations.php:293
 msgid "Select the image to be used as featured image"
 msgstr ""
 
-#: eme_events.php:3262 eme_locations.php:294
+#: eme_events.php:3262 eme_locations.php:295
 msgid "Set featured image"
 msgstr ""
 
@@ -1348,7 +1348,7 @@ msgstr ""
 msgid "Chinese Yuan Renminbi"
 msgstr ""
 
-#: eme_locations.php:40 eme_locations.php:84
+#: eme_locations.php:40 eme_locations.php:85
 msgid "You have no right to edit this location!"
 msgstr ""
 
@@ -1356,133 +1356,137 @@ msgstr ""
 msgid "You have no right to copy this location!"
 msgstr ""
 
-#: eme_locations.php:61 eme_locations.php:80
+#: eme_locations.php:61 eme_locations.php:81
 msgid "You have no right to add a location!"
 msgstr ""
 
-#: eme_locations.php:145
+#: eme_locations.php:73
+msgid "Successfully deleted the selected locations."
+msgstr ""
+
+#: eme_locations.php:146
 msgid "The location has been added."
 msgstr ""
 
-#: eme_locations.php:147
+#: eme_locations.php:148
 msgid "There has been a problem adding the location."
 msgstr ""
 
-#: eme_locations.php:152
+#: eme_locations.php:153
 msgid "The location has been updated."
 msgstr ""
 
-#: eme_locations.php:154
+#: eme_locations.php:155
 msgid "The location update failed."
 msgstr ""
 
-#: eme_locations.php:183 eme_locations.php:380 eme_locations.php:408
+#: eme_locations.php:184 eme_locations.php:381 eme_locations.php:409
 #: eme_options.php:432
 msgid "Add location"
 msgstr ""
 
-#: eme_locations.php:185 eme_options.php:434
+#: eme_locations.php:186 eme_options.php:434
 msgid "Edit location"
 msgstr ""
 
-#: eme_locations.php:207
+#: eme_locations.php:208
 msgid "Location name"
 msgstr ""
 
-#: eme_locations.php:225
+#: eme_locations.php:226
 msgid "Location address"
 msgstr ""
 
-#: eme_locations.php:234
+#: eme_locations.php:235
 msgid "Location town"
 msgstr ""
 
-#: eme_locations.php:243
+#: eme_locations.php:244
 msgid "Location latitude/longitude"
 msgstr ""
 
-#: eme_locations.php:247
+#: eme_locations.php:248
 msgid "Latitude"
 msgstr ""
 
-#: eme_locations.php:251
+#: eme_locations.php:252
 msgid "Longitude"
 msgstr ""
 
-#: eme_locations.php:259
+#: eme_locations.php:260
 msgid "Location image"
 msgstr ""
 
-#: eme_locations.php:343
+#: eme_locations.php:344
 msgid ""
 "Because qtranslate is active, the title of the location will not update "
 "automatically in the balloon, so don't panic there."
 msgstr ""
 
-#: eme_locations.php:353
+#: eme_locations.php:354
 msgid "Location description"
 msgstr ""
 
-#: eme_locations.php:360
+#: eme_locations.php:361
 msgid "A description of the Location. You may include any kind of info here."
 msgstr ""
 
-#: eme_locations.php:377
+#: eme_locations.php:378
 msgid ""
 "If this is filled in, the single location URL will point to this url instead "
 "of the standard location page."
 msgstr ""
 
-#: eme_locations.php:380
+#: eme_locations.php:381
 msgid "Update location"
 msgstr ""
 
-#: eme_locations.php:397
+#: eme_locations.php:398
 msgid "Add a new location"
 msgstr ""
 
-#: eme_locations.php:412 events-manager.php:1009
+#: eme_locations.php:413 events-manager.php:1009
 msgid "Locations"
 msgstr ""
 
-#: eme_locations.php:424 eme_locations.php:434
+#: eme_locations.php:425 eme_locations.php:435
 #: extras/plugins/events-made-easy-frontend-submit/templates/form.php:82
 msgid "Address"
 msgstr ""
 
-#: eme_locations.php:425 eme_locations.php:435
+#: eme_locations.php:426 eme_locations.php:436
 msgid "Town"
 msgstr ""
 
-#: eme_locations.php:447
+#: eme_locations.php:448
 msgid "Duplicate this location"
 msgstr ""
 
-#: eme_locations.php:456
+#: eme_locations.php:457
 msgid "Are you sure you want to delete these locations?"
 msgstr ""
 
-#: eme_locations.php:462
+#: eme_locations.php:463
 msgid "No venues have been inserted yet!"
 msgstr ""
 
-#: eme_locations.php:636
+#: eme_locations.php:637
 msgid "The location name"
 msgstr ""
 
-#: eme_locations.php:636
+#: eme_locations.php:637
 msgid "The location address"
 msgstr ""
 
-#: eme_locations.php:636
+#: eme_locations.php:637
 msgid "The location town"
 msgstr ""
 
-#: eme_locations.php:1370
+#: eme_locations.php:1371
 msgid "Your Street Address"
 msgstr ""
 
-#: eme_locations.php:1374
+#: eme_locations.php:1375
 msgid "Get Directions"
 msgstr ""
 
