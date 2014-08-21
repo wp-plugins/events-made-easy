@@ -1,3 +1,8 @@
+Installation
+============
+
+Just copy this folder (events-made-easy-frontend-submit) into the wordpress plugins directory. Read further down about customization, configuration and usage.
+
 Customization
 =============
 The plugin will look for configuration, form template and style files in the following paths, in that priority:

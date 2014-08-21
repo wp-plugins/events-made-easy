@@ -79,13 +79,13 @@
 		</div>
 		
 		<div class="input">
-			<label for="location_name"><?php _e('Address'); ?></label>
+			<label for="location_address"><?php _e('Address'); ?></label>
 			<?php EMEFS::field('location_address'); ?>
 			<?php EMEFS::error('location_address'); ?>
 		</div>
 		
 		<div class="input">
-			<label for="location_name"><?php _e('City or Town'); ?></label>
+			<label for="location_town"><?php _e('City or Town'); ?></label>
 			<?php EMEFS::field('location_town'); ?>
 			<?php EMEFS::error('location_town'); ?>
 		</div>

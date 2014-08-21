@@ -1,8 +1,18 @@
 <?php
 
 function eme_get_recurrence_days($recurrence){
+
+   $matching_days = array(); 
    
-   //print_r($recurrence);
+   if($recurrence['recurrence_freq'] == 'specific') {
+   	$specific_days = explode(",", $recurrence['recurrence_specific_days']);
+	foreach ($specific_days as $day) {
+		$date = mktime(0, 0, 0, substr($day,5,2), substr($day,8,2), substr($day,0,4));
+            	array_push($matching_days, $date);
+	}
+	return $matching_days;
+   }
+ 
    $start_date = mktime(0, 0, 0, substr($recurrence['recurrence_start_date'],5,2), substr($recurrence['recurrence_start_date'],8,2), substr($recurrence['recurrence_start_date'],0,4));
    $end_date = mktime(0, 0, 0, substr($recurrence['recurrence_end_date'],5,2), substr($recurrence['recurrence_end_date'],8,2), substr($recurrence['recurrence_end_date'],0,4));
  
@@ -15,7 +25,6 @@ function eme_get_recurrence_days($recurrence){
    $last_week_start = array(25, 22, 25, 24, 25, 24, 25, 25, 24, 25, 24, 25);
    
    $weekdays = explode(",", $recurrence['recurrence_byday']);
-//   print_r($weekdays);
    
    $counter = 0;
    $daycounter = 0;
@@ -23,9 +32,8 @@ function eme_get_recurrence_days($recurrence){
    $monthcounter=0;
    $start_monthday = date("j", $start_date);
    $cycle_date = $start_date;
-   $matching_days = array(); 
    $aDay = 86400;  // a day in seconds
- 
+
    while (date("d-M-Y", $cycle_date) != date('d-M-Y', $end_date + $aDay)) {
     //echo (date("d-M-Y", $cycle_date));
       $style = "";
@@ -82,10 +90,6 @@ function eme_get_recurrence_days($recurrence){
    return $matching_days ;
 }
 
-
-
-///////////////////////////////////////////////
-
 // backwards compatible: eme_insert_recurrent_event renamed to eme_db_insert_recurrence
 function eme_insert_recurrent_event($event, $recurrence) {
    return eme_db_insert_recurrence($event, $recurrence);
@@ -104,10 +108,12 @@ function eme_db_insert_recurrence($event, $recurrence ){
       unset ($recurrence['recurrence_id']);
 
    // some sanity checks
-   $startstring=strtotime($recurrence['recurrence_start_date']);
-   $endstring=strtotime($recurrence['recurrence_end_date']);
-   if ($endstring<$startstring) {
-      $recurrence['recurrence_end_date']=$recurrence['recurrence_start_date'];
+   if ($recurrence['recurrence_freq'] != "specific") {
+      $startstring=strtotime($recurrence['recurrence_start_date']);
+      $endstring=strtotime($recurrence['recurrence_end_date']);
+      if ($endstring<$startstring) {
+         $recurrence['recurrence_end_date']=$recurrence['recurrence_start_date'];
+      }
    }
 
    //$wpdb->show_errors(true);
@@ -127,13 +133,12 @@ function eme_insert_events_for_recurrence($event,$recurrence) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $matching_days = eme_get_recurrence_days($recurrence);
-//   print_r($matching_days);
    sort($matching_days);
 
    if ($event['event_end_date']=='') {
       $duration_days_event = 0;
    } else {
-      $duration_days_event = eme_daydifference($event['event_start_date'],$event['event_end_date']);
+      $duration_days_event = abs(eme_daydifference($event['event_start_date'],$event['event_end_date']));
    }
    foreach($matching_days as $day) {
       $event['event_start_date'] = date("Y-m-d", $day); 
@@ -164,6 +169,7 @@ function eme_db_update_recurrence($event, $recurrence) {
    $where = array('recurrence_id' => $recurrence['recurrence_id']);
    $wpdb->show_errors(true);
    $wpdb->update($recurrence_table, $recurrence, $where); 
+   $wpdb->show_errors(false);
    $event['recurrence_id'] = $recurrence['recurrence_id'];
    eme_update_events_for_recurrence($event,$recurrence); 
    if (has_action('eme_update_recurrence_action')) do_action('eme_update_recurrence_action',$event,$recurrence);
@@ -180,7 +186,7 @@ function eme_update_events_for_recurrence($event,$recurrence) {
    if ($event['event_end_date']=='') {
       $duration_days_event = 0;
    } else {
-      $duration_days_event = eme_daydifference($event['event_start_date'],$event['event_end_date']);
+      $duration_days_event = abs(eme_daydifference($event['event_start_date'],$event['event_end_date']));
    }
 
    // 2 steps for updating events for a recurrence:
@@ -190,7 +196,7 @@ function eme_update_events_for_recurrence($event,$recurrence) {
    // and just deleting all current events for a recurrence and inserting new ones would break the link
    // between booking id and event id
    // Second step: check all days of the recurrence and if no event exists yet, insert it
-   $sql = "SELECT * FROM $events_table WHERE recurrence_id = '".$recurrence['recurrence_id']."';";
+   $sql = $wpdb->prepare("SELECT * FROM $events_table WHERE recurrence_id = %d",$recurrence['recurrence_id']);
    $events = $wpdb->get_results($sql, ARRAY_A);
    // Doing step 1
    foreach($events as $existing_event) {
@@ -229,6 +235,7 @@ function eme_remove_recurrence($recurrence_id) {
    global $wpdb;
    $recurrence_table = $wpdb->prefix.RECURRENCE_TBNAME;
    $sql = "DELETE FROM $recurrence_table WHERE recurrence_id = '$recurrence_id';";
+   $sql = $wpdb->prepare("DELETE FROM $recurrence_table WHERE recurrence_id = %d",$recurrence_id);
    $wpdb->query($sql);
    eme_remove_events_for_recurrence_id($recurrence_id);
    $image_basename= IMAGE_UPLOAD_DIR."/recurrence-".$recurrence_id;
@@ -238,20 +245,27 @@ function eme_remove_recurrence($recurrence_id) {
 function eme_remove_events_for_recurrence_id($recurrence_id) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
-   $sql = "DELETE FROM $events_table WHERE recurrence_id = '$recurrence_id';";
+   $sql = $wpdb->prepare("DELETE FROM $events_table WHERE recurrence_id = %d",$recurrence_id);
    $wpdb->query($sql);
+}
+
+function eme_get_recurrence_eventids($recurrence_id) {
+   global $wpdb;
+   $events_table = $wpdb->prefix.EVENTS_TBNAME;
+   $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE recurrence_id = %d",$recurrence_id);
+   return $wpdb->get_col($sql);
 }
 
 function eme_get_recurrence($recurrence_id) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $recurrence_table = $wpdb->prefix.RECURRENCE_TBNAME;
-   $sql = "SELECT * FROM $recurrence_table WHERE recurrence_id = $recurrence_id;";
+   $sql = $wpdb->prepare("SELECT * FROM $recurrence_table WHERE recurrence_id = %d",$recurrence_id);
    $recurrence = $wpdb->get_row($sql, ARRAY_A);
 
    // now add the info that has no column in the recurrence table
    // for that, we take the info from the first occurence
-   $sql = "SELECT event_id FROM $events_table WHERE recurrence_id = '$recurrence_id' ORDER BY event_start_date ASC LIMIT 1;";
+   $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE recurrence_id = %d ORDER BY event_start_date ASC LIMIT 1",$recurrence_id);
    $event_id = $wpdb->get_var($sql);
    $event = eme_get_event($event_id);
    foreach ($event as $key=>$val) {
@@ -271,7 +285,7 @@ function eme_get_recurrence_desc($recurrence_id) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $recurrence_table = $wpdb->prefix.RECURRENCE_TBNAME;
-   $sql = "SELECT * FROM $recurrence_table WHERE recurrence_id = $recurrence_id;";
+   $sql = $wpdb->prepare("SELECT * FROM $recurrence_table WHERE recurrence_id = %d",$recurrence_id);
    $recurrence = $wpdb->get_row($sql, ARRAY_A);
 
    $weekdays_name = array(__('Monday'),__('Tuesday'),__('Wednesday'),__('Thursday'),__('Friday'),__('Saturday'),__('Sunday'));
@@ -321,6 +335,8 @@ function eme_get_recurrence_desc($recurrence_id) {
       if ($recurrence['recurrence_interval'] > 1 ) {
          $freq_desc .= ", ".sprintf (__("every %s months",'eme'), $recurrence['recurrence_interval']);
       }
+   } elseif ($recurrence['recurrence_freq'] == 'specific')  {
+      return __("Specific days",'eme');
    } else {
       $freq_desc = "";
    }
@@ -332,7 +348,7 @@ function eme_recurrence_count($recurrence_id) {
    # return the number of events for an recurrence
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
-   $sql = "SELECT COUNT(*) from $events_table WHERE recurrence_id='".$recurrence_id."'";
+   $sql = $wpdb->prepare("SELECT COUNT(*) FROM $events_table WHERE recurrence_id = %d",$recurrence_id);
    return $wpdb->get_var($sql);
 }
 
