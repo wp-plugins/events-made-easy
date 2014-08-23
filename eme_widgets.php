@@ -38,9 +38,9 @@ class WP_Widget_eme_list extends WP_Widget {
          echo $args['before_title'] . $title . $args['after_title'];
 
       if (is_array($category))
-         $category=explode(',',$category);
+         $category=implode(',',$category);
       if (is_array($notcategory))
-         $notcategory=explode(',',$notcategory);
+         $notcategory=implode(',',$notcategory);
 
       $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,0,$notcategory,$recurrence_only_once);
       if ($events_list == get_option('eme_no_events_message' ))
@@ -201,9 +201,9 @@ class WP_Widget_eme_calendar extends WP_Widget {
       }
 
       if (is_array($category))
-         $category=explode(',',$category);
+         $category=implode(',',$category);
       if (is_array($notcategory))
-         $notcategory=explode(',',$notcategory);
+         $notcategory=implode(',',$notcategory);
 
       $options=array();
       $options['title'] = $title;

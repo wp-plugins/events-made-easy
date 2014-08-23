@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 3.8
 Tested up to: 3.9.2
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 
 Manage and display events, recurring events, locations and maps, widgets, RSVP, ICAL and RSS feeds, payment gateways support. SEO compatible.
              
@@ -62,6 +62,9 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
 See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
+
+= 1.5.2 =
+* Bugfix: multiple categories in widgets still contained an error, tested ok now
 
 = 1.5.1 =
 * Bugfix: multiple categories in widgets wasn't working
