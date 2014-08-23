@@ -7,6 +7,11 @@ if (!isset($_SERVER['HTTP_REFERER']) || !strrchr($_SERVER['HTTP_REFERER'],$_SERV
    exit;
 }
 
+if (isset($_GET['sessionvar']))
+   $sessionvar=$_GET['sessionvar'];
+else
+   $sessionvar='captcha';
+
 // 23 letters
 $alfabet="abcdefghjkmnpqrstuvwxyz";
 $random1 = substr($alfabet,rand(1,23)-1,1);
@@ -18,7 +23,7 @@ $rand=rand(1,23)-1;
 $random5 = substr($alfabet,rand(1,23)-1,1);
 
 $randomtext=$random1.$random2.$random3.$random4.$random5;
-$_SESSION['captcha'] = md5($randomtext);
+$_SESSION[$sessionvar] = md5($randomtext);
 
 $im = imagecreatetruecolor(120, 38);
 

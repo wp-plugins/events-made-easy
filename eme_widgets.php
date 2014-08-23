@@ -1,15 +1,20 @@
 <?php
 
 class WP_Widget_eme_list extends WP_Widget {
-   function WP_Widget_eme_list() {
-      $widget_ops = array('classname' => 'widget_eme_list', 'description' => __( 'Events List','eme' ) );
-      $this->WP_Widget('eme_list', __('Events List','eme'), $widget_ops);
-      $this->alt_option_name = 'widget_eme_list';
+
+   function __construct() {
+      parent::__construct(
+            'eme_list', // Base ID
+            __('Events Made Easy List', 'eme'), // Name
+            array( 'description' => __( 'Events Made Easy List of events', 'eme' ), ) // Args
+            );
    }
-   function widget( $args, $instance ) {
-      extract($args);
+
+   public function widget( $args, $instance ) {
+      //extract($args);
       //$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( 'Events','eme' ) : $instance['title'], $instance, $this->id_base);
-      $title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
+      //$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
+      $title = apply_filters('widget_title', $instance['title']);
       $limit = isset( $instance['limit'] ) ? intval($instance['limit']) : 5;
       $scope = empty( $instance['scope'] ) ? 'future' : $instance['scope'];
       $showperiod = empty( $instance['showperiod'] ) ? '' : $instance['showperiod'];
@@ -17,51 +22,54 @@ class WP_Widget_eme_list extends WP_Widget {
       $order = empty( $instance['order'] ) ? 'ASC' : $instance['order'];
       $header = empty( $instance['header'] ) ? '<ul>' : $instance['header'];
       $footer = empty( $instance['footer'] ) ? '</ul>' : $instance['footer'];
+      $category = empty( $instance['category'] ) ? '' : $instance['category'];
+      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
+      $recurrence_only_once = empty( $instance['recurrence_only_once'] ) ? false : $instance['recurrence_only_once'];
+      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
+
       if ($instance['authorid']==-1 ) {
          $author='';
       } else {
          $authinfo=get_userdata($instance['authorid']);
          $author=$authinfo->user_login;
       }
-      $category = empty( $instance['category'] ) ? '' : $instance['category'];
-      $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
-      $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
-      echo $before_widget;
+      echo $args['before_widget'];
       if ( $title)
-         echo $before_title . $title . $after_title;
+         echo $args['before_title'] . $title . $args['after_title'];
 
-      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,0,$notcategory);
+      if (is_array($category))
+         $category=implode(',',$category);
+      if (is_array($notcategory))
+         $notcategory=implode(',',$notcategory);
+
+      $events_list = eme_get_events_list($limit,$scope,$order,$format,false,$category,$showperiod,0,$author,'',0,'',0,$show_ongoing,0,$notcategory,$recurrence_only_once);
       if ($events_list == get_option('eme_no_events_message' ))
          echo $events_list;
       else
          echo $header.$events_list.$footer;
-      echo $after_widget;
+      echo $args['after_widget'];
    }
-   function update( $new_instance, $old_instance ) {
-      $instance = $old_instance;
-      $instance['title'] = strip_tags($new_instance['title']);
-      $instance['limit'] = intval($new_instance['limit']);
-      $instance['scope'] = $new_instance['scope'];
-      if ( in_array( $new_instance['showperiod'], array( 'daily', 'monthly', 'yearly' ) ) ) {
-         $instance['showperiod'] = $new_instance['showperiod'];
-      } else {
+
+   public function update( $new_instance, $old_instance ) {
+      // before the merge, let's set the values of those elements that are checkboxes (not returned in the POST if not selected)
+      if (!isset($new_instance['recurrence_only_once']))
+         $new_instance['recurrence_only_once']=false;
+      if (!isset($new_instance['show_ongoing']))
+         $new_instance['show_ongoing']=false;
+
+      $instance = array_merge($old_instance,$new_instance);
+      $instance['title'] = strip_tags($instance['title']);
+      $instance['limit'] = intval($instance['limit']);
+      if ( !in_array( $instance['showperiod'], array( 'daily', 'monthly', 'yearly' ) ) ) {
          $instance['showperiod'] = '';
       }
-      if ( in_array( $new_instance['order'], array( 'ASC', 'DESC' ) ) ) {
-         $instance['order'] = $new_instance['order'];
-      } else {
+      if ( !in_array( $instance['order'], array( 'ASC', 'DESC' ) ) ) {
          $instance['order'] = 'ASC';
       }
-      $instance['show_ongoing'] = $new_instance['show_ongoing'];
-      $instance['category'] = $new_instance['category'];
-      $instance['notcategory'] = $new_instance['notcategory'];
-      $instance['format'] = $new_instance['format'];
-      $instance['authorid'] = $new_instance['authorid'];
-      $instance['header'] = $new_instance['header'];
-      $instance['footer'] = $new_instance['footer'];
       return $instance;
    }
-   function form( $instance ) {
+
+   public function form( $instance ) {
       //Defaults
       $instance = wp_parse_args( (array) $instance, array( 'limit' => 5, 'scope' => 'future', 'order' => 'ASC', 'format' => DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT, 'authorid' => '', 'show_ongoing'=> 1 ) );
       $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
@@ -77,8 +85,13 @@ class WP_Widget_eme_list extends WP_Widget {
       $footer = empty( $instance['footer'] ) ? '</ul>' : eme_sanitize_html($instance['footer']);
       $category = empty( $instance['category'] ) ? '' : eme_sanitize_html($instance['category']);
       $notcategory = empty( $instance['notcategory'] ) ? '' : eme_sanitize_html($instance['notcategory']);
+      $recurrence_only_once = empty( $instance['recurrence_only_once'] ) ? '' : eme_sanitize_html($instance['recurrence_only_once']);
       $authorid = empty( $instance['authorid'] ) ? '' : eme_sanitize_html($instance['authorid']);
       $categories = eme_get_categories();
+      foreach ($categories as $cat) {
+         $id=$cat['category_id'];
+         $option_categories[$id]=$cat['category_name'];
+      }
       $format = empty( $instance['format'] ) ? DEFAULT_WIDGET_EVENT_LIST_ITEM_FORMAT : $instance['format'];
 ?>
   <p>
@@ -114,27 +127,17 @@ class WP_Widget_eme_list extends WP_Widget {
 ?>
   <p>
     <label for="<?php echo $this->get_field_id('category'); ?>"><?php _e('Category','eme'); ?>:</label><br />
-    <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?></option>
+    <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-         <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$category);
       ?>
     </select>
   </p>
   <p>
     <label for="<?php echo $this->get_field_id('notcategory'); ?>"><?php _e('Exclude Category','eme'); ?>:</label><br />
-    <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?></option>
+    <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-         <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $notcategory,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$notcategory);
       ?>
     </select>
   </p>
@@ -144,6 +147,10 @@ class WP_Widget_eme_list extends WP_Widget {
   <p>
     <label for="<?php echo $this->get_field_id('show_ongoing'); ?>"><?php _e('Show Ongoing Events?', 'eme'); ?>:</label>
     <input type="checkbox" id="<?php echo $this->get_field_id('show_ongoing'); ?>" name="<?php echo $this->get_field_name('show_ongoing'); ?>" value="1" <?php echo ($show_ongoing) ? 'checked="checked"':'' ;?> />
+  </p>
+  <p>
+    <label for="<?php echo $this->get_field_id('recurrence_only_once'); ?>"><?php _e('Show Recurrent Events Only Once?', 'eme'); ?>:</label>
+    <input type="checkbox" id="<?php echo $this->get_field_id('recurrence_only_once'); ?>" name="<?php echo $this->get_field_name('recurrence_only_once'); ?>" value="1" <?php echo ($recurrence_only_once) ? 'checked="checked"':'' ;?> />
   </p>
   <p>
     <label for="<?php echo $this->get_field_id('authorid'); ?>"><?php _e('Author','eme'); ?>:</label><br />
@@ -168,16 +175,21 @@ wp_dropdown_users ( array ('id' => $this->get_field_id('authorid'), 'name' => $t
 }     
 
 class WP_Widget_eme_calendar extends WP_Widget {
-   function WP_Widget_eme_calendar() {
-      $widget_ops = array('classname' => 'widget_eme_calendar', 'description' => __( 'Events Calendar', 'eme' ) );
-      $this->WP_Widget('eme_calendar', __('Events Calendar','eme'), $widget_ops);
-      $this->alt_option_name = 'widget_eme_calendar';
+
+   function __construct() {
+      parent::__construct(
+            'eme_calendar', // Base ID
+            __('Events Made Easy Calendar', 'eme'), // Name
+            array( 'description' => __( 'Events Made Easy Calendar', 'eme' ), ) // Args
+            );
    }
-   function widget( $args, $instance ) {
+
+   public function widget( $args, $instance ) {
       global $wp_query;
-      extract($args);
+      //extract($args);
       //$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( 'Calendar','eme' ) : $instance['title'], $instance, $this->id_base);
-      $title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
+      //$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
+      $title = apply_filters('widget_title', $instance['title']);
       $long_events = isset( $instance['long_events'] ) ? $instance['long_events'] : false;
       $category = empty( $instance['category'] ) ? '' : $instance['category'];
       $notcategory = empty( $instance['notcategory'] ) ? '' : $instance['notcategory'];
@@ -187,39 +199,44 @@ class WP_Widget_eme_calendar extends WP_Widget {
          $authinfo=get_userdata($instance['authorid']);
          $author=$authinfo->user_login;
       }
-      echo $before_widget;
-      if ( $title)
-         echo $before_title . $title . $after_title;
-      
+
+      if (is_array($category))
+         $category=implode(',',$category);
+      if (is_array($notcategory))
+         $notcategory=implode(',',$notcategory);
+
       $options=array();
       $options['title'] = $title;
       $options['long_events'] = $long_events;
       $options['category'] = $category;
       $options['notcategory'] = $notcategory;
       // the month shown depends on the calendar day clicked
-      if (isset ( $wp_query->query_vars ['calendar_day'] ) && $wp_query->query_vars ['calendar_day'] != '') {
-          $options['month'] = date("m", strtotime( $wp_query->query_vars ['calendar_day']) );
-          $options['year'] = date("Y", strtotime( $wp_query->query_vars ['calendar_day']) );
+      if (get_query_var('calendar_day')) {
+          $options['month'] = date("m", strtotime(get_query_var('calendar_day')));
+          $options['year'] = date("Y", strtotime(get_query_var('calendar_day')));
       } else {
           $options['month'] = date("m");
           $options['year'] = date("Y");
       }
       $options['author'] = $author;
+
+      echo $args['before_widget'];
+      if ( $title)
+         echo $args['before_title'] . $title . $args['after_title'];
       eme_get_calendar($options);
-      echo $after_widget;
+      echo $args['after_widget'];
    }
    
-   function update( $new_instance, $old_instance ) {
-      $instance = $old_instance;
-      $instance['title'] = strip_tags($new_instance['title']);
-      $instance['category'] = $new_instance['category'];
-      $instance['notcategory'] = $new_instance['notcategory'];
-      $instance['long_events'] = $new_instance['long_events'];
-      $instance['authorid'] = $new_instance['authorid'];
+   public function update( $new_instance, $old_instance ) {
+      // before the merge, let's set the values of those elements that are checkboxes (not returned in the POST if not selected)
+      if (!isset($new_instance['long_events']))
+         $new_instance['long_events']=false;
+      $instance = array_merge($old_instance,$new_instance);
+      $instance['title'] = strip_tags($instance['title']);
       return $instance;
    }
 
-   function form( $instance ) {
+   public function form( $instance ) {
       //Defaults
       $instance = wp_parse_args( (array) $instance, array( 'long_events' => 0 ) );
       $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
@@ -228,6 +245,10 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $long_events = isset( $instance['long_events'] ) ? eme_sanitize_html($instance['long_events']) : false;
       $authorid = isset( $instance['authorid'] ) ? eme_sanitize_html($instance['authorid']) : '';
       $categories = eme_get_categories();
+      foreach ($categories as $cat) {
+         $id=$cat['category_id'];
+         $option_categories[$id]=$cat['category_name'];
+      }
 ?>
   <p>
    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
@@ -242,27 +263,17 @@ class WP_Widget_eme_calendar extends WP_Widget {
   ?>
   <p>
     <label for="<?php echo $this->get_field_id('category'); ?>"><?php _e('Category','eme'); ?>:</label><br />
-   <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?>   </option>
+   <select id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-      <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $category,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$category);
       ?>
    </select>
   </p>
   <p>
     <label for="<?php echo $this->get_field_id('notcategory'); ?>"><?php _e('Exclude Category','eme'); ?>:</label><br />
-   <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>">
-      <option value=""><?php _e ( 'Select...', 'eme' ); ?>   </option>
+   <select id="<?php echo $this->get_field_id('notcategory'); ?>" name="<?php echo $this->get_field_name('notcategory'); ?>[]" multiple="multiple">
       <?php
-      foreach ( $categories as $my_category ){
-      ?>
-      <option value="<?php echo $my_category['category_id']; ?>" <?php selected( $notcategory,$my_category['category_id']); ?>><?php echo $my_category['category_name']; ?></option>
-      <?php
-      }
+      eme_option_items($option_categories,$notcategory);
       ?>
    </select>
   </p>
@@ -278,11 +289,5 @@ wp_dropdown_users ( array ('id' => $this->get_field_id('authorid'), 'name' => $t
 <?php
    } 
 }
-
-function eme_load_widgets() {
-   register_widget( 'WP_Widget_eme_list' );
-   register_widget( 'WP_Widget_eme_calendar' );
-}
-add_action( 'widgets_init', 'eme_load_widgets' );
 
 ?>

@@ -1,7 +1,7 @@
 howto include in another page:
   <table><tr><td><img src="./captcha.php"></td>
-             <td> <?php echo _("Please fill in the code displayed here"); ?><br>
-                  <input type="text" name="captcha_check"></td>
+             <td> <?php echo _("Please fill in the code displayed here"); ?><br />
+                  <input type="text" name="captcha_check" /></td>
   </table>
 
 and to check the result in the form submit page:
