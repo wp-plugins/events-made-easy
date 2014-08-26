@@ -47,7 +47,7 @@ function emefs_deploy(show24Hours) {
         };
 
 	
-	jQuery("#event_start_date, #event_end_date").datepicker({ dateFormat: 'yy-mm-dd' });
+	jQuery("#event_start_date, #event_end_date").datepick({ dateFormat: 'yy-mm-dd' });
 	jQuery('#event_start_time, #event_end_time').timeEntry({ hourText: 'Hour', minuteText: 'Minute', show24Hours: show24Hours, spinnerImage: '' });
 	
 	if(emefs_gmap_hasSelectedLocation){

@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Events Made Easy Frontend Submit
-Plugin URI: https://github.com/halles/events-manager-extended-frontend-submit/
+Plugin URI: http://www.e-dynamics.be/wordpress
 Description: Displays a form in a page where users can submit events for publishing. Heavily Based on Code from malo.conny at http://bueltge.de/
-Author: Matías Halles
-Version: 0.3.0
-Author URI: http://halles.cl/
+Author: Franky Van Liedekerke
+Version: 1.0.0
+Author URI: http://www.e-dynamics.be/wordpress
 License: GNU General Public License
 */
 
@@ -16,34 +16,38 @@ License: GNU General Public License
  *
  */
 
-$emefs_event_data = array(
-	"event_name" => '',
-	"event_status" => 5,
-	"event_start_date" => '',
-	"event_end_date" => '',
-	"event_start_time" => '00:00',
-	"event_end_time" => '00:00',
-	"event_rsvp" => 0,
-	"rsvp_number_days" => 0,
-	"registration_requires_approval" => 0,
-	"registration_wp_users_only" => 0,
-	"event_seats" => 0,
-	"event_contactperson_id" => '-1',
-	"event_notes" => '',
-	'event_page_title_format' => '',
-	'event_single_event_format' => '',
-	'event_contactperson_email_body' => '',
-	'event_respondent_email_body' => '',
-	'event_url' => '',
-	'event_category_ids' => '',
-	'event_attributes' => 'a:0:{}',
-	'location_id' => '',
-	'location_name' => '',
-	'location_address' => '',
-	'location_town' => '',
-	'location_latitude' => 0,
-	'location_longitude' => 0,
-);
+if (function_exists('eme_new_event')) {
+   $emefs_event_data=eme_new_event();
+} else {
+   $emefs_event_data = array(
+         "event_name" => '',
+         "event_start_date" => '',
+         "event_end_date" => '',
+         "event_start_time" => '00:00',
+         "event_end_time" => '00:00',
+         "event_rsvp" => 0,
+         "rsvp_number_days" => 0,
+         "registration_requires_approval" => 0,
+         "registration_wp_users_only" => 0,
+         "event_seats" => 0,
+         "event_contactperson_id" => '-1',
+         "event_notes" => '',
+         'event_page_title_format' => '',
+         'event_single_event_format' => '',
+         'event_contactperson_email_body' => '',
+         'event_respondent_email_body' => '',
+         'event_url' => '',
+         'event_category_ids' => '',
+         'event_attributes' => 'a:0:{}',
+         'location_id' => '',
+         'location_name' => '',
+         'location_address' => '',
+         'location_town' => '',
+         'location_latitude' => 0,
+         'location_longitude' => 0,
+         );
+}
+$emefs_event_data["event_status"]=5;
 
 $emefs_event_errors = array(
 	"event_name" => false,
@@ -96,9 +100,10 @@ class EMEFS {
 	public static function init() {
 		global $emefs_config;
 		
-      if (function_exists('is_multisite') && is_multisite() && array_key_exists('events-made-easy/events-manager.php',get_site_option('active_sitewide_plugins'))) {
-			$emefs_config['enabled'] = true;
-		} elseif (in_array('events-made-easy/events-manager.php', apply_filters('active_plugins', get_option( 'active_plugins' )))) {
+      //if (function_exists('is_multisite') && is_multisite() && array_key_exists('events-made-easy/events-manager.php',get_site_option('active_sitewide_plugins'))) {
+	//		$emefs_config['enabled'] = true;
+		//} elseif (in_array('events-made-easy/events-manager.php', apply_filters('active_plugins', get_option( 'active_plugins' )))) {
+      if (function_exists('eme_new_event')) {
 			$emefs_config['enabled'] = true;
 		} else {
 			$emefs_config['display_notice'] = true;
@@ -350,7 +355,7 @@ class EMEFS {
 				<h2><?php _e('Basic Configuration is Missing', 'emefs'); ?></h2>
 				<p>You have to configure the page where successful submissions will be redirected to.</p>
 				<p>
-					Please refer to the <a href="https://github.com/halles/events-manager-extended-frontend-submit/wiki/Customization" title="Customization Page">Customization Page</a> in order to set the basic parameter with which <strong>Events Made Easy Frontend Submit</strong> will run.
+					See the readme.txt file to set the basic parameters with which <strong>Events Made Easy Frontend Submit</strong> will run.
 				</p>
 			</div>
 			<?php
@@ -361,9 +366,9 @@ class EMEFS {
 			?>
 			<div class="emefs_error">
 				<h2><?php _e('Basic Configuration is Missing', 'emefs'); ?></h2>
-				<p>Since you have chosen no to accept public submissions. You have to select a page where to redirect unauthorized users.</p>
+				<p>Since you have chosen not to accept public submissions, you have to select a page where to redirect unauthorized users.</p>
 				<p>
-					Please refer to the <a href="https://github.com/halles/events-manager-extended-frontend-submit/wiki/Customization" title="Customization Page">Customization Page</a> in order to set the basic parameter with which <strong>Events Made Easy Frontend Submit</strong> will run.
+					See the readme.txt file to set the basic parameters with which <strong>Events Made Easy Frontend Submit</strong> will run.
 				</p>
 			</div>
 			<?php
