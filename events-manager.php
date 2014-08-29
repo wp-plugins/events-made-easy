@@ -117,7 +117,6 @@ define('FORMFIELDS_TBNAME', 'eme_formfields');
 define('FIELDTYPES_TBNAME', 'eme_fieldtypes');
 define('ANSWERS_TBNAME', 'eme_answers');
 define('PAYMENTS_TBNAME', 'eme_payments');
-define('DEFAULT_EVENT_PAGE_NAME', 'Events');
 define('MIN_CAPABILITY', 'edit_posts');   // Minimum user level to edit own events
 define('AUTHOR_CAPABILITY', 'publish_posts');   // Minimum user level to put an event in public/private state
 define('EDIT_CAPABILITY', 'edit_others_posts'); // Minimum user level to edit any event
@@ -973,10 +972,12 @@ function eme_create_payments_table($charset,$collate) {
 function eme_create_events_page() {
    global $wpdb;
    $postarr = array(
-      'post_status'=> 'publish',
-      'post_title' => DEFAULT_EVENT_PAGE_NAME,
-      'post_name'  => wp_strip_all_tags(__('events','eme')),
-      'post_type'  => 'page',
+      'post_title'     => wp_strip_all_tags(__('Events','eme')),
+      'post_content'   => __("This page is used by Events Made Easy. Don't change it, don't use it in your menu's, don't delete it. Just make sure the EME setting called 'Events page' points to this page. EME uses this page to render any and all events, locations, bookings, maps, ... anything. If you do want to delete this page, create a new one EME can use and update the EME setting 'Events page' accordingly.",'eme'),
+      'post_type'      => 'page',
+      'post_status'    => 'publish',
+      'comment_status' => 'closed',
+      'ping_status'    => 'closed'
    );
    if ($int_post_id = wp_insert_post($postarr)) {
       update_option('eme_events_page', $int_post_id);
