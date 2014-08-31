@@ -17,7 +17,7 @@ http://wordpress.org/extend/plugins/events-made-easy/
 == Installation ==
 
 1. Download the plugin archive and expand it
-2. Upload the eme-frontend-submit folder to your /wp-content/plugins/ directory
+2. Upload the events-made-easy-frontend-submit folder to your /wp-content/plugins/ directory
 3. Go to the plugins page and click 'Activate' for EME Frontend Submit
 4. Navigate to the Settings section within Wordpress and change the settings appropriately.
 5. Ensure the Events Made Easy plugin is installed and configured - http://wordpress.org/extend/plugins/events-made-easy/
