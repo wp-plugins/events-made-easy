@@ -62,8 +62,9 @@ function eme_options_textarea($title, $name, $description) {
    <?php
 }
 
-function eme_options_radio_binary($title, $name, $description) {
-      $option_value = get_option($name);
+function eme_options_radio_binary($title, $name, $description, $option_value=false) {
+      if (!$option_value)
+         $option_value = get_option($name);
       if ($name == "eme_permalink_events_prefix" || $name == "eme_permalink_locations_prefix") {
          $option_value = eme_permalink_convert($option_value);
       }
@@ -80,8 +81,9 @@ function eme_options_radio_binary($title, $name, $description) {
 <?php 
 }
 
-function eme_options_select($title, $name, $list, $description) {
-      $option_value = get_option($name);
+function eme_options_select($title, $name, $list, $description, $option_value=false) {
+      if (!$option_value)
+         $option_value = get_option($name);
 ?>
          <tr valign="top" id='<?php echo $name;?>_row'>
             <th scope="row"><?php _e($title,'eme'); ?></th>
