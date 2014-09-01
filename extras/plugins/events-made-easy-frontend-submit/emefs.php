@@ -100,16 +100,10 @@ class EMEFS {
       if (!function_exists('eme_new_event')) {
          add_action('admin_notices', array(__CLASS__, 'do_dependencies_notice'));
       } else {
-         if (is_admin()) {
-            // Load settings page
-            if (!class_exists("emefs_settings"))
-               require(EMEFS_DIR . 'emefs-settings.php');
-            $this->settings=new EMEFS_Settings();
-         } else {
-            add_action('template_redirect', array(__CLASS__, 'pageHasForm'));
-            self::processForm();
-            self::registerAssets();
-         }
+         // Load settings page
+         if (!class_exists("emefs_settings"))
+            require(EMEFS_DIR . 'emefs-settings.php');
+         $this->settings=new EMEFS_Settings();
          add_action('init', array($this,'init') );
          register_activation_hook( __FILE__, array($this,'activate') );
          register_deactivation_hook( __FILE__, array($this,'deactivate') );
@@ -155,22 +149,27 @@ class EMEFS {
     */
    function _deactivate() {}
 
-   public static function init() {
+   function init() {
       load_plugin_textdomain( 'emefs', EMEFS_DIR . 'lang',
             basename( dirname( __FILE__ ) ) . '/lang' );
+      if (!is_admin()) {
+         add_action('template_redirect', array($this, 'pageHasForm'));
+         $this->processForm();
+         self::registerAssets();
+      }
    }
 
-	public static function pageHasForm() { 
+	function pageHasForm() { 
 		global $wp_query;
 		if ( is_page() || is_single() ) {
 			$post = $wp_query->get_queried_object();
-			if ( false !== strpos($post->post_content, '[submit_event_form]') ) {
+			if ( false !== strpos($post->post_content, '[emefs_submit_event_form]') ) {
 				if(!$this->settings->options['guest_submit'] && !current_user_can('edit_posts')){
 					wp_redirect(get_permalink($this->settings->options['guest_not_allowed_page']));
 				}
 				
 				// Display Form Shortcode & Wrapper
-				add_shortcode( 'emefs_submit_event_form', array(__CLASS__, 'deployForm'));
+				add_shortcode( 'emefs_submit_event_form', array($this, 'deployForm'));
 				
 				// Scripts and Styles 
 				add_action( 'wp_print_scripts', array(__CLASS__, 'printScripts') );
@@ -190,7 +189,7 @@ class EMEFS {
 	/*
 	  Processes the form submitted data
 	 */
-	public static function processForm() {
+	function processForm() {
 	
 		global $emefs_event_errors, $emefs_event_data, $emefs_has_errors;
 		
@@ -261,12 +260,6 @@ class EMEFS {
 				$emefs_event_errors['event_category_ids'] = __('Please select an Event Category', 'emefs');
 			}
 			 
-			$event_data['event_contactperson_email_body'] = esc_attr( $event_data['event_contactperson_email_body'] );
-			
-			$event_data['event_url'] = esc_url( $event_data['event_url'] );
-			
-			$event_data = self::processLocation($event_data);
-			
 			foreach ($emefs_event_errors as $error) {
 				if($error){
 					$emefs_has_errors = true;
@@ -275,6 +268,10 @@ class EMEFS {
 			}
 			
 			if ( !$emefs_has_errors ) {
+			
+            $event_data = self::processLocation($event_data);
+            $event_data['event_contactperson_email_body'] = esc_attr( $event_data['event_contactperson_email_body'] );
+            $event_data['event_url'] = esc_url( $event_data['event_url'] );
 			
 				$emefs_event_data_compiled = array_merge($emefs_event_data, $event_data);
 				unset($emefs_event_data_compiled['action']);
@@ -291,7 +288,9 @@ class EMEFS {
 				}
 
 				if ($event_id = eme_db_insert_event($emefs_event_data_compiled)) {
-					if ($this->settings->options['auto_publish']) {
+					if (is_user_logged_in() && $this->settings->options['auto_publish']!=STATUS_DRAFT) {
+						wp_redirect(html_entity_decode(eme_event_url(eme_get_event($event_id))));
+					} elseif (!is_user_logged_in() && $this->settings->options['auto_publish']==STATUS_PUBLIC) {
 						wp_redirect(html_entity_decode(eme_event_url(eme_get_event($event_id))));
 					} else {
 						wp_redirect(get_permalink($this->settings->options['success_page']));
@@ -312,8 +311,6 @@ class EMEFS {
 	 */
 	public static function processLocation($event_data) {
 	
-		global $wpdb;
-
 		if ( isset($event_data['location_name']) && '' != $event_data['location_name'] ) {
 			$event_data['location_name'] = esc_attr( $event_data['location_name'] );
 		}
@@ -328,10 +325,7 @@ class EMEFS {
 		
 		if ( !empty($event_data['location_name']) && !empty($event_data['location_address']) && !empty($event_data['location_town'])) {
 		
-			$locations_table = $wpdb->prefix . 'dbem_locations';
-			$sql = sprintf("SELECT * FROM %s WHERE location_town = '%s' AND location_address = '%s'", $locations_table, $event_data['location_town'], $event_data['location_address']);
-			$location = $wpdb->get_row($sql, ARRAY_A);
-			
+			$location = eme_get_identical_location($event_data);
 			if ( !$location['location_id'] ) {
 				$location = array (
 					'location_name' => $event_data['location_name'],
@@ -351,7 +345,7 @@ class EMEFS {
 	/*
 	   Print out the Submitting Form
 	 */
-	public static function deployForm($atts, $content) {
+	function deployForm($atts, $content) {
 		global $emefs_event_errors, $emefs_event_data;
 		
 		if (!$this->settings->options['success_page']) {
@@ -421,7 +415,8 @@ class EMEFS {
 	public static function field($field = false, $type = 'text', $field_id = false, $more = null) {
 		global $emefs_event_data;
 		
-		if (!$field || !isset($emefs_event_data[$field]))
+		//if (!$field || !isset($emefs_event_data[$field]))
+		if (!$field)
 			return false;
 		
 		if (is_array($field)) {
@@ -461,7 +456,8 @@ class EMEFS {
 			case 'text':
 			case 'textarea':
 			case 'hidden':
-				echo sprintf($html_by_type[$type], $field_id, $field, $emefs_event_data[$field], $more);
+				//echo sprintf($html_by_type[$type], $field_id, $field, $emefs_event_data[$field], $more);
+				echo sprintf($html_by_type[$type], $field_id, $field, '', $more);
 				break;
 			case 'select':
 				echo self::getCategoriesSelect();

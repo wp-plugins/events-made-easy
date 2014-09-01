@@ -149,9 +149,9 @@ if (!class_exists("EMEFS_Settings")) :
          ?>
           <table class="form-table">
           <?php
-          eme_options_select (__('State for submitted event','emefs'), $this->get_field_name('auto_publish'), eme_status_array(), __ ('State for a submitted event','emefs'), $this->get_field_value('auto_publish') );
+          eme_options_select (__('State for new event','emefs'), $this->get_field_name('auto_publish'), eme_status_array(), __ ('The state for a newly submitted event.','emefs'), $this->get_field_value('auto_publish') );
           eme_options_radio_binary (__('Allow guest submit?','emefs'), $this->get_field_name('guest_submit'), __ ( 'Check this option if you want guests also to be able to add new events.', 'emefs' ), $this->get_field_value('guest_submit'));
-          eme_options_select ( __ ( 'Success Page','emefs'), $this->get_field_name('success_page'), eme_get_all_pages (), __ ( 'The page a person will be redirected to after successfully submitting a new event','emefs'), $this->get_field_value('success_page'));
+          eme_options_select ( __ ( 'Success Page','emefs'), $this->get_field_name('success_page'), eme_get_all_pages (), __ ( 'The page a person will be redirected to after successfully submitting a new event if the person submitting the event has no right to see the newly submitted event.','emefs'), $this->get_field_value('success_page'));
           eme_options_select ( __ ( 'Guests not allowed page','emefs'), $this->get_field_name('guest_not_allowed_page'), eme_get_all_pages (), __ ( 'The page a guest will be redirected to when trying to submit a new event when they are not allowed to do so.','emefs'), $this->get_field_value('guest_not_allowed_page'));
           ?>
           </table>
