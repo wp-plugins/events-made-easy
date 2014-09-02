@@ -1,9 +1,12 @@
 === EME Frontend Submit ===
 Contributors: liedekef
+Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, frontend
 Requires at least: 3.5
 Tested up to: 3.9.2
 Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A simple plugin that displays a form to allow people to enter events for the Event Made Easy plugin on a regular wordpress page.
 
@@ -36,3 +39,7 @@ The overloadable files at this moment are:
    1. form.php which controls the html form. The default version can be found in the templates subdir.
    2. style.css which controls the style loaded automatically by the plugin. The default version can be found in the templates subdir.
 
+== Changelog ==
+
+= 1.0.0 =
+Released as seperate wordpress plugin, using it's own WP settings (no config file anymore)
