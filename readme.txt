@@ -5,6 +5,8 @@ Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypa
 Requires at least: 3.8
 Tested up to: 3.9.2
 Stable tag: 1.5.2
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Manage and display events, recurring events, locations and maps, widgets, RSVP, ICAL and RSS feeds, payment gateways support. SEO compatible.
              
