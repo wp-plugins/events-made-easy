@@ -9,9 +9,8 @@ Author URI: http://www.e-dynamics.be/wordpress
 License: GNU General Public License
 */
 
-/* License Stuff Goes Here */
-
-define( 'EMEFS_DIR', plugin_dir_path( __FILE__ ) );
+define( 'EMEFS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'EMEFS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 /*
   Default Data used by the plugin
@@ -102,7 +101,7 @@ class EMEFS {
       } else {
          // Load settings page
          if (!class_exists("emefs_settings"))
-            require(EMEFS_DIR . 'emefs-settings.php');
+            require(EMEFS_PLUGIN_DIR . 'emefs-settings.php');
          $this->settings=new EMEFS_Settings();
          add_action('init', array($this,'init') );
          register_activation_hook( __FILE__, array($this,'activate') );
@@ -150,7 +149,7 @@ class EMEFS {
    function _deactivate() {}
 
    function init() {
-      load_plugin_textdomain( 'emefs', EMEFS_DIR . 'lang',
+      load_plugin_textdomain( 'emefs', EMEFS_PLUGIN_DIR . 'lang',
             basename( dirname( __FILE__ ) ) . '/lang' );
       if (!is_admin()) {
          add_action('template_redirect', array($this, 'pageHasForm'));
@@ -390,8 +389,9 @@ class EMEFS {
 		jQuery(document).ready( function(){
 			emefs_autocomplete_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
 			emefs_gmap_enabled = 1;
+			show24Hours = <?php echo $show24Hours; ?>;
 			emefs_gmap_hasSelectedLocation = <?php echo ($emefs_event_data['location_id'])?'1':'0'; ?>;
-			emefs_deploy(<?php echo $show24Hours; ?>);
+			emefs_deploy(emefs_autocomplete_url, show24Hours);
 		});
 		</script>
 		<?php
@@ -553,7 +553,7 @@ class EMEFS {
 		
 		wp_register_script( 'google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
 		
-		wp_register_script( 'emefs', WP_PLUGIN_URL.'/events-made-easy-frontend-submit/emefs.js', array('jquery-datepick', 'jquery-timeentry', 'jquery-ui-autocomplete', 'google-maps'));
+		wp_register_script( 'emefs', EMEFS_PLUGIN_URL.'emefs.js', array('jquery-datepick', 'jquery-timeentry', 'jquery-ui-autocomplete', 'google-maps'));
 		$style_filename = locate_template(array(
 			'eme-frontend-submit/style.css',
 			'events-made-easy-frontend-submit/style.css',
@@ -562,13 +562,13 @@ class EMEFS {
 		));
 		
 		if(empty($style_filename)){
-			$style_filename = WP_PLUGIN_URL.'/events-made-easy-frontend-submit/templates/style.css';
+			$style_filename = EMEFS_PLUGIN_URL.'templates/style.css';
 		}else{
 			$style_filename = get_bloginfo('url').'/'.str_replace(ABSPATH, '', $style_filename);
 		}
 		
 		wp_register_style( 'emefs', $style_filename );
-		wp_register_style( 'emefs-internal', WP_PLUGIN_URL.'/events-made-easy-frontend-submit/templates/style.internal.css');
+		wp_register_style( 'emefs-internal', EMEFS_PLUGIN_URL.'templates/style.internal.css');
       wp_register_style('jquery-datepick', EME_PLUGIN_URL.'js/jquery-datepick/jquery.datepick.css');
 	}
 	

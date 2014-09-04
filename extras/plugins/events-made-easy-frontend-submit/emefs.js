@@ -1,5 +1,4 @@
 var emefs_page = 0;
-var emefs_autocomplete_url = "/wp-content/plugins/events-manager-extended/locations-search.php";
 var emefs_gmap_enabled = 1;
 var emefs_gmap_hasSelectedLocation = 0;
 
@@ -7,7 +6,7 @@ function htmlDecode(value){
 	return jQuery('<div/>').html(value).text(); 
 }
 
-function emefs_deploy(show24Hours) {
+function emefs_deploy(emefs_autocomplete_url,show24Hours) {
 
         jQuery("input#location_name").autocomplete({
             source: function(request, response) {
