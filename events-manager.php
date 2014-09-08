@@ -1350,6 +1350,17 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = $seats[$field_id];
          }
 
+      } elseif ($event && preg_match('/#_(PENDINGSPACES|PENDINGSEATS)$/', $result)) {
+         $replacement = eme_get_pending_seats($event['event_id']);
+
+      } elseif (preg_match('/#_(PENDINGSPACES|PENDINGSEATS)\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats=eme_get_pending_multiseats($event['event_id']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
+         }
+
       } elseif ($event && preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)$/', $result)) {
          if (is_user_logged_in()) {
             $replacement = eme_get_booked_seats_by_wp_event_id($current_userid,$event['event_id']);
