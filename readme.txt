@@ -65,6 +65,10 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.3 =
+* Feature: new hook eme_ipn_action (1 parameter: $booking), executed after successfull IPN
+           Hint: get the event from the booking id by using this: $event = eme_get_event_by_booking_id($booking['booking_id']);
+
 = 1.5.2 =
 * Bugfix: multiple categories in widgets still contained an error, tested ok now
 

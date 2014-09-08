@@ -378,6 +378,7 @@ function eme_paypal_notification() {
             eme_update_booking_payed($booking_id,1,1);
          else
             eme_update_booking_payed($booking_id,1,0);
+         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
       }
       $ipn->complete();
    }
@@ -480,6 +481,7 @@ function eme_google_notification() {
                 eme_update_booking_payed($booking_id,1,1);
              else
                 eme_update_booking_payed($booking_id,1,0);
+             if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
           }
           break;
         }
@@ -559,6 +561,7 @@ function eme_2co_notification() {
             eme_update_booking_payed($booking_id,1,1);
          else
             eme_update_booking_payed($booking_id,1,0);
+         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
       }
    }
 }
@@ -587,6 +590,7 @@ function eme_webmoney_notification() {
                eme_update_booking_payed($booking_id,1,1);
             else
                eme_update_booking_payed($booking_id,1,0);
+            if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
          }
       }
    }
@@ -627,6 +631,7 @@ function eme_fdgg_notification() {
             eme_update_booking_payed($booking_id,1,1);
          else
             eme_update_booking_payed($booking_id,1,0);
+         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
       }
    }
 }
