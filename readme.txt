@@ -71,6 +71,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added placeholders #_PENDINGSPACES and #_PENDINGSPACES{xx} (see the doc)
 * Improvement: added conditional shortcodes eme_if7 till eme_if15 (some people really want these ...)
 * Bugfix: #_PAYMENT_URL was no longer replaced correctly
+* Bugfix: First Data payment button was not being generated correctly
 
 = 1.5.2 =
 * Bugfix: multiple categories in widgets still contained an error, tested ok now
