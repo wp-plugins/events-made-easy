@@ -70,6 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
            Hint: get the event from the booking id by using this: $event = eme_get_event_by_booking_id($booking['booking_id']);
 * Feature: added placeholders #_PENDINGSPACES and #_PENDINGSPACES{xx} (see the doc)
 * Improvement: added conditional shortcodes eme_if7 till eme_if15 (some people really want these ...)
+* Bugfix: #_PAYMENT_URL was no longer replaced correctly
 
 = 1.5.2 =
 * Bugfix: multiple categories in widgets still contained an error, tested ok now

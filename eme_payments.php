@@ -201,7 +201,6 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"First Data");
    if ($charge>0)
       $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"First Data",$charge,$event['currency']);
-   $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
    $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
