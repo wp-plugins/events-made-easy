@@ -2798,7 +2798,7 @@ function eme_admin_event_script() {
    
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
-   $use_select_for_locations = get_option('eme_use_select_for_locations');
+   $use_select_for_locations = get_option('eme_use_select_for_locations')?1:0;
    // qtranslate there? Then we need the select
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
       $use_select_for_locations=1;
@@ -2810,7 +2810,7 @@ function eme_admin_event_script() {
 var show24Hours = <?php echo $show24Hours;?>;
 var locale_code = '<?php echo $locale_code;?>';
 var eme_locations_search_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
-var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
 var use_select_for_locations = <?php echo $use_select_for_locations; ?>;
 
 function eme_event_page_title_format(){
