@@ -2500,6 +2500,10 @@ function eme_event_form($event, $title, $element) {
                         <p><?php _e('Contact','eme'); ?>
                            <?php
                            wp_dropdown_users ( array ('name' => 'event_contactperson_id', 'show_option_none' => __ ( "Event author", 'eme' ), 'selected' => $event['event_contactperson_id'] ) );
+                           // if it is not a new event and there's no contact person defined, then the event author becomes contact person
+                           // So let's display a warning what this means if there's no author (like when submitting via the frontend submission form)
+                           if (!$is_new_event && $event['event_contactperson_id']<1 && $event['event_author']<1)
+                              print "<br />". __( 'Since the author is undefined for this event, any reference to the contact person (like when using #_CONTACTPERSON when sending mails), will use the currently logged-in user info.', 'eme' );
                            ?>
                         </p>
                      </div>
@@ -2794,11 +2798,21 @@ function eme_admin_event_script() {
    
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
+   $use_select_for_locations = get_option('eme_use_select_for_locations')?1:0;
+   // qtranslate there? Then we need the select
+   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+      $use_select_for_locations=1;
+   }
+
 ?>
 <script type="text/javascript">
    //<![CDATA[
 var show24Hours = <?php echo $show24Hours;?>;
 var locale_code = '<?php echo $locale_code;?>';
+var eme_locations_search_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
+var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
+var use_select_for_locations = <?php echo $use_select_for_locations; ?>;
+
 function eme_event_page_title_format(){
    var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
    tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");

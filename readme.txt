@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 3.8
 Tested up to: 4.0
-Stable tag: 1.5.2
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,6 +64,17 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
 See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
+
+= 1.5.4 =
+* Bugfix: account for the fact that a WP setting might be never changed, and thus just be empty in case of booleans
+
+= 1.5.3 =
+* Feature: new hook eme_ipn_action (1 parameter: $booking), executed after successfull IPN
+           Hint: get the event from the booking id by using this: $event = eme_get_event_by_booking_id($booking['booking_id']);
+* Feature: added placeholders #_PENDINGSPACES and #_PENDINGSPACES{xx} (see the doc)
+* Improvement: added conditional shortcodes eme_if7 till eme_if15 (some people really want these ...)
+* Bugfix: #_PAYMENT_URL was no longer replaced correctly
+* Bugfix: First Data payment button was not being generated correctly
 
 = 1.5.2 =
 * Bugfix: multiple categories in widgets still contained an error, tested ok now

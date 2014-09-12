@@ -201,7 +201,6 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"First Data");
    if ($charge>0)
       $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"First Data",$charge,$event['currency']);
-   $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
    $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
@@ -378,6 +377,7 @@ function eme_paypal_notification() {
             eme_update_booking_payed($booking_id,1,1);
          else
             eme_update_booking_payed($booking_id,1,0);
+         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
       }
       $ipn->complete();
    }
@@ -480,6 +480,7 @@ function eme_google_notification() {
                 eme_update_booking_payed($booking_id,1,1);
              else
                 eme_update_booking_payed($booking_id,1,0);
+             if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
           }
           break;
         }
@@ -559,6 +560,7 @@ function eme_2co_notification() {
             eme_update_booking_payed($booking_id,1,1);
          else
             eme_update_booking_payed($booking_id,1,0);
+         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
       }
    }
 }
@@ -587,6 +589,7 @@ function eme_webmoney_notification() {
                eme_update_booking_payed($booking_id,1,1);
             else
                eme_update_booking_payed($booking_id,1,0);
+            if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
          }
       }
    }
@@ -627,6 +630,7 @@ function eme_fdgg_notification() {
             eme_update_booking_payed($booking_id,1,1);
          else
             eme_update_booking_payed($booking_id,1,0);
+         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
       }
    }
 }
