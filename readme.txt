@@ -65,6 +65,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.5 =
+* Bugfix: featured image for locations wasn't working anymore
+
 = 1.5.4 =
 * Bugfix: account for the fact that a WP setting might be never changed, and thus just be empty in case of booleans
 

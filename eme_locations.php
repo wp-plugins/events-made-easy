@@ -302,9 +302,9 @@ jQuery(document).ready(function($){
     })
     .on('select', function() {
         var attachment = custom_uploader.state().get('selection').first().toJSON();
-        $('#event_image_url').val(attachment.url);
-        $('#event_image_id').val(attachment.id);
-        $('#eme_event_image_example' ).attr("src",attachment.url);
+        $('#location_image_url').val(attachment.url);
+        $('#location_image_id').val(attachment.id);
+        $('#eme_location_image_example' ).attr("src",attachment.url);
     })
     .open();
   });
