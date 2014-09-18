@@ -2799,8 +2799,8 @@ function eme_admin_event_script() {
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
    $use_select_for_locations = get_option('eme_use_select_for_locations')?1:0;
-   // qtranslate there? Then we need the select
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+   $lang = eme_detect_lang();
+   if (!empty($lang)) {
       $use_select_for_locations=1;
    }
 
@@ -3098,7 +3098,8 @@ function eme_meta_box_div_event_cancel_form_format($event) {
 function eme_meta_box_div_location_name($event) {
    $use_select_for_locations = get_option('eme_use_select_for_locations');
    // qtranslate there? Then we need the select, otherwise locations will be created again...
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+   $lang = eme_detect_lang();
+   if (!empty($lang)) {
       $use_select_for_locations=1;
    }
    $gmap_is_active = get_option('eme_gmap_is_active' );
@@ -3417,7 +3418,7 @@ function eme_admin_map_script() {
          }
  
          function eme_displayAddress(ignore_coord){
-            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
             if (gmap_enabled) {
                eventLocation = jQuery("input[name=location_name]").val();
                eventTown = jQuery("input#location_town").val();
@@ -3433,7 +3434,7 @@ function eme_admin_map_script() {
          }
 
          function eme_SelectdisplayAddress(){
-            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
             if (gmap_enabled) {
                eventLocation = jQuery("input[name='location-select-name']").val(); 
                eventTown = jQuery("input[name='location-select-town']").val();
@@ -3450,7 +3451,8 @@ function eme_admin_map_script() {
             <?php 
             $use_select_for_locations = get_option('eme_use_select_for_locations');
             // qtranslate there? Then we need the select
-            if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+            $lang = eme_detect_lang();
+            if (!empty($lang)) {
                $use_select_for_locations=1;
             }
 
@@ -3459,10 +3461,13 @@ function eme_admin_map_script() {
             // We check on the edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             // For new events we do nothing if the use_select_for_locations var is set, because there's nothing to show.
-            if ($use_select_for_locations &&
-               (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) { ?>
-               eme_SelectdisplayAddress();
-            <?php } elseif ($plugin_page == 'eme-locations' && (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation'))) { ?>
+            if (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) {
+               if ($use_select_for_locations) { ?> 
+                  eme_SelectdisplayAddress();
+               <?php } else { ?>
+                  eme_displayAddress(0);
+               <?php } ?>
+            <?php } elseif (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation')) { ?>
                eme_displayAddress(0);
             <?php } ?>
 
