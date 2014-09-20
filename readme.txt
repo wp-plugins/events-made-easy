@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 3.8
 Tested up to: 4.0
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.5.5 =
 * Bugfix: featured image for locations wasn't working anymore
 * Bugfix: show the map when editing an existing event with a known location
+* Bugfix: fix a JS error when looking at the list of events
 
 = 1.5.4 =
 * Bugfix: account for the fact that a WP setting might be never changed, and thus just be empty in case of booleans
