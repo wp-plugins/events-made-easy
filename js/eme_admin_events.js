@@ -81,7 +81,9 @@ function updateShowHideTime () {
 }
 
 function eme_event_location_info () {
-    if (!use_select_for_locations) {
+    // for autocomplete to work, the element needs to exist, otherwise JS errors occur
+    // we check for that using length
+    if (!use_select_for_locations && jQuery("input[name=location_name]").length) {
           jQuery("input[name=location_name]").autocomplete({
             source: function(request, response) {
                          jQuery.ajax({ url: eme_locations_search_url,

@@ -105,7 +105,7 @@ function eme_client_clock_callback() {
 // Setting constants
 define('EME_DB_VERSION', 64);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
-define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
+define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
 define('RECURRENCE_TBNAME','eme_recurrence');
 define('LOCATIONS_TBNAME','eme_locations');
