@@ -1,3 +1,7 @@
+function htmlDecode(value){ 
+   return jQuery('<div/>').html(value).text(); 
+}
+
 function updateIntervalDescriptor () { 
    jQuery(".interval-desc").hide();
    var number = "-plural";
@@ -7,12 +11,14 @@ function updateIntervalDescriptor () {
    var descriptor = "span#interval-"+jQuery("select#recurrence-frequency").val()+number;
    jQuery(descriptor).show();
 }
+
 function updateIntervalSelectors () {
    jQuery('p.alternate-selector').hide();
    jQuery('p#'+ jQuery('select#recurrence-frequency').val() + "-selector").show();
    //jQuery('p.recurrence-tip').hide();
    //jQuery('p#'+ jQuery(this).val() + "-tip").show();
 }
+
 function updateShowHideRecurrence () {
    if(jQuery('input#event-recurrence').attr("checked")) {
       jQuery("#event_recurrence_pattern").fadeIn();
@@ -72,6 +78,64 @@ function updateShowHideTime () {
    } else {
       jQuery("div#div_event_time").show();
    }
+}
+
+function eme_event_location_info () {
+    // for autocomplete to work, the element needs to exist, otherwise JS errors occur
+    // we check for that using length
+    if (!use_select_for_locations && jQuery("input[name=location_name]").length) {
+          jQuery("input[name=location_name]").autocomplete({
+            source: function(request, response) {
+                         jQuery.ajax({ url: eme_locations_search_url,
+                                  data: { q: request.term},
+                                  dataType: "json",
+                                  type: "GET",
+                                  success: function(data){
+                                                response(jQuery.map(data, function(item) {
+                                                      return {
+                                                         label: item.name,
+                                                         name: htmlDecode(item.name),
+                                                         address: item.address,
+                                                         town: item.town,
+                                                         latitude: item.latitude,
+                                                         longitude: item.longitude,
+                                                      };
+                                                }));
+                                           }
+                                 });
+                    },
+            select:function(evt, ui) {
+                         // when a product is selected, populate related fields in this form
+                         jQuery('input[name=location_name]').val(ui.item.name);
+                         jQuery('input#location_address').val(ui.item.address);
+                         jQuery('input#location_town').val(ui.item.town);
+                         jQuery('input#location_latitude').val(ui.item.latitude);
+                         jQuery('input#location_longitude').val(ui.item.longitude);
+                         if(gmap_enabled) {
+                            loadMapLatLong(ui.item.name, ui.item.town, ui.item.address, ui.item.latitude, ui.item.longitude);
+                         }
+                         return false;
+                   },
+            minLength: 1
+          }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return jQuery( "<li></li>" )
+            .append("<a><strong>"+htmlDecode(item.name)+'</strong><br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small></a>')
+            .appendTo( ul );
+          };
+    } else {
+          jQuery('#location-select-id').change(function() {
+            jQuery.getJSON(eme_locations_search_url,{id: jQuery(this).val()}, function(item){
+               jQuery("input[name='location-select-name']").val(item.name);
+               jQuery("input[name='location-select-address']").val(item.address); 
+               jQuery("input[name='location-select-town']").val(item.town); 
+               jQuery("input[name='location-select-latitude']").val(item.latitude); 
+               jQuery("input[name='location-select-longitude']").val(item.longitude); 
+               if(gmap_enabled) {
+                  loadMapLatLong(item.name, item.town, item.address, item.latitude, item.longitude);
+               }
+            })
+          });
+    }
 }
 
 jQuery(document).ready( function() {
@@ -208,6 +272,7 @@ jQuery(document).ready( function() {
       }
    }); 
 
+   eme_event_location_info();
 
    updateIntervalDescriptor(); 
    updateIntervalSelectors();

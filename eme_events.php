@@ -2207,8 +2207,8 @@ function eme_events_table($message="",$scope="future") {
          jQuery('#eme_admin_events').dataTable( {
 <?php
    $locale_code = get_locale();
-   $locale_file = EME_PLUGIN_DIR. "/js/jquery-datatables/i18n/$locale_code.json";
-   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datatables/i18n/$locale_code.json";
+   $locale_file = EME_PLUGIN_DIR. "js/jquery-datatables/i18n/$locale_code.json";
+   $locale_file_url = EME_PLUGIN_URL. "js/jquery-datatables/i18n/$locale_code.json";
    if ($locale_code != "en_US" && file_exists($locale_file)) {
 ?>
             "language": {
@@ -2500,6 +2500,10 @@ function eme_event_form($event, $title, $element) {
                         <p><?php _e('Contact','eme'); ?>
                            <?php
                            wp_dropdown_users ( array ('name' => 'event_contactperson_id', 'show_option_none' => __ ( "Event author", 'eme' ), 'selected' => $event['event_contactperson_id'] ) );
+                           // if it is not a new event and there's no contact person defined, then the event author becomes contact person
+                           // So let's display a warning what this means if there's no author (like when submitting via the frontend submission form)
+                           if (!$is_new_event && $event['event_contactperson_id']<1 && $event['event_author']<1)
+                              print "<br />". __( 'Since the author is undefined for this event, any reference to the contact person (like when using #_CONTACTPERSON when sending mails), will use the currently logged-in user info.', 'eme' );
                            ?>
                         </p>
                      </div>
@@ -2794,11 +2798,21 @@ function eme_admin_event_script() {
    
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
+   $use_select_for_locations = get_option('eme_use_select_for_locations')?1:0;
+   $lang = eme_detect_lang();
+   if (!empty($lang)) {
+      $use_select_for_locations=1;
+   }
+
 ?>
 <script type="text/javascript">
    //<![CDATA[
 var show24Hours = <?php echo $show24Hours;?>;
 var locale_code = '<?php echo $locale_code;?>';
+var eme_locations_search_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
+var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
+var use_select_for_locations = <?php echo $use_select_for_locations; ?>;
+
 function eme_event_page_title_format(){
    var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
    tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
@@ -3084,7 +3098,8 @@ function eme_meta_box_div_event_cancel_form_format($event) {
 function eme_meta_box_div_location_name($event) {
    $use_select_for_locations = get_option('eme_use_select_for_locations');
    // qtranslate there? Then we need the select, otherwise locations will be created again...
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+   $lang = eme_detect_lang();
+   if (!empty($lang)) {
       $use_select_for_locations=1;
    }
    $gmap_is_active = get_option('eme_gmap_is_active' );
@@ -3403,7 +3418,7 @@ function eme_admin_map_script() {
          }
  
          function eme_displayAddress(ignore_coord){
-            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
             if (gmap_enabled) {
                eventLocation = jQuery("input[name=location_name]").val();
                eventTown = jQuery("input#location_town").val();
@@ -3419,7 +3434,7 @@ function eme_admin_map_script() {
          }
 
          function eme_SelectdisplayAddress(){
-            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
             if (gmap_enabled) {
                eventLocation = jQuery("input[name='location-select-name']").val(); 
                eventTown = jQuery("input[name='location-select-town']").val();
@@ -3436,7 +3451,8 @@ function eme_admin_map_script() {
             <?php 
             $use_select_for_locations = get_option('eme_use_select_for_locations');
             // qtranslate there? Then we need the select
-            if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+            $lang = eme_detect_lang();
+            if (!empty($lang)) {
                $use_select_for_locations=1;
             }
 
@@ -3445,10 +3461,13 @@ function eme_admin_map_script() {
             // We check on the edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             // For new events we do nothing if the use_select_for_locations var is set, because there's nothing to show.
-            if ($use_select_for_locations &&
-               (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) { ?>
-               eme_SelectdisplayAddress();
-            <?php } elseif ($plugin_page == 'eme-locations' && (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation'))) { ?>
+            if (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) {
+               if ($use_select_for_locations) { ?> 
+                  eme_SelectdisplayAddress();
+               <?php } else { ?>
+                  eme_displayAddress(0);
+               <?php } ?>
+            <?php } elseif (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation')) { ?>
                eme_displayAddress(0);
             <?php } ?>
 
@@ -3867,14 +3886,14 @@ function eme_admin_enqueue_js(){
       // jquery ui locales are with dashes, not underscores
       $locale_code = get_locale();
       $locale_code = preg_replace( "/_/","-", $locale_code );
-      $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+      $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+      $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
       // for english, no translation code is needed)
       if ($locale_code != "en-US") {
          if (!file_exists($locale_file)) {
             $locale_code = substr ( $locale_code, 0, 2 );
-            $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-            $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+            $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+            $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
          }
          if (file_exists($locale_file))
             wp_enqueue_script('jquery-datepick-locale',$locale_file_url);

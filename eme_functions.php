@@ -216,14 +216,10 @@ function eme_calendar_day_url($day) {
    return $the_link;
 }
 
-function eme_payment_url($booking_id) {
+function eme_payment_url($payment_id) {
    global $wp_rewrite;
 
    $url_mode=1;
-   $payment_id=eme_get_booking_payment_id($booking_id);
-   if (!$payment_id)
-      return;
-
    $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
