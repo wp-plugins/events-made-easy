@@ -1137,16 +1137,9 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
       //$sql = "INSERT INTO $bookings_table (event_id, person_id, booking_seats,booking_comment) VALUES ($event_id, $person_id, $seats,'$comment')";
       //$wpdb->query($sql);
 
-      // we insert the booking in the DB, then calc the transfer_nbr for it based on the new booking id
       if ($wpdb->insert($bookings_table,$booking)) {
          $booking_id = $wpdb->insert_id;
          $booking['booking_id'] = $booking_id;
-         $booking['transfer_nbr_be97'] = eme_transfer_nbr_be97($booking_id);
-         $where = array();
-         $fields = array();
-         $where['booking_id'] = $booking_id;
-         $fields['transfer_nbr_be97'] = $booking['transfer_nbr_be97'];
-         $wpdb->update($bookings_table, $fields, $where);
          eme_record_answers($booking_id);
          // now that everything is (or should be) correctly entered in the db, execute possible actions for the new booking
          if (has_action('eme_insert_rsvp_action')) do_action('eme_insert_rsvp_action',$booking);
@@ -2359,6 +2352,7 @@ function eme_registration_seats_form_table($pending=0) {
          $person = eme_get_person ($event_booking['person_id']);
          $search_url=add_query_arg(array('search'=>$person['person_id']),$search_dest);
          $event = eme_get_event($event_booking['event_id']);
+         $payment_id = eme_get_booking_payment_id($event_booking ['booking_id']);
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
@@ -2377,9 +2371,9 @@ function eme_registration_seats_form_table($pending=0) {
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
           <td>[person_id=<?php echo $person['person_id']; ?>]</td>
-         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$plugin_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see the details and/or edit the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
+         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$plugin_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see and/or edit the details of the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>" title="<?php _e('Click the event name in order to see and/or edit the details of the event.','eme')?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>
          <?php
              $approved_seats = eme_get_approved_seats($event['event_id']);
@@ -2398,7 +2392,7 @@ function eme_registration_seats_form_table($pending=0) {
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
-         <td><a href="<?php echo $search_url; ?>"><?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?></a>
+         <td><a href="<?php echo $search_url; ?>" title="<?php _e('Click the name of the booker in order to see and/or edit the details of the booker.','eme')?>"><?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?></a>
          </td>
          <td data-sort="<?php echo $bookingtimestamp; ?>">
             <?php echo $localised_booking_date ." ". $localised_booking_time;?>
@@ -2419,7 +2413,7 @@ function eme_registration_seats_form_table($pending=0) {
             <?php echo eme_get_total_booking_price($event,$event_booking); ?>
          </td>
          <td>
-            <?php echo eme_sanitize_html($event_booking['transfer_nbr_be97']); ?>
+            <span title="<?php print sprintf(__('This is based on the payment ID of the booking: %d','eme'),$payment_id);?>"><?php echo eme_sanitize_html($event_booking['transfer_nbr_be97']); ?></span>
          </td>
          <td>
             <?php echo eme_ui_select_binary($event_booking['booking_payed'],"bookings_payed[]"); ?>

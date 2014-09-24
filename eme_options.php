@@ -655,6 +655,7 @@ function eme_options_page() {
 <h3><?php _e ( 'RSVP: paypal options', 'eme' ); ?></h3>
 <table class='form-table'>
    <?php
+      $notification_link = add_query_arg(array('eme_eventAction'=>'paypal_notification'),$events_page_link);
       eme_options_select ( __('PayPal live or test','eme'), 'eme_paypal_url', array (PAYPAL_SANDBOX_URL => __('Paypal Sandbox (for testing)','eme'), PAYPAL_LIVE_URL => __ ( 'Paypal Live', 'eme' )), __('Choose wether you want to test paypal in a paypal sandbox or go live and really use paypal.','eme') );
       eme_options_input_text (__('PayPal business info','eme'),'eme_paypal_business', __("Paypal business ID or email.",'eme'));
       eme_options_radio_binary ( __ ( 'Use paypal encryption?' ), 'eme_paypal_s_encrypt', __ ( 'Select yes to encrypt the paypal button using certificates.','eme' ) );
@@ -663,6 +664,7 @@ function eme_options_page() {
       eme_options_input_text (__('Own private key','eme'),'eme_paypal_s_privkey', __("Path to own private key file.",'eme'));
       eme_options_input_text (__('Certificate ID','eme'),'eme_paypal_s_certid', __("Certificate ID of your cert at paypal.",'eme'));
       eme_options_input_text (__('Extra charge','eme'),'eme_paypal_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
+      echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
 
@@ -675,7 +677,7 @@ function eme_options_page() {
       eme_options_input_text (__('2Checkout Account number','eme'),'eme_2co_business', __("2Checkout Account number.",'eme'));
       eme_options_input_text (__('2Checkout Secret','eme'),'eme_2co_secret', __("2Checkout secret.",'eme'));
       eme_options_input_text (__('Extra charge','eme'),'eme_2co_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
-      echo "<tr>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</tr>';
+      echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
 
@@ -688,7 +690,7 @@ function eme_options_page() {
       eme_options_input_text (__('Webmoney Purse','eme'),'eme_webmoney_purse', __("Webmoney Purse.",'eme'));
       eme_options_input_text (__('Webmoney Secret','eme'),'eme_webmoney_secret', __("Webmoney secret.",'eme'));
       eme_options_input_text (__('Extra charge','eme'),'eme_webmoney_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
-      echo "<tr>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</tr>';
+      echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
 
@@ -711,7 +713,7 @@ function eme_options_page() {
       eme_options_input_text (__('First Data Store Name','eme'),'eme_fdgg_store_name', __("First Data Store Name.",'eme'));
       eme_options_input_text (__('First Data Shared Secret','eme'),'eme_fdgg_shared_secret', __("First Data Shared Secret.",'eme'));
       eme_options_input_text (__('Extra charge','eme'),'eme_fdgg_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
-      echo "<tr>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</tr>';
+      echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
 

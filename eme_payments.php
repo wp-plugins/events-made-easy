@@ -645,20 +645,28 @@ function eme_event_needs_payment ($event) {
 function eme_create_payment($booking_ids) {
    global $wpdb;
    $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
+   $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
 
    // some safety
    if (!$booking_ids)
       return false;
 
+   $payment_id = false;
    $payment=array();
    $payment['booking_ids']=$booking_ids;
    $payment['creation_date_gmt']=current_time('mysql', true);
    if ($wpdb->insert($payments_table,$payment)) {
       $payment_id = $wpdb->insert_id;
-      return $payment_id;
-   } else {
-      return false;
+      $booking_ids_arr=explode(",",$booking_ids);
+      foreach ($booking_ids_arr as $booking_id) {
+         $where = array();
+         $fields = array();
+         $where['booking_id'] = $booking_id;
+         $fields['transfer_nbr_be97'] = eme_transfer_nbr_be97($payment_id);
+         $wpdb->update($bookings_table, $fields, $where);
+      }
    }
+   return $payment_id;
 }
 
 function eme_get_payment($payment_id) {
