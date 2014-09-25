@@ -66,6 +66,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.6 =
+* Feature: added 2 new filters to influence CSV output: eme_csv_header_filter and eme_csv_footer_filter
+  Both take 1 parameter ($event) and should return an array (representing columns in the csv output in the header or footer)
+  Can be used to add extra info at the top or bottom of the CSV output
 * Bugfix: the unique number for payments should be calculated based on the payment ID, not the booking ID anymore.
 * Bugfix: small html correction in EME admin interface, tab Payments
 * Bugfix: fix some 'notcategory' behaviour for the eme_events shortcode

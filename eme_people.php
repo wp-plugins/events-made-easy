@@ -256,6 +256,10 @@ function eme_csv_booking_report($event_id) {
    $bookings =  eme_get_bookings_for($event_id);
    $answer_columns = eme_get_answercolumns(eme_get_bookingids_for($event_id));
    $out = fopen('php://output', 'w');
+   if (has_filter('eme_csv_header_filter')) {
+      $line=apply_filters('eme_csv_header_filter',$event);
+      fputcsv2($out,$line);
+   }
    $line=array();
    $line[]=__('ID', 'eme');
    $line[]=__('Name', 'eme');
@@ -314,6 +318,10 @@ function eme_csv_booking_report($event_id) {
          if (!$found)
             $line[]="";
       }
+      fputcsv2($out,$line);
+   }
+   if (has_filter('eme_csv_footer_filter')) {
+      $line=apply_filters('eme_csv_footer_filter',$event);
       fputcsv2($out,$line);
    }
    fclose($out);
