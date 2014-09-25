@@ -2625,7 +2625,7 @@ function eme_send_mail_form($event_id=0) {
            <option value='attendees'><?php _e('Attendee mails','eme'); ?></option>
            <option value='bookings'><?php _e('Booking mails','eme'); ?></option>
            <option value='all_wp'><?php _e('Mail to all WP users','eme'); ?></option>
-           <option value='all_wp_not_registered'><?php _e('All WP users except registered ones','eme'); ?></option>
+           <option value='all_wp_not_registered'><?php _e('All WP users except those registered for the event','eme'); ?></option>
            </select>
       </td>
       </tr>

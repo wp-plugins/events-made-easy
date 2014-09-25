@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.5.6 =
 * Bugfix: the unique number for payments should be calculated based on the payment ID, not the booking ID anymore.
 * Bugfix: small html correction in EME admin interface, tab Payments
+* Bugfix: fix some 'notcategory' behaviour for the eme_events shortcode
 
 = 1.5.5 =
 * Bugfix: featured image for locations wasn't working anymore

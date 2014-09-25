@@ -928,6 +928,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       // for AND categories: the user enters "+" and this gets translated to " " by wp_parse_args
       // so we fix it again
       $category = preg_replace("/ /","+",$category);
+      $notcategory = preg_replace("/ /","+",$notcategory);
    }
    $echo = ($echo==="true" || $echo==="1") ? true : $echo;
    $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
@@ -1808,6 +1809,14 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
                $category_conditions[] = " NOT FIND_IN_SET($cat,event_category_ids)";
          }
          $conditions[] = "(".implode(' AND ', $category_conditions).")";
+      } elseif ( preg_match('/ /', $notcategory) ) {
+         // url decoding of '+' is ' '
+         $notcategory = explode(' ', $notcategory);
+         $category_conditions = array();
+         foreach ($notcategory as $cat) {
+            if (is_numeric($cat) && $cat>0)
+               $category_conditions[] = " NOT FIND_IN_SET($cat,event_category_ids)";
+         }
       }
    }
 
