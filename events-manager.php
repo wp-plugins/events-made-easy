@@ -1821,7 +1821,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_RECURRENCEDESC/', $result)) {
+      } elseif ($event && preg_match('/#_RECURRENCE_DESC|#_RECURRENCEDESC/', $result)) {
          if ($event ['recurrence_id']) {
             $replacement = eme_get_recurrence_desc ( $event ['recurrence_id'] );
             if ($target == "html") {
@@ -1830,6 +1830,16 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = apply_filters('eme_general_rss', $replacement);
             } else {
                $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif ($event && preg_match('/#_RECURRENCE_NBR/', $result)) {
+         // returns the sequence number of an event in a recurrence series
+         if ($event ['recurrence_id']) {
+            $events = eme_get_recurrence_eventids ( $event ['recurrence_id'] );
+            $nbr = array_search($event['event_id'],$events);
+            if ($nbr !== false) {
+               $replacement = $nbr+1;
             }
          }
 
@@ -1931,6 +1941,27 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = 1;
          else
             $replacement = 0;
+
+      } elseif ($event && preg_match('/#_IS_FIRST_RECURRENCE/', $result)) {
+         // returns 1 if the event is the first event in a recurrence series
+         if ($event ['recurrence_id']) {
+            $events = eme_get_recurrence_eventids ( $event ['recurrence_id'] );
+            $nbr = array_search($event['event_id'],$events);
+            if ($nbr !== false && $nbr==0) {
+               $replacement = 1;
+            }
+         }
+
+      } elseif ($event && preg_match('/#_IS_LAST_RECURRENCE/', $result)) {
+         // returns 1 if the event is the last event in a recurrence series
+         if ($event ['recurrence_id']) {
+            $events = eme_get_recurrence_eventids ( $event ['recurrence_id'] );
+            $nbr = array_search($event['event_id'],$events);
+            $last_index = count($events)-1;
+            if ($nbr !== false && $nbr==$last_index) {
+               $replacement = 1;
+            }
+         }
 
       } else {
          $found = 0;
