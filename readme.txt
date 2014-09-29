@@ -71,6 +71,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   Can be used to add extra info at the top or bottom of the CSV output
 * Feature: new event placeholder #_RECURRENCE_NBR, returns the sequence number of an event in a recurrence series (first event is 1, second is 2, etc ...)
   Also added conditional tags #_IS_FIRST_RECURRENCE and #_IS_LAST_RECURRENCE
+* Feature: the RSVP cut-off date/time can now also be done based on the end-date of the event, not just the start-date
 * Improvement: renamed #_RECURRENCEDESC to #_RECURRENCE_DESC for conformity (the old one is still possible)
 * Bugfix: the unique number for payments should be calculated based on the payment ID, not the booking ID anymore.
 * Bugfix: small html correction in EME admin interface, tab Payments

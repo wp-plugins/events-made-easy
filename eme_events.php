@@ -61,6 +61,8 @@ function eme_init_event_props($props) {
       $props['min_allowed']=get_option('eme_rsvp_addbooking_min_spaces');
    if (!isset($props['max_allowed']))
       $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
+   if (!isset($props['rsvp_end_target']))
+      $props['rsvp_end_target']='start';
 
    $template_override=array('event_page_title_format_tpl','event_single_event_format_tpl','event_contactperson_email_body_tpl','event_registration_recorded_ok_html_tpl','event_respondent_email_body_tpl','event_registration_pending_email_body_tpl','event_registration_updated_email_body_tpl','event_registration_form_format_tpl','event_cancel_form_format_tpl');
    foreach ($template_override as $template) {
@@ -2324,6 +2326,9 @@ function eme_event_form($event, $title, $element) {
    $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
    $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
    $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
+   $eme_prop_rsvp_end_target_isstartdate = ($event['event_properties']['rsvp_end_target']=='start')? "selected='selected'" : "";
+   $eme_prop_rsvp_end_target_isenddate = ($event['event_properties']['rsvp_end_target']=='end')? "selected='selected'" : "";
+
 
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
    ?>
@@ -2578,10 +2583,14 @@ function eme_event_form($event, $title, $element) {
                               <?php _e ( 'Allow RSVP until ','eme' ); ?>
                            <br />
                               <input id="rsvp_number_days" type="text" name="rsvp_number_days" maxlength='2' size='2' value="<?php echo $event['rsvp_number_days']; ?>" />
-                              <?php _e ( ' days before the event starts.','eme' ); ?>
-                           <br />
+                              <?php _e ( 'days','eme' ); ?>
                               <input id="rsvp_number_hours" type="text" name="rsvp_number_hours" maxlength='2' size='2' value="<?php echo $event['rsvp_number_hours']; ?>" />
-                              <?php _e ( ' hours before the event starts.','eme' ); ?>
+                              <?php _e ( 'hours','eme' ); ?>
+                           <br />
+                              <?php _e ( 'before the event ','eme' ); ?><select id="eme_prop_rsvp_end_target" name="eme_prop_rsvp_end_target">
+                                 <option value='start' <?php echo $eme_prop_rsvp_end_target_isstartdate;?>><?php _e ( 'starts','eme' ); ?></option>
+                                 <option value='end' <?php echo $eme_prop_rsvp_end_target_isenddate;?>><?php _e ( 'ends','eme' ); ?></option>
+                              </select>
                            <br />
                            <br />
                               <?php _e ( 'Payment methods','eme' ); ?><br />
