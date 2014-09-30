@@ -506,8 +506,8 @@ function eme_cancel_seats($event) {
       $booking_ids=eme_get_booking_ids_by_person_event_id($person_id,$event_id);
       if (!empty($booking_ids)) {
          foreach ($booking_ids as $booking_id) {
-            eme_email_rsvp_booking($booking_id,"cancelRegistration");
             eme_delete_booking($booking_id);
+            eme_email_rsvp_booking($booking_id,"cancelRegistration");
          }
          $result = __('Booking deleted', 'eme');
       } else {

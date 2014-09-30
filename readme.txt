@@ -77,6 +77,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: small html correction in EME admin interface, tab Payments
 * Bugfix: fix some 'notcategory' behaviour for the eme_events shortcode
 * Bugfix: the optional choosen template got lost when switching months in the full calendar
+* Bugfix: the mail for cancellation was sent before the cancellation was done, resulting in wrong number of spaces free/reserved in the cancellation mail
 
 = 1.5.5 =
 * Bugfix: featured image for locations wasn't working anymore
