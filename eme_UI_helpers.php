@@ -40,6 +40,7 @@ function eme_options_input_text($title, $name, $description) {
       </tr>
    <?php
 }
+
 function eme_options_input_password($title, $name, $description) {
    ?>
    <tr valign="top" id='<?php echo $name;?>_row'>

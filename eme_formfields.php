@@ -1053,6 +1053,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 }
 
 function eme_find_required_formfields ($format) {
+   $placeholders=array();
    if (empty($format)) {
       $format = get_option('eme_registration_form_format');
    }
