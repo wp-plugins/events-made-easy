@@ -2809,7 +2809,8 @@ function eme_closed($data) {
 // General script to make sure hidden fields are shown when containing data
 function eme_admin_event_script() {
    // check if the user wants AM/PM or 24 hour notation
-   $time_format = get_option('time_format');
+   // make sure that escaped characters are filtered out first
+   $time_format = preg_replace('/\\\\./','',get_option('time_format'));
    $show24Hours = 'true';
    if (preg_match ( "/g|h/", $time_format ))
       $show24Hours = 'false';
@@ -2997,7 +2998,8 @@ function eme_meta_box_div_event_page_title_format($event) {
 
 function eme_meta_box_div_event_time($event) {
    // check if the user wants AM/PM or 24 hour notation
-   $time_format = get_option('time_format');
+   // make sure that escaped characters are filtered out first
+   $time_format = preg_replace('/\\\\./','',get_option('time_format'));
    $hours_locale = '24';
    if (preg_match ( "/g|h/", $time_format )) {
       $event_start_time = date("h:iA", strtotime($event['event_start_time']));

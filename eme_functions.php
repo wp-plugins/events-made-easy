@@ -404,11 +404,11 @@ function eme_localised_date($mydate, $is_unixtimestamp=0) {
 }
 
 function eme_localised_time($mydate, $is_unixtimestamp=0) {
-   $date_format = get_option('time_format');
+   $time_format = get_option('time_format');
    if ($is_unixtimestamp)
-      return date_i18n ( $date_format, $mydate);
+      return date_i18n ( $time_format, $mydate);
    else
-      return date_i18n ( $date_format, strtotime($mydate));
+      return date_i18n ( $time_format, strtotime($mydate));
 }
 
 function eme_currency_array() {
