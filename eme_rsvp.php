@@ -30,7 +30,8 @@ function eme_add_booking_form($event_id,$show_message=1) {
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking' && isset($_POST['event_id'])) {
       $event_id = intval($_POST['event_id']);
       $event = eme_get_event($event_id);
-      $booking_res = eme_book_seats($event);
+      $send_mail=1;
+      $booking_res = eme_book_seats($event,$send_mail);
       $form_result_message = $booking_res[0];
       $booking_id_done=$booking_res[1];
       $post_string="{";
@@ -189,7 +190,8 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_bookings' && isset($_POST['event_id'])) {
       $event_ids = $_POST['event_id'];
       $events = eme_get_event($event_ids);
-      $booking_res = eme_multibook_seats($events,1,$format_entry);
+      $send_mail=1;
+      $booking_res = eme_multibook_seats($events,$send_mail,$format_entry);
       $form_result_message = $booking_res[0];
       $booking_ids_done=$booking_res[1];
       $post_string="{";
@@ -519,7 +521,7 @@ function eme_cancel_seats($event) {
    return $result;
 }
 
-function eme_multibook_seats($events, $send_mail=1, $format) {
+function eme_multibook_seats($events, $send_mail, $format) {
    global $current_user;
    $booking_ids = array();
    $result="";
@@ -706,14 +708,14 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
                   $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
                   $booking = eme_get_booking ($booking_id);
                   if (!empty($event['event_registration_recorded_ok_html']))
-                     $format = $event['event_registration_recorded_ok_html'];
+                     $ok_format = $event['event_registration_recorded_ok_html'];
                   elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
-                     $format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
+                     $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
                   else
-                     $format = get_option('eme_registration_recorded_ok_html' );
+                     $ok_format = get_option('eme_registration_recorded_ok_html' );
 
                   // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-                  $result = eme_replace_placeholders($format, $event, "html", 0);
+                  $result = eme_replace_placeholders($ok_format, $event, "html", 0);
                   $result = eme_replace_booking_placeholders($result, $event, $booking);
                   if (is_admin()) {
                      $action="approveRegistration";
@@ -751,7 +753,7 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
 }
 
 // the eme_book_seats can also be called from the admin backend, that's why for certain things, we check using is_admin where we are
-function eme_book_seats($event, $send_mail=1) {
+function eme_book_seats($event, $send_mail) {
    global $current_user;
    $booking_id = 0;
    $result="";
@@ -948,14 +950,14 @@ function eme_book_seats($event, $send_mail=1) {
 
                $booking = eme_get_booking ($booking_id);
                if (!empty($event['event_registration_recorded_ok_html']))
-                  $format = $event['event_registration_recorded_ok_html'];
+                  $ok_format = $event['event_registration_recorded_ok_html'];
                elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
-                  $format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
+                  $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
                else
-                  $format = get_option('eme_registration_recorded_ok_html' );
+                  $ok_format = get_option('eme_registration_recorded_ok_html' );
 
                // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-               $result = eme_replace_placeholders($format, $event, "html", 0);
+               $result = eme_replace_placeholders($ok_format, $event, "html", 0);
                $result = eme_replace_booking_placeholders($result, $event, $booking);
                if (is_admin()) {
                   $action="approveRegistration";
