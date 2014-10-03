@@ -81,6 +81,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: the mail for cancellation was sent before the cancellation was done, resulting in wrong number of spaces free/reserved in the cancellation mail
 * Bugfix: better 24h-timeformat notation detection
 * Bugfix: better value escaping with ESC when using conditional tags
+* Bugfix: use correct headers when sending html-mail via wp_mail function
 
 = 1.5.5 =
 * Bugfix: featured image for locations wasn't working anymore
