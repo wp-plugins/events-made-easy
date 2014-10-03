@@ -1083,7 +1083,7 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
          }
          if ($found) {
             if ($need_escape)
-               $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+               $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
             $format = str_replace($orig_result, $replacement ,$format );
          }
       }
@@ -1135,7 +1135,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       }
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );
@@ -1969,7 +1969,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       if ($found) {
          if ($need_escape)
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+            $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
          if ($need_urlencode)
             $replacement = rawurlencode($replacement);
          $format = str_replace($orig_result, $replacement ,$format );
@@ -2012,7 +2012,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       $replacement = date_i18n(substr($result, $offset, (strlen($result)-($offset+1)) ), strtotime($event[$my_date]." ".$event[$my_time]));
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );

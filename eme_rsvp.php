@@ -1898,7 +1898,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
 
       if ($found) {
          if ($need_escape)
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+            $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
          $format = str_replace($orig_result, $replacement ,$format );
       }
    }
