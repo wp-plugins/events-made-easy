@@ -692,7 +692,9 @@ function eme_update_location($location) {
    }
 }
 
-function eme_insert_location($location) {
+function eme_insert_location($location,$force=0) {
+   // the force parameter can be used to ignore capabilities for a user when inserting a location
+   // the frontend submit plugin can use this
    global $wpdb;  
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME; 
 
@@ -718,7 +720,7 @@ function eme_insert_location($location) {
    if (!is_serialized($location['location_properties']))
       $location['location_properties'] = serialize($location['location_properties']);
       
-   if (current_user_can( get_option('eme_cap_add_locations'))) {
+   if (current_user_can( get_option('eme_cap_add_locations')) || $force) {
       $wpdb->show_errors(true);
       if (!$wpdb->insert($table_name,$location)) {
          $wpdb->print_error();
