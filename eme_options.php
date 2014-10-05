@@ -564,8 +564,23 @@ function eme_options_page() {
    eme_options_input_text ( __ ( 'Default number of spaces', 'eme' ), 'eme_rsvp_default_number_spaces', __ ( 'The default number of spaces an event has.', 'eme' ) );
    eme_options_input_text ( __ ( 'Min number of spaces to book', 'eme' ), 'eme_rsvp_addbooking_min_spaces', __ ( 'The minimum number of spaces a person can book in one go (it can be 0, for e.g. just an attendee list).', 'eme' ) );
    eme_options_input_text ( __ ( 'Max number of spaces to book', 'eme' ), 'eme_rsvp_addbooking_max_spaces', __ ( 'The maximum number of spaces a person can book in one go.', 'eme' ) );
-   eme_options_input_text ( __ ( 'By default allow RSVP until this many days before the event starts', 'eme' ), 'eme_rsvp_number_days', __ ( 'By default allow RSVP until this many days before the event starts.', 'eme' ) );
-   eme_options_input_text ( __ ( 'By default allow RSVP until this many hours before the event starts', 'eme' ), 'eme_rsvp_number_hours', __ ( 'By default allow RSVP until this many hours before the event starts.', 'eme' ) );
+   $eme_rsvp_number_days=get_option('eme_rsvp_number_days');
+   $eme_rsvp_number_hours=get_option('eme_rsvp_number_hours');
+   $eme_rsvp_end_target=get_option('eme_rsvp_end_target');
+   ?>
+   <tr valign="top" id='<?php echo $name;?>_row'>
+      <th scope="row"><?php _e('By default allow RSVP until this many', 'eme') ?></th>
+      <td>
+      <input name="eme_rsvp_number_days" type="text" id="eme_rsvp_number_days" value="<?php echo eme_sanitize_html($eme_rsvp_number_days); ?>" size="4" /> <?php _e('days', 'eme') ?>
+      <input name="eme_rsvp_number_hours" type="text" id="eme_rsvp_number_hours" value="<?php echo eme_sanitize_html($eme_rsvp_number_hours); ?>" size="4" /> <?php _e('hours', 'eme') ?>
+      <?php
+      $eme_rsvp_end_target_list = array('start'=>__('starts','eme'),'end'=>__('ends','eme'));
+      _e ( 'before the event ','eme' );
+      echo eme_ui_select($eme_rsvp_end_target,'eme_rsvp_end_target',$eme_rsvp_end_target_list);
+      ?>
+      </td>
+   </tr>
+   <?php
    eme_options_radio_binary ( __ ( 'Use captcha for booking form?', 'eme' ), 'eme_captcha_for_booking', __ ( 'Check this option if you want to use a captcha on the booking form, to thwart spammers a bit.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'Hide fully booked events?', 'eme' ), 'eme_rsvp_hide_full_events', __ ( 'Check this option if you want to hide events that are fully booked from the calendar and events listing in the front.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'Hide RSVP ended events?', 'eme' ), 'eme_rsvp_hide_rsvp_ended_events', __ ( 'Check this option if you want to hide events which RSVP registration period has already ended.', 'eme' ) );

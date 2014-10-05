@@ -62,7 +62,7 @@ function eme_init_event_props($props) {
    if (!isset($props['max_allowed']))
       $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
    if (!isset($props['rsvp_end_target']))
-      $props['rsvp_end_target']='start';
+      $props['rsvp_end_target']=get_option('eme_rsvp_end_target');
 
    $template_override=array('event_page_title_format_tpl','event_single_event_format_tpl','event_contactperson_email_body_tpl','event_registration_recorded_ok_html_tpl','event_respondent_email_body_tpl','event_registration_pending_email_body_tpl','event_registration_updated_email_body_tpl','event_registration_form_format_tpl','event_cancel_form_format_tpl');
    foreach ($template_override as $template) {
@@ -2587,10 +2587,10 @@ function eme_event_form($event, $title, $element) {
                               <input id="rsvp_number_hours" type="text" name="rsvp_number_hours" maxlength='2' size='2' value="<?php echo $event['rsvp_number_hours']; ?>" />
                               <?php _e ( 'hours','eme' ); ?>
                            <br />
-                              <?php _e ( 'before the event ','eme' ); ?><select id="eme_prop_rsvp_end_target" name="eme_prop_rsvp_end_target">
-                                 <option value='start' <?php echo $eme_prop_rsvp_end_target_isstartdate;?>><?php _e ( 'starts','eme' ); ?></option>
-                                 <option value='end' <?php echo $eme_prop_rsvp_end_target_isenddate;?>><?php _e ( 'ends','eme' ); ?></option>
-                              </select>
+                              <?php _e ( 'before the event ','eme' );
+                                 $eme_rsvp_end_target_list = array('start'=>__('starts','eme'),'end'=>__('ends','eme'));
+                                 echo eme_ui_select($event['event_properties']['rsvp_end_target'],'eme_prop_rsvp_end_target',$eme_rsvp_end_target_list);
+                              ?>
                            <br />
                            <br />
                               <?php _e ( 'Payment methods','eme' ); ?><br />
