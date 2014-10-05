@@ -2326,9 +2326,6 @@ function eme_event_form($event, $title, $element) {
    $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
    $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
    $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
-   $eme_prop_rsvp_end_target_isstartdate = ($event['event_properties']['rsvp_end_target']=='start')? "selected='selected'" : "";
-   $eme_prop_rsvp_end_target_isenddate = ($event['event_properties']['rsvp_end_target']=='end')? "selected='selected'" : "";
-
 
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
    ?>
