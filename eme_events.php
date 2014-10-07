@@ -2825,6 +2825,7 @@ function eme_admin_event_script() {
    //<![CDATA[
 var show24Hours = <?php echo $show24Hours;?>;
 var locale_code = '<?php echo $locale_code;?>';
+var firstDayOfWeek = '<?php echo get_option('start_of_week');?>';
 var eme_locations_search_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
 var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
 var use_select_for_locations = <?php echo $use_select_for_locations; ?>;
@@ -3896,6 +3897,8 @@ function eme_admin_enqueue_js(){
    }
    //if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {
+      // both datepick and timeentry need jquery.plugin, so let's include it upfront
+      wp_enqueue_script( 'jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js',array( 'jquery' ));
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
       //wp_enqueue_style('jquery-ui-autocomplete',EME_PLUGIN_URL."js/jquery-autocomplete/jquery.autocomplete.css");
       wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
@@ -3918,7 +3921,6 @@ function eme_admin_enqueue_js(){
    }
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager') ) ) {
       wp_enqueue_script( 'jquery-mousewheel', EME_PLUGIN_URL.'js/jquery-mousewheel/jquery.mousewheel.min.js', array('jquery'));
-      wp_enqueue_script( 'jquery-plugin-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.plugin.min.js');
       wp_enqueue_script( 'jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js');
       wp_enqueue_script( 'eme-events',EME_PLUGIN_URL."js/eme_admin_events.js",array( 'jquery' ));
       // some inline js that gets shown at the top

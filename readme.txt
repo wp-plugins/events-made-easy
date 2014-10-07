@@ -65,6 +65,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.7 =
+* Feature: first day of week is now also respected in the datepicker
+
 = 1.5.6 =
 * Feature: added 2 new filters to influence CSV output: eme_csv_header_filter and eme_csv_footer_filter
   Both take 1 parameter ($event) and should return an array (representing columns in the csv output in the header or footer)

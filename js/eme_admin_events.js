@@ -147,15 +147,17 @@ jQuery(document).ready( function() {
    jQuery("#rec-start-date-to-submit").hide();
    jQuery("#rec-end-date-to-submit").hide(); 
 
-   jQuery.datepick.setDefaults( jQuery.datepick.regional[locale_code] );
+   jQuery.datepick.setDefaults( jQuery.datepick.regionalOptions[locale_code] );
    jQuery.datepick.setDefaults({
       changeMonth: true,
-      changeYear: true
+      changeYear: true,
+      altFormat: "yyyy-mm-dd",
+      firstDay: firstDayOfWeek
    });
-   jQuery("#localised-start-date").datepick({ altField: "#start-date-to-submit", altFormat: "yyyy-mm-dd" });
-   jQuery("#localised-end-date").datepick({ altField: "#end-date-to-submit", altFormat: "yyyy-mm-dd" });
-   jQuery("#localised-rec-start-date").datepick({ altField: "#rec-start-date-to-submit", altFormat: "yyyy-mm-dd" });
-   jQuery("#localised-rec-end-date").datepick({ altField: "#rec-end-date-to-submit", altFormat: "yyyy-mm-dd" });
+   jQuery("#localised-start-date").datepick({ altField: "#start-date-to-submit" });
+   jQuery("#localised-end-date").datepick({ altField: "#end-date-to-submit" });
+   jQuery("#localised-rec-start-date").datepick({ altField: "#rec-start-date-to-submit" });
+   jQuery("#localised-rec-end-date").datepick({ altField: "#rec-end-date-to-submit" });
 
    jQuery("#start-time").timeEntry({spinnerImage: '', show24Hours: show24Hours });
    jQuery("#end-time").timeEntry({spinnerImage: '', show24Hours: show24Hours });
