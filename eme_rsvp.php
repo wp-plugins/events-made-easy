@@ -30,7 +30,8 @@ function eme_add_booking_form($event_id,$show_message=1) {
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking' && isset($_POST['event_id'])) {
       $event_id = intval($_POST['event_id']);
       $event = eme_get_event($event_id);
-      $booking_res = eme_book_seats($event);
+      $send_mail=1;
+      $booking_res = eme_book_seats($event,$send_mail);
       $form_result_message = $booking_res[0];
       $booking_id_done=$booking_res[1];
       $post_string="{";
@@ -108,8 +109,11 @@ function eme_add_booking_form($event_id,$show_message=1) {
    if ($show_message && !empty($form_result_message))
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
 
-   $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
+   if ($event['event_properties']['rsvp_end_target']=='start')
+      $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+   else
+      $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
+   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
@@ -186,7 +190,8 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_bookings' && isset($_POST['event_id'])) {
       $event_ids = $_POST['event_id'];
       $events = eme_get_event($event_ids);
-      $booking_res = eme_multibook_seats($events,1,$format_entry);
+      $send_mail=1;
+      $booking_res = eme_multibook_seats($events,$send_mail,$format_entry);
       $form_result_message = $booking_res[0];
       $booking_ids_done=$booking_res[1];
       $post_string="{";
@@ -279,8 +284,11 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 
    foreach ($events as $event) {
       $event_id=$event['event_id'];
-      $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-      if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
+      if ($event['event_properties']['rsvp_end_target']=='start')
+         $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+      else
+         $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
+      if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
          //$ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
          continue;
       }
@@ -407,8 +415,11 @@ function eme_delete_booking_form($event_id,$show_message=1) {
       $form_result_message = eme_sanitize_html($_POST['eme_message']);
    }
 
-   $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_start_datetime ) {
+   if ($event['event_properties']['rsvp_end_target']=='start')
+      $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+   else
+      $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
+   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_result_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
@@ -497,8 +508,8 @@ function eme_cancel_seats($event) {
       $booking_ids=eme_get_booking_ids_by_person_event_id($person_id,$event_id);
       if (!empty($booking_ids)) {
          foreach ($booking_ids as $booking_id) {
-            eme_email_rsvp_booking($booking_id,"cancelRegistration");
             eme_delete_booking($booking_id);
+            eme_email_rsvp_booking($booking_id,"cancelRegistration");
          }
          $result = __('Booking deleted', 'eme');
       } else {
@@ -510,7 +521,7 @@ function eme_cancel_seats($event) {
    return $result;
 }
 
-function eme_multibook_seats($events, $send_mail=1, $format) {
+function eme_multibook_seats($events, $send_mail, $format) {
    global $current_user;
    $booking_ids = array();
    $result="";
@@ -590,7 +601,7 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
 
       $missing_required_fields=array();
       // check all required fields
-      if (!is_admin()) {
+      if (!is_admin() && !get_option('eme_rsvp_check_required_fields')) {
          foreach ($all_required_fields as $required_field) {
             if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
                // we already check these seperately, and EMAIL regex also catches _HTML5_EMAIL
@@ -697,14 +708,14 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
                   $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
                   $booking = eme_get_booking ($booking_id);
                   if (!empty($event['event_registration_recorded_ok_html']))
-                     $format = $event['event_registration_recorded_ok_html'];
+                     $ok_format = $event['event_registration_recorded_ok_html'];
                   elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
-                     $format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
+                     $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
                   else
-                     $format = get_option('eme_registration_recorded_ok_html' );
+                     $ok_format = get_option('eme_registration_recorded_ok_html' );
 
                   // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-                  $result = eme_replace_placeholders($format, $event, "html", 0);
+                  $result = eme_replace_placeholders($ok_format, $event, "html", 0);
                   $result = eme_replace_booking_placeholders($result, $event, $booking);
                   if (is_admin()) {
                      $action="approveRegistration";
@@ -742,7 +753,7 @@ function eme_multibook_seats($events, $send_mail=1, $format) {
 }
 
 // the eme_book_seats can also be called from the admin backend, that's why for certain things, we check using is_admin where we are
-function eme_book_seats($event, $send_mail=1) {
+function eme_book_seats($event, $send_mail) {
    global $current_user;
    $booking_id = 0;
    $result="";
@@ -828,7 +839,7 @@ function eme_book_seats($event, $send_mail=1) {
 
    $missing_required_fields=array();
    // check all required fields
-   if (!is_admin()) {
+   if (!is_admin() && !get_option('eme_rsvp_check_required_fields')) {
       foreach ($all_required_fields as $required_field) {
          if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
             // we already check these seperately, and EMAIL regex also catches _HTML5_EMAIL
@@ -939,14 +950,14 @@ function eme_book_seats($event, $send_mail=1) {
 
                $booking = eme_get_booking ($booking_id);
                if (!empty($event['event_registration_recorded_ok_html']))
-                  $format = $event['event_registration_recorded_ok_html'];
+                  $ok_format = $event['event_registration_recorded_ok_html'];
                elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
-                  $format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
+                  $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
                else
-                  $format = get_option('eme_registration_recorded_ok_html' );
+                  $ok_format = get_option('eme_registration_recorded_ok_html' );
 
                // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-               $result = eme_replace_placeholders($format, $event, "html", 0);
+               $result = eme_replace_placeholders($ok_format, $event, "html", 0);
                $result = eme_replace_booking_placeholders($result, $event, $booking);
                if (is_admin()) {
                   $action="approveRegistration";
@@ -1137,16 +1148,9 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
       //$sql = "INSERT INTO $bookings_table (event_id, person_id, booking_seats,booking_comment) VALUES ($event_id, $person_id, $seats,'$comment')";
       //$wpdb->query($sql);
 
-      // we insert the booking in the DB, then calc the transfer_nbr for it based on the new booking id
       if ($wpdb->insert($bookings_table,$booking)) {
          $booking_id = $wpdb->insert_id;
          $booking['booking_id'] = $booking_id;
-         $booking['transfer_nbr_be97'] = eme_transfer_nbr_be97($booking_id);
-         $where = array();
-         $fields = array();
-         $where['booking_id'] = $booking_id;
-         $fields['transfer_nbr_be97'] = $booking['transfer_nbr_be97'];
-         $wpdb->update($bookings_table, $fields, $where);
          eme_record_answers($booking_id);
          // now that everything is (or should be) correctly entered in the db, execute possible actions for the new booking
          if (has_action('eme_insert_rsvp_action')) do_action('eme_insert_rsvp_action',$booking);
@@ -1894,7 +1898,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
 
       if ($found) {
          if ($need_escape)
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+            $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
          $format = str_replace($orig_result, $replacement ,$format );
       }
    }
@@ -2359,6 +2363,7 @@ function eme_registration_seats_form_table($pending=0) {
          $person = eme_get_person ($event_booking['person_id']);
          $search_url=add_query_arg(array('search'=>$person['person_id']),$search_dest);
          $event = eme_get_event($event_booking['event_id']);
+         $payment_id = eme_get_booking_payment_id($event_booking ['booking_id']);
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
@@ -2377,9 +2382,9 @@ function eme_registration_seats_form_table($pending=0) {
          <td><input type='checkbox' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='selected_bookings[]' />
              <input type='hidden' class='row-selector' value='<?php echo $event_booking ['booking_id']; ?>' name='bookings[]' /></td>
           <td>[person_id=<?php echo $person['person_id']; ?>]</td>
-         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$plugin_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see the details and/or edit the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
+         <td><a class="row-title" href="<?php echo admin_url("admin.php?page=$plugin_page&amp;eme_admin_action=editRegistration&amp;booking_id=".$event_booking ['booking_id']); ?>" title="<?php _e('Click the booking ID in order to see and/or edit the details of the booking.','eme')?>"><?php echo $event_booking ['booking_id']; ?></a>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event_booking ['event_id']); ?>" title="<?php _e('Click the event name in order to see and/or edit the details of the event.','eme')?>"><?php echo eme_trans_sanitize_html($event ['event_name']); ?></a>
          </strong>
          <?php
              $approved_seats = eme_get_approved_seats($event['event_id']);
@@ -2398,7 +2403,7 @@ function eme_registration_seats_form_table($pending=0) {
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
-         <td><a href="<?php echo $search_url; ?>"><?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?></a>
+         <td><a href="<?php echo $search_url; ?>" title="<?php _e('Click the name of the booker in order to see and/or edit the details of the booker.','eme')?>"><?php echo eme_sanitize_html($person['person_name']) ."(".eme_sanitize_html($person['person_phone']).", ". eme_sanitize_html($person['person_email']).")";?></a>
          </td>
          <td data-sort="<?php echo $bookingtimestamp; ?>">
             <?php echo $localised_booking_date ." ". $localised_booking_time;?>
@@ -2419,7 +2424,7 @@ function eme_registration_seats_form_table($pending=0) {
             <?php echo eme_get_total_booking_price($event,$event_booking); ?>
          </td>
          <td>
-            <?php echo eme_sanitize_html($event_booking['transfer_nbr_be97']); ?>
+            <span title="<?php print sprintf(__('This is based on the payment ID of the booking: %d','eme'),$payment_id);?>"><?php echo eme_sanitize_html($event_booking['transfer_nbr_be97']); ?></span>
          </td>
          <td>
             <?php echo eme_ui_select_binary($event_booking['booking_payed'],"bookings_payed[]"); ?>
@@ -2437,8 +2442,8 @@ function eme_registration_seats_form_table($pending=0) {
             <?php
             // jquery datatables locale loading
             $locale_code = get_locale();
-            $locale_file = EME_PLUGIN_DIR. "/js/jquery-datatables/i18n/$locale_code.json";
-            $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datatables/i18n/$locale_code.json";
+            $locale_file = EME_PLUGIN_DIR. "js/jquery-datatables/i18n/$locale_code.json";
+            $locale_file_url = EME_PLUGIN_URL. "js/jquery-datatables/i18n/$locale_code.json";
             if ($locale_code != "en_US" && file_exists($locale_file)) {
             ?>
             "language": {
@@ -2631,7 +2636,7 @@ function eme_send_mail_form($event_id=0) {
            <option value='attendees'><?php _e('Attendee mails','eme'); ?></option>
            <option value='bookings'><?php _e('Booking mails','eme'); ?></option>
            <option value='all_wp'><?php _e('Mail to all WP users','eme'); ?></option>
-           <option value='all_wp_not_registered'><?php _e('All WP users except registered ones','eme'); ?></option>
+           <option value='all_wp_not_registered'><?php _e('All WP users except those registered for the event','eme'); ?></option>
            </select>
       </td>
       </tr>

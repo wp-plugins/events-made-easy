@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.5.2
+Version: 1.5.6
 Plugin URI: http://www.e-dynamics.be/wordpress
 Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
@@ -103,9 +103,9 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 64);
+define('EME_DB_VERSION', 65);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
-define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__))); //PLUGIN DIRECTORY
+define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
 define('RECURRENCE_TBNAME','eme_recurrence');
 define('LOCATIONS_TBNAME','eme_locations');
@@ -1083,7 +1083,7 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
          }
          if ($found) {
             if ($need_escape)
-               $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+               $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
             $format = str_replace($orig_result, $replacement ,$format );
          }
       }
@@ -1135,7 +1135,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       }
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );
@@ -1346,6 +1346,17 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $field_id = intval($matches[2])-1;
          if (eme_is_multi($event['event_seats'])) {
             $seats=eme_get_booked_multiseats($event['event_id']);
+            if (array_key_exists($field_id,$seats))
+               $replacement = $seats[$field_id];
+         }
+
+      } elseif ($event && preg_match('/#_(PENDINGSPACES|PENDINGSEATS)$/', $result)) {
+         $replacement = eme_get_pending_seats($event['event_id']);
+
+      } elseif (preg_match('/#_(PENDINGSPACES|PENDINGSEATS)\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[2])-1;
+         if (eme_is_multi($event['event_seats'])) {
+            $seats=eme_get_pending_multiseats($event['event_id']);
             if (array_key_exists($field_id,$seats))
                $replacement = $seats[$field_id];
          }
@@ -1810,7 +1821,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_RECURRENCEDESC/', $result)) {
+      } elseif ($event && preg_match('/#_RECURRENCE_DESC|#_RECURRENCEDESC/', $result)) {
          if ($event ['recurrence_id']) {
             $replacement = eme_get_recurrence_desc ( $event ['recurrence_id'] );
             if ($target == "html") {
@@ -1819,6 +1830,16 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = apply_filters('eme_general_rss', $replacement);
             } else {
                $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif ($event && preg_match('/#_RECURRENCE_NBR/', $result)) {
+         // returns the sequence number of an event in a recurrence series
+         if ($event ['recurrence_id']) {
+            $events = eme_get_recurrence_eventids ( $event ['recurrence_id'] );
+            $nbr = array_search($event['event_id'],$events);
+            if ($nbr !== false) {
+               $replacement = $nbr+1;
             }
          }
 
@@ -1921,13 +1942,34 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          else
             $replacement = 0;
 
+      } elseif ($event && preg_match('/#_IS_FIRST_RECURRENCE/', $result)) {
+         // returns 1 if the event is the first event in a recurrence series
+         if ($event ['recurrence_id']) {
+            $events = eme_get_recurrence_eventids ( $event ['recurrence_id'] );
+            $nbr = array_search($event['event_id'],$events);
+            if ($nbr !== false && $nbr==0) {
+               $replacement = 1;
+            }
+         }
+
+      } elseif ($event && preg_match('/#_IS_LAST_RECURRENCE/', $result)) {
+         // returns 1 if the event is the last event in a recurrence series
+         if ($event ['recurrence_id']) {
+            $events = eme_get_recurrence_eventids ( $event ['recurrence_id'] );
+            $nbr = array_search($event['event_id'],$events);
+            $last_index = count($events)-1;
+            if ($nbr !== false && $nbr==$last_index) {
+               $replacement = 1;
+            }
+         }
+
       } else {
          $found = 0;
       }
 
       if ($found) {
          if ($need_escape)
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+            $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
          if ($need_urlencode)
             $replacement = rawurlencode($replacement);
          $format = str_replace($orig_result, $replacement ,$format );
@@ -1970,7 +2012,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       $replacement = date_i18n(substr($result, $offset, (strlen($result)-($offset+1)) ), strtotime($event[$my_date]." ".$event[$my_time]));
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );

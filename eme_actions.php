@@ -152,7 +152,6 @@ add_action('template_redirect', 'eme_template_redir' );
 add_action('template_redirect', 'eme_change_canonical_url' );
 add_action('wp_enqueue_scripts','eme_general_css');
 add_action('admin_notices', 'eme_alert_events_page' );
-add_action('admin_head', 'eme_locations_autocomplete');
 
 // when editing other profiles then your own
 add_action('edit_user_profile', 'eme_user_profile') ;
