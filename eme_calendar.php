@@ -440,8 +440,10 @@ function eme_filter_calendar_ajax() {
    (isset($_POST['author'])) ? $author = eme_sanitize_request($_POST['author']) : $author = ''; 
    (isset($_POST['contact_person'])) ? $contact_person = eme_sanitize_request($_POST['contact_person']) : $contact_person = ''; 
    (isset($_POST['location_id'])) ? $location_id = eme_sanitize_request($_POST['location_id']) : $location_id = '';
+   (isset($_POST['template_id'])) ? $template_id = eme_sanitize_request($_POST['template_id']) : $template_id = '';
+   $echo=1;
 
-   eme_get_calendar('echo=1&full='.$full.'&long_events='.$long_events.'&category='.$category.'&month='.$month.'&year='.$year.'&author='.$author.'&contact_person='.$contact_person.'&location_id='.$location_id.'&notcategory='.$notcategory);
+   eme_get_calendar("full={$full}&month={$month}&year={$year}&echo={$echo}&long_events={$long_events}&category={$category}&author={$author}&contact_person={$contact_person}&location_id={$location_id}&notcategory={$notcategory}&template_id={$template_id}");
 }
 
 ?>
