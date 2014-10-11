@@ -91,6 +91,19 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
    return $ret_string;
 }
 
+function eme_payment_provider_button_info($provider) {
+   $provider_id = sanitize_title_with_dashes(remove_accents($provider));
+   return "<br /><span id=eme_button-$provider_id>".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),$provider)."</span>";
+}
+
+function eme_payment_provider_extra_charge($provider,$charge,$currency) {
+   $provider_id = sanitize_title_with_dashes(remove_accents($provider));
+   if ($charge>0)
+      return "<br /><span id=eme_charge-$provider_id>".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),$provider,$charge,$currency)."</span>";
+   else
+      return "";
+}
+
 function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $charge=eme_payment_extra_charge($price,get_option('eme_webmoney_cost'));
@@ -123,9 +136,8 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    }
    $wm_request->btn_label = __('Pay via Webmoney','eme');
 
-   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"Webmoney");
-   if ($charge>0)
-      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"Webmoney",$charge,$event['currency']);
+   $form_html = eme_payment_provider_button_info("Webmoney");
+   $form_html.= eme_payment_provider_extra_charge("Webmoney",$charge,$event['currency']);
    $form_html .= $wm_request->SetForm(false);
    return $form_html;
 }
@@ -149,9 +161,8 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    $quantity=1;
    $cur=$event['currency'];
 
-   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"2Checkout");
-   if ($charge>0)
-      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"2Checkout",$charge,$event['currency']);
+   $form_html = eme_payment_provider_button_info("2Checkout");
+   $form_html.= eme_payment_provider_extra_charge("2Checkout",$charge,$event['currency']);
    $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='sid' value='$business' />";
@@ -198,9 +209,8 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $timezone_short="GMT";
 
    require_once('fdgg/fdgg-util_sha2.php');
-   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"First Data");
-   if ($charge>0)
-      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"First Data",$charge,$event['currency']);
+   $form_html = eme_payment_provider_button_info("First Data");
+   $form_html.= eme_payment_provider_extra_charge("First Data",$charge,$event['currency']);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
    $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
@@ -254,6 +264,8 @@ function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"Google Checkout");
    if ($charge>0)
       $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"Google Checkout",$charge,$event['currency']);
+   $form_html = eme_payment_provider_button_info("Google Checkout");
+   $form_html.= eme_payment_provider_extra_charge("Google Checkout",$charge,$event['currency']);
    return $form_html.$cart->CheckoutButtonCode("SMALL");
 }
 
@@ -274,9 +286,8 @@ function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    }
    $notification_link = add_query_arg(array('eme_eventAction'=>'paypal_notification'),$events_page_link);
 
-   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"PayPal");
-   if ($charge>0)
-      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"PayPal",$charge,$event['currency']);
+   $form_html = eme_payment_provider_button_info("PayPal");
+   $form_html.= eme_payment_provider_extra_charge("PayPal",$charge,$event['currency']);
    require_once "paypal/Paypal.php";
    $p = new Paypal;
 
