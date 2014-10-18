@@ -2825,7 +2825,7 @@ function eme_admin_event_script() {
    //<![CDATA[
 var show24Hours = <?php echo $show24Hours;?>;
 var locale_code = '<?php echo $locale_code;?>';
-var firstDayOfWeek = '<?php echo get_option('start_of_week');?>';
+var firstDayOfWeek = <?php echo get_option('start_of_week');?>;
 var eme_locations_search_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
 var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
 var use_select_for_locations = <?php echo $use_select_for_locations; ?>;

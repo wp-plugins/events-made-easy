@@ -65,6 +65,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.8 =
+* Bugfix: first day of week in the datepicker is a integer, not a string. Putting a string creates mangled day headers in the datepicker.
+
 = 1.5.7 =
 * Feature: first day of week is now also respected in the datepicker
 
