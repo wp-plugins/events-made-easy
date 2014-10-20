@@ -66,6 +66,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.8 =
+* Feature: added 2 new scopes: relative-Xd--YYYY-MM-DD (end YYYY-MM-DD, start X days before that) and YYYY-MM-DD--relative+Xd (start YYYY-MM-DD, end X days past that)
 * Bugfix: first day of week in the datepicker is a integer, not a string. Putting a string creates mangled day headers in the datepicker.
 
 = 1.5.7 =

@@ -1557,6 +1557,20 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
+   } elseif (preg_match ( "/^relative\-(\d+)d--([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $scope, $matches )) {
+      $limit_end=$matches[2];
+      $limit_start=date('Y-m-d',strtotime($limit_end)-$matches[1]*86400);
+      if ($show_ongoing)
+         $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
+      else
+         $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
+   } elseif (preg_match ( "/^([0-9]{4}-[0-9]{2}-[0-9]{2})--relative\+(\d+)d$/", $scope, $matches )) {
+      $limit_start=$matches[1];
+      $limit_end=date('Y-m-d',strtotime($limit_start)+$matches[2]*86400);
+      if ($show_ongoing)
+         $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
+      else
+         $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^\+(\d+)m$/", $scope, $matches )) {
       // the year/month should be based on the first of the month, so if we are the 13th, we substract 12 days to get to day 1
       // Reason: monthly offsets needs to be calculated based on the first day of the current month, not the current day,
