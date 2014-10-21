@@ -82,6 +82,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    $loc_post_name="eme_loc_filter";
    $town_post_name="eme_town_filter";
    $scope_post_name="eme_scope_filter";
+   $localised_scope_post_name="eme_localised_scoperange_filter";
 
    $selected_scope = isset($_REQUEST[$scope_post_name]) ? eme_sanitize_request($_REQUEST[$scope_post_name]) : '';
    $selected_location = isset($_REQUEST[$loc_post_name]) ? eme_sanitize_request($_REQUEST[$loc_post_name]) : '';
@@ -172,6 +173,39 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
       } elseif (preg_match('/#_FILTER_MONTHS/', $result)) {
          if (strstr($fields,'months'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_month_scope($scope_count));
+      } elseif (preg_match('/#_FILTER_MONTHRANGE/', $result)) {
+         if (strstr($fields,'monthrange')) {
+            $replacement = "<input type='text' id='$localised_scope_post_name' name='$localised_scope_post_name'>";
+            $replacement .= "<input type='hidden' id='$scope_post_name' name='$scope_post_name' value='".eme_sanitize_html($selected_scope)."'>";
+            wp_enqueue_script( 'jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js',array( 'jquery' ));
+            wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
+            wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
+            // jquery ui locales are with dashes, not underscores
+            $locale_code = get_locale();
+            $locale_code = preg_replace( "/_/","-", $locale_code );
+            $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+            $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+            // for english, no translation code is needed)
+            if ($locale_code != "en-US") {
+               if (!file_exists($locale_file)) {
+                  $locale_code = substr ( $locale_code, 0, 2 );
+                  $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+                  $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+               }
+               if (file_exists($locale_file))
+                  wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
+            }
+
+            ob_start();
+            ?>
+            <script type="text/javascript">
+            var locale_code = '<?php echo $locale_code;?>';
+            var firstDayOfWeek = <?php echo get_option('start_of_week');?>;
+            </script>
+            <?php
+            $replacement .= ob_get_clean();
+            $replacement .= "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_filters.js'></script>";
+         }
       } elseif (preg_match('/#_FILTER_YEARS/', $result)) {
          if (strstr($fields,'years'))
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_year_scope($scope_count));
