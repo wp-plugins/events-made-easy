@@ -329,10 +329,13 @@ function eme_add_booking_form_shortcode($atts) {
 }
 
 function eme_add_multibooking_form_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id'=>0,'recurrence_id'=>0,'template_id_header'=>0,'template_id'=>0,'template_id_footer'=>0), $atts));
+   extract ( shortcode_atts ( array ('id'=>0,'recurrence_id'=>0,'category_id'=>0,'template_id_header'=>0,'template_id'=>0,'template_id_footer'=>0), $atts));
    $ids=explode(",", $id);
    if ($recurrence_id) {
       $ids=eme_get_recurrence_eventids($recurrence_id);
+   }
+   if ($category_id) {
+      $ids=eme_get_category_eventids($category_id);
    }
    if ($ids && $template_id_header && $template_id && $template_id_footer)
       return eme_add_multibooking_form($ids,$template_id_header,$template_id,$template_id_footer);

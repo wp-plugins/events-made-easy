@@ -230,9 +230,8 @@ function eme_get_categories($eventful=false,$scope="future",$extra_conditions=""
 function eme_get_category($category_id) { 
    global $wpdb;
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
-   $sql = "SELECT * FROM $categories_table WHERE category_id ='$category_id'";   
-   $category = $wpdb->get_row($sql, ARRAY_A);
-   return $category;
+   $sql = $wpdb->prepare("SELECT * FROM $categories_table WHERE category_id = %d",$category_id);
+   return $wpdb->get_row($sql, ARRAY_A);
 }
 
 function eme_get_event_categories($event_id,$extra_conditions="") { 
@@ -241,18 +240,24 @@ function eme_get_event_categories($event_id,$extra_conditions="") {
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
    if ($extra_conditions !="")
       $extra_conditions = " AND ($extra_conditions)";
-   $sql = "SELECT category_name FROM $categories_table, $event_table where event_id ='$event_id' AND FIND_IN_SET(category_id,event_category_ids) $extra_conditions";
-   $category = $wpdb->get_col($sql);
-   return $category;
+   $sql = $wpdb->prepare("SELECT category_name FROM $categories_table, $event_table where event_id = %d AND FIND_IN_SET(category_id,event_category_ids) $extra_conditions",$event_id);
+   return $wpdb->get_col($sql);
+}
+
+function eme_get_category_eventids($category_id) {
+   // similar to eme_get_recurrence_eventids
+   global $wpdb;
+   $events_table = $wpdb->prefix.EVENTS_TBNAME;
+   $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE FIND_IN_SET(%d,event_category_ids) ORDER BY event_start_date ASC, event_start_time ASC",$category_id);
+   return $wpdb->get_col($sql);
 }
 
 function eme_get_location_categories($location_id) { 
    global $wpdb;
    $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
-   $sql = "SELECT category_name FROM $categories_table, $locations_table where location_id ='$location_id' AND FIND_IN_SET(category_id,location_category_ids)";
-   $category = $wpdb->get_col($sql);
-   return $category;
+   $sql = $wpdb->prepare("SELECT category_name FROM $categories_table, $locations_table where location_id = %d AND FIND_IN_SET(category_id,location_category_ids)",$location_id);
+   return $wpdb->get_col($sql);
 }
 
 function eme_get_category_ids($cat_name) {
