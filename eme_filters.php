@@ -82,7 +82,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    $loc_post_name="eme_loc_filter";
    $town_post_name="eme_town_filter";
    $scope_post_name="eme_scope_filter";
-   $localised_scope_post_name="eme_localised_scoperange_filter";
+   $localised_scope_post_name="eme_localised_scope_filter";
 
    $selected_scope = isset($_REQUEST[$scope_post_name]) ? eme_sanitize_request($_REQUEST[$scope_post_name]) : '';
    $selected_location = isset($_REQUEST[$loc_post_name]) ? eme_sanitize_request($_REQUEST[$loc_post_name]) : '';
