@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added 2 new scopes: relative-Xd--YYYY-MM-DD (end YYYY-MM-DD, start X days before that) and YYYY-MM-DD--relative+Xd (start YYYY-MM-DD, end X days past that)
 * Feature: added monthly range select in filter form: use #_FILTER_MONTHRANGE in the filter format and fields=monthrange in the eme_filterform shortcode
 * Feature: the shortcode eme_add_multibooking_form now also supports category_id as a parameter, to select all events for a single category
+* Doc: documented the template_id option for the shortcode eme_filterform, as the template is preferred before the fields option
 * Bugfix: first day of week in the datepicker is a integer, not a string. Putting a string creates mangled day headers in the datepicker.
 
 = 1.5.7 =
