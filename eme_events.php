@@ -989,14 +989,22 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    $next_text = "";
    $limit_start=0;
    $limit_end=0;
+
    // for browsing: if limit=0,paging=1 and only for this_week,this_month or today
    if ($limit>0 && $paging==1 && isset($_GET['eme_offset'])) {
       $limit_offset=intval($_GET['eme_offset']);
    } else {
       $limit_offset=0;
    }
+
+   // if extra scope_filter is found (from the eme_filter shortcode), then no paging
+   // since it won't work anyway
+   if (isset($_REQUEST["eme_scope_filter"]))
+      $paging=0;
+
    if ($paging==1 && $limit==0) {
       $scope_offset=0;
+      $scope_text = "";
       if (isset($_GET['eme_offset']))
          $scope_offset=$_GET['eme_offset'];
       $prev_offset=$scope_offset-1;
