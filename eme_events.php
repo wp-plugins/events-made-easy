@@ -2961,10 +2961,10 @@ function eme_meta_box_div_event_name($event){
 function eme_meta_box_div_event_date($event){
    $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 ?>
-      <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
-      <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
-      <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
-      <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
+      <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="background: #FCFFAA;" readonly="readonly" />
+      <input id="start-date-to-submit" type="hidden" name="event_start_date" value="" />
+      <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="background: #FCFFAA;" readonly="readonly" />
+      <input id="end-date-to-submit" type="hidden" name="event_end_date" value="" />
       <span id='event-date-explanation'>
       <?php _e ( 'The event beginning and end date.', 'eme' ); ?>
       </span>

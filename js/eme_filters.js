@@ -1,7 +1,4 @@
 jQuery(document).ready( function() {
-   jQuery("#eme_localised_scope_filter").show();
-   jQuery("#eme_scope_filter").hide();
-
    jQuery.datepick.setDefaults( jQuery.datepick.regionalOptions[locale_code] );
    jQuery.datepick.setDefaults({
       changeMonth: true,
