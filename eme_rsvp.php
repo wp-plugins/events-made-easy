@@ -1835,7 +1835,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_TRANSFER_NBR_BE97/', $result)) {
          $replacement = $booking['transfer_nbr_be97'];
       } elseif (preg_match('/#_PAYMENT_URL/', $result)) {
-         if ($payment_id)
+         if ($payment_id && eme_event_can_pay_online($event))
             $replacement = eme_payment_url($payment_id);
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
