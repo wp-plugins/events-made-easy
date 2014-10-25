@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 3.8
 Tested up to: 4.0
-Stable tag: 1.5.7
+Stable tag: 1.5.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,7 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added monthly range select in filter form: use #_FILTER_MONTHRANGE in the filter format and fields=monthrange in the eme_filterform shortcode
 * Feature: the shortcode eme_add_multibooking_form now also supports category_id as a parameter, to select all events for a single category
 * Doc: documented the template_id option for the shortcode eme_filterform, as the template is preferred before the fields option
-* Bugfix: first day of week in the datepicker is a integer, not a string. Putting a string creates mangled day headers in the datepicker.
+* Bugfix: first day of week in the datepicker is a integer, not a string. Putting a string created mangled day headers in the datepicker.
 
 = 1.5.7 =
 * Feature: first day of week is now also respected in the datepicker
