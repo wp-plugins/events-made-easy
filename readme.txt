@@ -18,6 +18,8 @@ Events Made Easy handles RSVP and bookings, integrates payments for events using
 
 Events Made Easy provides also a RSS and ICAL feed, to keep your subscribers updated about the events you're organising. 
 
+Events Made Easy is fully multi-site compatible.
+
 Events Made Easy is fully customisable; you can customise the amount of data displayed and their format in events lists, locations, attendees and in the RSS/ICAL feed. Also the RSVP form can be changed to your liking with extra fields, and by using EME templates let you change the layout even per page!
 
 Events Made Easy is fully localisable and already partially localised in Italian, Spanish, German, Swedish, French and Dutch. 
