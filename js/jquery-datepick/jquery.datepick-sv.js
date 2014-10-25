@@ -2,7 +2,7 @@
    Swedish localisation for jQuery Datepicker.
    Written by Anders Ekdahl ( anders@nomadiz.se). */
 (function($) {
-    $.datepick.regional['sv'] = {
+    $.datepick.regionalOptions['sv'] = {
         monthNames: ['Januari','Februari','Mars','April','Maj','Juni',
         'Juli','Augusti','September','Oktober','November','December'],
         monthNamesShort: ['Jan','Feb','Mar','Apr','Maj','Jun',
@@ -22,8 +22,8 @@
 		closeText: 'Stäng', closeStatus: '',
 		yearStatus: '', monthStatus: '',
 		weekText: 'Ve', weekStatus: '',
-		dayStatus: 'D, M d', defauktStatus: '',
+		dayStatus: 'D, M d', defaultStatus: '',
 		isRTL: false
 	};
-    $.datepick.setDefaults($.datepick.regional['sv']);
+    $.datepick.setDefaults($.datepick.regionalOptions['sv']);
 })(jQuery);

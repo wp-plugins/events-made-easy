@@ -14,7 +14,13 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
       $headers[] = "From: $fromName <$fromMail>";
       if ($replytoemail != "")
          $headers[] = "ReplyTo: $replytoname <$replytoemail>";
+      if (get_option('eme_rsvp_send_html') == '1')
+          add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
       wp_mail( $receiveremail, $subject, $body, $headers );  
+      // Reset content-type to avoid conflicts -- http://core.trac.wordpress.org/ticket/23578
+      if (get_option('eme_rsvp_send_html') == '1')
+         remove_filter('wp_mail_content_type', 'set_html_content_type' );
+
    } else {
       require_once(ABSPATH . WPINC . "/class-phpmailer.php");
       // there's a bug in class-phpmailer from wordpress, so we need to copy class-smtp.php
@@ -52,14 +58,14 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
          else
             $mail->port = 25;
 
-         if(get_option('eme_rsvp_mail_SMTPAuth') == '1') {
+         if (get_option('eme_rsvp_mail_SMTPAuth') == '1') {
             $mail->SMTPAuth = TRUE;
             $mail->Username = get_option('eme_smtp_username');
             $mail->Password = get_option('eme_smtp_password');
          }
          $mail->From = $fromMail;
          $mail->FromName = $fromName;
-         if(get_option('eme_rsvp_send_html') == '1')
+         if (get_option('eme_rsvp_send_html') == '1')
             $mail->MsgHTML($body);
          else
             $mail->Body = $body;
