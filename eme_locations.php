@@ -302,9 +302,9 @@ jQuery(document).ready(function($){
     })
     .on('select', function() {
         var attachment = custom_uploader.state().get('selection').first().toJSON();
-        $('#event_image_url').val(attachment.url);
-        $('#event_image_id').val(attachment.id);
-        $('#eme_event_image_example' ).attr("src",attachment.url);
+        $('#location_image_url').val(attachment.url);
+        $('#location_image_id').val(attachment.id);
+        $('#eme_location_image_example' ).attr("src",attachment.url);
     })
     .open();
   });
@@ -692,7 +692,9 @@ function eme_update_location($location) {
    }
 }
 
-function eme_insert_location($location) {
+function eme_insert_location($location,$force=0) {
+   // the force parameter can be used to ignore capabilities for a user when inserting a location
+   // the frontend submit plugin can use this
    global $wpdb;  
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME; 
 
@@ -718,7 +720,7 @@ function eme_insert_location($location) {
    if (!is_serialized($location['location_properties']))
       $location['location_properties'] = serialize($location['location_properties']);
       
-   if (current_user_can( get_option('eme_cap_add_locations'))) {
+   if (current_user_can( get_option('eme_cap_add_locations')) || $force) {
       $wpdb->show_errors(true);
       if (!$wpdb->insert($table_name,$location)) {
          $wpdb->print_error();
@@ -1066,7 +1068,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       }
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );
@@ -1308,7 +1310,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
 
       if ($found) {
          if ($need_escape)
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+            $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
          if ($need_urlencode)
             $replacement = rawurlencode($replacement);
          $format = str_replace($orig_result, $replacement ,$format );
@@ -1347,7 +1349,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       }
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );
@@ -1448,88 +1450,4 @@ function eme_events_in_location_list($location, $scope = "") {
       $list = get_option('eme_location_no_events_message');
    }
    return $list;
-}
-
-function eme_locations_autocomplete() {
-   $use_select_for_locations = get_option('eme_use_select_for_locations');
-   // qtranslate there? Then we need the select
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
-      $use_select_for_locations=1;
-   }
-
-   if ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) {
-      ?>
-
-      <script type="text/javascript">
-      //<![CDATA[
-
-      jQuery(document).ready(function() {
-         function htmlDecode(value){ 
-            return jQuery('<div/>').html(value).text(); 
-         }
-
-         var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>; 
-         var use_select_for_locations = <?php echo $use_select_for_locations; ?>; 
-
-         if (!use_select_for_locations) {
-          jQuery("input[name=location_name]").autocomplete({
-            source: function(request, response) {
-                         jQuery.ajax({ url: "<?php echo EME_PLUGIN_URL; ?>locations-search.php",
-                                  data: { q: request.term},
-                                  dataType: "json",
-                                  type: "GET",
-                                  success: function(data){
-                                                response(jQuery.map(data, function(item) {
-                                                      return {
-                                                         label: item.name,
-                                                         name: htmlDecode(item.name),
-                                                         address: item.address,
-                                                         town: item.town,
-                                                         latitude: item.latitude,
-                                                         longitude: item.longitude,
-                                                      };
-                                                }));
-                                           }
-                                 });
-                    },
-            select:function(evt, ui) {
-                         // when a product is selected, populate related fields in this form
-                         jQuery('input[name=location_name]').val(ui.item.name);
-                         jQuery('input#location_address').val(ui.item.address);
-                         jQuery('input#location_town').val(ui.item.town);
-                         jQuery('input#location_latitude').val(ui.item.latitude);
-                         jQuery('input#location_longitude').val(ui.item.longitude);
-                         if(gmap_enabled) {
-                            loadMapLatLong(ui.item.name, ui.item.town, ui.item.address, ui.item.latitude, ui.item.longitude);
-                         }
-                         return false;
-                   },
-            minLength: 1
-          }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-            return jQuery( "<li></li>" )
-            .append("<a>"+htmlDecode(item.name)+'<br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small></a>')
-            .appendTo( ul );
-          };
-         } else {
-          jQuery('#location-select-id').change(function() {
-            jQuery.getJSON("<?php echo EME_PLUGIN_URL; ?>locations-search.php",{id: jQuery(this).val()}, function(item){
-               jQuery("input[name='location-select-name']").val(item.name);
-               jQuery("input[name='location-select-address']").val(item.address); 
-               jQuery("input[name='location-select-town']").val(item.town); 
-               jQuery("input[name='location-select-latitude']").val(item.latitude); 
-               jQuery("input[name='location-select-longitude']").val(item.longitude); 
-               if(gmap_enabled) {
-                  loadMapLatLong(item.name, item.town, item.address, item.latitude, item.longitude);
-               }
-            })
-          });
-         }
-      });   
-      //]]> 
-
-      </script>
-
-      <?php
-
-   }
 }

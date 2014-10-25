@@ -61,6 +61,8 @@ function eme_init_event_props($props) {
       $props['min_allowed']=get_option('eme_rsvp_addbooking_min_spaces');
    if (!isset($props['max_allowed']))
       $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
+   if (!isset($props['rsvp_end_target']))
+      $props['rsvp_end_target']=get_option('eme_rsvp_end_target');
 
    $template_override=array('event_page_title_format_tpl','event_single_event_format_tpl','event_contactperson_email_body_tpl','event_registration_recorded_ok_html_tpl','event_respondent_email_body_tpl','event_registration_pending_email_body_tpl','event_registration_updated_email_body_tpl','event_registration_form_format_tpl','event_cancel_form_format_tpl');
    foreach ($template_override as $template) {
@@ -928,6 +930,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       // for AND categories: the user enters "+" and this gets translated to " " by wp_parse_args
       // so we fix it again
       $category = preg_replace("/ /","+",$category);
+      $notcategory = preg_replace("/ /","+",$notcategory);
    }
    $echo = ($echo==="true" || $echo==="1") ? true : $echo;
    $long_events = ($long_events==="true" || $long_events==="1") ? true : $long_events;
@@ -986,14 +989,22 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    $next_text = "";
    $limit_start=0;
    $limit_end=0;
+
    // for browsing: if limit=0,paging=1 and only for this_week,this_month or today
    if ($limit>0 && $paging==1 && isset($_GET['eme_offset'])) {
       $limit_offset=intval($_GET['eme_offset']);
    } else {
       $limit_offset=0;
    }
+
+   // if extra scope_filter is found (from the eme_filter shortcode), then no paging
+   // since it won't work anyway
+   if (isset($_REQUEST["eme_scope_filter"]))
+      $paging=0;
+
    if ($paging==1 && $limit==0) {
       $scope_offset=0;
+      $scope_text = "";
       if (isset($_GET['eme_offset']))
          $scope_offset=$_GET['eme_offset'];
       $prev_offset=$scope_offset-1;
@@ -1554,6 +1565,20 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
          $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
+   } elseif (preg_match ( "/^relative\-(\d+)d--([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $scope, $matches )) {
+      $limit_end=$matches[2];
+      $limit_start=date('Y-m-d',strtotime($limit_end)-$matches[1]*86400);
+      if ($show_ongoing)
+         $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
+      else
+         $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
+   } elseif (preg_match ( "/^([0-9]{4}-[0-9]{2}-[0-9]{2})--relative\+(\d+)d$/", $scope, $matches )) {
+      $limit_start=$matches[1];
+      $limit_end=date('Y-m-d',strtotime($limit_start)+$matches[2]*86400);
+      if ($show_ongoing)
+         $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
+      else
+         $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif (preg_match ( "/^\+(\d+)m$/", $scope, $matches )) {
       // the year/month should be based on the first of the month, so if we are the 13th, we substract 12 days to get to day 1
       // Reason: monthly offsets needs to be calculated based on the first day of the current month, not the current day,
@@ -1808,6 +1833,14 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
                $category_conditions[] = " NOT FIND_IN_SET($cat,event_category_ids)";
          }
          $conditions[] = "(".implode(' AND ', $category_conditions).")";
+      } elseif ( preg_match('/ /', $notcategory) ) {
+         // url decoding of '+' is ' '
+         $notcategory = explode(' ', $notcategory);
+         $category_conditions = array();
+         foreach ($notcategory as $cat) {
+            if (is_numeric($cat) && $cat>0)
+               $category_conditions[] = " NOT FIND_IN_SET($cat,event_category_ids)";
+         }
       }
    }
 
@@ -2207,8 +2240,8 @@ function eme_events_table($message="",$scope="future") {
          jQuery('#eme_admin_events').dataTable( {
 <?php
    $locale_code = get_locale();
-   $locale_file = EME_PLUGIN_DIR. "/js/jquery-datatables/i18n/$locale_code.json";
-   $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datatables/i18n/$locale_code.json";
+   $locale_file = EME_PLUGIN_DIR. "js/jquery-datatables/i18n/$locale_code.json";
+   $locale_file_url = EME_PLUGIN_URL. "js/jquery-datatables/i18n/$locale_code.json";
    if ($locale_code != "en_US" && file_exists($locale_file)) {
 ?>
             "language": {
@@ -2500,6 +2533,10 @@ function eme_event_form($event, $title, $element) {
                         <p><?php _e('Contact','eme'); ?>
                            <?php
                            wp_dropdown_users ( array ('name' => 'event_contactperson_id', 'show_option_none' => __ ( "Event author", 'eme' ), 'selected' => $event['event_contactperson_id'] ) );
+                           // if it is not a new event and there's no contact person defined, then the event author becomes contact person
+                           // So let's display a warning what this means if there's no author (like when submitting via the frontend submission form)
+                           if (!$is_new_event && $event['event_contactperson_id']<1 && $event['event_author']<1)
+                              print "<br />". __( 'Since the author is undefined for this event, any reference to the contact person (like when using #_CONTACTPERSON when sending mails), will use the currently logged-in user info.', 'eme' );
                            ?>
                         </p>
                      </div>
@@ -2565,10 +2602,14 @@ function eme_event_form($event, $title, $element) {
                               <?php _e ( 'Allow RSVP until ','eme' ); ?>
                            <br />
                               <input id="rsvp_number_days" type="text" name="rsvp_number_days" maxlength='2' size='2' value="<?php echo $event['rsvp_number_days']; ?>" />
-                              <?php _e ( ' days before the event starts.','eme' ); ?>
-                           <br />
+                              <?php _e ( 'days','eme' ); ?>
                               <input id="rsvp_number_hours" type="text" name="rsvp_number_hours" maxlength='2' size='2' value="<?php echo $event['rsvp_number_hours']; ?>" />
-                              <?php _e ( ' hours before the event starts.','eme' ); ?>
+                              <?php _e ( 'hours','eme' ); ?>
+                           <br />
+                              <?php _e ( 'before the event ','eme' );
+                                 $eme_rsvp_end_target_list = array('start'=>__('starts','eme'),'end'=>__('ends','eme'));
+                                 echo eme_ui_select($event['event_properties']['rsvp_end_target'],'eme_prop_rsvp_end_target',$eme_rsvp_end_target_list);
+                              ?>
                            <br />
                            <br />
                               <?php _e ( 'Payment methods','eme' ); ?><br />
@@ -2787,18 +2828,30 @@ function eme_closed($data) {
 // General script to make sure hidden fields are shown when containing data
 function eme_admin_event_script() {
    // check if the user wants AM/PM or 24 hour notation
-   $time_format = get_option('time_format');
+   // make sure that escaped characters are filtered out first
+   $time_format = preg_replace('/\\\\./','',get_option('time_format'));
    $show24Hours = 'true';
    if (preg_match ( "/g|h/", $time_format ))
       $show24Hours = 'false';
    
    // jquery ui locales are with dashes, not underscores
    $locale_code = get_locale();
+   $use_select_for_locations = get_option('eme_use_select_for_locations')?1:0;
+   $lang = eme_detect_lang();
+   if (!empty($lang)) {
+      $use_select_for_locations=1;
+   }
+
 ?>
 <script type="text/javascript">
    //<![CDATA[
 var show24Hours = <?php echo $show24Hours;?>;
 var locale_code = '<?php echo $locale_code;?>';
+var firstDayOfWeek = <?php echo get_option('start_of_week');?>;
+var eme_locations_search_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
+var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
+var use_select_for_locations = <?php echo $use_select_for_locations; ?>;
+
 function eme_event_page_title_format(){
    var tmp_value='<?php echo rawurlencode(get_option('eme_event_page_title_format' )); ?>';
    tmp_value=unescape(tmp_value).replace(/\r\n/g,"\n");
@@ -2916,10 +2969,10 @@ function eme_meta_box_div_event_name($event){
 function eme_meta_box_div_event_date($event){
    $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 ?>
-      <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="display: none;" readonly="readonly" />
-      <input id="start-date-to-submit" type="text" name="event_start_date" value="" style="background: #FCFFAA" />
-      <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="display: none;" readonly="readonly" />
-      <input id="end-date-to-submit" type="text" name="event_end_date" value="" style="background: #FCFFAA" />
+      <input id="localised-start-date" type="text" name="localised_event_start_date" value="" style="background: #FCFFAA;" readonly="readonly" />
+      <input id="start-date-to-submit" type="hidden" name="event_start_date" value="" />
+      <input id="localised-end-date" type="text" name="localised_event_end_date" value="" style="background: #FCFFAA;" readonly="readonly" />
+      <input id="end-date-to-submit" type="hidden" name="event_end_date" value="" />
       <span id='event-date-explanation'>
       <?php _e ( 'The event beginning and end date.', 'eme' ); ?>
       </span>
@@ -2965,7 +3018,8 @@ function eme_meta_box_div_event_page_title_format($event) {
 
 function eme_meta_box_div_event_time($event) {
    // check if the user wants AM/PM or 24 hour notation
-   $time_format = get_option('time_format');
+   // make sure that escaped characters are filtered out first
+   $time_format = preg_replace('/\\\\./','',get_option('time_format'));
    $hours_locale = '24';
    if (preg_match ( "/g|h/", $time_format )) {
       $event_start_time = date("h:iA", strtotime($event['event_start_time']));
@@ -3084,7 +3138,8 @@ function eme_meta_box_div_event_cancel_form_format($event) {
 function eme_meta_box_div_location_name($event) {
    $use_select_for_locations = get_option('eme_use_select_for_locations');
    // qtranslate there? Then we need the select, otherwise locations will be created again...
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+   $lang = eme_detect_lang();
+   if (!empty($lang)) {
       $use_select_for_locations=1;
    }
    $gmap_is_active = get_option('eme_gmap_is_active' );
@@ -3403,7 +3458,7 @@ function eme_admin_map_script() {
          }
  
          function eme_displayAddress(ignore_coord){
-            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
             if (gmap_enabled) {
                eventLocation = jQuery("input[name=location_name]").val();
                eventTown = jQuery("input#location_town").val();
@@ -3419,7 +3474,7 @@ function eme_admin_map_script() {
          }
 
          function eme_SelectdisplayAddress(){
-            var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>;
+            var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
             if (gmap_enabled) {
                eventLocation = jQuery("input[name='location-select-name']").val(); 
                eventTown = jQuery("input[name='location-select-town']").val();
@@ -3436,7 +3491,8 @@ function eme_admin_map_script() {
             <?php 
             $use_select_for_locations = get_option('eme_use_select_for_locations');
             // qtranslate there? Then we need the select
-            if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
+            $lang = eme_detect_lang();
+            if (!empty($lang)) {
                $use_select_for_locations=1;
             }
 
@@ -3445,10 +3501,13 @@ function eme_admin_map_script() {
             // We check on the edit event because this javascript is also executed for editing locations, and then we don't care
             // about the use_select_for_locations parameter
             // For new events we do nothing if the use_select_for_locations var is set, because there's nothing to show.
-            if ($use_select_for_locations &&
-               (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence'))) { ?>
-               eme_SelectdisplayAddress();
-            <?php } elseif ($plugin_page == 'eme-locations' && (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation'))) { ?>
+            if (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) {
+               if ($use_select_for_locations) { ?> 
+                  eme_SelectdisplayAddress();
+               <?php } else { ?>
+                  eme_displayAddress(0);
+               <?php } ?>
+            <?php } elseif (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation')) { ?>
                eme_displayAddress(0);
             <?php } ?>
 
@@ -3860,6 +3919,8 @@ function eme_admin_enqueue_js(){
    }
    //if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {
+      // both datepick and timeentry need jquery.plugin, so let's include it upfront
+      wp_enqueue_script( 'jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js',array( 'jquery' ));
       wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
       //wp_enqueue_style('jquery-ui-autocomplete',EME_PLUGIN_URL."js/jquery-autocomplete/jquery.autocomplete.css");
       wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
@@ -3867,14 +3928,14 @@ function eme_admin_enqueue_js(){
       // jquery ui locales are with dashes, not underscores
       $locale_code = get_locale();
       $locale_code = preg_replace( "/_/","-", $locale_code );
-      $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-      $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+      $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+      $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
       // for english, no translation code is needed)
       if ($locale_code != "en-US") {
          if (!file_exists($locale_file)) {
             $locale_code = substr ( $locale_code, 0, 2 );
-            $locale_file = EME_PLUGIN_DIR. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
-            $locale_file_url = EME_PLUGIN_URL. "/js/jquery-datepick/jquery.datepick-$locale_code.js";
+            $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+            $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
          }
          if (file_exists($locale_file))
             wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
@@ -3882,7 +3943,6 @@ function eme_admin_enqueue_js(){
    }
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager') ) ) {
       wp_enqueue_script( 'jquery-mousewheel', EME_PLUGIN_URL.'js/jquery-mousewheel/jquery.mousewheel.min.js', array('jquery'));
-      wp_enqueue_script( 'jquery-plugin-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.plugin.min.js');
       wp_enqueue_script( 'jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js');
       wp_enqueue_script( 'eme-events',EME_PLUGIN_URL."js/eme_admin_events.js",array( 'jquery' ));
       // some inline js that gets shown at the top
