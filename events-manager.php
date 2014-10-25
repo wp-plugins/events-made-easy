@@ -1275,10 +1275,15 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if ($target == "rss" || $target == "text") {
             $replacement = "";
          } else {
-            if ($booking_id_done && eme_event_needs_payment($event))
-               $replacement = eme_payment_form($event,$booking_id_done);
-            else
+            if ($booking_id_done && eme_event_can_pay_online($event)) {
+               $booking = eme_get_booking($booking_id_done);
+               if (eme_get_total_booking_price($event,$booking)>0)
+                  $replacement = eme_payment_form($event,$booking_id_done);
+               else
+                  $replacement = eme_add_booking_form($event['event_id'],$show_message_on_add);
+            }  else {
                $replacement = eme_add_booking_form($event['event_id'],$show_message_on_add);
+            }
          }
 
       } elseif ($event && preg_match('/#_ADDBOOKINGFORM_IF_NOT_REGISTERED/', $result)) {
@@ -1286,10 +1291,15 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = "";
          } elseif (is_user_logged_in() ) {
             // we show the form if the user did not register yet, or after registration to show the paypal form
-            if ($booking_id_done && eme_event_needs_payment($event))
-               $replacement = eme_payment_form($event,$booking_id_done);
-            elseif (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
+            if ($booking_id_done && eme_event_can_pay_online($event)) {
+               $booking = eme_get_booking($booking_id_done);
+               if (eme_get_total_booking_price($event,$booking)>0)
+                  $replacement = eme_payment_form($event,$booking_id_done);
+               elseif (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
+                  $replacement = eme_add_booking_form($event['event_id'],$show_message_on_add);
+            } elseif (!eme_get_booking_ids_by_wp_id($current_userid,$event['event_id'])) {
                $replacement = eme_add_booking_form($event['event_id'],$show_message_on_add);
+            }
          }
 
       } elseif ($event && preg_match('/#_REMOVEBOOKINGFORM$/', $result)) {
@@ -1297,7 +1307,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = "";
          } else {
             // when the booking just happened and the user needs to pay, we don't show the remove booking form
-            if ($booking_id_done && eme_event_needs_payment($event))
+            if ($booking_id_done && eme_event_can_pay_online($event))
                $replacement = "";
             else
                $replacement = eme_delete_booking_form($event['event_id'],$show_message_on_remove);
@@ -1308,7 +1318,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = "";
          } elseif (is_user_logged_in() ) {
             // when the booking just happened and the user needs to pay, we don't show the remove booking form
-            if ($booking_id_done && eme_event_needs_payment($event))
+            if ($booking_id_done && eme_event_can_pay_online($event))
                $replacement = "";
             elseif (eme_get_booking_ids_by_wp_id($current_userid,$event['event_id']))
                $replacement = eme_delete_booking_form($event['event_id'],$show_message_on_remove);

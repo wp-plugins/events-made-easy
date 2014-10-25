@@ -65,6 +65,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.9
+* Bugfix: the unique nbr for bookings only got generated when online payment was being selected too, now it gets generated if the total booking price >0
+
 = 1.5.8 =
 * Feature: added 2 new scopes: relative-Xd--YYYY-MM-DD (end YYYY-MM-DD, start X days before that) and YYYY-MM-DD--relative+Xd (start YYYY-MM-DD, end X days past that)
 * Feature: added monthly range select in filter form: use #_FILTER_MONTHRANGE in the filter format and fields=monthrange in the eme_filterform shortcode

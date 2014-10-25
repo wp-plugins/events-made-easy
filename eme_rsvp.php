@@ -35,7 +35,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
       $form_result_message = $booking_res[0];
       $booking_id_done=$booking_res[1];
       $post_string="{";
-      if ($booking_id_done && eme_event_needs_payment($event)) {
+      if ($booking_id_done && eme_event_can_pay_online($event)) {
          $payment_id = eme_get_booking_payment_id($booking_id_done);
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
@@ -196,8 +196,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       $booking_ids_done=$booking_res[1];
       $post_string="{";
       // let's decide for the first event wether or not payment is needed
-      if ($booking_ids_done && eme_event_needs_payment($events[0])) {
-         $payment_id = eme_create_payment($booking_ids_done);
+      if ($booking_ids_done && eme_event_can_pay_online($events[0])) {
          $payment_id = eme_get_bookings_payment_id($booking_ids_done);
          // you did a successfull registration, so now we decide wether to show the form again, or the payment form
          // but to make sure people don't mess with the booking id in the url, we use wp_nonce
@@ -527,6 +526,7 @@ function eme_cancel_seats($event) {
 function eme_multibook_seats($events, $send_mail, $format) {
    global $current_user;
    $booking_ids = array();
+   $total_price = 0;
    $result="";
 
    // check for spammers as early as possible
@@ -710,6 +710,8 @@ function eme_multibook_seats($events, $send_mail, $format) {
                   }
                   $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
                   $booking = eme_get_booking ($booking_id);
+                  $total_price += eme_get_total_booking_price($event,$booking);
+
                   if (!empty($event['event_registration_recorded_ok_html']))
                      $ok_format = $event['event_registration_recorded_ok_html'];
                   elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
@@ -746,10 +748,12 @@ function eme_multibook_seats($events, $send_mail, $format) {
 
    $booking_ids_done=join(',',$booking_ids);
 
-   // the payment needs to be created before the mail is sent, otherwise you can't send a link to the payment ...
-   if ($booking_ids_done && eme_event_needs_payment($events[0]))
-      eme_create_payment($booking_ids_done);
-   if ($send_mail) eme_email_rsvp_booking($booking_ids[0],$action);
+   if (!empty($booking_ids_done)) {
+      // the payment needs to be created before the mail is sent, otherwise you can't send a link to the payment ...
+      if ($total_price>0)
+         eme_create_payment($booking_ids_done);
+      if ($send_mail) eme_email_rsvp_booking($booking_ids[0],$action);
+   }
 
    $res = array(0=>$result,1=>$booking_ids_done);
    return $res;
@@ -759,6 +763,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
 function eme_book_seats($event, $send_mail) {
    global $current_user;
    $booking_id = 0;
+   $total_price = 0;
    $result="";
 
    // check for spammers as early as possible
@@ -948,10 +953,8 @@ function eme_book_seats($event, $send_mail) {
                   eme_update_phone($booker,$bookerPhone);
                }
                $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
-               if ($booking_id && eme_event_needs_payment($event))
-                  eme_create_payment($booking_id);
-
                $booking = eme_get_booking ($booking_id);
+               $total_price = eme_get_total_booking_price($event,$booking);
                if (!empty($event['event_registration_recorded_ok_html']))
                   $ok_format = $event['event_registration_recorded_ok_html'];
                elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
@@ -967,7 +970,6 @@ function eme_book_seats($event, $send_mail) {
                } else {
                   $action="";
                }
-               if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
 
                // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
                foreach($_POST as $key=>$value) {
@@ -983,6 +985,13 @@ function eme_book_seats($event, $send_mail) {
          // here we only unset the number of seats entered, so the user doesn't have to fill in the rest again
          unset($_POST['bookedSeats']);
       }
+   }
+
+   // the payment needs to be created before the mail is sent, otherwise you can't send a link to the payment ...
+   if ($booking_id) {
+      if ($total_price>0)
+         eme_create_payment($booking_id);
+      if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
    }
 
    $res = array(0=>$result,1=>$booking_id);
@@ -2740,7 +2749,7 @@ function eme_get_payment_total_booking_price($payment_id) {
    $bookings = eme_get_bookings($booking_ids);
    foreach ($bookings as $booking) {
       $event=eme_get_event($booking['event_id']);
-      if (!$booking['booking_payed'] && is_array($event) && eme_event_needs_payment($event))
+      if (!$booking['booking_payed'] && is_array($event))
          $price += eme_get_total_booking_price($event,$booking);
    }
    return $price;

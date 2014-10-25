@@ -18,7 +18,7 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
    if ($booking['booking_payed'])
       return $ret_string."<div class='eme-already-payed'>".__('This booking has already been payed for','eme')."</div>";
 
-   if (is_array($event) && eme_event_needs_payment($event)) {
+   if (is_array($event) && eme_event_can_pay_online($event)) {
       $eme_payment_form_header_format=get_option('eme_payment_form_header_format');
       $total_price = eme_get_total_booking_price($event,$booking);
       if (!empty($eme_payment_form_header_format)) {
@@ -646,7 +646,7 @@ function eme_fdgg_notification() {
    }
 }
 
-function eme_event_needs_payment ($event) {
+function eme_event_can_pay_online ($event) {
    if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'])
       return 1;
    else
@@ -677,7 +677,7 @@ function eme_create_payment($booking_ids) {
          $wpdb->update($bookings_table, $fields, $where);
       }
    }
-   return $payment_id;
+   #return $payment_id;
 }
 
 function eme_get_payment($payment_id) {
