@@ -568,7 +568,7 @@ function eme_options_page() {
    $eme_rsvp_number_hours=get_option('eme_rsvp_number_hours');
    $eme_rsvp_end_target=get_option('eme_rsvp_end_target');
    ?>
-   <tr valign="top" id='<?php echo $name;?>_row'>
+   <tr valign="top" id='eme_rsvp_number_row'>
       <th scope="row"><?php _e('By default allow RSVP until this many', 'eme') ?></th>
       <td>
       <input name="eme_rsvp_number_days" type="text" id="eme_rsvp_number_days" value="<?php echo eme_sanitize_html($eme_rsvp_number_days); ?>" size="4" /> <?php _e('days', 'eme') ?>
