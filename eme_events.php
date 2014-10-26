@@ -2536,7 +2536,7 @@ function eme_event_form($event, $title, $element) {
                            // if it is not a new event and there's no contact person defined, then the event author becomes contact person
                            // So let's display a warning what this means if there's no author (like when submitting via the frontend submission form)
                            if (!$is_new_event && $event['event_contactperson_id']<1 && $event['event_author']<1)
-                              print "<br />". __( 'Since the author is undefined for this event, any reference to the contact person (like when using #_CONTACTPERSON when sending mails), will use the currently logged-in user info.', 'eme' );
+                              print "<br />". __( 'Since the author is undefined for this event, any reference to the contact person (like when using #_CONTACTPERSON when sending mails), will use the admin user info.', 'eme' );
                            ?>
                         </p>
                      </div>
