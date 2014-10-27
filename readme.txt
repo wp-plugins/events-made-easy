@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.10
 * Improvement: try to use admin info when no other contact info is present for an event (can happen after using the frontent submit form)
+* Bugfix: take Daylight Saving Time into account in the calendar
 
 = 1.5.9
 * Bugfix: the unique nbr for bookings only got generated when online payment was being selected too, now it gets generated if the total booking price >0

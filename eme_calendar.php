@@ -187,15 +187,20 @@ function eme_get_calendar($args="") {
             $event_end_date = strtotime($event['event_end_date']);
             if ($event_end_date < $event_start_date)
                $event_end_date=$event_start_date;
-            while( $event_start_date <= $event_end_date ) {
-               $event_eventful_date = date('Y-m-d', $event_start_date);
+            $event_date=$event_start_date;
+            $day_count=0;
+            while( $event_date <= $event_end_date ) {
+               $day_count++;
+               $event_eventful_date = date('Y-m-d', $event_date);
                //Only show events on the day that they start
                if(isset($eventful_days[$event_eventful_date]) &&  is_array($eventful_days[$event_eventful_date]) ) {
-                  $eventful_days[$event_eventful_date][] = $event; 
+                  $eventful_days[$event_eventful_date][] = $event;
                } else {
                   $eventful_days[$event_eventful_date] = array($event);
                }  
-               $event_start_date += (60*60*24);          
+               //don't add 24 hours, because that doesn't work for days with 23 or 25 hours (daylight saving time)
+               //$event_date += (60*60*24);
+               $event_date = strtotime($event['event_start_date']." + $day_count days");
             }
          } else {
             //Only show events on the day that they start
