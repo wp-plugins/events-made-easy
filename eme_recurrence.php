@@ -32,9 +32,8 @@ function eme_get_recurrence_days($recurrence){
    $monthcounter=0;
    $start_monthday = date("j", $start_date);
    $cycle_date = $start_date;
-   $aDay = 86400;  // a day in seconds
 
-   while (date("d-M-Y", $cycle_date) != date('d-M-Y', $end_date + $aDay)) {
+   while ($cycle_date < $end_date) {
     //echo (date("d-M-Y", $cycle_date));
       $style = "";
       $monthweek =  floor(((date("d", $cycle_date)-1)/7))+1;
@@ -77,7 +76,7 @@ function eme_get_recurrence_days($recurrence){
             $counter++;
          }
       }
-      $cycle_date = $cycle_date + $aDay;         //adding a day
+      $cycle_date = eme_unixdate_calc("+1 day",$cycle_date);  //adding a day
       $daycounter++;
       if ($daycounter%7==0) {
          $weekcounter++;
@@ -300,9 +299,8 @@ function eme_get_recurrence_desc($recurrence_id) {
    elseif ($recurrence['recurrence_freq'] == 'weekly')  {
       if (!$recurrence['recurrence_byday']) {
          # no weekdays given for the recurrence, so we use the
-         # so we use the day of the week of the startdate as
-         # reference
-         $recurrence['recurrence_byday']=date_i18n('w',strtotime($recurrence['recurrence_start_date']));
+         # day of the week of the startdate as reference
+         $recurrence['recurrence_byday']= eme_localised_date($recurrence['recurrence_start_date'],'w');
          # Sunday is 7, not 0
          if ($recurrence['recurrence_byday']==0)
             $recurrence['recurrence_byday']=7; 
@@ -321,9 +319,8 @@ function eme_get_recurrence_desc($recurrence_id) {
    elseif ($recurrence['recurrence_freq'] == 'monthly')  {
       if (!$recurrence['recurrence_byday']) {
          # no monthday given for the recurrence, so we use the
-         # so we use the day of the month of the startdate as
-         # reference
-         $recurrence['recurrence_byday']=date_i18n('e',strtotime($recurrence['recurrence_start_date']));
+         # day of the month of the startdate as reference
+         $recurrence['recurrence_byday']= eme_localised_date($recurrence['recurrence_start_date'],'e');
       }
       $weekday_array = explode(",", $recurrence['recurrence_byday']);
       $natural_days = array();

@@ -804,40 +804,32 @@ function eme_global_map($atts) {
          $prev_offset=$scope_offset-1;
          $next_offset=$scope_offset+1;
          if ($scope=="this_week") {
-            $day_offset=date('w');
-            $start_day=time()-$day_offset*86400;
-            $end_day=$start_day+6*86400;
-            $limit_start = date('Y-m-d',$start_day+$scope_offset*7*86400);
-            $limit_end   = date('Y-m-d',$end_day+$scope_offset*7*86400);
+            $start_of_week = get_option('start_of_week');
+            $day_offset=date('w')-$start_of_week;
+            if ($day_offset<0) $day_offset+=7;
+            $limit_start=eme_date_calc("-$day_offset days +$scope_offset week");
+            $limit_end=eme_date_calc("+6 days",$start_day);
             $scope = "$limit_start--$limit_end";
-            $scope_text = date_i18n (get_option('date_format'),$start_day+$scope_offset*7*86400)."--".date_i18n (get_option('date_format'),$end_day+$scope_offset*7*86400);
+            $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
+
             $prev_text = __('Previous week','eme');
             $next_text = __('Next week','eme');
 
          } elseif ($scope=="this_month") {
-            // "first day of this month, last day of this month" works for newer versions of php (5.3+), but for compatibility:
-            // the year/month should be based on the first of the month, so if we are the 13th, we substract 12 days to get to day 1
-            // Reason: monthly offsets needs to be calculated based on the first day of the current month, not the current day,
-            //    otherwise if we're now on the 31st we'll skip next month since it has only 30 days
-            $day_offset=date('j')-1;
-            $year=date('Y', strtotime("$scope_offset month")-$day_offset*86400);
-            $month=date('m', strtotime("$scope_offset month")-$day_offset*86400);
-            $number_of_days_month=eme_days_in_month($month,$year);
-            $limit_start = "$year-$month-01";
-            $limit_end   = "$year-$month-$number_of_days_month";
+            $limit_start = eme_date_calc("first day of $scope_offset month");
+            $limit_end   = eme_date_calc("last day of $scope_offset month");
             $scope = "$limit_start--$limit_end";
-            //$prev_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$prev_offset month")-$day_offset*86400);
-            //$next_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$next_offset month")-$day_offset*86400);
-            $scope_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$scope_offset month")-$day_offset*86400);
+            $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_monthly_dateformat'));
             $prev_text = __('Previous month','eme');
             $next_text = __('Next month','eme');
 
          } elseif ($scope=="this_year") {
-            $year=date('Y', strtotime("$scope_offset year")-$day_offset*86400);
+            $year=date('Y')+$scope_offset;
             $limit_start = "$year-01-01";
             $limit_end   = "$year-12-31";
             $scope = "$limit_start--$limit_end";
-            $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime("$scope_offset year")-$day_offset*86400);
+            $scope = "$limit_start--$limit_end";
+            $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_yearly_dateformat'));
             $prev_text = __('Previous year','eme');
             $next_text = __('Next year','eme');
 
@@ -845,7 +837,7 @@ function eme_global_map($atts) {
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
             $limit_start = $scope;
             $limit_end   = $scope;
-            $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
+            $scope_text = eme_localised_date($limit_start);
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
 
@@ -854,7 +846,7 @@ function eme_global_map($atts) {
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
             $limit_start = $scope;
             $limit_end   = $scope;
-            $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
+            $scope_text = eme_localised_date($limit_start);
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
          }

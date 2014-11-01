@@ -1662,14 +1662,14 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#[A-Za-z]$/', $result)) {
          // matches all PHP date placeholders for startdate-time
-         $replacement=date_i18n( ltrim($result,"#"), strtotime( $event['event_start_date']." ".$event['event_start_time']));
+         $replacement=eme_localised_date($event['event_start_date']." ".$event['event_start_time'],ltrim($result,"#"));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#i") {
             $replacement=ltrim($replacement,"0");
          }
 
       } elseif ($event && preg_match('/#@[A-Za-z]$/', $result)) {
          // matches all PHP time placeholders for enddate-time
-         $replacement=date_i18n( ltrim($result,"#@"), strtotime( $event['event_end_date']." ".$event['event_end_time']));
+         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#"));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#@i") {
             $replacement=ltrim($replacement,"0");
          }
@@ -1823,7 +1823,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif (preg_match('/#_CALENDAR_DAY/', $result)) {
          $day_key = get_query_var('calendar_day');
-         $replacement = date_i18n (get_option('date_format'), strtotime($day_key));
+         $replacement=eme_localised_date($day_key);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
@@ -1857,10 +1857,11 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_RSVPEND/', $result)) {
          // show the end date+time for which a user can rsvp for an event
          if (eme_is_event_rsvp($event)) {
-               $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-               $rsvp_end_datetime = $event_start_datetime - $event['rsvp_number_days']*60*60*24 - $event['rsvp_number_hours']*60*60;
-               $rsvp_end_date = eme_localised_date($rsvp_end_datetime,1);
-               $rsvp_end_time = eme_localised_time($rsvp_end_datetime,1);
+               $rsvp_number_days=$event['rsvp_number_days'];
+               $rsvp_number_hours=$event['rsvp_number_hours'];
+               $rsvp_end_datetime = strtotime("-$rsvp_number_days days -$rsvp_number_hours hours",$event['event_start_date']." ".$event['event_start_time']);
+               $rsvp_end_date = eme_localised_unixdate($rsvp_end_datetime);
+               $rsvp_end_time = eme_localised_unixtime($rsvp_end_datetime);
                $replacement = $rsvp_end_date." ".$rsvp_end_time;
          }
 
@@ -2020,7 +2021,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $offset = 3;
       }
 
-      $replacement = date_i18n(substr($result, $offset, (strlen($result)-($offset+1)) ), strtotime($event[$my_date]." ".$event[$my_time]));
+      $replacement = eme_localised_date($event[$my_date]." ".$event[$my_time],substr($result, $offset, (strlen($result)-($offset+1)) ));
 
       if ($need_escape)
          $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));

@@ -370,10 +370,10 @@ function eme_get_all_caps() {
 }
 
 function eme_daydifference($date1,$date2) {
-   $ConvertToTimeStamp_Date1 = strtotime($date1);
-   $ConvertToTimeStamp_Date2 = strtotime($date2);
-   $DateDifference = intval($ConvertToTimeStamp_Date2) - intval($ConvertToTimeStamp_Date1);
-   return round($DateDifference/86400);
+   $datetime1 = date_create($date1);
+   $datetime2 = date_create($date2);
+   $interval = date_diff($datetime1, $datetime2, true);
+   return $interval->format('%a');
 }
 
 function eme_hourdifference($date1,$date2) {
@@ -399,20 +399,21 @@ function eme_status_array() {
    return $event_status_array;
 }
 
-function eme_localised_date($mydate, $is_unixtimestamp=0) {
-   $date_format = eme_get_date_format();
-   if ($is_unixtimestamp)
-      return date_i18n ( $date_format, $mydate);
-   else
-      return date_i18n ( $date_format, strtotime($mydate));
+function eme_localised_unixdate($mydate,$date_format='') {
+   if (empty($date_format))
+      $date_format = eme_get_date_format();
+   return date_i18n ( $date_format, $mydate);
+}
+function eme_localised_date($mydate,$date_format='') {
+   return eme_localised_unixdate (strtotime($mydate),$date_format);
 }
 
-function eme_localised_time($mydate, $is_unixtimestamp=0) {
+function eme_localised_unixtime($mydate) {
    $time_format = get_option('time_format');
-   if ($is_unixtimestamp)
-      return date_i18n ( $time_format, $mydate);
-   else
-      return date_i18n ( $time_format, strtotime($mydate));
+   return date_i18n ( $time_format, $mydate);
+}
+function eme_localised_time($mydate) {
+   return eme_localised_unixtime (strtotime($mydate));
 }
 
 function eme_currency_array() {
@@ -470,6 +471,16 @@ function eme_convert_date_format($format,$datestring) {
       return date($format);
    else
       return date($format, strtotime($datestring));
+}
+
+function eme_unixdate_calc($calc,$unixdate="") {
+   if (empty($unixdate))
+      return strtotime($calc);
+   else
+      return strtotime(date("Y-m-d",$unixdate)." $calc");
+}
+function eme_date_calc($calc,$unixdate="") {
+   return date("Y-m-d",eme_unixdate_calc($calc,$unixdate));
 }
 
 function eme_detect_lang() {
