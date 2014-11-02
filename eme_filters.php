@@ -34,7 +34,7 @@ function eme_create_week_scope($count) {
    $scope[0] = __('Select Week','eme');
    for ( $i = 0; $i < $count; $i++) {
       $limit_start=eme_date_calc("-$day_offset days +$i weeks");
-      $limit_end=eme_date_calc("+6 days +$i weeks",$start_day);
+      $limit_end=eme_date_calc("+6 days",$limit_start);
       $this_scope=$limit_start."--".$limit_end;
       $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
       $scope[$this_scope] = $scope_text;

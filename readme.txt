@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.10
 * Improvement: try to use admin info when no other contact info is present for an event (can happen after using the frontent submit form)
+* Incompatibility: removed the per-user date format settings, was getting too confusing for coding up different formats for backend and frontend date formatting, while the generic WP settings should be used anyway
 * Bugfix: better use of function strtotime to take Daylight Saving Time into account (not all days have 24 hours)
 
 = 1.5.9

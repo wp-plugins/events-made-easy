@@ -78,15 +78,6 @@ function eme_get_user_phone($user_id) {
    return get_user_meta($user_id, 'eme_phone',true);
 }
 
-function eme_get_date_format() {
-   $format="";
-   $current_userid=get_current_user_id();
-   if ($current_userid)
-      $format = get_user_meta($current_userid, 'eme_date_format',true);
-   if ($format == '') $format=get_option('date_format');
-   return $format;
-}
-
 // got from http://davidwalsh.name/php-email-encode-prevent-spam
 function eme_ascii_encode($e) {
     $output = "";
@@ -401,7 +392,7 @@ function eme_status_array() {
 
 function eme_localised_unixdate($mydate,$date_format='') {
    if (empty($date_format))
-      $date_format = eme_get_date_format();
+      $date_format = get_option('date_format');
    return date_i18n ( $date_format, $mydate);
 }
 function eme_localised_date($mydate,$date_format='') {
@@ -466,21 +457,17 @@ function eme_transfer_nbr_be97($my_nbr) {
    return $transfer_nbr_be97_main.$transfer_nbr_be97_check;
 }
 
-function eme_convert_date_format($format,$datestring) {
-   if (empty($datestring))
-      return date($format);
-   else
-      return date($format, strtotime($datestring));
-}
-
 function eme_unixdate_calc($calc,$unixdate="") {
    if (empty($unixdate))
       return strtotime($calc);
    else
-      return strtotime(date("Y-m-d",$unixdate)." $calc");
+      return strtotime($calc,$unixdate);
 }
-function eme_date_calc($calc,$unixdate="") {
-   return date("Y-m-d",eme_unixdate_calc($calc,$unixdate));
+function eme_date_calc($calc,$date="") {
+   if (empty($date))
+      return date("Y-m-d",strtotime($calc));
+   else
+      return date("Y-m-d",strtotime($calc,strtotime($date)));
 }
 
 function eme_detect_lang() {

@@ -705,7 +705,6 @@ function eme_add_person($name, $email, $phone, $wp_id, $lang) {
 function eme_user_profile($user) {
    //$eme_phone=get_user_meta($user,'eme_phone',true);
    $eme_phone=$user->eme_phone;
-   $eme_date_format=$user->eme_date_format;
    ?>
    <h3><?php _e('Events Made Easy settings', 'eme')?></h3>
    <table class='form-table'>
@@ -713,14 +712,6 @@ function eme_user_profile($user) {
          <th><label for="eme_phone"><?php _e('Phone number','eme');?></label></th>
          <td><input type="text" name="eme_phone" id="eme_phone" value="<?php echo $eme_phone; ?>" class="regular-text" /> <br />
          <?php _e('The phone number used by Events Made Easy when the user is indicated as the contact person for an event.','eme');?></td>
-      </tr>
-      <tr>
-         <th><label for="eme_date_format"><?php _e('Date format','eme');?></label></th>
-         <td><input type="text" name="eme_date_format" id="eme_date_format" value="<?php echo $eme_date_format; ?>" class="regular-text" /> <br />
-         <?php _e('The date format used by Events Made Easy in the admin section. If empty the general WP date format setting will be used.','eme');
-               echo "\t<p>" . __('<a href="http://codex.wordpress.org/Formatting_Date_and_Time">Documentation on date and time formatting</a>.') . "</p>\n";
-         ?>
-         </td>
       </tr>
    </table>
    <?php
@@ -730,10 +721,6 @@ function eme_update_user_profile($wp_user_ID) {
    if(isset($_POST['eme_phone'])) {
       update_user_meta($wp_user_ID,'eme_phone', $_POST['eme_phone']);
    }
-   if(isset($_POST['eme_date_format'])) {
-      update_user_meta($wp_user_ID,'eme_date_format', $_POST['eme_date_format']);
-   }
-   
 }
 
 function eme_update_phone($person,$phone) {
