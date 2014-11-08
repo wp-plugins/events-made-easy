@@ -1840,7 +1840,14 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {
-            $field_replace.=$answer['field_name'].": ".eme_convert_answer2tag($answer)."\n";
+            $tmp_answer=eme_convert_answer2tag($answer);
+            if (has_filter('eme_rsvp_multifield_filter')) {
+               $formfield=eme_get_formfield_byname($answer['field_name']);
+               if (eme_is_multifield($formfield['field_type'])) {
+                  $tmp_answer=apply_filters('eme_rsvp_multifield_filter',$tmp_answer);
+               }
+            }
+            $field_replace.=$answer['field_name'].": $tmp_answer\n";
          }
          $replacement = eme_trans_sanitize_html($field_replace,$lang);
          if ($target == "html")
@@ -1862,10 +1869,20 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
                 preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
+         $field_replace = "";
          foreach ($answers as $answer) {
-            if ($answer['field_name'] == $formfield['field_name'])
-               $replacement = eme_trans_sanitize_html(eme_convert_answer2tag($answer),$lang);
+            if ($answer['field_name'] == $formfield['field_name']) {
+               $tmp_answer=eme_convert_answer2tag($answer);
+               if (has_filter('eme_rsvp_multifield_filter')) {
+                  // $formfield=eme_get_formfield_byname($answer['field_name']);
+                  if (eme_is_multifield($formfield['field_type'])) {
+                     $tmp_answer=apply_filters('eme_rsvp_multifield_filter',$tmp_answer);
+                  }
+               }
+               $field_replace=$tmp_answer;
+            }
          }
+         $replacement = eme_trans_sanitize_html($field_replace,$lang);
          if ($target == "html")
             $replacement = apply_filters('eme_general', $replacement); 
          else 

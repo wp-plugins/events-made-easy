@@ -68,6 +68,12 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.10
+* Feature: added new filter eme_rsvp_multifield_filter to be able to change the answers in a mail (using #_FIELDS or #_FIELD{x}) if the corresponding defined form field was a multifield. Can be used to change the separator (default: "||"). One parameter: current replacement for the placeholder #_FIELDS or #_FIELD{x}, output should be the changed string. E.g. to change the separator by a comma:
+add_filter('eme_rsvp_multifield_filter','do_my_stuff');
+function do_my_stuff($answer) {
+   return str_replace('||',',',$answer); 
+}
+  
 * Improvement: try to use admin info when no other contact info is present for an event (can happen after using the frontent submit form)
 * Incompatibility: removed the per-user date format settings, was getting too confusing for coding up different formats for backend and frontend date formatting, while the generic WP settings should be used anyway
 * Bugfix: better use of function strtotime to take Daylight Saving Time into account (not all days have 24 hours)
