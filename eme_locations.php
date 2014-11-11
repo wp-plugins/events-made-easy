@@ -203,12 +203,12 @@ function eme_locations_edit_layout($location, $message = "") {
          <?php } ?>
          
          <!-- we need titlediv and title for qtranslate as ID -->
-         <div id="titlediv" class="form-required">
+         <div id="titlediv" class="postbox">
             <h3>
                <?php _e('Location name', 'eme') ?>
             </h3>
             <div class="inside">
-           <input name="location_name" id="title" type="text" value="<?php echo eme_sanitize_html($location['location_name']); ?>" size="40" />
+           <input name="location_name" id="title" type="text" required="required" value="<?php echo eme_sanitize_html($location['location_name']); ?>" size="40" />
            <?php if ($action=="edit") {
                     _e ('Permalink: ', 'eme' );
                     echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix')).$location['location_id']."/";
