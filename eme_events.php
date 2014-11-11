@@ -3324,8 +3324,14 @@ function eme_admin_map_script() {
           ?>
              var lang = '<?php echo qtrans_getLanguage(); ?>';
              var use_qtrans=1;
+             var use_ppqtrans=0;
+          <?php } elseif (function_exists('ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) { ?>
+             var lang = '<?php echo ppqtrans_getLanguage(); ?>';
+             var use_qtrans=0;
+             var use_ppqtrans=1;
           <?php } else { ?>
              var use_qtrans=0;
+             var use_ppqtrans=0;
           <?php } ?>
           function loadMap(location, town, address) {
             var latlng = new google.maps.LatLng(-34.397, 150.644);
@@ -3349,6 +3355,8 @@ function eme_admin_map_script() {
             }
             if (use_qtrans) {
                location=qtrans_use(lang,location);
+            } else if (use_ppqtrans) {
+               location=ppqtrans_use(lang,location);
             }
                
             if (address !="" || town!="") {
@@ -3387,6 +3395,8 @@ function eme_admin_map_script() {
             }
             if (use_qtrans) {
                location=qtrans_use(lang,location);
+            } else if (use_ppqtrans) {
+               location=ppqtrans_use(lang,location);
             }
                
             if (lat != 0 && long != 0) {

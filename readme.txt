@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.10
+* Feature: support qtranslate plus, next to qtranslate and mqtranslate
 * Feature: added new filter eme_rsvp_multifield_filter to be able to change the answers in a mail (using #_FIELDS or #_FIELD{x}) if the corresponding defined form field was a multifield. Can be used to change the separator (default: "||"). One parameter: current replacement for the placeholder #_FIELDS or #_FIELD{x}, output should be the changed string. E.g. to change the separator by a comma:
 add_filter('eme_rsvp_multifield_filter','do_my_stuff');
 function do_my_stuff($answer) {

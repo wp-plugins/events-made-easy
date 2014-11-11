@@ -2065,6 +2065,11 @@ function eme_translate ( $value, $lang='') {
          return qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
       else
          return qtrans_use($lang,$value);
+   } elseif (function_exists('ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
+      if (empty($lang))
+         return ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
+      else
+         return ppqtrans_use($lang,$value);
    } else {
       return $value;
    }

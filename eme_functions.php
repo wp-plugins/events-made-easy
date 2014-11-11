@@ -475,6 +475,8 @@ function eme_detect_lang() {
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure
       $language=qtrans_getLanguage();
+   } elseif (function_exists('ppqtrans_getLanguage')) {
+      $language=ppqtrans_getLanguage();
    } elseif (defined('ICL_LANGUAGE_CODE')) {
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure

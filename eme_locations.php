@@ -340,8 +340,8 @@ jQuery(document).ready(function($){
             if ($gmap_is_active) :
           ?>   
          <div class="postbox"><?php 
-               if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
-                  _e("Because qtranslate is active, the title of the location will not update automatically in the balloon, so don't panic there.");
+               if (function_exists('qtrans_getLanguage') || function_exists('ppqtrans_getLanguage') || defined('ICL_LANGUAGE_CODE')) {
+                  _e("Because qtranslate or a derivate is active, the title of the location might not update automatically in the balloon, so don't panic there.");
                }
               ?>
          </div>
