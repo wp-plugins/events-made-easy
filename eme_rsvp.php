@@ -1848,12 +1848,6 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          $field_replace = "";
          foreach ($answers as $answer) {
             $tmp_answer=eme_convert_answer2tag($answer);
-            if (has_filter('eme_rsvp_multifield_filter')) {
-               $formfield=eme_get_formfield_byname($answer['field_name']);
-               if (eme_is_multifield($formfield['field_type'])) {
-                  $tmp_answer=apply_filters('eme_rsvp_multifield_filter',$tmp_answer);
-               }
-            }
             $field_replace.=$answer['field_name'].": $tmp_answer\n";
          }
          $replacement = eme_trans_sanitize_html($field_replace,$lang);
@@ -1880,12 +1874,6 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          foreach ($answers as $answer) {
             if ($answer['field_name'] == $formfield['field_name']) {
                $tmp_answer=eme_convert_answer2tag($answer);
-               if (has_filter('eme_rsvp_multifield_filter')) {
-                  // $formfield=eme_get_formfield_byname($answer['field_name']);
-                  if (eme_is_multifield($formfield['field_type'])) {
-                     $tmp_answer=apply_filters('eme_rsvp_multifield_filter',$tmp_answer);
-                  }
-               }
                $field_replace=$tmp_answer;
             }
          }
@@ -1994,20 +1982,22 @@ function eme_email_rsvp_booking($booking,$action="") {
    $contact_name = $contact->display_name;
    $mail_text_html=get_option('eme_rsvp_send_html')?"html":"text";
    
+   $booker_body_vars=['confirmed_body','updated_body','pending_body','denied_body','cancelled_body'];
+   $booker_subject_vars=['confirmed_subject','updated_subject','pending_subject','denied_subject','cancelled_subject'];
+   $booker_vars=$booker_body_vars+$booker_subject_vars;
+   $contact_body_vars=['contact_body','contact_cancelled_body','contact_pending_body'];
+   $contact_subject_vars=['contact_subject','contact_cancelled_subject','contact_pending_subject'];
+   $contact_vars=$contact_body_vars+$contact_subject_vars;
+
+   // first get the initial values
    $confirmed_subject = get_option('eme_respondent_email_subject' );
-   $confirmed_subject = eme_replace_placeholders($confirmed_subject, $event, "text",0,$booking['lang']);
-   $confirmed_subject = eme_replace_booking_placeholders($confirmed_subject, $event, $booking, "text",$booking['lang']);
    if (!empty($event['event_respondent_email_body']))
       $confirmed_body = $event['event_respondent_email_body'];
    elseif ($event['event_properties']['event_respondent_email_body_tpl']>0)
       $confirmed_body = eme_get_template_format($event['event_properties']['event_respondent_email_body_tpl']);
    else
       $confirmed_body = get_option('eme_respondent_email_body' );
-   $confirmed_body = eme_replace_placeholders($confirmed_body, $event, $mail_text_html,0,$booking['lang']);
-   $confirmed_body = eme_replace_booking_placeholders($confirmed_body, $event, $booking, $mail_text_html,$booking['lang']);
    $pending_subject = get_option('eme_registration_pending_email_subject' );
-   $pending_subject = eme_replace_placeholders($pending_subject, $event, "text",0,$booking['lang']);
-   $pending_subject = eme_replace_booking_placeholders($pending_subject, $event, $booking, "text",$booking['lang']);
    $pending_body = ( $event['event_registration_pending_email_body'] != '' ) ? $event['event_registration_pending_email_body'] : get_option('eme_registration_pending_email_body' );
    if (!empty($event['event_registration_pending_email_body']))
       $pending_body = $event['event_registration_pending_email_body'];
@@ -2015,74 +2005,68 @@ function eme_email_rsvp_booking($booking,$action="") {
       $pending_body = eme_get_template_format($event['event_properties']['event_registration_pending_email_body_tpl']);
    else
       $pending_body = get_option('eme_registration_pending_email_body' );
-   $pending_body = eme_replace_placeholders($pending_body, $event, $mail_text_html,0,$booking['lang']);
-   $pending_body = eme_replace_booking_placeholders($pending_body, $event, $booking, $mail_text_html,$booking['lang']);
    $denied_subject = get_option('eme_registration_denied_email_subject' );
-   $denied_subject = eme_replace_placeholders($denied_subject, $event, "text",0,$booking['lang']);
-   $denied_subject = eme_replace_booking_placeholders($denied_subject, $event, $booking, "text",$booking['lang']);
    $denied_body = get_option('eme_registration_denied_email_body' );
-   $denied_body = eme_replace_placeholders($denied_body, $event, $mail_text_html,0,$booking['lang']);
-   $denied_body = eme_replace_booking_placeholders($denied_body, $event, $booking, $mail_text_html,$booking['lang']);
    $updated_subject = get_option('eme_registration_updated_email_subject' );
-   $updated_subject = eme_replace_placeholders($updated_subject, $event, "text",0,$booking['lang']);
-   $updated_subject = eme_replace_booking_placeholders($updated_subject, $event, $booking, "text",$booking['lang']);
    if (!empty($event['event_registration_updated_email_body']))
       $updated_body = $event['event_registration_updated_email_body'];
    elseif ($event['event_properties']['event_registration_updated_email_body_tpl']>0)
       $updated_body = eme_get_template_format($event['event_properties']['event_registration_updated_email_body_tpl']);
    else
       $updated_body = get_option('eme_registration_updated_email_body' );
-   $updated_body = eme_replace_placeholders($updated_body, $event, $mail_text_html,0,$booking['lang']);
-   $updated_body = eme_replace_booking_placeholders($updated_body, $event, $booking, $mail_text_html,$booking['lang']);
    $cancelled_subject = get_option('eme_registration_cancelled_email_subject' );
-   $cancelled_subject = eme_replace_placeholders($cancelled_subject, $event, "text",0,$booking['lang']);
-   $cancelled_subject = eme_replace_booking_placeholders($cancelled_subject, $event, $booking, "text",$booking['lang']);
    $cancelled_body = get_option('eme_registration_cancelled_email_body' );
-   $cancelled_body = eme_replace_placeholders($cancelled_body, $event, $mail_text_html,0,$booking['lang']);
-   $cancelled_body = eme_replace_booking_placeholders($cancelled_body, $event, $booking, $mail_text_html,$booking['lang']);
 
    $contact_subject = get_option('eme_contactperson_email_subject' );
-   $contact_subject = eme_replace_placeholders($contact_subject, $event, "text",0);
-   $contact_subject = eme_replace_booking_placeholders($contact_subject, $event, $booking, "text");
    if (!empty($event['event_contactperson_email_body']))
       $contact_body = $event['event_contactperson_email_body'];
    elseif ($event['event_properties']['event_contactperson_email_body_tpl']>0)
       $contact_body = eme_get_template_format($event['event_properties']['event_contactperson_email_body_tpl']);
    else
       $contact_body = get_option('eme_contactperson_email_body' );
-   $contact_body = eme_replace_placeholders($contact_body, $event, $mail_text_html,0);
-   $contact_body = eme_replace_booking_placeholders($contact_body, $event, $booking, $mail_text_html);
    $contact_cancelled_subject = get_option('eme_contactperson_cancelled_email_subject' );
-   $contact_cancelled_subject = eme_replace_placeholders($contact_cancelled_subject, $event, "text",0,$booking['lang']);
-   $contact_cancelled_subject = eme_replace_booking_placeholders($contact_cancelled_subject, $event, $booking, "text",$booking['lang']);
    $contact_cancelled_body = get_option('eme_contactperson_cancelled_email_body' );
-   $contact_cancelled_body = eme_replace_placeholders($contact_cancelled_body, $event, $mail_text_html,0,$booking['lang']);
-   $contact_cancelled_body = eme_replace_booking_placeholders($contact_cancelled_body, $event, $booking, $mail_text_html,$booking['lang']);
    $contact_pending_subject = get_option('eme_contactperson_pending_email_subject' );
-   $contact_pending_subject = eme_replace_placeholders($contact_pending_subject, $event, "text",0,$booking['lang']);
-   $contact_pending_subject = eme_replace_booking_placeholders($contact_pending_subject, $event, $booking, "text",$booking['lang']);
    $contact_pending_body = get_option('eme_contactperson_pending_email_body' );
-   $contact_pending_body = eme_replace_placeholders($contact_pending_body, $event, $mail_text_html,0,$booking['lang']);
-   $contact_pending_body = eme_replace_booking_placeholders($contact_pending_body, $event, $booking, $mail_text_html,$booking['lang']);
+
+   // replace needed placeholders
+   foreach ($contact_subject_vars as $var) {
+      $$var = eme_replace_placeholders($$var, $event, "text",0);
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, "text");
+   }
+   foreach ($contact_body_vars as $var) {
+      $$var = eme_replace_placeholders($$var, $event, $mail_text_html,0);
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $mail_text_html);
+   }
+   foreach ($booker_subject_vars as $var) {
+      $$var = eme_replace_placeholders($$var, $event, "text",0,$booking['lang']);
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, "text",$booking['lang']);
+   }
+   foreach ($booker_body_vars as $var) {
+      $$var = eme_replace_placeholders($$var, $event, $mail_text_html,0,$booking['lang']);
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $mail_text_html,$booking['lang']);
+   }
 
    // possible translations are handled last 
-   $contact_body = eme_translate($contact_body); 
-   $contact_cancelled_body = eme_translate($contact_cancelled_body); 
-   $contact_pending_body = eme_translate($contact_pending_body); 
-   $contact_subject = eme_translate($contact_subject); 
-   $contact_cancelled_subject = eme_translate($contact_cancelled_subject); 
-   $contact_pending_subject = eme_translate($contact_pending_subject); 
-   $confirmed_subject = eme_translate($confirmed_subject,$booking['lang']); 
-   $updated_subject = eme_translate($updated_subject,$booking['lang']); 
-   $pending_subject = eme_translate($pending_subject,$booking['lang']); 
-   $denied_subject = eme_translate($denied_subject,$booking['lang']); 
-   $cancelled_subject = eme_translate($cancelled_subject,$booking['lang']);  
-   $confirmed_body = eme_translate($confirmed_body,$booking['lang']); 
-   $updated_body = eme_translate($updated_body,$booking['lang']); 
-   $pending_body = eme_translate($pending_body,$booking['lang']); 
-   $denied_body = eme_translate($denied_body,$booking['lang']); 
-   $cancelled_body = eme_translate($cancelled_body,$booking['lang']);  
+   foreach ($contact_vars as $var) {
+      $$var=eme_translate($$var);
+   }
+   foreach ($booker_vars as $var) {
+      $$var=eme_translate($$var,$booking['lang']);
+   }
 
+   // possible mail body filter
+   $filtername='eme_rsvp_email_body'.$mail_text_html.'_filter';
+   if (has_filter($filtername)) {
+      foreach ($contact_body_vars as $var) {
+         $$var=apply_filters($filtername,$$var);
+      }
+      foreach ($booker_body_vars as $var) {
+         $$var=apply_filters($filtername,$$var);
+      }
+   }
+
+   // and now send the wanted mails
    if ($action == 'approveRegistration') {
       eme_send_mail($confirmed_subject,$confirmed_body, $person['person_email'], $person['person_name'], $contact_email, $contact_name);
    } elseif ($action == 'denyRegistration') {

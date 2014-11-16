@@ -69,15 +69,10 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.10
 * Feature: support qtranslate plus, next to qtranslate and mqtranslate
-* Feature: added new filter eme_rsvp_multifield_filter to be able to change the answers in a mail (using #_FIELDS or #_FIELD{x}) if the corresponding defined form field was a multifield. Can be used to change the separator (default: "||"). One parameter: current replacement for the placeholder #_FIELDS or #_FIELD{x}, output should be the changed string. E.g. to change the separator by a comma:
-add_filter('eme_rsvp_multifield_filter','do_my_stuff');
-function do_my_stuff($answer) {
-   return str_replace('||',',',$answer); 
-}
-  
-* Improvement: try to use admin info when no other contact info is present for an event (can happen after using the frontent submit form)
+* Feature: added new filters eme_rsvp_email_body_text_filter and eme_rsvp_email_body_html_filter to be able to change the mail body just before it is sent
 * Incompatibility: removed the per-user date format settings, was getting too confusing for coding up different formats for backend and frontend date formatting, while the generic WP settings should be used anyway
 * Incompatibility: renamed eme_email_filter to eme_email_obfuscate_filter
+* Improvement: try to use admin info when no other contact info is present for an event (can happen after using the frontent submit form)
 * Bugfix: better use of function strtotime to take Daylight Saving Time into account (not all days have 24 hours)
 * Bugfix: there's a bug for the cancel-mails and placeholders due to the fact that I first delete the booking before sending the mail (otherwise the number of free seats in the mail can be wrong), but because of that the placeholders can't be replaced anymore since the booking no longer exists. This has been fixed by getting the booking info before doing anything and handing that info to the function that does the mail sending (and not letting that function get the booking info anymore, since it might already been deleted)
 
