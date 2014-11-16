@@ -77,6 +77,7 @@ function do_my_stuff($answer) {
   
 * Improvement: try to use admin info when no other contact info is present for an event (can happen after using the frontent submit form)
 * Incompatibility: removed the per-user date format settings, was getting too confusing for coding up different formats for backend and frontend date formatting, while the generic WP settings should be used anyway
+* Incompatibility: renamed eme_email_filter to eme_email_obfuscate_filter
 * Bugfix: better use of function strtotime to take Daylight Saving Time into account (not all days have 24 hours)
 * Bugfix: there's a bug for the cancel-mails and placeholders due to the fact that I first delete the booking before sending the mail (otherwise the number of free seats in the mail can be wrong), but because of that the placeholders can't be replaced anymore since the booking no longer exists. This has been fixed by getting the booking info before doing anything and handing that info to the function that does the mail sending (and not letting that function get the booking info anymore, since it might already been deleted)
 

@@ -81,8 +81,8 @@ function eme_get_user_phone($user_id) {
 // got from http://davidwalsh.name/php-email-encode-prevent-spam
 function eme_ascii_encode($e) {
     $output = "";
-    if (has_filter('eme_email_filter')) {
-       $output=apply_filters('eme_email_filter',$e);
+    if (has_filter('eme_email_obfuscate_filter')) {
+       $output=apply_filters('eme_email_obfuscate_filter',$e);
     } else {
        for ($i = 0; $i < strlen($e); $i++) { $output .= '&#'.ord($e[$i]).';'; }
     }
