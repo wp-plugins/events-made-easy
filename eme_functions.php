@@ -64,9 +64,13 @@ function eme_get_contact($event) {
    if (!get_userdata($contact_id)) $contact_id = get_option('eme_default_contact_person');
    if ($contact_id < 1)
       $contact_id = $event['event_author'];
-   if ($contact_id < 1)
-      $contact_id = get_current_user_id();
-   $userinfo=get_userdata($contact_id);
+   if ($contact_id < 1) {
+      $thisblog = get_current_blog_id();
+      $userinfo = get_user_by('email', get_blog_option($thisblog, 'admin_email'));
+      #$contact_id = get_current_user_id();
+   } else {
+      $userinfo=get_userdata($contact_id);
+   }
    return $userinfo;
 }
 
@@ -74,20 +78,11 @@ function eme_get_user_phone($user_id) {
    return get_user_meta($user_id, 'eme_phone',true);
 }
 
-function eme_get_date_format() {
-   $format="";
-   $current_userid=get_current_user_id();
-   if ($current_userid)
-      $format = get_user_meta($current_userid, 'eme_date_format',true);
-   if ($format == '') $format=get_option('date_format');
-   return $format;
-}
-
 // got from http://davidwalsh.name/php-email-encode-prevent-spam
 function eme_ascii_encode($e) {
     $output = "";
-    if (has_filter('eme_email_filter')) {
-       $output=apply_filters('eme_email_filter',$e);
+    if (has_filter('eme_email_obfuscate_filter')) {
+       $output=apply_filters('eme_email_obfuscate_filter',$e);
     } else {
        for ($i = 0; $i < strlen($e); $i++) { $output .= '&#'.ord($e[$i]).';'; }
     }
@@ -216,14 +211,10 @@ function eme_calendar_day_url($day) {
    return $the_link;
 }
 
-function eme_payment_url($booking_id) {
+function eme_payment_url($payment_id) {
    global $wp_rewrite;
 
    $url_mode=1;
-   $payment_id=eme_get_booking_payment_id($booking_id);
-   if (!$payment_id)
-      return;
-
    $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
@@ -370,10 +361,10 @@ function eme_get_all_caps() {
 }
 
 function eme_daydifference($date1,$date2) {
-   $ConvertToTimeStamp_Date1 = strtotime($date1);
-   $ConvertToTimeStamp_Date2 = strtotime($date2);
-   $DateDifference = intval($ConvertToTimeStamp_Date2) - intval($ConvertToTimeStamp_Date1);
-   return round($DateDifference/86400);
+   $datetime1 = date_create($date1);
+   $datetime2 = date_create($date2);
+   $interval = date_diff($datetime1, $datetime2, true);
+   return $interval->format('%a');
 }
 
 function eme_hourdifference($date1,$date2) {
@@ -399,20 +390,21 @@ function eme_status_array() {
    return $event_status_array;
 }
 
-function eme_localised_date($mydate, $is_unixtimestamp=0) {
-   $date_format = eme_get_date_format();
-   if ($is_unixtimestamp)
-      return date_i18n ( $date_format, $mydate);
-   else
-      return date_i18n ( $date_format, strtotime($mydate));
+function eme_localised_unixdate($mydate,$date_format='') {
+   if (empty($date_format))
+      $date_format = get_option('date_format');
+   return date_i18n ( $date_format, $mydate);
+}
+function eme_localised_date($mydate,$date_format='') {
+   return eme_localised_unixdate (strtotime($mydate),$date_format);
 }
 
-function eme_localised_time($mydate, $is_unixtimestamp=0) {
-   $date_format = get_option('time_format');
-   if ($is_unixtimestamp)
-      return date_i18n ( $date_format, $mydate);
-   else
-      return date_i18n ( $date_format, strtotime($mydate));
+function eme_localised_unixtime($mydate) {
+   $time_format = get_option('time_format');
+   return date_i18n ( $time_format, $mydate);
+}
+function eme_localised_time($mydate) {
+   return eme_localised_unixtime (strtotime($mydate));
 }
 
 function eme_currency_array() {
@@ -465,11 +457,17 @@ function eme_transfer_nbr_be97($my_nbr) {
    return $transfer_nbr_be97_main.$transfer_nbr_be97_check;
 }
 
-function eme_convert_date_format($format,$datestring) {
-   if (empty($datestring))
-      return date($format);
+function eme_unixdate_calc($calc,$unixdate="") {
+   if (empty($unixdate))
+      return strtotime($calc);
    else
-      return date($format, strtotime($datestring));
+      return strtotime($calc,$unixdate);
+}
+function eme_date_calc($calc,$date="") {
+   if (empty($date))
+      return date("Y-m-d",strtotime($calc));
+   else
+      return date("Y-m-d",strtotime($calc,strtotime($date)));
 }
 
 function eme_detect_lang() {
@@ -477,6 +475,8 @@ function eme_detect_lang() {
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure
       $language=qtrans_getLanguage();
+   } elseif (function_exists('ppqtrans_getLanguage')) {
+      $language=ppqtrans_getLanguage();
    } elseif (defined('ICL_LANGUAGE_CODE')) {
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure

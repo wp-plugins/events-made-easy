@@ -203,12 +203,12 @@ function eme_locations_edit_layout($location, $message = "") {
          <?php } ?>
          
          <!-- we need titlediv and title for qtranslate as ID -->
-         <div id="titlediv" class="form-required">
+         <div id="titlediv" class="postbox">
             <h3>
                <?php _e('Location name', 'eme') ?>
             </h3>
             <div class="inside">
-           <input name="location_name" id="title" type="text" value="<?php echo eme_sanitize_html($location['location_name']); ?>" size="40" />
+           <input name="location_name" id="title" type="text" required="required" value="<?php echo eme_sanitize_html($location['location_name']); ?>" size="40" />
            <?php if ($action=="edit") {
                     _e ('Permalink: ', 'eme' );
                     echo trailingslashit(home_url()).eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix')).$location['location_id']."/";
@@ -302,9 +302,9 @@ jQuery(document).ready(function($){
     })
     .on('select', function() {
         var attachment = custom_uploader.state().get('selection').first().toJSON();
-        $('#event_image_url').val(attachment.url);
-        $('#event_image_id').val(attachment.id);
-        $('#eme_event_image_example' ).attr("src",attachment.url);
+        $('#location_image_url').val(attachment.url);
+        $('#location_image_id').val(attachment.id);
+        $('#eme_location_image_example' ).attr("src",attachment.url);
     })
     .open();
   });
@@ -340,8 +340,8 @@ jQuery(document).ready(function($){
             if ($gmap_is_active) :
           ?>   
          <div class="postbox"><?php 
-               if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
-                  _e("Because qtranslate is active, the title of the location will not update automatically in the balloon, so don't panic there.");
+               if (function_exists('qtrans_getLanguage') || function_exists('ppqtrans_getLanguage') || defined('ICL_LANGUAGE_CODE')) {
+                  _e("Because qtranslate or a derivate is active, the title of the location might not update automatically in the balloon, so don't panic there.");
                }
               ?>
          </div>
@@ -692,7 +692,9 @@ function eme_update_location($location) {
    }
 }
 
-function eme_insert_location($location) {
+function eme_insert_location($location,$force=0) {
+   // the force parameter can be used to ignore capabilities for a user when inserting a location
+   // the frontend submit plugin can use this
    global $wpdb;  
    $table_name = $wpdb->prefix.LOCATIONS_TBNAME; 
 
@@ -718,7 +720,7 @@ function eme_insert_location($location) {
    if (!is_serialized($location['location_properties']))
       $location['location_properties'] = serialize($location['location_properties']);
       
-   if (current_user_can( get_option('eme_cap_add_locations'))) {
+   if (current_user_can( get_option('eme_cap_add_locations')) || $force) {
       $wpdb->show_errors(true);
       if (!$wpdb->insert($table_name,$location)) {
          $wpdb->print_error();
@@ -802,40 +804,32 @@ function eme_global_map($atts) {
          $prev_offset=$scope_offset-1;
          $next_offset=$scope_offset+1;
          if ($scope=="this_week") {
-            $day_offset=date('w');
-            $start_day=time()-$day_offset*86400;
-            $end_day=$start_day+6*86400;
-            $limit_start = date('Y-m-d',$start_day+$scope_offset*7*86400);
-            $limit_end   = date('Y-m-d',$end_day+$scope_offset*7*86400);
+            $start_of_week = get_option('start_of_week');
+            $day_offset=date('w')-$start_of_week;
+            if ($day_offset<0) $day_offset+=7;
+            $limit_start=eme_date_calc("-$day_offset days +$scope_offset week");
+            $limit_end=eme_date_calc("+6 days",$start_day);
             $scope = "$limit_start--$limit_end";
-            $scope_text = date_i18n (get_option('date_format'),$start_day+$scope_offset*7*86400)."--".date_i18n (get_option('date_format'),$end_day+$scope_offset*7*86400);
+            $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
+
             $prev_text = __('Previous week','eme');
             $next_text = __('Next week','eme');
 
          } elseif ($scope=="this_month") {
-            // "first day of this month, last day of this month" works for newer versions of php (5.3+), but for compatibility:
-            // the year/month should be based on the first of the month, so if we are the 13th, we substract 12 days to get to day 1
-            // Reason: monthly offsets needs to be calculated based on the first day of the current month, not the current day,
-            //    otherwise if we're now on the 31st we'll skip next month since it has only 30 days
-            $day_offset=date('j')-1;
-            $year=date('Y', strtotime("$scope_offset month")-$day_offset*86400);
-            $month=date('m', strtotime("$scope_offset month")-$day_offset*86400);
-            $number_of_days_month=eme_days_in_month($month,$year);
-            $limit_start = "$year-$month-01";
-            $limit_end   = "$year-$month-$number_of_days_month";
+            $limit_start = eme_date_calc("first day of $scope_offset month");
+            $limit_end   = eme_date_calc("last day of $scope_offset month");
             $scope = "$limit_start--$limit_end";
-            //$prev_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$prev_offset month")-$day_offset*86400);
-            //$next_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$next_offset month")-$day_offset*86400);
-            $scope_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$scope_offset month")-$day_offset*86400);
+            $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_monthly_dateformat'));
             $prev_text = __('Previous month','eme');
             $next_text = __('Next month','eme');
 
          } elseif ($scope=="this_year") {
-            $year=date('Y', strtotime("$scope_offset year")-$day_offset*86400);
+            $year=date('Y')+$scope_offset;
             $limit_start = "$year-01-01";
             $limit_end   = "$year-12-31";
             $scope = "$limit_start--$limit_end";
-            $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime("$scope_offset year")-$day_offset*86400);
+            $scope = "$limit_start--$limit_end";
+            $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_yearly_dateformat'));
             $prev_text = __('Previous year','eme');
             $next_text = __('Next year','eme');
 
@@ -843,7 +837,7 @@ function eme_global_map($atts) {
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
             $limit_start = $scope;
             $limit_end   = $scope;
-            $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
+            $scope_text = eme_localised_date($limit_start);
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
 
@@ -852,7 +846,7 @@ function eme_global_map($atts) {
             $scope = date('Y-m-d',strtotime("$scope_offset days"));
             $limit_start = $scope;
             $limit_end   = $scope;
-            $scope_text = date_i18n (get_option('date_format'), strtotime("$scope_offset days"));
+            $scope_text = eme_localised_date($limit_start);
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
          }
@@ -1066,7 +1060,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       }
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );
@@ -1308,7 +1302,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
 
       if ($found) {
          if ($need_escape)
-            $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+            $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
          if ($need_urlencode)
             $replacement = rawurlencode($replacement);
          $format = str_replace($orig_result, $replacement ,$format );
@@ -1347,7 +1341,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       }
 
       if ($need_escape)
-         $replacement = eme_sanitize_request(preg_replace('/\n|\r/','',$replacement));
+         $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));
       if ($need_urlencode)
          $replacement = rawurlencode($replacement);
       $format = str_replace($orig_result, $replacement ,$format );
@@ -1448,88 +1442,4 @@ function eme_events_in_location_list($location, $scope = "") {
       $list = get_option('eme_location_no_events_message');
    }
    return $list;
-}
-
-function eme_locations_autocomplete() {
-   $use_select_for_locations = get_option('eme_use_select_for_locations');
-   // qtranslate there? Then we need the select
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') || defined('ICL_LANGUAGE_CODE')) {
-      $use_select_for_locations=1;
-   }
-
-   if ((isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'edit_event' || $_REQUEST['eme_admin_action'] == 'duplicate_event' || $_REQUEST['eme_admin_action'] == 'edit_recurrence')) || (isset($_GET['page']) && $_GET['page'] == 'eme-new_event')) {
-      ?>
-
-      <script type="text/javascript">
-      //<![CDATA[
-
-      jQuery(document).ready(function() {
-         function htmlDecode(value){ 
-            return jQuery('<div/>').html(value).text(); 
-         }
-
-         var gmap_enabled = <?php echo get_option('eme_gmap_is_active'); ?>; 
-         var use_select_for_locations = <?php echo $use_select_for_locations; ?>; 
-
-         if (!use_select_for_locations) {
-          jQuery("input[name=location_name]").autocomplete({
-            source: function(request, response) {
-                         jQuery.ajax({ url: "<?php echo EME_PLUGIN_URL; ?>locations-search.php",
-                                  data: { q: request.term},
-                                  dataType: "json",
-                                  type: "GET",
-                                  success: function(data){
-                                                response(jQuery.map(data, function(item) {
-                                                      return {
-                                                         label: item.name,
-                                                         name: htmlDecode(item.name),
-                                                         address: item.address,
-                                                         town: item.town,
-                                                         latitude: item.latitude,
-                                                         longitude: item.longitude,
-                                                      };
-                                                }));
-                                           }
-                                 });
-                    },
-            select:function(evt, ui) {
-                         // when a product is selected, populate related fields in this form
-                         jQuery('input[name=location_name]').val(ui.item.name);
-                         jQuery('input#location_address').val(ui.item.address);
-                         jQuery('input#location_town').val(ui.item.town);
-                         jQuery('input#location_latitude').val(ui.item.latitude);
-                         jQuery('input#location_longitude').val(ui.item.longitude);
-                         if(gmap_enabled) {
-                            loadMapLatLong(ui.item.name, ui.item.town, ui.item.address, ui.item.latitude, ui.item.longitude);
-                         }
-                         return false;
-                   },
-            minLength: 1
-          }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-            return jQuery( "<li></li>" )
-            .append("<a>"+htmlDecode(item.name)+'<br /><small>'+htmlDecode(item.address)+' - '+htmlDecode(item.town)+ '</small></a>')
-            .appendTo( ul );
-          };
-         } else {
-          jQuery('#location-select-id').change(function() {
-            jQuery.getJSON("<?php echo EME_PLUGIN_URL; ?>locations-search.php",{id: jQuery(this).val()}, function(item){
-               jQuery("input[name='location-select-name']").val(item.name);
-               jQuery("input[name='location-select-address']").val(item.address); 
-               jQuery("input[name='location-select-town']").val(item.town); 
-               jQuery("input[name='location-select-latitude']").val(item.latitude); 
-               jQuery("input[name='location-select-longitude']").val(item.longitude); 
-               if(gmap_enabled) {
-                  loadMapLatLong(item.name, item.town, item.address, item.latitude, item.longitude);
-               }
-            })
-          });
-         }
-      });   
-      //]]> 
-
-      </script>
-
-      <?php
-
-   }
 }

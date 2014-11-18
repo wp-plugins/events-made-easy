@@ -36,10 +36,11 @@ function eme_options_input_text($title, $name, $description) {
        <td>
          <input name="<?php echo $name ?>" type="text" id="<?php echo $name ?>" style="width: 95%" value="<?php echo eme_sanitize_html($value); ?>" size="45" />
                   <?php if (!empty($description)) echo "<br />".$description; ?>
-         </td>
-      </tr>
+       </td>
+   </tr>
    <?php
 }
+
 function eme_options_input_password($title, $name, $description) {
    ?>
    <tr valign="top" id='<?php echo $name;?>_row'>

@@ -6,7 +6,9 @@ function eme_filter_form_shortcode($atts) {
    $multiple = ($multiple==="false" || $multiple==="0") ? false : $multiple;
 
    if ($template_id) {
+      // when using a template, don't bother with fields, the template should contain the things needed
       $filter_form_format= eme_get_template_format($template_id);
+      $fields="";
    } else {
       $filter_form_format = get_option('eme_filter_form_format');
    }
@@ -25,31 +27,29 @@ function eme_filter_form_shortcode($atts) {
 }
 
 function eme_create_week_scope($count) {
-   $day_offset=date('w');
-   $start_day=time()-$day_offset*86400;
-   $end_day=$start_day+6*86400;
+   $start_of_week = get_option('start_of_week');
+   $day_offset=date('w')-$start_of_week;
+   if ($day_offset<0) $day_offset+=7;
    $scope=array();
    $scope[0] = __('Select Week','eme');
    for ( $i = 0; $i < $count; $i++) {
-      $this_scope=date('Y-m-d',$start_day+$i*7*86400)."--".date('Y-m-d',$end_day+$i*7*86400);
-      $scope_text = date_i18n (get_option('date_format'),$start_day+$i*7*86400)." -- ".date_i18n (get_option('date_format'),$end_day+$i*7*86400);
+      $limit_start=eme_date_calc("-$day_offset days +$i weeks");
+      $limit_end=eme_date_calc("+6 days",$limit_start);
+      $this_scope=$limit_start."--".$limit_end;
+      $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
       $scope[$this_scope] = $scope_text;
    }
    return $scope;
 }
 
 function eme_create_month_scope($count) {
-   $day_offset=date('j')-1;
    $scope=array();
    $scope[0] = __('Select Month','eme');
    for ( $i = 0; $i < $count; $i++) {
-      $year=date('Y', strtotime("$i month")-$day_offset*86400);
-      $month=date('m', strtotime("$i month")-$day_offset*86400);
-      $number_of_days_month=eme_days_in_month($month,$year);
-      $limit_start = "$year-$month-01";
-      $limit_end   = "$year-$month-$number_of_days_month";
+      $limit_start= eme_date_calc("first day of $i month");
+      $limit_end= eme_date_calc("last day of $i month");
       $this_scope = "$limit_start--$limit_end";
-      $scope_text = date_i18n (get_option('eme_show_period_monthly_dateformat'), strtotime("$i month")-$day_offset*86400);
+      $scope_text = eme_localised_date ($limit_start,get_option('eme_show_period_monthly_dateformat'));
       $scope[$this_scope] = $scope_text;
    }
    return $scope;
@@ -60,11 +60,11 @@ function eme_create_year_scope($count) {
    $scope=array();
    $scope[0] = __('Select Year','eme');
    for ( $i = 0; $i < $count; $i++) {
-      $year=date('Y', strtotime("$i year")-$day_offset*86400);
+      $year=date('Y', strtotime("$i year -$day_offset days"));
       $limit_start = "$year-01-01";
       $limit_end   = "$year-12-31";
       $this_scope = "$limit_start--$limit_end";
-      $scope_text = date_i18n (get_option('eme_show_period_yearly_dateformat'), strtotime("$i year")-$day_offset*86400);
+      $scope_text = eme_localised_date ($limit_start,get_option('eme_show_period_yearly_dateformat'));
       $scope[$this_scope] = $scope_text;
    }
    return $scope;
@@ -82,6 +82,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
    $loc_post_name="eme_loc_filter";
    $town_post_name="eme_town_filter";
    $scope_post_name="eme_scope_filter";
+   $localised_scope_post_name="eme_localised_scope_filter";
 
    $selected_scope = isset($_REQUEST[$scope_post_name]) ? eme_sanitize_request($_REQUEST[$scope_post_name]) : '';
    $selected_location = isset($_REQUEST[$loc_post_name]) ? eme_sanitize_request($_REQUEST[$loc_post_name]) : '';
@@ -95,6 +96,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
       $extra_conditions_arr[]="(category_id NOT IN ($notcategory))";
    $extra_conditions = implode(' AND ',$extra_conditions_arr);
 
+   $scope_fieldcount=0;
    foreach($placeholders[0] as $result) {
       $replacement = "";
       $eventful=0;
@@ -107,7 +109,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
          }
 
          $categories = eme_get_categories($eventful,"future",$extra_conditions);
-         if (strstr($fields,'categories') && $categories) {
+         if ($categories && (empty($fields) || strstr($fields,'categories'))) {
             $cat_list = array();
             foreach ($categories as $this_category) {
                $id=$this_category['category_id'];
@@ -129,7 +131,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
          }
          $locations = eme_get_locations($eventful,"future");
 
-         if (strstr($fields,'locations') && $locations) {
+         if ($locations && (empty($fields) || strstr($fields,'locations'))) {
             $loc_list = array();
             foreach ($locations as $this_location) {
                $id=$this_location['location_id'];
@@ -150,7 +152,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             $eventful=1;
          }
          $towns = eme_get_locations($eventful,"future");
-         if (strstr($fields,'towns') && $towns) {
+         if ($towns && (empty($fields) || strstr($fields,'towns'))) {
             $town_list = array();
             foreach ($towns as $this_town) {
                $id=eme_translate($this_town['location_town']);
@@ -167,14 +169,53 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
          }
 
       } elseif (preg_match('/#_FILTER_WEEKS/', $result)) {
-         if (strstr($fields,'weeks'))
+         if ($scope_fieldcount==0 && (empty($fields) || strstr($fields,'weeks'))) {
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_week_scope($scope_count));
+            $scope_fieldcount++;
+         }
       } elseif (preg_match('/#_FILTER_MONTHS/', $result)) {
-         if (strstr($fields,'months'))
+         if ($scope_fieldcount==0 && (empty($fields) || strstr($fields,'months'))) {
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_month_scope($scope_count));
+            $scope_fieldcount++;
+         }
+      } elseif (preg_match('/#_FILTER_MONTHRANGE/', $result)) {
+         if ($scope_fieldcount==0 && (empty($fields) || strstr($fields,'monthrange'))) {
+            $replacement = "<input type='text' id='$localised_scope_post_name' name='$localised_scope_post_name' readonly='readonly' >";
+            $replacement .= "<input type='hidden' id='$scope_post_name' name='$scope_post_name' value='".eme_sanitize_html($selected_scope)."'>";
+            wp_enqueue_script( 'jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js',array( 'jquery' ));
+            wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
+            wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
+            // jquery ui locales are with dashes, not underscores
+            $locale_code = get_locale();
+            $locale_code = preg_replace( "/_/","-", $locale_code );
+            $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+            $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+            // for english, no translation code is needed)
+            if ($locale_code != "en-US") {
+               if (!file_exists($locale_file)) {
+                  $locale_code = substr ( $locale_code, 0, 2 );
+                  $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+                  $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
+               }
+               if (file_exists($locale_file))
+                  wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
+            }
+
+            ob_start();
+            ?>
+            <script type="text/javascript">
+            var locale_code = '<?php echo $locale_code;?>';
+            var firstDayOfWeek = <?php echo get_option('start_of_week');?>;
+            </script>
+            <?php
+            $replacement .= ob_get_clean();
+            $replacement .= "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_filters.js'></script>";
+         }
       } elseif (preg_match('/#_FILTER_YEARS/', $result)) {
-         if (strstr($fields,'years'))
+         if ($scope_fieldcount==0 && (empty($fields) || strstr($fields,'years'))) {
             $replacement = eme_ui_select($selected_scope,$scope_post_name,eme_create_year_scope($scope_count));
+            $scope_fieldcount++;
+         }
       } else {
          $found = 0;
       }
