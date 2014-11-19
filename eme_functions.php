@@ -65,8 +65,12 @@ function eme_get_contact($event) {
    if ($contact_id < 1)
       $contact_id = $event['event_author'];
    if ($contact_id < 1) {
-      $thisblog = get_current_blog_id();
-      $userinfo = get_user_by('email', get_blog_option($thisblog, 'admin_email'));
+      if (function_exists('is_multisite') && is_multisite()) {
+         $thisblog = get_current_blog_id();
+         $userinfo = get_user_by('email', get_blog_option($thisblog, 'admin_email'));
+      } else {
+         $userinfo = get_user_by('email', get_option('admin_email'));
+      }
       #$contact_id = get_current_user_id();
    } else {
       $userinfo=get_userdata($contact_id);
