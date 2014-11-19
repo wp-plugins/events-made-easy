@@ -2,9 +2,9 @@
 Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
-Requires at least: 3.8
+Requires at least: 4.0
 Tested up to: 4.0
-Stable tag: 1.5.2
+Stable tag: 1.5.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,8 @@ Events Made Easy integrates with Google Maps; thanks to geocoding, Events Made E
 Events Made Easy handles RSVP and bookings, integrates payments for events using paypal and other payment gateways and allows payment tracking.
 
 Events Made Easy provides also a RSS and ICAL feed, to keep your subscribers updated about the events you're organising. 
+
+Events Made Easy is fully multi-site compatible.
 
 Events Made Easy is fully customisable; you can customise the amount of data displayed and their format in events lists, locations, attendees and in the RSS/ICAL feed. Also the RSVP form can be changed to your liking with extra fields, and by using EME templates let you change the layout even per page!
 
@@ -64,6 +66,65 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
 See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
+
+= 1.5.11
+* Bugfix: not all mails were being sent out correctly
+
+= 1.5.10
+* Feature: support qtranslate plus, next to qtranslate and mqtranslate
+* Feature: added new filters eme_rsvp_email_body_text_filter and eme_rsvp_email_body_html_filter to be able to change the mail body just before it is sent
+* Incompatibility: removed the per-user date format settings, was getting too confusing for coding up different formats for backend and frontend date formatting, while the generic WP settings should be used anyway
+* Incompatibility: renamed eme_email_filter to eme_email_obfuscate_filter
+* Improvement: try to use admin info when no other contact info is present for an event (can happen after using the frontent submit form)
+* Bugfix: better use of function strtotime to take Daylight Saving Time into account (not all days have 24 hours)
+* Bugfix: there's a bug for the cancel-mails and placeholders due to the fact that I first delete the booking before sending the mail (otherwise the number of free seats in the mail can be wrong), but because of that the placeholders can't be replaced anymore since the booking no longer exists. This has been fixed by getting the booking info before doing anything and handing that info to the function that does the mail sending (and not letting that function get the booking info anymore, since it might already been deleted)
+
+= 1.5.9
+* Bugfix: the unique nbr for bookings only got generated when online payment was being selected too, now it gets generated if the total booking price >0
+
+= 1.5.8 =
+* Feature: added 2 new scopes: relative-Xd--YYYY-MM-DD (end YYYY-MM-DD, start X days before that) and YYYY-MM-DD--relative+Xd (start YYYY-MM-DD, end X days past that)
+* Feature: added monthly range select in filter form: use #_FILTER_MONTHRANGE in the filter format and fields=monthrange in the eme_filterform shortcode
+* Feature: the shortcode eme_add_multibooking_form now also supports category_id as a parameter, to select all events for a single category
+* Doc: documented the template_id option for the shortcode eme_filterform, as the template is preferred before the fields option
+* Bugfix: first day of week in the datepicker is a integer, not a string. Putting a string created mangled day headers in the datepicker.
+
+= 1.5.7 =
+* Feature: first day of week is now also respected in the datepicker
+
+= 1.5.6 =
+* Feature: added 2 new filters to influence CSV output: eme_csv_header_filter and eme_csv_footer_filter
+  Both take 1 parameter ($event) and should return an array (representing columns in the csv output in the header or footer)
+  Can be used to add extra info at the top or bottom of the CSV output
+* Feature: new event placeholder #_RECURRENCE_NBR, returns the sequence number of an event in a recurrence series (first event is 1, second is 2, etc ...)
+  Also added conditional tags #_IS_FIRST_RECURRENCE and #_IS_LAST_RECURRENCE
+* Feature: the RSVP cut-off date/time can now also be done based on the end-date of the event, not just the start-date
+* Feature: add a generic option to disable server-side required field checks when submitting a RSVP form
+* Improvement: renamed #_RECURRENCEDESC to #_RECURRENCE_DESC for conformity (the old one is still possible)
+* Bugfix: the unique number for payments should be calculated based on the payment ID, not the booking ID anymore.
+* Bugfix: small html correction in EME admin interface, tab Payments
+* Bugfix: fix some 'notcategory' behaviour for the eme_events shortcode
+* Bugfix: the optional choosen template got lost when switching months in the full calendar
+* Bugfix: the mail for cancellation was sent before the cancellation was done, resulting in wrong number of spaces free/reserved in the cancellation mail
+* Bugfix: better 24h-timeformat notation detection
+* Bugfix: better value escaping with ESC when using conditional tags
+* Bugfix: use correct headers when sending html-mail via wp_mail function
+
+= 1.5.5 =
+* Bugfix: featured image for locations wasn't working anymore
+* Bugfix: show the map when editing an existing event with a known location
+* Bugfix: fix a JS error when looking at the list of events
+
+= 1.5.4 =
+* Bugfix: account for the fact that a WP setting might be never changed, and thus just be empty in case of booleans
+
+= 1.5.3 =
+* Feature: new hook eme_ipn_action (1 parameter: $booking), executed after successfull IPN
+           Hint: get the event from the booking id by using this: $event = eme_get_event_by_booking_id($booking['booking_id']);
+* Feature: added placeholders #_PENDINGSPACES and #_PENDINGSPACES{xx} (see the doc)
+* Improvement: added conditional shortcodes eme_if7 till eme_if15 (some people really want these ...)
+* Bugfix: #_PAYMENT_URL was no longer replaced correctly
+* Bugfix: First Data payment button was not being generated correctly
 
 = 1.5.2 =
 * Bugfix: multiple categories in widgets still contained an error, tested ok now

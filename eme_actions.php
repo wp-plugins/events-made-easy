@@ -66,10 +66,11 @@ function eme_actions_init() {
    if (is_admin() && current_user_can( get_option('eme_cap_registrations')) && isset($_REQUEST['eme_admin_action']) &&
        $_REQUEST['eme_admin_action'] == 'remove_booking' && isset($_REQUEST['booking_id'])) {
       $booking_id=intval($_REQUEST['booking_id']);
-      if (get_option('eme_deny_mail_event_edit')) {
-         eme_email_rsvp_booking($booking_id,"denyRegistration");
-      }
       eme_delete_booking(intval($booking_id));
+      if (get_option('eme_deny_mail_event_edit')) {
+         $booking = eme_get_booking ($booking_id);
+         eme_email_rsvp_booking($booking,"denyRegistration");
+      }
       exit();
    }
 
@@ -152,7 +153,6 @@ add_action('template_redirect', 'eme_template_redir' );
 add_action('template_redirect', 'eme_change_canonical_url' );
 add_action('wp_enqueue_scripts','eme_general_css');
 add_action('admin_notices', 'eme_alert_events_page' );
-add_action('admin_head', 'eme_locations_autocomplete');
 
 // when editing other profiles then your own
 add_action('edit_user_profile', 'eme_user_profile') ;
