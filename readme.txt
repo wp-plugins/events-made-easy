@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.14 =
+* Bugfix: make sure initial date for new events and recurrences is the current date, not 1970 ...
+
 = 1.5.13 =
 * Bugfix: for events with no defined contact person, I tried to get the admin email but used a multisite function for it (which doesn't seem to be defined if you don't activate multisite)
 * Bugfix: fix sending of mail for normal registrations (typo fixes)
