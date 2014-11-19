@@ -1984,10 +1984,10 @@ function eme_email_rsvp_booking($booking,$action="") {
    
    $booker_body_vars=['confirmed_body','updated_body','pending_body','denied_body','cancelled_body'];
    $booker_subject_vars=['confirmed_subject','updated_subject','pending_subject','denied_subject','cancelled_subject'];
-   $booker_vars=$booker_body_vars+$booker_subject_vars;
+   $booker_vars=array_merge($booker_body_vars,$booker_subject_vars);
    $contact_body_vars=['contact_body','contact_cancelled_body','contact_pending_body'];
    $contact_subject_vars=['contact_subject','contact_cancelled_subject','contact_pending_subject'];
-   $contact_vars=$contact_body_vars+$contact_subject_vars;
+   $contact_vars=array_merge($contact_body_vars,$contact_subject_vars);
 
    // first get the initial values
    $confirmed_subject = get_option('eme_respondent_email_subject' );
