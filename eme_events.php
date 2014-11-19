@@ -6,9 +6,9 @@ function eme_new_event() {
       "event_id" => '',
       "event_name" => '',
       "event_status" => get_option('eme_event_initial_state'),
-      "event_start_date" => '',
+      "event_start_date" => date("Y-m-d"),
       "event_start_time" => '',
-      "event_end_date" => '',
+      "event_end_date" => date("Y-m-d"),
       "event_end_time" => '',
       "event_notes" => '',
       "event_rsvp" => get_option('eme_rsvp_reg_for_new_events')? 1:0,
@@ -2275,19 +2275,19 @@ function eme_event_form($event, $title, $element) {
          # for single non-recurrent events: we show the form, so we can make it recurrent if we want to
          # but for that, we need to set the recurrence fields, otherwise we get warnings
          $show_recurrent_form = 1;
-         $event["recurrence_id"] = 0;
-         $event["recurrence_freq"] = '';
-         $event["recurrence_start_date"] = '';
-         $event["recurrence_end_date"] = '';
-         $event["recurrence_interval"] = '';
-         $event["recurrence_byweekno"] = '';
-         $event["recurrence_byday"] = '';
-         $event["recurrence_specific_days"] = '';
+         $event['recurrence_id'] = 0;
+         $event['recurrence_freq'] = '';
+         $event['recurrence_start_date'] = $event['event_start_date'];
+         $event['recurrence_end_date'] = $event['event_end_date'];
+         $event['recurrence_interval'] = '';
+         $event['recurrence_byweekno'] = '';
+         $event['recurrence_byday'] = '';
+         $event['recurrence_specific_days'] = '';
       }
    }
    
-   if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']="";
-   if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']="";
+   if (!isset($event['recurrence_start_date'])) $event['recurrence_start_date']=$event['event_start_date'];
+   if (!isset($event['recurrence_end_date'])) $event['recurrence_end_date']=$event['event_end_date'];
 
    $freq_options = array ("daily" => __ ( 'Daily', 'eme' ), "weekly" => __ ( 'Weekly', 'eme' ), "monthly" => __ ( 'Monthly', 'eme' ), "specific" => __('Specific days', 'eme' ) );
    $days_names = array (1 => __ ( 'Mon' ), 2 => __ ( 'Tue' ), 3 => __ ( 'Wed' ), 4 => __ ( 'Thu' ), 5 => __ ( 'Fri' ), 6 => __ ( 'Sat' ), 7 => __ ( 'Sun' ) );
@@ -2949,10 +2949,10 @@ function eme_meta_box_div_event_date($event){
 
 function eme_meta_box_div_recurrence_date($event){
 ?>
-   <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="" readonly="readonly" />
-   <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="" style="background: #FCFFAA" />
-   <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="" readonly="readonly" />
-   <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="" style="background: #FCFFAA" />
+   <input id="localised-rec-start-date" type="text" name="localised_recurrence_date" value="" style="background: #FCFFAA;" readonly="readonly" />
+   <input id="rec-start-date-to-submit" type="text" name="recurrence_start_date" value="" />
+   <input id="localised-rec-end-date" type="text" name="localised_recurrence_end_date" value="" style="background: #FCFFAA;" readonly="readonly" />
+   <input id="rec-end-date-to-submit" type="text" name="recurrence_end_date" value="" />
    <br />
    <span id='recurrence-dates-explanation'>
    <?php _e ( 'The recurrence beginning and end date.', 'eme' ); ?>

@@ -996,7 +996,7 @@ function eme_book_seats($event, $send_mail) {
          eme_create_payment($booking_id);
 
       $booking = eme_get_booking ($booking_id);
-      if ($send_mail) eme_email_rsvp_booking($booking_id,$action);
+      if ($send_mail) eme_email_rsvp_booking($booking,$action);
    }
 
    $res = array(0=>$result,1=>$booking_id);
@@ -1986,7 +1986,7 @@ function eme_email_rsvp_booking($booking,$action="") {
    $booker_subject_vars=array('confirmed_subject','updated_subject','pending_subject','denied_subject','cancelled_subject');
    $booker_vars=array_merge($booker_body_vars,$booker_subject_vars);
    $contact_body_vars=array('contact_body','contact_cancelled_body','contact_pending_body');
-   $contact_subject_vars=array('act_subject','contact_cancelled_subject','contact_pending_subject');
+   $contact_subject_vars=array('contact_subject','contact_cancelled_subject','contact_pending_subject');
    $contact_vars=array_merge($contact_body_vars,$contact_subject_vars);
 
    // first get the initial values
