@@ -67,13 +67,13 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.11
+= 1.5.12 =
 * Bugfix: use php 5.3 notation for arrays, not everybody uses php 5.4 ...
 
-= 1.5.11
+= 1.5.11 =
 * Bugfix: not all mails were being sent out correctly
 
-= 1.5.10
+= 1.5.10 =
 * Feature: support qtranslate plus, next to qtranslate and mqtranslate
 * Feature: added new filters eme_rsvp_email_body_text_filter and eme_rsvp_email_body_html_filter to be able to change the mail body just before it is sent
 * Incompatibility: removed the per-user date format settings, was getting too confusing for coding up different formats for backend and frontend date formatting, while the generic WP settings should be used anyway
@@ -82,7 +82,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: better use of function strtotime to take Daylight Saving Time into account (not all days have 24 hours)
 * Bugfix: there's a bug for the cancel-mails and placeholders due to the fact that I first delete the booking before sending the mail (otherwise the number of free seats in the mail can be wrong), but because of that the placeholders can't be replaced anymore since the booking no longer exists. This has been fixed by getting the booking info before doing anything and handing that info to the function that does the mail sending (and not letting that function get the booking info anymore, since it might already been deleted)
 
-= 1.5.9
+= 1.5.9 =
 * Bugfix: the unique nbr for bookings only got generated when online payment was being selected too, now it gets generated if the total booking price >0
 
 = 1.5.8 =
