@@ -2062,8 +2062,8 @@ function eme_email_rsvp_booking($booking,$action="") {
       $$var=eme_translate($$var,$booking['lang']);
    }
 
-   // possible mail body filter
-   $filtername='eme_rsvp_email_body'.$mail_text_html.'_filter';
+   // possible mail body filter: eme_rsvp_email_body_text_filter or eme_rsvp_email_body_html_filter
+   $filtername='eme_rsvp_email_body_'.$mail_text_html.'_filter';
    if (has_filter($filtername)) {
       foreach ($contact_body_vars as $var) {
          $$var=apply_filters($filtername,$$var);
