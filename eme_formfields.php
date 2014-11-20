@@ -424,7 +424,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
 
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only) {
-      $readonly="disabled='disabled'";
+      $readonly="readonly='readonly'";
    } else {
       $readonly="";
    }
@@ -657,7 +657,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only || (is_admin() && $booking)) {
-      $readonly="disabled='disabled'";
+      $readonly="readonly='readonly'";
    } else {
       $readonly="";
    }

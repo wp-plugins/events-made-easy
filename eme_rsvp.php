@@ -370,7 +370,7 @@ function eme_delete_booking_form($event_id,$show_message=1) {
       if (!is_user_logged_in()) {
          return;
       }
-      $readonly="disabled='disabled'";
+      $readonly="readonly='readonly'";
    } else {
       $readonly="";
    }

@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.15 =
+* Bugfix: disabled form fields don't always get posted upon submit, they should be readonly (when you require WP membership for an event)
+
 = 1.5.14 =
 * Bugfix: make sure initial date for new events and recurrences is the current date, not 1970 ...
 
