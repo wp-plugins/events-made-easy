@@ -993,11 +993,11 @@ function eme_get_locations_shortcode($atts) {
       $format = ( $format != '' ) ? $format : "<li class=\"location-#_LOCATIONID\">#_LOCATIONNAME</li>";
       if (empty($eme_format_header)) {
 	      $eme_format_header = eme_replace_locations_placeholders(get_option('eme_location_list_format_header' ));
-	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : "<ul class='eme_events_list'>";
+	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : DEFAULT_LOCATION_LIST_HEADER_FORMAT;
       }
       if (empty($eme_format_footer)) {
 	      $eme_format_footer = eme_replace_locations_placeholders(get_option('eme_location_list_format_footer' ));
-	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : "</ul>";
+	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : DEFAULT_LOCATION_LIST_FOOTER_FORMAT;
       }
    }
 

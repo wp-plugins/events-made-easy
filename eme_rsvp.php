@@ -1665,8 +1665,8 @@ function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,
    $ignore_pending=get_option('eme_attendees_list_ignore_pending');
    $attendees = eme_get_attendees_for($event['event_id'],$ignore_pending);
    $format=get_option('eme_attendees_list_format');
-   $eme_format_header="<ul class='eme_bookings_list_ul'>";
-   $eme_format_footer="</ul>";
+   $eme_format_header=DEFAULT_BOOKINGS_LIST_HEADER_FORMAT;
+   $eme_format_footer=DEFAULT_BOOKINGS_LIST_FOOTER_FORMAT;
 
    // rsvp not active or no rsvp for this event, then return
    if (!eme_is_event_rsvp($event)) {

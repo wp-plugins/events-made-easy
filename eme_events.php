@@ -561,9 +561,9 @@ function eme_events_page_content() {
    global $wpdb;
 
    $format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
-   $format_header = ( $format_header != '' ) ?  $format_header : "<ul class='eme_events_list'>";
+   $format_header = ( $format_header != '' ) ?  $format_header : DEFAULT_EVENT_LIST_HEADER_FORMAT;
    $format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
-   $format_footer = ( $format_footer != '' ) ?  $format_footer : "</ul>";
+   $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
 
    if (get_query_var('eme_pmt_result') && get_option('eme_payment_show_custom_return_page')) {
       // show the result of a payment, but not for a multi-booking payment result
@@ -607,9 +607,9 @@ function eme_events_page_content() {
       $stored_format = get_option('eme_event_list_item_format');
       if (count($location_ids)>0) {
          $format_header = eme_replace_placeholders(get_option('eme_location_list_item_format_header' ));
-         $format_header = ( $format_header != '' ) ?  $format_header : "<ul class='eme_events_list'>";
+         $format_header = ( $format_header != '' ) ?  $format_header : DEFAULT_EVENT_LIST_HEADER_FORMAT;
          $format_footer = eme_replace_placeholders(get_option('eme_location_list_item_format_footer' ));
-         $format_footer = ( $format_footer != '' ) ?  $format_footer : "</ul>";
+         $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
          $page_body = $format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, '','',0,'','',0,$location_ids) .  $format_footer;
       } else {
          $page_body = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
@@ -963,11 +963,11 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $format = get_option('eme_event_list_item_format' );
       if (empty($eme_format_header)) {
 	      $eme_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
-	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : "<ul class='eme_events_list'>";
+	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : DEFAULT_EVENT_LIST_HEADER_FORMAT;
       }
       if (empty($eme_format_footer)) {
 	      $eme_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
-	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : "</ul>";
+	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
       }
    }
 
