@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.15 =
 * Bugfix: disabled form fields don't always get posted upon submit, they should be readonly (when you require WP membership for an event)
+* Bugfix: allow username/email to be changed when doing a new registration via the backend and WP membership is required for an event
 
 = 1.5.14 =
 * Bugfix: make sure initial date for new events and recurrences is the current date, not 1970 ...
