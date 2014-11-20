@@ -492,6 +492,7 @@ function eme_cancel_seats($event) {
       return __("You're not allowed to do this. If you believe you've received this message in error please contact the site owner.",'eme');
    } 
 
+   $booker = array();
    if ($registration_wp_users_only && is_user_logged_in()) {
       // we require a user to be WP registered to be able to book
       get_currentuserinfo();
@@ -500,12 +501,12 @@ function eme_cancel_seats($event) {
       $bookerName = $current_user->display_name;
       $bookerEmail = $current_user->user_email;
       $booker = eme_get_person_by_wp_info($bookerName, $bookerEmail,$booker_wp_id);
-   } else {
+   } elseif (isset($_POST['bookerName']) && isset($_POST['bookerEmail'])) {
       $bookerName = eme_strip_tags($_POST['bookerName']);
       $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    }
-   if ($booker) {
+   if (empty($booker)) {
       $person_id = $booker['person_id'];
       $booking_ids=eme_get_booking_ids_by_person_event_id($person_id,$event_id);
       if (!empty($booking_ids)) {
@@ -628,6 +629,9 @@ function eme_multibook_seats($events, $send_mail, $format) {
       }
 
       $registration_wp_users_only=$event['registration_wp_users_only'];
+      $bookerName = "";
+      $bookerEmail = "";
+      $booker=array();
       if (!is_admin() && $registration_wp_users_only && is_user_logged_in()) {
          // we require a user to be WP registered to be able to book
          get_currentuserinfo();
@@ -636,12 +640,12 @@ function eme_multibook_seats($events, $send_mail, $format) {
          $bookerName = $current_user->display_name;
          $bookerEmail = $current_user->user_email;
          $booker = eme_get_person_by_wp_info($bookerName, $bookerEmail,$booker_wp_id);
-      } elseif (!is_admin() && is_user_logged_in()) {
+      } elseif (!is_admin() && is_user_logged_in() && isset($_POST['bookerName']) && isset($_POST['bookerEmail'])) {
          $booker_wp_id=get_current_user_id();
          $bookerName = eme_strip_tags($_POST['bookerName']);
          $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
          $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
-      } else {
+      } elseif (isset($_POST['bookerName']) && isset($_POST['bookerEmail'])) {
          // when called from the admin backend, we don't care about registration_wp_users_only
          $booker_wp_id=0;
          $bookerName = eme_strip_tags($_POST['bookerName']);
@@ -654,10 +658,10 @@ function eme_multibook_seats($events, $send_mail, $format) {
       else
          $eval_filter_return=array(0=>1,1=>'');
 
-      if (!$bookerName) {
+      if (empty($bookerName)) {
          // if any required field is empty: return an error
          $result .= __('Please fill out your name','eme');
-      } elseif (!$bookerEmail) {
+      } elseif (empty($bookerEmail)) {
          // if any required field is empty: return an error
          $result .= __('Please fill out your e-mail','eme');
       } elseif (count($missing_required_fields)>0) {
@@ -690,7 +694,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
          else
             $seats_available=eme_are_seats_available_for($event_id, $bookedSeats);
          if ($seats_available) {
-            if (!$booker) {
+            if (empty($booker)) {
                $booker = eme_add_person($bookerName, $bookerEmail, $bookerPhone, $booker_wp_id,$language);
             }
 
@@ -874,6 +878,9 @@ function eme_book_seats($event, $send_mail) {
 
    $event_id = $event['event_id'];
    $registration_wp_users_only=$event['registration_wp_users_only'];
+   $bookerName = "";
+   $bookerEmail = "";
+   $booker=array();
    if (!is_admin() && $registration_wp_users_only && is_user_logged_in()) {
       // we require a user to be WP registered to be able to book
       get_currentuserinfo();
@@ -882,12 +889,12 @@ function eme_book_seats($event, $send_mail) {
       $bookerName = $current_user->display_name;
       $bookerEmail = $current_user->user_email;
       $booker = eme_get_person_by_wp_info($bookerName, $bookerEmail,$booker_wp_id);
-   } elseif (!is_admin() && is_user_logged_in()) {
+   } elseif (!is_admin() && is_user_logged_in() && isset($_POST['bookerName']) && isset($_POST['bookerEmail'])) {
       $booker_wp_id=get_current_user_id();
       $bookerName = eme_strip_tags($_POST['bookerName']);
       $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
-   } else {
+   } elseif (isset($_POST['bookerName']) && isset($_POST['bookerEmail'])) {
       // when called from the admin backend, we don't care about registration_wp_users_only
       $booker_wp_id=0;
       $bookerName = eme_strip_tags($_POST['bookerName']);
@@ -900,10 +907,10 @@ function eme_book_seats($event, $send_mail) {
    else
       $eval_filter_return=array(0=>1,1=>'');
 
-   if (!$bookerName) {
+   if (empty($bookerName)) {
       // if any required field is empty: return an error
       $result = __('Please fill out your name','eme');
-   } elseif (!$bookerEmail) {
+   } elseif (empty($bookerEmail)) {
       // if any required field is empty: return an error
       $result = __('Please fill out your e-mail','eme');
    } elseif (count($missing_required_fields)>0) {
@@ -936,7 +943,7 @@ function eme_book_seats($event, $send_mail) {
       else
          $seats_available=eme_are_seats_available_for($event_id, $bookedSeats);
       if ($seats_available) {
-         if (!$booker) {
+         if (empty($booker)) {
             $booker = eme_add_person($bookerName, $bookerEmail, $bookerPhone, $booker_wp_id,$language);
          }
 
