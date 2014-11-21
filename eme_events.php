@@ -2405,7 +2405,7 @@ function eme_event_form($event, $title, $element) {
                         <?php 
                            $recurrence_YES = "";
                            if ($event['recurrence_id'])
-                              $recurrence_YES = "checked='checked' readonly='readonly'";
+                              $recurrence_YES = "checked='checked' disabled='disabled'";
                         ?>
                         <p>
                            <input id="event-recurrence" type="checkbox" name="repeated_event"

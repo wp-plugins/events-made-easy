@@ -424,7 +424,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
 
    $registration_wp_users_only=$event['registration_wp_users_only'];
    if ($registration_wp_users_only) {
-      $readonly="readonly='readonly'";
+      $readonly="disabled='disabled'";
    } else {
       $readonly="";
    }
@@ -657,8 +657,16 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 
    $registration_wp_users_only=$event['registration_wp_users_only'];
    $is_admin=is_admin();
-   if (($registration_wp_users_only && !$is_admin) || ($is_admin && $booking)) {
-      $readonly="readonly='readonly'";
+   if ($is_admin && $booking) {
+      $editing_booking_from_backend=1;
+   } else {
+      $editing_booking_from_backend=0;
+   }
+
+   // if not in the backend and wp membership is required
+   // or when editing an existing booking via backend (not a new)
+   if (($registration_wp_users_only && !$is_admin) || $editing_booking_from_backend) {
+      $readonly="disabled='disabled'";
    } else {
       $readonly="";
    }
@@ -674,7 +682,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];
-   if ($is_admin && $booking) {
+   if ($editing_booking_from_backend) {
       // in the admin itf, and editing a booking
       // then the avail seats are the total seats
       if (eme_is_multi($event['event_seats'])) {
@@ -703,7 +711,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
    if (eme_is_multi($event['event_seats'])) {
       // in the admin itf, and editing a booking
       // then the avail seats are the total seats
-      if ($is_admin && $booking)
+      if ($editing_booking_from_backend)
          $multi_avail = eme_convert_multi2array($event['event_seats']);
       else
          $multi_avail = eme_get_available_multiseats($event['event_id']);
@@ -797,7 +805,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       $bookerEmail=$current_user->user_email;
    }
 
-   if ($is_admin && $booking) {
+   if ($editing_booking_from_backend) {
       $person = eme_get_person ($booking['person_id']);
       // when editing a booking
       $bookerName = eme_sanitize_html($person['person_name']);
@@ -866,7 +874,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
    }
 
    if (preg_match('/#_SUBMIT\{.+\}/', $format)) {
-      if ($is_admin && $booking)
+      if ($editing_booking_from_backend)
          $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".__('Update booking','eme')."' />" ,$format );
       else
          $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
@@ -884,7 +892,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
    }
 
    if ($deprecated && preg_match('/#_SUBMIT\[.+\]/', $format)) {
-      if ($is_admin && $booking)
+      if ($editing_booking_from_backend)
          $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".__('Update booking','eme')."' />" ,$format );
       else
          $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
@@ -1006,7 +1014,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
          $replacement = eme_get_formfield_html($field_id,$entered_val,$required);
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
          if (!$eme_multibooking) {
-            if ($is_admin && $booking)
+            if ($editing_booking_from_backend)
                $replacement = "<input type='submit' value='".__('Update booking','eme')."' />";
             else
                $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."' />";
