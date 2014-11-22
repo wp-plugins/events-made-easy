@@ -68,8 +68,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.15 =
-* Bugfix: allow username/email to be changed when doing a new registration via the backend and WP membership is required for an event
+* Improvement: allow username/email to be changed when doing a new registration via the backend and WP membership is required for an event
 * Bugfix: the new filters eme_rsvp_email_body_text_filter and eme_rsvp_email_body_html_filter were not taken into account (missing underscore)
+* Bugfix: the end date/time placeholder #@[a-z] were being replaced correctly, but the '@' remained too
 
 = 1.5.14 =
 * Bugfix: make sure initial date for new events and recurrences is the current date, not 1970 ...

@@ -1673,7 +1673,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#@[A-Za-z]$/', $result)) {
          // matches all PHP time placeholders for enddate-time
-         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#"));
+         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#@"));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#@i") {
             $replacement=ltrim($replacement,"0");
          }
