@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.5.14
+Version: 1.5.15
 Plugin URI: http://www.e-dynamics.be/wordpress
 Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
@@ -1673,7 +1673,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#@[A-Za-z]$/', $result)) {
          // matches all PHP time placeholders for enddate-time
-         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#"));
+         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#@"));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#@i") {
             $replacement=ltrim($replacement,"0");
          }
