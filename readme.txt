@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.0.1
-Stable tag: 1.5.15
+Stable tag: 1.5.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.16 =
+* Improvement: each category now also has a SEO slug (albeit not editable yet)
+* Incompatibility: the function eme_event_category_url now takes the whole category array as argument (as for events and locations)
+* Incompatibility: the function eme_get_event_categories now returns an assoc array of categories, the old behaviour is renamed to a new function eme_get_event_category_names 
 * Bugfix: make sure the booking cancel form work again
 
 = 1.5.15 =
