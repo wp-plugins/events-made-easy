@@ -506,7 +506,7 @@ function eme_cancel_seats($event) {
       $bookerEmail = eme_strip_tags($_POST['bookerEmail']);
       $booker = eme_get_person_by_name_and_email($bookerName, $bookerEmail); 
    }
-   if (empty($booker)) {
+   if (!empty($booker)) {
       $person_id = $booker['person_id'];
       $booking_ids=eme_get_booking_ids_by_person_event_id($person_id,$event_id);
       if (!empty($booking_ids)) {

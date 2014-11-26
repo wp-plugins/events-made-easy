@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.16 =
+* Bugfix: make sure the booking cancel form work again
+
 = 1.5.15 =
 * Improvement: allow username/email to be changed when doing a new registration via the backend and WP membership is required for an event
 * Bugfix: the new filters eme_rsvp_email_body_text_filter and eme_rsvp_email_body_html_filter were not taken into account (missing underscore)
