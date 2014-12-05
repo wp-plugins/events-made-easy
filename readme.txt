@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.17 =
+* Bugfix: #_RSVPEND was incorrect
+
 = 1.5.16 =
 * Improvement: each category now also has a SEO slug (albeit not editable yet)
 * Incompatibility: the function eme_event_category_url now takes the whole category array as argument (as for events and locations)
