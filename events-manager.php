@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.5.14
+Version: 1.5.17
 Plugin URI: http://www.e-dynamics.be/wordpress
 Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 65);
+define('EME_DB_VERSION', 66);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -850,9 +850,22 @@ function eme_create_categories_table($charset,$collate) {
       $sql = "CREATE TABLE ".$table_name." (
          category_id int(11) NOT NULL auto_increment,
          category_name tinytext NOT NULL,
+         category_slug text default NULL,
          UNIQUE KEY  (category_id)
          ) $charset $collate;";
       maybe_create_table($table_name,$sql);
+   } else {
+      maybe_add_column($table_name, 'category_slug', "alter table $table_name add category_slug text DEFAULT NULL;"); 
+      if ($db_version<66) {
+         $categories = $wpdb->get_results("SELECT * FROM $table_name", ARRAY_A);
+         foreach ($categories as $this_category) {
+             $where = array();
+             $fields = array();
+             $where['category_id'] = $this_category['category_id'];
+             $fields['category_slug'] = untrailingslashit(eme_permalink_convert($this_category['category_name']));
+             $wpdb->update($table_name, $fields, $where);
+         }
+      }
    }
 }
 
@@ -1673,7 +1686,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#@[A-Za-z]$/', $result)) {
          // matches all PHP time placeholders for enddate-time
-         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#"));
+         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#@"));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#@i") {
             $replacement=ltrim($replacement,"0");
          }
@@ -1692,7 +1705,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
-         $categories = eme_get_event_categories($event['event_id']);
+         $categories = eme_get_event_category_names($event['event_id']);
          if ($target == "html") {
             $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement); 
@@ -1709,10 +1722,11 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $cat_links = array();
          foreach ($categories as $category) {
             $cat_link=eme_event_category_url($category);
+            $cat_name=$category['category_name'];
             if ($target == "html")
-               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category,$lang)."'>".eme_trans_sanitize_html($category,$lang)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($cat_name,$lang)."'>".eme_trans_sanitize_html($cat_name,$lang)."</a>");
             else
-               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category,$lang)."'>".eme_translate($category,$lang)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($cat_name,$lang)."'>".eme_translate($cat_name,$lang)."</a>");
          }
          $replacement = join(", ",$cat_links);
          if ($target == "html") {
@@ -1734,7 +1748,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (!empty($exclude_cats))
             array_push($extra_conditions_arr, "category_id NOT IN ($exclude_cats)");
          $extra_conditions = join(" AND ",$extra_conditions_arr);
-         $categories = eme_get_event_categories($event['event_id'],$extra_conditions);
+         $categories = eme_get_event_category_names($event['event_id'],$extra_conditions);
          if ($target == "html") {
             $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement); 
@@ -1755,7 +1769,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (!empty($exclude_cats))
             array_push($extra_conditions_arr, "category_id NOT IN ($exclude_cats)");
          $extra_conditions = join(" AND ",$extra_conditions_arr);
-         $categories = eme_get_event_categories($event['event_id'],$extra_conditions);
+         $categories = eme_get_event_category_names($event['event_id'],$extra_conditions);
          if ($target == "html") {
             $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement); 
@@ -1780,10 +1794,11 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $cat_links = array();
          foreach ($categories as $category) {
             $cat_link=eme_event_category_url($category);
+            $cat_name=$category['category_name'];
             if ($target == "html")
-               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category,$lang)."'>".eme_trans_sanitize_html($category,$lang)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($cat_name,$lang)."'>".eme_trans_sanitize_html($cat_name,$lang)."</a>");
             else
-               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category,$lang)."'>".eme_translate($category,$lang)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($cat_name,$lang)."'>".eme_translate($cat_name,$lang)."</a>");
          }
          $replacement = join(", ",$cat_links);
          if ($target == "html") {
@@ -1809,10 +1824,11 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $cat_links = array();
          foreach ($categories as $category) {
             $cat_link=eme_event_category_url($category);
+            $cat_name=$category['category_name'];
             if ($target == "html")
-               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($category,$lang)."'>".eme_trans_sanitize_html($category,$lang)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($cat_name,$lang)."'>".eme_trans_sanitize_html($cat_name,$lang)."</a>");
             else
-               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($category,$lang)."'>".eme_translate($category,$lang)."</a>");
+               array_push($cat_links,"<a href='$cat_link' title='".eme_translate($cat_name,$lang)."'>".eme_translate($cat_name,$lang)."</a>");
          }
          $replacement = join(", ",$cat_links);
          if ($target == "html") {
@@ -1863,7 +1879,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (eme_is_event_rsvp($event)) {
                $rsvp_number_days=$event['rsvp_number_days'];
                $rsvp_number_hours=$event['rsvp_number_hours'];
-               $rsvp_end_datetime = strtotime("-$rsvp_number_days days -$rsvp_number_hours hours",$event['event_start_date']." ".$event['event_start_time']);
+               $rsvp_end_datetime = strtotime("-$rsvp_number_days days -$rsvp_number_hours hours",strtotime($event['event_start_date']." ".$event['event_start_time']));
                $rsvp_end_date = eme_localised_unixdate($rsvp_end_datetime);
                $rsvp_end_time = eme_localised_unixtime($rsvp_end_datetime);
                $replacement = $rsvp_end_date." ".$rsvp_end_time;

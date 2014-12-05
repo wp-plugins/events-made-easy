@@ -247,14 +247,15 @@ function eme_payment_url($payment_id) {
    return $the_link;
 }
 
-function eme_event_category_url($cat_name) {
+function eme_event_category_url($category) {
    global $wp_rewrite;
 
    $url_mode=1;
    $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
-      $name=$events_prefix."cat/".eme_permalink_convert($cat_name);
+      $slug = $category['category_slug'] ? $category['category_slug'] : $category['category_name'];
+      $name=$events_prefix."cat/".eme_permalink_convert($slug);
       $the_link = home_url();
       // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
       $the_link = trailingslashit(remove_query_arg('lang',$the_link));
@@ -272,7 +273,7 @@ function eme_event_category_url($cat_name) {
       $the_link = eme_get_events_page(true, false);
       // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
       $the_link = remove_query_arg('lang',$the_link);
-      $the_link = add_query_arg( array( 'eme_event_cat' => $cat_name ), $the_link );
+      $the_link = add_query_arg( array( 'eme_event_cat' => $category['category_name'] ), $the_link );
       if (!empty($language))
          $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
    }

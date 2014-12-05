@@ -24,11 +24,13 @@ function eme_categories_page() {
          // category update required  
          $category = array();
          $category['category_name'] = trim(stripslashes($_POST['category_name']));
+         $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->update( $categories_table, $category, array('category_id' => intval($_POST['category_ID'])) );
       } elseif ($_POST['eme_admin_action'] == "add" ) {
          // Add a new category
          $category = array();
          $category['category_name'] = trim(stripslashes($_POST['category_name']));
+         $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->insert($categories_table, $category);
       } elseif ($_POST['eme_admin_action'] == "delete" && isset($_POST['categories'])) {
          // Delete category or multiple
@@ -234,7 +236,7 @@ function eme_get_category($category_id) {
    return $wpdb->get_row($sql, ARRAY_A);
 }
 
-function eme_get_event_categories($event_id,$extra_conditions="") { 
+function eme_get_event_category_names($event_id,$extra_conditions="") { 
    global $wpdb;
    $event_table = $wpdb->prefix.EVENTS_TBNAME; 
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
@@ -242,6 +244,16 @@ function eme_get_event_categories($event_id,$extra_conditions="") {
       $extra_conditions = " AND ($extra_conditions)";
    $sql = $wpdb->prepare("SELECT category_name FROM $categories_table, $event_table where event_id = %d AND FIND_IN_SET(category_id,event_category_ids) $extra_conditions",$event_id);
    return $wpdb->get_col($sql);
+}
+
+function eme_get_event_categories($event_id,$extra_conditions="") { 
+   global $wpdb;
+   $event_table = $wpdb->prefix.EVENTS_TBNAME; 
+   $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
+   if ($extra_conditions !="")
+      $extra_conditions = " AND ($extra_conditions)";
+   $sql = $wpdb->prepare("SELECT * FROM $categories_table, $event_table where event_id = %d AND FIND_IN_SET(category_id,event_category_ids) $extra_conditions",$event_id);
+   return $wpdb->get_results($sql,ARRAY_A);
 }
 
 function eme_get_category_eventids($category_id) {
@@ -260,13 +272,13 @@ function eme_get_location_categories($location_id) {
    return $wpdb->get_col($sql);
 }
 
-function eme_get_category_ids($cat_name) {
+function eme_get_category_ids($cat_slug) {
    global $wpdb;
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
    $cat_ids = array();
    $conditions="";
-   if (!empty($cat_name)) {
-      $conditions = " category_name = '$cat_name'";
+   if (!empty($cat_slug)) {
+      $conditions = " category_slug = '$cat_slug'";
    }
    if (!empty($conditions)) {
       $sql = "SELECT DISTINCT category_id FROM $categories_table WHERE ".$conditions;
