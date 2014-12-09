@@ -1203,11 +1203,9 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
             $theday = date ("d", strtotime($day_key));
             if ($showperiod == "yearly" && $theyear != $curyear) {
                $output .= "<li class='eme_period'>".eme_localised_date ($day_key,get_option('eme_show_period_yearly_dateformat'))."</li>";
-               $curyear=$theyear;
-            } elseif ($showperiod == "monthly" && $themonth != $curmonth) {
+            } elseif ($showperiod == "monthly" && "$theyear$themonth" != "$curyear$curmonth") {
                $output .= "<li class='eme_period'>".eme_localised_date ($day_key,get_option('eme_show_period_monthly_dateformat'))."</li>";
-               $curmonth=$themonth;
-            } elseif ($showperiod == "daily" && $theday != $curday) {
+            } elseif ($showperiod == "daily" && "$theyear$themonth$theday" != "$curyear$curmonth$curday") {
                $output .= "<li class='eme_period'>";
                if ($link_showperiod) {
                   $eme_link=eme_calendar_day_url($theyear."-".$themonth."-".$theday);
@@ -1216,8 +1214,10 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
                   $output .= eme_localised_date ($day_key);
                }
                $output .= "</li>";
-               $curday=$theday;
             }
+	    $curyear=$theyear;
+	    $curmonth=$themonth;
+	    $curday=$theday;
             foreach($day_events as $event) {
                $output .= eme_replace_placeholders ( $format, $event );
             }
