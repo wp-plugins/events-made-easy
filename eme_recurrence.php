@@ -210,7 +210,7 @@ function eme_update_events_for_recurrence($event,$recurrence) {
          $event['event_end_date'] = date("Y-m-d", strtotime($event['event_start_date'] ." + $duration_days_event days")); 
          eme_db_update_event($event, $existing_event['event_id'], 1); 
       } else {
-         eme_db_delete_event($existing_event);
+         eme_db_delete_event($existing_event,1);
       }
    }
    // Doing step 2

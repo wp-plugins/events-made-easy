@@ -3845,16 +3845,18 @@ function eme_change_event_state($events,$state) {
    $wpdb->query($sql);
 }
 
-function eme_db_delete_event($event) {
+function eme_db_delete_event($event,$event_is_part_of_recurrence=0) {
    global $wpdb;
    $table_name = $wpdb->prefix . EVENTS_TBNAME;
+   $wpdb->show_errors(false);
    $sql = $wpdb->prepare("DELETE FROM $table_name WHERE event_id = %d",$event['event_id']);
    // also delete associated image
    $image_basename= IMAGE_UPLOAD_DIR."/event-".$event['event_id'];
    eme_delete_image_files($image_basename);
    if ($wpdb->query($sql)) {
       eme_delete_all_bookings_for_event_id($event['event_id']);
-      if (has_action('eme_delete_event_action')) do_action('eme_delete_event_action',$event);
+      // the eme_delete_event_action is only executed for single events, not those part of a recurrence
+      if (!$event_is_part_of_recurrence && has_action('eme_delete_event_action')) do_action('eme_delete_event_action',$event);
    }
 }
 
