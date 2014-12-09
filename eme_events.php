@@ -158,7 +158,8 @@ function eme_events_page() {
                # if the event is part of a recurrence and it is the last event of the recurrence, delete the recurrence
                # else just delete the singe event
                if (eme_recurrence_count($tmp_event['recurrence_id'])==1) {
-                  eme_remove_recurrence ($tmp_event['recurrence_id'] );
+                  $tmp_recurrence=eme_get_recurrence($tmp_event['recurrence_id']);
+                  eme_db_delete_recurrence ($tmp_event,$tmp_recurrence );
                } else {
                   eme_db_delete_event($tmp_event);
                }
@@ -182,7 +183,8 @@ function eme_events_page() {
             $tmp_event = array();
             $tmp_event = eme_get_event($event_ID);
             if ($tmp_event['recurrence_id']>0) {
-               eme_remove_recurrence ($tmp_event['recurrence_id']);
+               $tmp_recurrence=eme_get_recurrence($tmp_event['recurrence_id']);
+               eme_db_delete_recurrence ($tmp_event,$tmp_recurrence );
             }
          }
          $feedback_message = __ ( 'Event(s) deleted!', 'eme' );

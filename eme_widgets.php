@@ -56,6 +56,10 @@ class WP_Widget_eme_list extends WP_Widget {
          $new_instance['recurrence_only_once']=false;
       if (!isset($new_instance['show_ongoing']))
          $new_instance['show_ongoing']=false;
+      if (!isset($new_instance['category']))
+         $new_instance['category']="";
+      if (!isset($new_instance['notcategory']))
+         $new_instance['notcategory']="";
 
       $instance = array_merge($old_instance,$new_instance);
       $instance['title'] = strip_tags($instance['title']);

@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.17 =
+* Feature: added action eme_delete_recurrence_action
 * Bugfix: #_RSVPEND was incorrect
 * Bugfix: if the period was "daily" in the list widget and 2 events were on the same day but a different month, the new month info wasn't shown, making it look as the second event happened in the same month as the first
 
