@@ -51,7 +51,7 @@ class WP_Widget_eme_list extends WP_Widget {
    }
 
    public function update( $new_instance, $old_instance ) {
-      // before the merge, let's set the values of those elements that are checkboxes (not returned in the POST if not selected)
+      // before the merge, let's set the values of those elements that are checkboxes or multiselects (not returned in the POST if not selected)
       if (!isset($new_instance['recurrence_only_once']))
          $new_instance['recurrence_only_once']=false;
       if (!isset($new_instance['show_ongoing']))
@@ -232,9 +232,13 @@ class WP_Widget_eme_calendar extends WP_Widget {
    }
    
    public function update( $new_instance, $old_instance ) {
-      // before the merge, let's set the values of those elements that are checkboxes (not returned in the POST if not selected)
+      // before the merge, let's set the values of those elements that are checkboxes or multiselects (not returned in the POST if not selected)
       if (!isset($new_instance['long_events']))
          $new_instance['long_events']=false;
+      if (!isset($new_instance['category']))
+         $new_instance['category']="";
+      if (!isset($new_instance['notcategory']))
+         $new_instance['notcategory']="";
       $instance = array_merge($old_instance,$new_instance);
       $instance['title'] = strip_tags($instance['title']);
       return $instance;
