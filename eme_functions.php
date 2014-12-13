@@ -110,7 +110,7 @@ function eme_event_url($event,$language="") {
    if ($event['event_url'] != '') {
       $the_link = $event['event_url'];
    } else {
-      $url_mode=1;
+      $url_mode=eme_lang_url_mode();
       $language = eme_detect_lang();
       if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
          $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
@@ -150,7 +150,7 @@ function eme_location_url($location,$language="") {
    if ($location['location_url'] != '') {
       $the_link = $location['location_url'];
    } else {
-      $url_mode=1;
+      $url_mode=eme_lang_url_mode();
       $language = eme_detect_lang();
       if (isset($location['location_id']) && isset($location['location_name'])) {
          if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
@@ -186,7 +186,7 @@ function eme_location_url($location,$language="") {
 function eme_calendar_day_url($day) {
    global $wp_rewrite;
 
-   $url_mode=1;
+   $url_mode=eme_lang_url_mode();
 
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
@@ -218,7 +218,7 @@ function eme_calendar_day_url($day) {
 function eme_payment_url($payment_id) {
    global $wp_rewrite;
 
-   $url_mode=1;
+   $url_mode=eme_lang_url_mode();
    $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
@@ -250,7 +250,7 @@ function eme_payment_url($payment_id) {
 function eme_event_category_url($category) {
    global $wp_rewrite;
 
-   $url_mode=1;
+   $url_mode=eme_lang_url_mode();
    $language = eme_detect_lang();
    if (isset($wp_rewrite) && $wp_rewrite->using_permalinks() && get_option('eme_seo_permalink')) {
       $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
@@ -486,12 +486,31 @@ function eme_detect_lang() {
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure
       $language=ICL_LANGUAGE_CODE;
+   } elseif (function_exists('pll_current_language')) {
+      $language=pll_current_language('locale');
    } elseif (isset($_GET['lang'])) {
       $language=eme_strip_tags($_GET['lang']);
    } else {
       $language="";
    }
    return $language;
+}
+
+function eme_lang_url_mode() {
+   $url_mode=1;
+   if (function_exists('mqtranslate_conf')) {
+      // only some functions in mqtrans are different, but the options are named the same as for qtranslate
+      $url_mode=get_option('qtranslate_url_mode');
+   } elseif (function_exists('qtrans_getLanguage')) {
+      $url_mode=get_option('qtranslate_url_mode');
+   } elseif (function_exists('ppqtrans_getLanguage')) {
+      $url_mode=get_option('pqtranslate_url_mode');
+   } elseif (function_exists('pll_current_language')) {
+      $poly_options=get_option('polylang');
+      if ($poly_options['force_lang']==1) 
+         $url_mode=2;
+   }
+   return $url_mode;
 }
 
 # support older php version for array_replace_recursive

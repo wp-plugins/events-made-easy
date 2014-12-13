@@ -2080,16 +2080,21 @@ function eme_trans_sanitize_html( $value, $lang='') {
 }
 
 function eme_translate ( $value, $lang='') {
-   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
+   if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') && function_exists('qtrans_use')) {
       if (empty($lang))
          return qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
       else
          return qtrans_use($lang,$value);
-   } elseif (function_exists('ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
+   } elseif (function_exists('ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') && function_exists('ppqtrans_use')) {
       if (empty($lang))
          return ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
       else
          return ppqtrans_use($lang,$value);
+   } elseif (function_exists('pll_translate_string') && function_exists('pll__')) {
+      if (empty($lang))
+         return pll__($value);
+      else
+         return pll_translate_string($value,$lang);
    } else {
       return $value;
    }
