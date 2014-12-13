@@ -117,7 +117,7 @@ function eme_event_url($event,$language="") {
          $name=$events_prefix.$event['event_id']."/".eme_permalink_convert($slug);
          $the_link = home_url();
          // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
-         $the_link = str_replace("/$def_language","",$the_link);
+         $the_link = preg_replace("/\/$def_language$/","",$the_link);
          $the_link = trailingslashit(remove_query_arg('lang',$the_link));
          if (!empty($language)) {
             $url_mode=eme_lang_url_mode();
@@ -161,7 +161,7 @@ function eme_location_url($location,$language="") {
             $name=$locations_prefix.$location['location_id']."/".eme_permalink_convert($slug);
             $the_link = home_url();
             // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
-            $the_link = str_replace("/$def_language","",$the_link);
+            $the_link = preg_replace("/\/$def_language$/","",$the_link);
             $the_link = trailingslashit(remove_query_arg('lang',$the_link));
             if (!empty($language)) {
                $url_mode=eme_lang_url_mode();
@@ -198,7 +198,7 @@ function eme_calendar_day_url($day) {
       $name=$events_prefix.eme_permalink_convert($day);
       $the_link = home_url();
       // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
-      $the_link = str_replace("/$def_language","",$the_link);
+      $the_link = preg_replace("/\/$def_language$/","",$the_link);
       $the_link = trailingslashit(remove_query_arg('lang',$the_link));
       if (!empty($language)) {
          $url_mode=eme_lang_url_mode();
@@ -232,7 +232,7 @@ function eme_payment_url($payment_id) {
       $name=$events_prefix."p$payment_id";
       $the_link = home_url();
       // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
-      $the_link = str_replace("/$def_language","",$the_link);
+      $the_link = preg_replace("/\/$def_language$/","",$the_link);
       $the_link = trailingslashit(remove_query_arg('lang',$the_link));
       if (!empty($language)) {
          $url_mode=eme_lang_url_mode();
@@ -267,7 +267,7 @@ function eme_event_category_url($category) {
       $name=$events_prefix."cat/".eme_permalink_convert($slug);
       $the_link = home_url();
       // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
-      $the_link = str_replace("/$def_language","",$the_link);
+      $the_link = preg_replace("/\/$def_language$/","",$the_link);
       $the_link = trailingslashit(remove_query_arg('lang',$the_link));
       if (!empty($language)) {
          $url_mode=eme_lang_url_mode();
@@ -517,7 +517,7 @@ function eme_lang_url_mode() {
    } elseif (function_exists('ppqtrans_getLanguage')) {
       $url_mode=get_option('pqtranslate_url_mode');
    } elseif (function_exists('pll_current_language')) {
-      $url_mode=2;
+      $url_mode=1;
    }
    return $url_mode;
 }
