@@ -1006,6 +1006,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       } elseif (($deprecated && preg_match('/#_FIELD(\d+)/', $result, $matches)) || preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $postfield_name="${var_prefix}FIELD".$field_id.$var_postfix;
+         $entered_val = "";
          if ($booking) {
             $answers = eme_get_answers($booking['booking_id']);
             $formfield = eme_get_formfield_byid($field_id);
@@ -1021,8 +1022,6 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
             }
          } elseif (isset($_POST[$postfield_name])) {
             $entered_val = stripslashes_deep($_POST[$postfield_name]);
-         } else {
-            $entered_val = "";
          }
          $replacement = eme_get_formfield_html($field_id,$entered_val,$required);
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {

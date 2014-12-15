@@ -271,13 +271,13 @@ function eme_insertMyRewriteRules($rules) {
    $events_prefix=eme_permalink_convert(get_option ( 'eme_permalink_events_prefix'));
    $locations_prefix=eme_permalink_convert(get_option ( 'eme_permalink_locations_prefix'));
    $newrules = array();
-   $newrules[$events_prefix.'(\d{4})-(\d{2})-(\d{2})/c(\d*)'] = 'index.php?page_id='.$page_id.'&calendar_day=$matches[1]-$matches[2]-$matches[3]'.'&eme_event_cat=$matches[4]';
-   $newrules[$events_prefix.'(\d{4})-(\d{2})-(\d{2})'] = 'index.php?page_id='.$page_id.'&calendar_day=$matches[1]-$matches[2]-$matches[3]';
-   $newrules[$events_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&event_id=$matches[1]';
-   $newrules[$events_prefix.'p(\d*)'] = 'index.php?page_id='.$page_id.'&eme_pmt_id=$matches[1]';
-   $newrules[$events_prefix.'town/(.*)'] = 'index.php?page_id='.$page_id.'&eme_town=$matches[1]';
-   $newrules[$events_prefix.'cat/(.*)'] = 'index.php?page_id='.$page_id.'&eme_event_cat=$matches[1]';
-   $newrules[$locations_prefix.'(\d*)/'] = 'index.php?page_id='.$page_id.'&location_id=$matches[1]';
+   $newrules['(.*/)?'.$events_prefix.'(\d{4})-(\d{2})-(\d{2})/c(\d+).*'] = 'index.php?page_id='.$page_id.'&calendar_day=$matches[2]-$matches[3]-$matches[4]'.'&eme_event_cat=$matches[5]';
+   $newrules['(.*/)?'.$events_prefix.'(\d{4})-(\d{2})-(\d{2}).*'] = 'index.php?page_id='.$page_id.'&calendar_day=$matches[2]-$matches[3]-$matches[4]';
+   $newrules['(.*/)?'.$events_prefix.'(\d+).*'] = 'index.php?page_id='.$page_id.'&event_id=$matches[2]';
+   $newrules['(.*/)?'.$events_prefix.'p(\d+).*'] = 'index.php?page_id='.$page_id.'&eme_pmt_id=$matches[2]';
+   $newrules['(.*/)?'.$events_prefix.'town/(.*)'] = 'index.php?page_id='.$page_id.'&eme_town=$matches[2]';
+   $newrules['(.*/)?'.$events_prefix.'cat/(.*)'] = 'index.php?page_id='.$page_id.'&eme_event_cat=$matches[2]';
+   $newrules['(.*/)?'.$locations_prefix.'(\d+).*'] = 'index.php?page_id='.$page_id.'&location_id=$matches[2]';
    return $newrules + $rules;
 }
 add_filter('rewrite_rules_array','eme_insertMyRewriteRules');

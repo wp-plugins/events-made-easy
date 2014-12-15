@@ -256,11 +256,16 @@ function eme_get_event_categories($event_id,$extra_conditions="") {
    return $wpdb->get_results($sql,ARRAY_A);
 }
 
-function eme_get_category_eventids($category_id) {
+function eme_get_category_eventids($category_id,$future=0) {
    // similar to eme_get_recurrence_eventids
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
-   $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE FIND_IN_SET(%d,event_category_ids) ORDER BY event_start_date ASC, event_start_time ASC",$category_id);
+   if ($future_only) {
+      $today = date("Y-m-d");
+      $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE FIND_IN_SET(%d,event_category_ids) AND event_start_date > %s ORDER BY event_start_date ASC, event_start_time ASC",$category_id,$today);
+   } else {
+      $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE FIND_IN_SET(%d,event_category_ids) ORDER BY event_start_date ASC, event_start_time ASC",$category_id);
+   }
    return $wpdb->get_col($sql);
 }
 

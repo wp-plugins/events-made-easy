@@ -517,7 +517,7 @@ function eme_lang_url_mode() {
    } elseif (function_exists('ppqtrans_getLanguage')) {
       $url_mode=get_option('pqtranslate_url_mode');
    } elseif (function_exists('pll_current_language')) {
-      $url_mode=1;
+      $url_mode=2;
    }
    return $url_mode;
 }

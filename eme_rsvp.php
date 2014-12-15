@@ -27,8 +27,8 @@ function eme_add_booking_form($event_id,$show_message=1) {
    // after the add or delete booking, we do a POST to the same page using javascript to show just the result
    // this has 2 advantages: you can give arguments in the post, and refreshing the page won't repeat the booking action, just the post showing the result
    // a javascript redir using window.replace + GET would work too, but that leaves an ugly GET url
-   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking' && isset($_POST['event_id'])) {
-      $event_id = intval($_POST['event_id']);
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking' && isset($_POST['eme_event_id'])) {
+      $event_id = intval($_POST['eme_event_id']);
       $event = eme_get_event($event_id);
       $send_mail=1;
       $booking_res = eme_book_seats($event,$send_mail);
@@ -45,7 +45,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $post_arr = array (
                "eme_eventAction" => 'pay_booking',
                "eme_message" => $form_result_message,
-               "payment_id" => $payment_id,
+               "eme_payment_id" => $payment_id,
                "eme_payment_nonce" => $eme_payment_nonce
                );
       } elseif ($booking_id_done) {
@@ -83,8 +83,8 @@ function eme_add_booking_form($event_id,$show_message=1) {
       return;
    }
 
-   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_booking' && isset($_POST['eme_message']) && isset($_POST['payment_id'])) {
-      $payment_id = intval($_POST['payment_id']);
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_booking' && isset($_POST['eme_message']) && isset($_POST['eme_payment_id'])) {
+      $payment_id = intval($_POST['eme_payment_id']);
       // verify the nonce, to make sure people didn't mess with the booking id
       if (!isset($_POST['eme_payment_nonce']) || !wp_verify_nonce($_POST['eme_payment_nonce'], 'eme_payment_id'.$payment_id)) {
          return;
@@ -144,7 +144,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
             <p>".__('(* marks a required field)', 'eme')."</p>
             <input type='hidden' name='eme_eventAction' value='add_booking' />
-            <input type='hidden' name='event_id' value='$event_id' />
+            <input type='hidden' name='eme_event_id' value='$event_id' />
             </form>";
 
          if (has_filter('eme_add_booking_form_filter')) $form_html=apply_filters('eme_add_booking_form_filter',$form_html);
@@ -188,8 +188,8 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
    // after the add or delete booking, we do a POST to the same page using javascript to show just the result
    // this has 2 advantages: you can give arguments in the post, and refreshing the page won't repeat the booking action, just the post showing the result
    // a javascript redir using window.replace + GET would work too, but that leaves an ugly GET url
-   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_bookings' && isset($_POST['event_ids'])) {
-      $event_ids = $_POST['event_id'];
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_bookings' && isset($_POST['eme_event_ids'])) {
+      $event_ids = $_POST['eme_event_ids'];
       $events = eme_get_event($event_ids);
       $send_mail=1;
       $booking_res = eme_multibook_seats($events,$send_mail,$format_entry);
@@ -207,7 +207,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
          $post_arr = array (
                "eme_eventAction" => 'pay_bookings',
                "eme_message" => $form_result_message,
-               "payment_id" => $payment_id,
+               "eme_payment_id" => $payment_id,
                "eme_payment_nonce" => $eme_payment_nonce
                );
       } elseif ($booking_ids_done) {
@@ -245,8 +245,8 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       return;
    }
 
-   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_bookings' && isset($_POST['eme_message']) && isset($_POST['payment_id'])) {
-      $payment_id = $_POST['payment_id'];
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'pay_bookings' && isset($_POST['eme_message']) && isset($_POST['eme_payment_id'])) {
+      $payment_id = $_POST['eme_payment_id'];
       // verify the nonce, to make sure people didn't mess with the booking id
       if (!isset($_POST['eme_payment_nonce']) || !wp_verify_nonce($_POST['eme_payment_nonce'], 'eme_payment_id'.$payment_id)) {
          return;
@@ -311,7 +311,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 			   //if (!$message_is_result_of_booking)
 			   //   $form_html.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
 		   } else {
-			   $form_html .= "<input type='hidden' name='event_ids[]' value='$event_id' />";
+			   $form_html .= "<input type='hidden' name='eme_event_ids[]' value='$event_id' />";
 			   // regular formfield replacement here, but indicate that it is for multibooking
 			   $form_html .= eme_replace_formfields_placeholders ($event,"",$format_entry,1);
 		   }
@@ -334,10 +334,12 @@ function eme_add_multibooking_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0,'recurrence_id'=>0,'category_id'=>0,'template_id_header'=>0,'template_id'=>0,'template_id_footer'=>0), $atts));
    $ids=explode(",", $id);
    if ($recurrence_id) {
-      $ids=eme_get_recurrence_eventids($recurrence_id);
+      // we only want future events, so set the second arg to 1
+      $ids=eme_get_recurrence_eventids($recurrence_id,1);
    }
    if ($category_id) {
-      $ids=eme_get_category_eventids($category_id);
+      // we only want future events, so set the second arg to 1
+      $ids=eme_get_category_eventids($category_id,1);
    }
    if ($ids && $template_id_header && $template_id && $template_id_footer)
       return eme_add_multibooking_form($ids,$template_id_header,$template_id,$template_id_footer);
