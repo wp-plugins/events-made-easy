@@ -128,28 +128,29 @@ function eme_add_booking_form($event_id,$show_message=1) {
    else
       $min=$min_allowed;
 
+   $form_html = "";
    if ($avail_seats == 0 && $min>0) {
       // we show the message concerning 'no more seats' only if it is not after a successful booking
       if (!$message_is_result_of_booking)
          $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
    } else {
       if (!$message_is_result_of_booking || ($message_is_result_of_booking && get_option('eme_rsvp_show_form_after_booking'))) {
-         $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
-         $ret_string .= eme_replace_formfields_placeholders ($event);
+         $form_html = "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
+         $form_html .= eme_replace_formfields_placeholders ($event);
          // add a nonce for extra security
-         $ret_string .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
+         $form_html .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
          // also add a honeypot field: if it gets completed with data, 
          // it's a bot, since a humand can't see this (using CSS to render it invisible)
-         $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
+         $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
             <p>".__('(* marks a required field)', 'eme')."</p>
             <input type='hidden' name='eme_eventAction' value='add_booking' />
             <input type='hidden' name='event_id' value='$event_id' />
             </form>";
 
-         if (has_filter('eme_add_booking_form_filter')) $ret_string=apply_filters('eme_add_booking_form_filter',$form_html);
+         if (has_filter('eme_add_booking_form_filter')) $form_html=apply_filters('eme_add_booking_form_filter',$form_html);
       }
    }
-   return $ret_string."</div>";
+   return $ret_string.$form_html."</div>";
    
 }
 
@@ -270,55 +271,57 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
    if ($show_message && !empty($form_result_message))
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
 
-   $ret_string .= "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
-   // add a nonce for extra security
-   $ret_string .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
-   // also add a honeypot field: if it gets completed with data, 
-   // it's a bot, since a humand can't see this (using CSS to render it invisible)
-   $ret_string .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
-      <input type='hidden' name='eme_eventAction' value='add_bookings' />
-      ";
+   $form_html = "";
+   if (!$message_is_result_of_booking || ($message_is_result_of_booking && get_option('eme_rsvp_show_form_after_booking'))) {
+	   $form_html = "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
+	   // add a nonce for extra security
+	   $form_html .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
+	   // also add a honeypot field: if it gets completed with data, 
+	   // it's a bot, since a humand can't see this (using CSS to render it invisible)
+	   $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
+		   <input type='hidden' name='eme_eventAction' value='add_bookings' />
+		   ";
 
-   $ret_string .= eme_replace_multibooking_formfields_placeholders($format_header);
+	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_header);
 
-   foreach ($events as $event) {
-      $event_id=$event['event_id'];
-      if ($event['event_properties']['rsvp_end_target']=='start')
-         $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-      else
-         $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
-      if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
-         //$ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
-         continue;
-      }
+	   foreach ($events as $event) {
+		   $event_id=$event['event_id'];
+		   if ($event['event_properties']['rsvp_end_target']=='start')
+			   $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+		   else
+			   $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
+		   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
+			   //$form_html.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
+			   continue;
+		   }
 
-      // you can book the available number of seats, with a max of x per time
-      $min_allowed = $event['event_properties']['min_allowed'];
-      // the next gives the number of available seats, even for multiprice
-      $avail_seats = eme_get_available_seats($event_id);
-      // no seats anymore? No booking form then ... but only if it is required that the min number of
-      // bookings should be >0 (it can be=0 for attendance bookings)
-      if (eme_is_multi($min_allowed))
-         $min=eme_get_multitotal($min_allowed);
-      else
-         $min=$min_allowed;
+		   // you can book the available number of seats, with a max of x per time
+		   $min_allowed = $event['event_properties']['min_allowed'];
+		   // the next gives the number of available seats, even for multiprice
+		   $avail_seats = eme_get_available_seats($event_id);
+		   // no seats anymore? No booking form then ... but only if it is required that the min number of
+		   // bookings should be >0 (it can be=0 for attendance bookings)
+		   if (eme_is_multi($min_allowed))
+			   $min=eme_get_multitotal($min_allowed);
+		   else
+			   $min=$min_allowed;
 
-      if ($avail_seats == 0 && $min>0) {
-         // we show the message concerning 'no more seats' only if it is not after a successful booking
-         //if (!$message_is_result_of_booking)
-         //   $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
-      } else {
-         $ret_string .= "<input type='hidden' name='event_id[]' value='$event_id' />";
-         if (!$message_is_result_of_booking || ($message_is_result_of_booking && get_option('eme_rsvp_show_form_after_booking'))) {
-            // regular formfield replacement here, but indicate that it is for multibooking
-            $ret_string .= eme_replace_formfields_placeholders ($event,"",$format_entry,1);
-            if (has_filter('eme_add_booking_form_filter')) $ret_string=apply_filters('eme_add_booking_form_filter',$form_html);
-         }
-      }
+		   if ($avail_seats == 0 && $min>0) {
+			   // we show the message concerning 'no more seats' only if it is not after a successful booking
+			   //if (!$message_is_result_of_booking)
+			   //   $form_html.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
+		   } else {
+			   $form_html .= "<input type='hidden' name='event_id[]' value='$event_id' />";
+			   // regular formfield replacement here, but indicate that it is for multibooking
+			   $form_html .= eme_replace_formfields_placeholders ($event,"",$format_entry,1);
+		   }
+	   }
+	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_footer);
+	   $form_html .= "</form>";
+	   if (has_filter('eme_add_booking_form_filter')) $form_html=apply_filters('eme_add_booking_form_filter',$form_html);
    }
-   $ret_string .= eme_replace_multibooking_formfields_placeholders($format_footer);
-   $ret_string .= "</form>";
-   return $ret_string."</div>";
+
+   return $ret_string.$form_html."</div>";
 }
 
 function eme_add_booking_form_shortcode($atts) {
