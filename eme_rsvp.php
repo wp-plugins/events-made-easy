@@ -188,7 +188,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
    // after the add or delete booking, we do a POST to the same page using javascript to show just the result
    // this has 2 advantages: you can give arguments in the post, and refreshing the page won't repeat the booking action, just the post showing the result
    // a javascript redir using window.replace + GET would work too, but that leaves an ugly GET url
-   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_bookings' && isset($_POST['event_id'])) {
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_bookings' && isset($_POST['event_ids'])) {
       $event_ids = $_POST['event_id'];
       $events = eme_get_event($event_ids);
       $send_mail=1;
@@ -311,7 +311,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 			   //if (!$message_is_result_of_booking)
 			   //   $form_html.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
 		   } else {
-			   $form_html .= "<input type='hidden' name='event_id[]' value='$event_id' />";
+			   $form_html .= "<input type='hidden' name='event_ids[]' value='$event_id' />";
 			   // regular formfield replacement here, but indicate that it is for multibooking
 			   $form_html .= eme_replace_formfields_placeholders ($event,"",$format_entry,1);
 		   }
