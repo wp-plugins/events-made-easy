@@ -630,11 +630,24 @@ function eme_replace_multibooking_formfields_placeholders ($format) {
       } elseif (preg_match('/#_PHONE/', $result)) {
          $replacement = "<input $required_att type='text' name='bookerPhone' value='$bookerPhone' />";
       } elseif (preg_match('/#_COMMENT/', $result)) {
-         $replacement = "<textarea $required_att name='${var_prefix}bookerComment${var_postfix}'>$bookerComment</textarea>";
+         $replacement = "<textarea $required_att name='bookerComment'>$bookerComment</textarea>";
       } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_add_booking'><br /><input required='required' type='text' name='captcha_check' />";
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
          $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."' />";
+      } elseif (preg_match('/#_FIELDNAME\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $formfield = eme_get_formfield_byid($field_id);
+         $replacement = eme_trans_sanitize_html($formfield['field_name']);
+      } elseif (preg_match('/#_FIELD\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[1]);
+         $postfield_name="FIELD".$field_id;
+         if (isset($_POST[$postfield_name]))
+            $entered_val = stripslashes_deep($_POST[$postfield_name]);
+         else
+            $entered_val = "";
+         $replacement = eme_get_formfield_html($field_id,$entered_val,$required);
+
       } else {
          $found = 0;
       }

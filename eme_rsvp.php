@@ -619,8 +619,9 @@ function eme_multibook_seats($events, $send_mail, $format) {
                if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
             } elseif (preg_match ("/COMMENT/",$required_field)) {
                if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
-            } elseif (!isset($_POST['bookings'][$event_id][$required_field]) || empty($_POST['bookings'][$event_id][$required_field])) {
-               if (preg_match('/FIELD(.+)/', $required_field, $matches)) {
+            } elseif ((!isset($_POST['bookings'][$event_id][$required_field]) || empty($_POST['bookings'][$event_id][$required_field])) && 
+		      (!isset($_POST[$required_field]) || empty($_POST[$required_field]))) {
+               if (preg_match('/FIELD(\d+)/', $required_field, $matches)) {
                   $field_id = intval($matches[1]);
                   $formfield = eme_get_formfield_byid($field_id);
                   array_push($missing_required_fields, $formfield['field_name']);
@@ -868,7 +869,7 @@ function eme_book_seats($event, $send_mail) {
          } elseif (preg_match ("/COMMENT/",$required_field)) {
             if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
          } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
-            if (preg_match('/FIELD(.+)/', $required_field, $matches)) {
+            if (preg_match('/FIELD(\d+)/', $required_field, $matches)) {
                $field_id = intval($matches[1]);
                $formfield = eme_get_formfield_byid($field_id);
                array_push($missing_required_fields, $formfield['field_name']);
@@ -1192,7 +1193,7 @@ function eme_record_answers($booking_id) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
    foreach($_POST as $key =>$value) {
-		if (preg_match('/FIELD(.+)/', $key, $matches)) { 
+      if (preg_match('/FIELD(\d+)/', $key, $matches)) { 
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
          // for multivalue fields like checkbox, the value is in fact an array
