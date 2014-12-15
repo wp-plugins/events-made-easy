@@ -1162,46 +1162,57 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
       $booking['booking_approved']=1;
    }
 
-   // checking whether the booker has already booked places
-// $sql = "SELECT * FROM $bookings_table WHERE event_id = '$event_id' and person_id = '$person_id'; ";
-// //echo $sql;
-// $previously_booked = $wpdb->get_row($sql);
-// if ($previously_booked) {
-//    $total_booked_seats = $previously_booked->booking_seats + $seats;
-//    $where = array();
-//    $where['booking_id'] =$previously_booked->booking_id;
-//    $fields['booking_seats'] = $total_booked_seats;
-//    $wpdb->update($bookings_table, $fields, $where);
-// } else {
-      //$sql = "INSERT INTO $bookings_table (event_id, person_id, booking_seats,booking_comment) VALUES ($event_id, $person_id, $seats,'$comment')";
-      //$wpdb->query($sql);
-
-      if ($wpdb->insert($bookings_table,$booking)) {
-         $booking_id = $wpdb->insert_id;
-         $booking['booking_id'] = $booking_id;
-         eme_record_answers($booking_id);
-         // now that everything is (or should be) correctly entered in the db, execute possible actions for the new booking
-         if (has_action('eme_insert_rsvp_action')) do_action('eme_insert_rsvp_action',$booking);
-         return $booking['booking_id'];
-      } else {
-         return false;
-      }
-// }
+   if ($wpdb->insert($bookings_table,$booking)) {
+	   $booking_id = $wpdb->insert_id;
+	   $booking['booking_id'] = $booking_id;
+	   eme_record_answers($booking_id,$booking['event_id']);
+	   // now that everything is (or should be) correctly entered in the db, execute possible actions for the new booking
+	   if (has_action('eme_insert_rsvp_action')) do_action('eme_insert_rsvp_action',$booking);
+	   return $booking['booking_id'];
+   } else {
+	   return false;
+   }
 }
 
-function eme_record_answers($booking_id) {
+function eme_record_answers($booking_id,$event_id) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
+   $fields_seen=array();
+
+   // first do the multibooking answers if any
+   if (isset($_POST['bookings'][$event_id])) {
+	   foreach($_POST['bookings'][$event_id] as $key =>$value) {
+		   if (preg_match('/^FIELD(\d+)$/', $key, $matches)) { 
+			   $field_id = intval($matches[1]);
+			   $fields_seen[]=$field_id;
+			   $formfield = eme_get_formfield_byid($field_id);
+			   if ($formfield) {
+				   // for multivalue fields like checkbox, the value is in fact an array
+				   // to store it, we make it a simple "multi" string using eme_convert_array2multi, so later on when we need to parse the values 
+				   // (when editing a booking), we can re-convert it to an array with eme_convert_multi2array (see eme_formfields.php)
+				   if (is_array($value)) $value=eme_convert_array2multi($value);
+				   $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
+				   $wpdb->query($sql);
+			   }
+		   }
+	   }
+   }
+
    foreach($_POST as $key =>$value) {
-      if (preg_match('/FIELD(\d+)/', $key, $matches)) { 
+      if (preg_match('/^FIELD(\d+)$/', $key, $matches)) { 
          $field_id = intval($matches[1]);
+	 // the value was already stored for a multibooking, so don't do it again
+	 if (in_array($field_id,$fields_seen))
+		continue;
          $formfield = eme_get_formfield_byid($field_id);
-         // for multivalue fields like checkbox, the value is in fact an array
-         // to store it, we make it a simple "multi" string using eme_convert_array2multi, so later on when we need to parse the values 
-         // (when editing a booking), we can re-convert it to an array with eme_convert_multi2array (see eme_formfields.php)
-         if (is_array($value)) $value=eme_convert_array2multi($value);
-         $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
-         $wpdb->query($sql);
+	 if ($formfield) {
+		 // for multivalue fields like checkbox, the value is in fact an array
+		 // to store it, we make it a simple "multi" string using eme_convert_array2multi, so later on when we need to parse the values 
+		 // (when editing a booking), we can re-convert it to an array with eme_convert_multi2array (see eme_formfields.php)
+		 if (is_array($value)) $value=eme_convert_array2multi($value);
+		 $sql = $wpdb->prepare("INSERT INTO $answers_table (booking_id,field_name,answer) VALUES (%d,%s,%s)",$booking_id,$formfield['field_name'],stripslashes($value));
+		 $wpdb->query($sql);
+	 }
       }
    }
 }
