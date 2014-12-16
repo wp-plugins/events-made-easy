@@ -3,7 +3,7 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: 1.5.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
