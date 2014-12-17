@@ -487,18 +487,26 @@ function eme_date_calc($calc,$date="") {
 }
 
 function eme_detect_lang() {
+   $language="";
    if (function_exists('qtrans_getLanguage')) {
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure
       $language=qtrans_getLanguage();
    } elseif (function_exists('ppqtrans_getLanguage')) {
       $language=ppqtrans_getLanguage();
+   } elseif (function_exists('pll_current_language')) {
+      $languages=pll_languages_list();
+      foreach ($languages as $tmp_lang) {
+         if (preg_match("/^$tmp_lang\/|\/$tmp_lang\//",$_SERVER['REQUEST_URI']))
+               $language=$tmp_lang;
+      }
+      if (empty($language))
+         $language=pll_current_language('slug');
    } elseif (defined('ICL_LANGUAGE_CODE')) {
+      // Both polylang and wpml define this constant, so check polylang first (above)
       // if permalinks are on, $_GET doesn't contain lang as a parameter
       // so we get it like this to be sure
       $language=ICL_LANGUAGE_CODE;
-   } elseif (function_exists('pll_current_language')) {
-      $language=pll_current_language('locale');
    } elseif (isset($_GET['lang'])) {
       $language=eme_strip_tags($_GET['lang']);
    } else {

@@ -2080,6 +2080,8 @@ function eme_trans_sanitize_html( $value, $lang='') {
 }
 
 function eme_translate ( $value, $lang='') {
+   //if (empty($lang))
+   //   $lang=eme_detect_lang();
    if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage') && function_exists('qtrans_use')) {
       if (empty($lang))
          return qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
