@@ -58,8 +58,8 @@ function eme_get_recurrence_days($recurrence){
       if($recurrence['recurrence_freq'] == 'monthly') { 
          $monthday = date("j", $cycle_date); 
          $month = date("n", $cycle_date);
-         // if recurrence_byweekno=none ==> means to use the startday as repeating day
-         if ( $recurrence['recurrence_byweekno'] == 'none') {
+         // if recurrence_byweekno=0 ==> means to use the startday as repeating day
+         if ( $recurrence['recurrence_byweekno'] == 0) {
             if ($monthday == $start_monthday) {
                if ($monthcounter % $recurrence['recurrence_interval'] == 0)
                   array_push($matching_days, $cycle_date);

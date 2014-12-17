@@ -75,6 +75,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: #_RSVPEND was incorrect
 * Bugfix: if the period was "daily" in the list widget and 2 events were on the same day but a different month, the new month info wasn't shown, making it look as the second event happened in the same month as the first
 * Bugfix: translation url fixes
+* Bugfix: recurrence defined as "start day" was not working ok
 * Code change: small code change to make multi-bookings more wordpress 404-proof
 
 = 1.5.16 =
