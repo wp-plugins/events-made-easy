@@ -547,7 +547,7 @@ function eme_people_table($message="") {
             jQuery('#eme-people-table').dataTable( {
                <?php
                // jquery datatables locale loading
-               $locale_code = get_locale();
+               $locale_code = eme_get_locale();
                $locale_file = EME_PLUGIN_DIR. "js/jquery-datatables/i18n/$locale_code.json";
                $locale_file_url = EME_PLUGIN_URL. "js/jquery-datatables/i18n/$locale_code.json";
                if ($locale_code != "en_US" && file_exists($locale_file)) {

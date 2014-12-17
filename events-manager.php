@@ -204,8 +204,12 @@ define("FDGG_SANDBOX_URL","https://connect.firstdataglobalgateway.com/IPGConnect
 define('DEBUG', false);
 
 function eme_load_textdomain() {
+   $domain='eme';
    $thisDir = dirname( plugin_basename( __FILE__ ) );
-   load_plugin_textdomain('eme', false, $thisDir.'/langs'); 
+   $locale = apply_filters('plugin_locale', eme_get_locale(), $domain);
+   load_textdomain($domain, WP_LANG_DIR.'/my-plugin/'.$domain.'-'.$locale.'.mo');
+   load_textdomain($domain, WP_PLUGIN_DIR . '/'.$thisDir.'/langs/'.$domain.'-'.$locale.'.mo');
+   //load_plugin_textdomain($domain, false, $thisDir.'/langs'); 
 }
 
 // To enable activation through the activate function

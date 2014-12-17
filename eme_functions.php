@@ -486,6 +486,22 @@ function eme_date_calc($calc,$date="") {
       return date("Y-m-d",strtotime($calc,strtotime($date)));
 }
 
+function eme_get_locale() {
+   if (function_exists('pll_current_language')) {
+      $locale="";
+      $languages=pll_languages_list();
+      foreach ($languages as $tmp_lang) {
+         if (preg_match("/^$tmp_lang\/|\/$tmp_lang\//",$_SERVER['REQUEST_URI']))
+               $locale=$tmp_lang.'_'.strtoupper($tmp_lang);
+      }
+      if (empty($locale))
+         $locale=pll_current_language('locale');
+   } else {
+      $locale=get_locale();
+   }
+   return $locale;
+}
+
 function eme_detect_lang() {
    $language="";
    if (function_exists('qtrans_getLanguage')) {

@@ -120,7 +120,7 @@ function eme_get_calendar($args="") {
       list($sMonthName, $iDaysInMonth) = explode('-', eme_localised_unixdate($iTimestamp,'M-t'));
    }
    // take into account some locale info: some always best show full month name, some show month after year, some have a year suffix
-   $locale_code = substr ( get_locale (), 0, 2 );
+   $locale_code = substr ( eme_get_locale (), 0, 2 );
    $showMonthAfterYear=0;
    $yearSuffix="";
    switch($locale_code) { 
