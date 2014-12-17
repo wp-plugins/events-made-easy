@@ -1358,7 +1358,7 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
 }
 
 function eme_add_directions_form($location) {
-   $locale_code = substr ( eme_get_locale (), 0, 2 );
+   $locale_code = substr ( get_locale (), 0, 2 );
    $res = "";
    if (isset($location['location_address']) && isset($location['location_town'])) {
       $res .= '<form action="//maps.google.com/maps" method="get" target="_blank" style="text-align:left;">';

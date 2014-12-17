@@ -186,7 +186,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
             wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
             wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
             // jquery ui locales are with dashes, not underscores
-            $locale_code = eme_get_locale();
+            $locale_code = get_locale();
             $locale_code = preg_replace( "/_/","-", $locale_code );
             $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
             $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";

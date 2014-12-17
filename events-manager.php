@@ -203,13 +203,14 @@ define("FDGG_SANDBOX_URL","https://connect.firstdataglobalgateway.com/IPGConnect
 // if you are hacking this plugin, set to TRUE, a log will show in admin pages
 define('DEBUG', false);
 
+// make sure the locale is set correct asap
+add_filter('locale','eme_redefine_locale',10);  
 function eme_load_textdomain() {
    $domain='eme';
    $thisDir = dirname( plugin_basename( __FILE__ ) );
-   $locale = apply_filters('plugin_locale', eme_get_locale(), $domain);
-   load_textdomain($domain, WP_LANG_DIR.'/my-plugin/'.$domain.'-'.$locale.'.mo');
-   load_textdomain($domain, WP_PLUGIN_DIR . '/'.$thisDir.'/langs/'.$domain.'-'.$locale.'.mo');
-   //load_plugin_textdomain($domain, false, $thisDir.'/langs'); 
+   $locale = get_locale();
+   load_textdomain($domain, WP_LANG_DIR.'/events-made-easy/'.$domain.'-'.$locale.'.mo');
+   load_plugin_textdomain($domain, false, $thisDir.'/langs'); 
 }
 
 // To enable activation through the activate function

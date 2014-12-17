@@ -486,7 +486,7 @@ function eme_date_calc($calc,$date="") {
       return date("Y-m-d",strtotime($calc,strtotime($date)));
 }
 
-function eme_get_locale() {
+function eme_redefine_locale($locale) {
    if (function_exists('pll_current_language')) {
       $locale="";
       $languages=pll_languages_list();
@@ -496,8 +496,6 @@ function eme_get_locale() {
       }
       if (empty($locale))
          $locale=pll_current_language('locale');
-   } else {
-      $locale=get_locale();
    }
    return $locale;
 }

@@ -2201,7 +2201,7 @@ function eme_events_table($message="",$scope="future") {
    jQuery(document).ready( function() {
          jQuery('#eme_admin_events').dataTable( {
 <?php
-   $locale_code = eme_get_locale();
+   $locale_code = get_locale();
    $locale_file = EME_PLUGIN_DIR. "js/jquery-datatables/i18n/$locale_code.json";
    $locale_file_url = EME_PLUGIN_URL. "js/jquery-datatables/i18n/$locale_code.json";
    if ($locale_code != "en_US" && file_exists($locale_file)) {
@@ -2797,7 +2797,7 @@ function eme_admin_event_script() {
       $show24Hours = 'false';
    
    // jquery ui locales are with dashes, not underscores
-   $locale_code = eme_get_locale();
+   $locale_code = get_locale();
    $use_select_for_locations = get_option('eme_use_select_for_locations')?1:0;
    $lang = eme_detect_lang();
    if (!empty($lang)) {
@@ -3900,7 +3900,7 @@ function eme_admin_enqueue_js(){
       wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
       wp_enqueue_script('jquery-ui-autocomplete');
       // jquery ui locales are with dashes, not underscores
-      $locale_code = eme_get_locale();
+      $locale_code = get_locale();
       $locale_code = preg_replace( "/_/","-", $locale_code );
       $locale_file = EME_PLUGIN_DIR. "js/jquery-datepick/jquery.datepick-$locale_code.js";
       $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
