@@ -487,9 +487,10 @@ function eme_date_calc($calc,$date="") {
 }
 
 function eme_redefine_locale($locale) {
-   if (function_exists('pll_current_language')) {
-      $locale="";
+   if (function_exists('pll_current_language') && function_exists('pll_languages_list')) {
       $languages=pll_languages_list();
+      if (!$languages) return $locale;
+      $locale="";
       foreach ($languages as $tmp_lang) {
          if (preg_match("/^$tmp_lang\/|\/$tmp_lang\//",$_SERVER['REQUEST_URI']))
                $locale=$tmp_lang.'_'.strtoupper($tmp_lang);
