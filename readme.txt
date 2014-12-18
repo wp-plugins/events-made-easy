@@ -71,6 +71,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added action eme_delete_recurrence_action
 * Feature: allow custom fields also in the header/footer for multi-booking format templates, but use with care: will only work correctly for 'identical' events (events with the same custom fields)
 * Feature: support polylang, but only if the setting 'The language is set from content' is choosen
+* Feature: added filter eme_events_format_prefilter, a initial filter for the events format, in case people want to change anything before the placeholders get replaced
 * Improvement: support custom translations files in wp-content/languages/ (WP_LANG_DIR setting)
 * Bugfix: #_RSVPEND was incorrect
 * Bugfix: if the period was "daily" in the list widget and 2 events were on the same day but a different month, the new month info wasn't shown, making it look as the second event happened in the same month as the first
