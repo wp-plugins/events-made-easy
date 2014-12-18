@@ -210,7 +210,8 @@ function eme_load_textdomain() {
    $thisDir = dirname( plugin_basename( __FILE__ ) );
    $locale = get_locale();
    // support custom translations first
-   load_textdomain($domain, WP_LANG_DIR.'/events-made-easy/'.$domain.'-'.$locale.'.mo');
+   $locale = apply_filters('plugin_locale', get_locale(), $domain);
+   load_textdomain($domain, WP_LANG_DIR.'/'.$thisDir.'/'.$domain.'-'.$locale.'.mo');
    // if the above succeeds, the following with not load the language file again
    load_plugin_textdomain($domain, false, $thisDir.'/langs'); 
 }
