@@ -1888,7 +1888,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $rsvp_number_days=$event['rsvp_number_days'];
                $rsvp_number_hours=$event['rsvp_number_hours'];
                $rsvp_end_datetime = strtotime("-$rsvp_number_days days -$rsvp_number_hours hours",strtotime($event['event_start_date']." ".$event['event_start_time']));
-               $rsvp_end_date = eme_localised_unixdate($rsvp_end_datetime);
+               $rsvp_end_date = eme_localised_unixdatetime($rsvp_end_datetime);
                $rsvp_end_time = eme_localised_unixtime($rsvp_end_datetime);
                $replacement = $rsvp_end_date." ".$rsvp_end_time;
          }

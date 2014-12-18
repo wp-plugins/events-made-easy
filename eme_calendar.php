@@ -115,9 +115,9 @@ function eme_get_calendar($args="") {
    list($sMonthName, $iDaysInMonth) = explode('-', date('F-t', $iTimestamp));
    // Get friendly month name
    if ($full) {
-      list($sMonthName, $iDaysInMonth) = explode('-', eme_localised_unixdate($iTimestamp,'F-t'));
+      list($sMonthName, $iDaysInMonth) = explode('-', eme_localised_unixdatetime($iTimestamp,'F-t'));
    } else {
-      list($sMonthName, $iDaysInMonth) = explode('-', eme_localised_unixdate($iTimestamp,'M-t'));
+      list($sMonthName, $iDaysInMonth) = explode('-', eme_localised_unixdatetime($iTimestamp,'M-t'));
    }
    // take into account some locale info: some always best show full month name, some show month after year, some have a year suffix
    $locale_code = substr ( get_locale (), 0, 2 );
@@ -125,9 +125,9 @@ function eme_get_calendar($args="") {
    $yearSuffix="";
    switch($locale_code) { 
       case "hu": $showMonthAfterYear=1;break;
-      case "ja": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdate($iTimestamp,'F');$yearSuffix="年";break;
-      case "ko": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdate($iTimestamp,'F');$yearSuffix="년";break;
-      case "zh": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdate($iTimestamp,'F');$yearSuffix="年";break;
+      case "ja": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdatetime($iTimestamp,'F');$yearSuffix="年";break;
+      case "ko": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdatetime($iTimestamp,'F');$yearSuffix="년";break;
+      case "zh": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdatetime($iTimestamp,'F');$yearSuffix="年";break;
    }
    if ($showMonthAfterYear)
          $cal_datestring="$iSelectedYear$yearSuffix $sMonthName";
