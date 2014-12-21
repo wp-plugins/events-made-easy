@@ -2006,6 +2006,9 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             }
          }
 
+      } elseif (preg_match('/#_LOCALE/', $result)) {
+         $replacement = get_locale();
+
       } else {
          $found = 0;
       }
