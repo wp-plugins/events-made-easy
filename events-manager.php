@@ -1122,7 +1122,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
    global $eme_need_gmap_js, $booking_id_done;
 
    // an initial filter for the format, in case people want to change anything before the placeholders get replaced
-   if (has_filter('eme_events_format_prefilter')) $format=apply_filters('eme_events_format_prefilter',$format);
+   if (has_filter('eme_events_format_prefilter')) $format=apply_filters('eme_events_format_prefilter',$format, $event);
 
    // some variables we'll use further down more than once
    $current_userid=get_current_user_id();
