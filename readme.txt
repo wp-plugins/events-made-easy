@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.5.17
+Stable tag: 1.5.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,16 +67,21 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.17 =
+= 1.5.18 =
 * Feature: added action eme_delete_recurrence_action
 * Feature: allow custom fields also in the header/footer for multi-booking format templates, but use with care: will only work correctly for 'identical' events (events with the same custom fields)
 * Feature: support polylang, but only if the setting 'The language is set from content' is choosen
-* Improvement: support custom translations files in wp-content/languages/ (WP_LANG_DIR setting)
+* Feature: added filter eme_events_format_prefilter, a initial filter for the events format, in case people want to change anything before the placeholders get replaced. Has 2 arguments: $format and $event
+* Feature: added placeholder #_LOCALE, returning the currently chosen locale. Can be used in multilanguage setups, so you can change content of anything inside an event, location or form based on the locale active at that time (if no language tags are provided by the language plugin you're using)
+* Improvement: support custom translations files in wp-content/languages/ (WP_LANG_DIR setting), so changed translation files are not overwritten when updating EME
 * Bugfix: #_RSVPEND was incorrect
 * Bugfix: if the period was "daily" in the list widget and 2 events were on the same day but a different month, the new month info wasn't shown, making it look as the second event happened in the same month as the first
 * Bugfix: translation url fixes
 * Bugfix: recurrence defined as "start day" was not working ok
 * Code change: small code change to make multi-bookings more wordpress 404-proof
+
+= 1.5.17 =
+* Bugfix: #_RSVPEND was incorrect
 
 = 1.5.16 =
 * Improvement: each category now also has a SEO slug (albeit not editable yet)
