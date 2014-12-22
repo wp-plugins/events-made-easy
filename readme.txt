@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.5.17
+Stable tag: 1.5.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.17 =
+= 1.5.18 =
 * Feature: added action eme_delete_recurrence_action
 * Feature: allow custom fields also in the header/footer for multi-booking format templates, but use with care: will only work correctly for 'identical' events (events with the same custom fields)
 * Feature: support polylang, but only if the setting 'The language is set from content' is choosen
@@ -79,6 +79,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: translation url fixes
 * Bugfix: recurrence defined as "start day" was not working ok
 * Code change: small code change to make multi-bookings more wordpress 404-proof
+
+= 1.5.17 =
+* Bugfix: #_RSVPEND was incorrect
 
 = 1.5.16 =
 * Improvement: each category now also has a SEO slug (albeit not editable yet)
