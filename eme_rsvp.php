@@ -1823,9 +1823,9 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
-      } elseif (($deprecated && preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)(\d+)/', $result, $matches)) ||
-                preg_match('/#_(RESPSPACES|SPACES|BOOKEDSEATS)\{(\d+)\}/', $result, $matches)) {
-         $field_id = intval($matches[2])-1;
+      } elseif (($deprecated && preg_match('/#_RESPSPACES(\d+)/', $result, $matches)) ||
+                preg_match('/#_RESPSPACES\{(\d+)\}/', $result, $matches)) {
+         $field_id = intval($matches[1])-1;
          if (eme_is_multi($booking['booking_price'])) {
              $seats=eme_convert_multi2array($booking['booking_seats_mp']);
              if (array_key_exists($field_id,$seats))
@@ -1864,9 +1864,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_CHARGE\{(.+)\}$/', $result, $matches)) {
          $price = eme_get_total_booking_price($event,$booking);
          $replacement = eme_payment_extra_charge($price,get_option('eme_'.$matches[1].'_cost'));
-      } elseif (preg_match('/#_RESPSPACES$|#_SPACES$|#_BOOKEDSEATS$/', $result)) {
-         $replacement = eme_get_multitotal($booking['booking_seats']);
-      } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)/', $result)) {
+      } elseif (preg_match('/#_RESPSPACES$/', $result)) {
          $replacement = eme_get_multitotal($booking['booking_seats']);
       } elseif (preg_match('/#_BOOKINGCREATIONDATE/', $result)) {
          $replacement = eme_localised_date($booking['creation_date']);
@@ -1990,8 +1988,6 @@ function eme_replace_attendees_placeholders($format, $event, $attendee, $target=
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
 
-      } elseif (preg_match('/#_USER_(RESERVEDSPACES|BOOKEDSEATS)/', $result)) {
-         $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event['event_id']);
       } elseif (preg_match('/#_ATTENDSPACES$/', $result)) {
          $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event['event_id']);
       } else {
