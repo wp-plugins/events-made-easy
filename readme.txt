@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.19 =
+* Feature: rsvp end date/time restriction can now be negative, so you can say "Allow RSVP until -2 days -1 hours before the event starts, indicating the rsvp can go on for 2 days and 1 hour AFTER the event has started. The rsvp end can never go beyond the event end date itself of course.
+
 = 1.5.18 =
 * Feature: added action eme_delete_recurrence_action
 * Feature: allow custom fields also in the header/footer for multi-booking format templates, but use with care: will only work correctly for 'identical' events (events with the same custom fields)

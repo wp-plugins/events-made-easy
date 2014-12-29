@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 67);
+define('EME_DB_VERSION', 68);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -604,8 +604,8 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'use_2co', "alter table $table_name add use_2co bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_webmoney', "alter table $table_name add use_webmoney bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_fdgg', "alter table $table_name add use_fdgg bool DEFAULT 0;");
-      maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint unsigned DEFAULT 0;");
-      maybe_add_column($table_name, 'rsvp_number_hours', "alter table $table_name add rsvp_number_hours tinyint unsigned DEFAULT 0;");
+      maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint DEFAULT 0;");
+      maybe_add_column($table_name, 'rsvp_number_hours', "alter table $table_name add rsvp_number_hours tinyint DEFAULT 0;");
       maybe_add_column($table_name, 'price', "alter table $table_name add price text DEFAULT NULL;");
       maybe_add_column($table_name, 'currency', "alter table $table_name add currency text DEFAULT NULL;");
       maybe_add_column($table_name, 'event_seats', "alter table $table_name add event_seats text DEFAULT NULL;");
@@ -666,6 +666,10 @@ function eme_create_events_table($charset,$collate) {
       }
       if ($db_version<38) {
          $wpdb->query("ALTER TABLE $table_name MODIFY event_seats text default NULL;");
+      }
+      if ($db_version<68) {
+         $wpdb->query("ALTER TABLE $table_name MODIFY rsvp_number_days tinyint DEFAULT 0;");
+         $wpdb->query("ALTER TABLE $table_name MODIFY rsvp_number_hours tinyint DEFAULT 0;");
       }
    }
 }

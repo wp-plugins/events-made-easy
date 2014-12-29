@@ -109,11 +109,16 @@ function eme_add_booking_form($event_id,$show_message=1) {
    if ($show_message && !empty($form_result_message))
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
 
+   $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+   $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
    if ($event['event_properties']['rsvp_end_target']=='start')
-      $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+      $event_rsvp_datetime = $event_rsvp_startdatetime;
    else
-      $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
-   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
+      $event_rsvp_datetime = $event_rsvp_enddatetime;
+
+   $cur_time=time();
+   if ($cur_time+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ||
+       $cur_time>=$event_rsvp_enddatetime) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
@@ -284,13 +289,18 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 
 	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_header);
 
+      $cur_time=time();
 	   foreach ($events as $event) {
 		   $event_id=$event['event_id'];
+         $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+         $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
 		   if ($event['event_properties']['rsvp_end_target']=='start')
-			   $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+			   $event_rsvp_datetime = $event_rsvp_startdatetime;
 		   else
-			   $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
-		   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
+			   $event_rsvp_datetime = $event_rsvp_enddatetime;
+
+		   if ($cur_time+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ||
+             $cur_time>=$event_rsvp_enddatetime) {
 			   //$form_html.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
 			   continue;
 		   }
@@ -422,11 +432,16 @@ function eme_delete_booking_form($event_id,$show_message=1) {
       $form_result_message = eme_sanitize_html($_POST['eme_message']);
    }
 
+   $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+   $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
    if ($event['event_properties']['rsvp_end_target']=='start')
-      $event_rsvp_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+      $event_rsvp_datetime = $event_rsvp_startdatetime;
    else
-      $event_rsvp_datetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
-   if (time()+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ) {
+      $event_rsvp_datetime = $event_rsvp_enddatetime;
+
+   $cur_time=time();
+   if ($cur_time+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime || 
+       $cur_time>=$event_rsvp_enddatetime) {
       $ret_string = "<div id='eme-rsvp-message'>";
       if(!empty($form_result_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
