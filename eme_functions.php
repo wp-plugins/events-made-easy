@@ -502,6 +502,18 @@ function eme_redefine_locale($locale) {
    return $locale;
 }
 
+function eme_detect_lang_js_trans_function() {
+   if (function_exists('qtrans_getLanguage')) {
+      $function_name="qtrans_use";
+   } elseif (function_exists('ppqtrans_getLanguage')) {
+      $function_name="pqtrans_use";
+   } elseif (function_exists('qtranxf_getLanguage')) {
+      $function_name="qtranxf_use";
+   } else {
+   }
+   return $function_name;
+}
+
 function eme_detect_lang() {
    $language="";
    if (function_exists('qtrans_getLanguage')) {
@@ -510,6 +522,8 @@ function eme_detect_lang() {
       $language=qtrans_getLanguage();
    } elseif (function_exists('ppqtrans_getLanguage')) {
       $language=ppqtrans_getLanguage();
+   } elseif (function_exists('qtranxf_getLanguage')) {
+      $language=qtranxf_getLanguage();
    } elseif (function_exists('pll_current_language')) {
       $languages=pll_languages_list();
       foreach ($languages as $tmp_lang) {
@@ -540,6 +554,8 @@ function eme_lang_url_mode() {
       $url_mode=get_option('qtranslate_url_mode');
    } elseif (function_exists('ppqtrans_getLanguage')) {
       $url_mode=get_option('pqtranslate_url_mode');
+   } elseif (function_exists('qtranxf_getLanguage')) {
+      $url_mode=get_option('qtranslate_url_mode');
    } elseif (function_exists('pll_current_language')) {
       $url_mode=2;
    }

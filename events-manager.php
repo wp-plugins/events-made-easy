@@ -2110,6 +2110,11 @@ function eme_translate ( $value, $lang='') {
          return ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
       else
          return ppqtrans_use($lang,$value);
+   } elseif (function_exists('qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage') && function_exists('qtranxf_use')) {
+      if (empty($lang))
+         return qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage($value);
+      else
+         return qtranxf_use($lang,$value);
    } elseif (function_exists('pll_translate_string') && function_exists('pll__')) {
       if (empty($lang))
          return pll__($value);

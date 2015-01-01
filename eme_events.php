@@ -3323,21 +3323,9 @@ function eme_admin_map_script() {
 ?>
 <script src="//maps.google.com/maps/api/js?v=3.16&amp;sensor=false" type="text/javascript"></script>
 <script type="text/javascript">
-         //<![CDATA[
-          <?php
-          if (function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) {
-          ?>
-             var lang = '<?php echo qtrans_getLanguage(); ?>';
-             var use_qtrans=1;
-             var use_ppqtrans=0;
-          <?php } elseif (function_exists('ppqtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) { ?>
-             var lang = '<?php echo ppqtrans_getLanguage(); ?>';
-             var use_qtrans=0;
-             var use_ppqtrans=1;
-          <?php } else { ?>
-             var use_qtrans=0;
-             var use_ppqtrans=0;
-          <?php } ?>
+          //<![CDATA[
+          var lang = '<?php echo eme_detect_lang(); ?>';
+          var lang_trans_function = '<?php echo eme_detect_lang_js_trans_function(); ?>';
           function loadMap(location, town, address) {
             var latlng = new google.maps.LatLng(-34.397, 150.644);
             var myOptions = {
@@ -3358,10 +3346,8 @@ function eme_admin_map_script() {
             } else {
                searchKey =  location + ", " + town;
             }
-            if (use_qtrans) {
-               location=qtrans_use(lang,location);
-            } else if (use_ppqtrans) {
-               location=ppqtrans_use(lang,location);
+            if (lang!='' && lang_trans_function!='') {
+               location=<?php echo eme_detect_lang_js_trans_function(); ?>(lang,location);
             }
                
             if (address !="" || town!="") {
@@ -3398,10 +3384,8 @@ function eme_admin_map_script() {
             if (long === undefined) {
                long = 0;
             }
-            if (use_qtrans) {
-               location=qtrans_use(lang,location);
-            } else if (use_ppqtrans) {
-               location=ppqtrans_use(lang,location);
+            if (lang!='' && lang_trans_function!='') {
+               location=<?php echo eme_detect_lang_js_trans_function(); ?>(lang,location);
             }
                
             if (lat != 0 && long != 0) {
@@ -3465,7 +3449,7 @@ function eme_admin_map_script() {
             jQuery('#eme-admin-map-not-found').show();
             <?php 
             $use_select_for_locations = get_option('eme_use_select_for_locations');
-            // qtranslate there? Then we need the select
+            // translate plugin there? Then we need the select
             $lang = eme_detect_lang();
             if (!empty($lang)) {
                $use_select_for_locations=1;
