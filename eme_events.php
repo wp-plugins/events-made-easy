@@ -1682,7 +1682,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = " (event_start_date = '$tomorrow')";
    } elseif ($scope == "ongoing") {
       // only shows ongoing events, for this we try to use the date and time, but it might be incorrect since there's no user timezone info
-      $conditions[] = " (event_start_date <='$today' AND event_start_time<='$this_time' AND event_end_date >= '$today' AND event_end_time>='$this_time')";
+      $conditions[] = " (CONCAT(event_start_date,' ',event_start_time)<='$today $this_time' AND CONCAT(event_end_date,' ',event_end_time)>= '$today $this_time')";
    } else {
       if ($scope != "all")
          $scope = "future";
