@@ -626,7 +626,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
 
       $missing_required_fields=array();
       // check all required fields
-      if (!is_admin() && !get_option('eme_rsvp_check_required_fields')) {
+      if (!is_admin() && get_option('eme_rsvp_check_required_fields')) {
          foreach ($all_required_fields as $required_field) {
             if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
                // we already check these seperately, and EMAIL regex also catches _HTML5_EMAIL
@@ -875,7 +875,7 @@ function eme_book_seats($event, $send_mail) {
 
    $missing_required_fields=array();
    // check all required fields
-   if (!is_admin() && !get_option('eme_rsvp_check_required_fields')) {
+   if (!is_admin() && get_option('eme_rsvp_check_required_fields')) {
       foreach ($all_required_fields as $required_field) {
          if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
             // we already check these seperately, and EMAIL regex also catches _HTML5_EMAIL
