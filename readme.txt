@@ -73,6 +73,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: support qtranslate-X
 * Feature: added placeholders #_APPROVEDSPACES and #_APPROVEDSPACES{xx} (see the doc)
 * Bugfix: the required fields were not being checked in the backend, so browsers not supporting the html5-required tag could input empty custom field info
+* Improvement: German language updates, thanks to Joerg Knoerchen
 
 = 1.5.18 =
 * Feature: added action eme_delete_recurrence_action
