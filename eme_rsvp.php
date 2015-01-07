@@ -159,7 +159,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
    
 }
 
-function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id_entry,$template_id_footer=0,$show_message=1) {
+function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id_entry,$template_id_footer=0,$eme_register_empty_seats=0,$show_message=1) {
    // we need template ids
    $format_header = eme_get_template_format($template_id_header);
    $format_entry = eme_get_template_format($template_id_entry);
@@ -285,6 +285,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 	   // it's a bot, since a humand can't see this (using CSS to render it invisible)
 	   $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
 		   <input type='hidden' name='eme_eventAction' value='add_bookings' />
+		   <input type='hidden' name='eme_register_empty_seats' value='<?php echo $eme_register_empty_seats;?>' />
 		   ";
 
 	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_header);
@@ -341,7 +342,7 @@ function eme_add_booking_form_shortcode($atts) {
 }
 
 function eme_add_multibooking_form_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id'=>0,'recurrence_id'=>0,'category_id'=>0,'template_id_header'=>0,'template_id'=>0,'template_id_footer'=>0), $atts));
+   extract ( shortcode_atts ( array ('id'=>0,'recurrence_id'=>0,'category_id'=>0,'template_id_header'=>0,'template_id'=>0,'template_id_footer'=>0,'eme_register_empty_seats'=>0), $atts));
    $ids=explode(",", $id);
    if ($recurrence_id) {
       // we only want future events, so set the second arg to 1
@@ -352,7 +353,7 @@ function eme_add_multibooking_form_shortcode($atts) {
       $ids=eme_get_category_eventids($category_id,1);
    }
    if ($ids && $template_id_header && $template_id && $template_id_footer)
-      return eme_add_multibooking_form($ids,$template_id_header,$template_id,$template_id_footer);
+      return eme_add_multibooking_form($ids,$template_id_header,$template_id,$template_id_footer,$eme_register_empty_seats);
 }
 
 function eme_booking_list_shortcode($atts) {
@@ -594,6 +595,10 @@ function eme_multibook_seats($events, $send_mail, $format) {
          $bookedSeats = intval($_POST['bookings'][$event_id]['bookedSeats']);
       else
          $bookedSeats = 0;
+
+      // only register empty seats if wanted
+      if (!isset($_POST['eme_register_empty_seats']) || intval($_POST['eme_register_empty_seats'])==0) 
+         continue;
 
       // for multiple prices, we have multiple booked Seats as well
       // the next foreach is only valid when called from the frontend
