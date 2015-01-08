@@ -285,7 +285,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 	   // it's a bot, since a humand can't see this (using CSS to render it invisible)
 	   $form_html .= "<span id='honeypot_check'>Keep this field blank: <input type='text' name='honeypot_check' value='' /></span>
 		   <input type='hidden' name='eme_eventAction' value='add_bookings' />
-		   <input type='hidden' name='eme_register_empty_seats' value='<?php echo $eme_register_empty_seats;?>' />
+		   <input type='hidden' name='eme_register_empty_seats' value='$eme_register_empty_seats' />
 		   ";
 
 	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_header);
@@ -597,7 +597,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
          $bookedSeats = 0;
 
       // only register empty seats if wanted
-      if (!isset($_POST['eme_register_empty_seats']) || intval($_POST['eme_register_empty_seats'])==0) 
+      if ($bookedSeats==0 && (!isset($_POST['eme_register_empty_seats']) || intval($_POST['eme_register_empty_seats'])==0))
          continue;
 
       // for multiple prices, we have multiple booked Seats as well

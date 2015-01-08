@@ -510,6 +510,7 @@ function eme_detect_lang_js_trans_function() {
    } elseif (function_exists('qtranxf_getLanguage')) {
       $function_name="qtranxf_use";
    } else {
+      $function_name="";
    }
    return $function_name;
 }
