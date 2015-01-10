@@ -695,6 +695,11 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];
+   if ($event['event_properties']['take_attendance']) {
+      $min_allowed = 0;
+      $max_allowed = 1;
+   }
+
    if ($editing_booking_from_backend) {
       // in the admin itf, and editing a booking
       // then the avail seats are the total seats
@@ -972,7 +977,10 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       } elseif (preg_match('/#_PHONE/', $result)) {
          $replacement = "<input $required_att type='text' name='${var_prefix}bookerPhone${var_postfix}' value='$bookerPhone' />";
       } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
-         $replacement = eme_ui_select($bookedSeats,"${var_prefix}bookedSeats${var_postfix}",$booked_places_options);
+         if ($event['event_properties']['take_attendance'])
+            $replacement = eme_ui_select_binary($bookedSeats,"${var_prefix}bookedSeats${var_postfix}");
+         else
+            $replacement = eme_ui_select($bookedSeats,"${var_prefix}bookedSeats${var_postfix}",$booked_places_options);
          $required_fields_count++;
       } elseif (($deprecated && preg_match('/#_(SEATS|SPACES)(\d+)/', $result, $matches)) ||
                  preg_match('/#_(SEATS|SPACES)\{(\d+)\}/', $result, $matches)) {
@@ -986,10 +994,17 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
          else
             $entered_val=0;
 
-         if (eme_is_multi($event['event_seats']) || eme_is_multi($event['price']))
-            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options[$field_id-1]);
-         else
-            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options);
+         if (eme_is_multi($event['event_seats']) || eme_is_multi($event['price'])) {
+            if ($event['event_properties']['take_attendance'])
+               $replacement = eme_ui_select_binary($entered_val,$postfield_name);
+            else
+               $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options[$field_id-1]);
+         } else {
+            if ($event['event_properties']['take_attendance'])
+               $replacement = eme_ui_select_binary($entered_val,$postfield_name);
+            else
+               $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options);
+         }
          $required_fields_count++;
       } elseif (preg_match('/#_COMMENT/', $result)) {
          if (!$eme_multibooking)

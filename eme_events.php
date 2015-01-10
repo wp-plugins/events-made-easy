@@ -57,6 +57,8 @@ function eme_init_event_props($props) {
       $props['ignore_pending']=0;
    if (!isset($props['all_day']))
       $props['all_day']=0;
+   if (!isset($props['take_attendance']))
+      $props['take_attendance']=0;
    if (!isset($props['min_allowed']))
       $props['min_allowed']=get_option('eme_rsvp_addbooking_min_spaces');
    if (!isset($props['max_allowed']))
@@ -1077,7 +1079,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       }
       $prev_text=__('Previous page','eme');
       $next_text=__('Next page','eme');
-      $page_number = floor($offset/$limit) + 1;
+      $page_number = floor($limit_offset/$limit) + 1;
       $this_page_url=get_permalink($post->ID);
       //$this_page_url=$_SERVER['REQUEST_URI'];
       // remove the offset info
@@ -1100,8 +1102,8 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       // we always provide the text, so everything stays in place (but we just hide it if needed, and change the link to empty
       // to prevent going on indefinitely and thus allowing search bots to go on for ever
       if ($events_count > $limit) {
-         $forward = $offset + $limit;
-         $backward = $offset - $limit;
+         $forward = $limit_offset + $limit;
+         $backward = $limit_offset - $limit;
          if ($backward < 0)
             $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
          else
@@ -1109,9 +1111,9 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url)."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
-      if ($events_count <= $limit && $offset>0) {
+      if ($events_count <= $limit && $limit_offset>0) {
          $forward = 0;
-         $backward = $offset - $limit;
+         $backward = $limit_offset - $limit;
          if ($backward < 0)
             $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
          else
@@ -2312,6 +2314,7 @@ function eme_event_form($event, $title, $element) {
    // all properties
    $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
    $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
+   $eme_prop_take_attendance = ($event['event_properties']['take_attendance']) ? "checked='checked'" : "";
    $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
@@ -2529,6 +2532,9 @@ function eme_event_form($event, $title, $element) {
                            <br />
                               <input id="wp_member_required-checkbox" name='registration_wp_users_only' value='1' type='checkbox' <?php echo $registration_wp_users_only; ?> />
                               <?php _e ( 'Require WP membership for registration','eme' ); ?>
+                           <br />
+                              <input id="eme_prop_take_attendance" name='eme_prop_take_attendance' value='1' type='checkbox' <?php echo $eme_prop_take_attendance; ?> />
+                              <?php _e ( 'Only take attendance (0 or 1 seat) for this event','eme' ); ?>
                            <br /><table>
                               <tr>
                               <td><?php _e ( 'Spaces','eme' ); ?> :</td>
