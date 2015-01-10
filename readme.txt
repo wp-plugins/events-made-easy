@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.5.18
+Stable tag: 1.5.19
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,7 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.5.19 =
 * Feature: rsvp end date/time restriction can now be negative, so you can say "Allow RSVP until -2 days -1 hours before the event starts, indicating the rsvp can go on for 2 days and 1 hour AFTER the event has started. The rsvp end can never go beyond the event end date itself of course.
 * Feature: new scope for events: 'ongoing': only shows ongoing events, for this we try to use the date and time, but it might be incorrect since there's no user timezone info
-* Feature: support qtranslate-X
+* Feature: basic support for qtranslate-X (not fully functional yet, awaiting reply from the qtranslate-x authors)
 * Feature: added placeholders #_APPROVEDSPACES and #_APPROVEDSPACES{xx} (see the doc)
 * Feature: added option eme_register_empty_seats to the shortcode eme_add_multibooking_form: by default it is 0, but if you want to register 0-seats too, set ths to 1
 * Feature: an event can now also be designated to take attendances only for bookings, a corresponding conditional tag #_IS_ATTENDANCE has been created as well so you can change messages shown or emails sent
