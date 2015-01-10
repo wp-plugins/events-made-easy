@@ -75,6 +75,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added option eme_register_empty_seats to the shortcode eme_add_multibooking_form: by default it is 0, but if you want to register 0-seats too, set ths to 1
 * Bugfix: the required fields were not being checked in the backend, so browsers not supporting the html5-required tag could input empty custom field info
 * Bugfix: take booking price=0 into account for events that still have a payment gateway configured
+* Bugfix: make simple event paging work again
 * Improvement: German language updates, thanks to Joerg Knoerchen
 
 = 1.5.18 =

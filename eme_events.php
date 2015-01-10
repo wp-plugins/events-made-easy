@@ -1077,7 +1077,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       }
       $prev_text=__('Previous page','eme');
       $next_text=__('Next page','eme');
-      $page_number = floor($offset/$limit) + 1;
+      $page_number = floor($limit_offset/$limit) + 1;
       $this_page_url=get_permalink($post->ID);
       //$this_page_url=$_SERVER['REQUEST_URI'];
       // remove the offset info
@@ -1100,8 +1100,8 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       // we always provide the text, so everything stays in place (but we just hide it if needed, and change the link to empty
       // to prevent going on indefinitely and thus allowing search bots to go on for ever
       if ($events_count > $limit) {
-         $forward = $offset + $limit;
-         $backward = $offset - $limit;
+         $forward = $limit_offset + $limit;
+         $backward = $limit_offset - $limit;
          if ($backward < 0)
             $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
          else
@@ -1109,9 +1109,9 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $pagination_top.= "<a class='eme_nav_right' href='".add_query_arg(array('eme_offset'=>$forward),$this_page_url)."'>$next_text &gt;&gt;</a>";
          $pagination_top.= "<span class='eme_nav_center'>".__('Page ','eme').$page_number."</span>";
       }
-      if ($events_count <= $limit && $offset>0) {
+      if ($events_count <= $limit && $limit_offset>0) {
          $forward = 0;
-         $backward = $offset - $limit;
+         $backward = $limit_offset - $limit;
          if ($backward < 0)
             $pagination_top.= "<a class='eme_nav_left' $nav_hidden_class href='#'>&lt;&lt; $prev_text</a>";
          else
