@@ -37,17 +37,26 @@ function eme_add_booking_form($event_id,$show_message=1) {
       $post_string="{";
       if ($booking_id_done && eme_event_can_pay_online($event)) {
          $payment_id = eme_get_booking_payment_id($booking_id_done);
-         // you did a successfull registration, so now we decide wether to show the form again, or the payment form
-         // but to make sure people don't mess with the booking id in the url, we use wp_nonce
-         // by default the nonce is valid for 24 hours
-         $eme_payment_nonce=wp_create_nonce('eme_payment_id'.$payment_id);
-         // create the JS array that will be used to post
-         $post_arr = array (
-               "eme_eventAction" => 'pay_booking',
-               "eme_message" => $form_result_message,
-               "eme_payment_id" => $payment_id,
-               "eme_payment_nonce" => $eme_payment_nonce
-               );
+         if (!empty($payment_id)) {
+            // you did a successfull registration, so now we decide wether to show the form again, or the payment form
+            // but to make sure people don't mess with the booking id in the url, we use wp_nonce
+            // by default the nonce is valid for 24 hours
+            $eme_payment_nonce=wp_create_nonce('eme_payment_id'.$payment_id);
+            // create the JS array that will be used to post
+            $post_arr = array (
+                  "eme_eventAction" => 'pay_booking',
+                  "eme_message" => $form_result_message,
+                  "eme_payment_id" => $payment_id,
+                  "eme_payment_nonce" => $eme_payment_nonce
+                  );
+         } else {
+            // no payment registered (price=0)
+            $post_arr = array (
+                  "eme_eventAction" => 'message',
+                  "eme_message" => $form_result_message,
+                  "booking_done" => 1
+                  );
+         }
       } elseif ($booking_id_done) {
          $post_arr = array (
                "eme_eventAction" => 'message',
@@ -204,17 +213,26 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       // let's decide for the first event wether or not payment is needed
       if ($booking_ids_done && eme_event_can_pay_online($events[0])) {
          $payment_id = eme_get_bookings_payment_id($booking_ids_done);
-         // you did a successfull registration, so now we decide wether to show the form again, or the payment form
-         // but to make sure people don't mess with the booking id in the url, we use wp_nonce
-         // by default the nonce is valid for 24 hours
-         $eme_payment_nonce=wp_create_nonce('eme_payment_id'.$payment_id);
-         // create the JS array that will be used to post
-         $post_arr = array (
-               "eme_eventAction" => 'pay_bookings',
-               "eme_message" => $form_result_message,
-               "eme_payment_id" => $payment_id,
-               "eme_payment_nonce" => $eme_payment_nonce
-               );
+         if (!empty($payment_id)) {
+            // you did a successfull registration, so now we decide wether to show the form again, or the payment form
+            // but to make sure people don't mess with the booking id in the url, we use wp_nonce
+            // by default the nonce is valid for 24 hours
+            $eme_payment_nonce=wp_create_nonce('eme_payment_id'.$payment_id);
+            // create the JS array that will be used to post
+            $post_arr = array (
+                  "eme_eventAction" => 'pay_bookings',
+                  "eme_message" => $form_result_message,
+                  "eme_payment_id" => $payment_id,
+                  "eme_payment_nonce" => $eme_payment_nonce
+                  );
+         } else {
+            // no payment registered (price=0)
+            $post_arr = array (
+                  "eme_eventAction" => 'message',
+                  "eme_message" => $form_result_message,
+                  "booking_done" => 1
+                  );
+         }
       } elseif ($booking_ids_done) {
          $post_arr = array (
                "eme_eventAction" => 'message',
