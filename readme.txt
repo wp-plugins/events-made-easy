@@ -72,7 +72,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: new scope for events: 'ongoing': only shows ongoing events, for this we try to use the date and time, but it might be incorrect since there's no user timezone info
 * Feature: basic support for qtranslate-X (not fully functional yet, awaiting reply from the qtranslate-x authors)
 * Feature: added placeholders #_APPROVEDSPACES and #_APPROVEDSPACES{xx} (see the doc)
-* Feature: added option eme_register_empty_seats to the shortcode eme_add_multibooking_form: by default it is 0, but if you want to register 0-seats too, set ths to 1
+* Feature: added option eme_register_empty_seats to the shortcode eme_add_multibooking_form: by default it is 0, but if you want to register 0-seats too, set this to 1
 * Feature: an event can now also be designated to take attendances only for bookings, a corresponding conditional tag #_IS_ATTENDANCE has been created as well so you can change messages shown or emails sent
 * Bugfix: the required fields were not being checked in the backend, so browsers not supporting the html5-required tag could input empty custom field info
 * Bugfix: take booking price=0 into account for events that still have a payment gateway configured
