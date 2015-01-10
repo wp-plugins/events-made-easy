@@ -1994,6 +1994,12 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          else
             $replacement = 0;
 
+      } elseif ($event && preg_match('/#_IS_ATTENDANCE/', $result)) {
+         if ($event['event_properties']['take_attendance'])
+            $replacement = 1;
+         else
+            $replacement = 0;
+
       } elseif ($event && preg_match('/#_IS_MULTIDAY/', $result)) {
          if (strtotime($event['event_start_date']) != strtotime($event['event_end_date']))
             $replacement = 1;

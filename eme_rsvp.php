@@ -607,6 +607,10 @@ function eme_multibook_seats($events, $send_mail, $format) {
    foreach ($events as $event) {
       $min_allowed = $event['event_properties']['min_allowed'];
       $max_allowed = $event['event_properties']['max_allowed'];
+      if ($event['event_properties']['take_attendance']) {
+         $min_allowed = 0;
+         $max_allowed = 1;
+      }
 
       $event_id=$event['event_id'];
       if (isset($_POST['bookings'][$event_id]['bookedSeats']))
@@ -861,6 +865,10 @@ function eme_book_seats($event, $send_mail) {
 
    $min_allowed = $event['event_properties']['min_allowed'];
    $max_allowed = $event['event_properties']['max_allowed'];
+   if ($event['event_properties']['take_attendance']) {
+      $min_allowed = 0;
+      $max_allowed = 1;
+   }
 
    if (isset($_POST['bookedSeats']))
       $bookedSeats = intval($_POST['bookedSeats']);

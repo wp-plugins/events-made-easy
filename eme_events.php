@@ -57,6 +57,8 @@ function eme_init_event_props($props) {
       $props['ignore_pending']=0;
    if (!isset($props['all_day']))
       $props['all_day']=0;
+   if (!isset($props['take_attendance']))
+      $props['take_attendance']=0;
    if (!isset($props['min_allowed']))
       $props['min_allowed']=get_option('eme_rsvp_addbooking_min_spaces');
    if (!isset($props['max_allowed']))
@@ -2312,6 +2314,7 @@ function eme_event_form($event, $title, $element) {
    // all properties
    $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
    $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
+   $eme_prop_take_attendance = ($event['event_properties']['take_attendance']) ? "checked='checked'" : "";
    $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
 
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
@@ -2529,6 +2532,9 @@ function eme_event_form($event, $title, $element) {
                            <br />
                               <input id="wp_member_required-checkbox" name='registration_wp_users_only' value='1' type='checkbox' <?php echo $registration_wp_users_only; ?> />
                               <?php _e ( 'Require WP membership for registration','eme' ); ?>
+                           <br />
+                              <input id="eme_prop_take_attendance" name='eme_prop_take_attendance' value='1' type='checkbox' <?php echo $eme_prop_take_attendance; ?> />
+                              <?php _e ( 'Only take attendance (0 or 1 seat) for this event','eme' ); ?>
                            <br /><table>
                               <tr>
                               <td><?php _e ( 'Spaces','eme' ); ?> :</td>
