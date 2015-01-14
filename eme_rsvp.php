@@ -663,8 +663,8 @@ function eme_multibook_seats($events, $send_mail, $format) {
                if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
             } elseif (preg_match ("/COMMENT/",$required_field)) {
                if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
-            } elseif ((!isset($_POST['bookings'][$event_id][$required_field]) || empty($_POST['bookings'][$event_id][$required_field])) && 
-		      (!isset($_POST[$required_field]) || empty($_POST[$required_field]))) {
+            } elseif ((!isset($_POST['bookings'][$event_id][$required_field]) || $_POST['bookings'][$event_id][$required_field]==='') && 
+		      (!isset($_POST[$required_field]) || $_POST[$required_field]==='')) {
                if (preg_match('/FIELD(\d+)/', $required_field, $matches)) {
                   $field_id = intval($matches[1]);
                   $formfield = eme_get_formfield_byid($field_id);
@@ -916,7 +916,7 @@ function eme_book_seats($event, $send_mail) {
             if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
          } elseif (preg_match ("/COMMENT/",$required_field)) {
             if (empty($bookerComment)) array_push($missing_required_fields, __('Comment','eme'));
-         } elseif (!isset($_POST[$required_field]) || empty($_POST[$required_field])) {
+         } elseif (!isset($_POST[$required_field]) || $_POST[$required_field]==='') {
             if (preg_match('/FIELD(\d+)/', $required_field, $matches)) {
                $field_id = intval($matches[1]);
                $formfield = eme_get_formfield_byid($field_id);

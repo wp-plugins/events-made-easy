@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.20 =
+* Bugfix: required formfields that were defined as dropdown were not allowed to post "0" as a return value for required fields
 * Improvement: Dutch language updates, thanks to Herman Boswijk
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
 
