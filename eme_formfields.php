@@ -1094,7 +1094,11 @@ function eme_find_required_formfields ($format) {
    }
    preg_match_all("/#REQ_?[A-Z0-9_]+(\{[A-Z0-9_]+\})?/", $format, $placeholders);
    usort($placeholders[0],'sort_stringlenth');
-   return preg_replace("/#REQ_|\{|\}/","",$placeholders[0]);
+   // We just want the fieldnames: FIELD1, FIELD2, ... like they are POST'd via the form
+   $result=preg_replace("/#REQ_|\{|\}/","",$placeholders[0]);
+   // just to be sure: remove leadinf zeros in the names: FIELD01 should be FIELD1
+   $result=preg_replace("/FIELD0+/","FIELD",$result);
+   return $result;
 }
 
 ?>
