@@ -1747,7 +1747,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $categories = eme_get_event_categories($event['event_id']);
          $cat_links = array();
          foreach ($categories as $category) {
-            $cat_link=eme_event_category_url($category);
+            $cat_link=eme_category_url($category);
             $cat_name=$category['category_name'];
             if ($target == "html")
                array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($cat_name,$lang)."'>".eme_trans_sanitize_html($cat_name,$lang)."</a>");
@@ -1819,7 +1819,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $categories = eme_get_event_categories($event['event_id'],$extra_conditions);
          $cat_links = array();
          foreach ($categories as $category) {
-            $cat_link=eme_event_category_url($category);
+            $cat_link=eme_category_url($category);
             $cat_name=$category['category_name'];
             if ($target == "html")
                array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($cat_name,$lang)."'>".eme_trans_sanitize_html($cat_name,$lang)."</a>");
@@ -1849,7 +1849,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $categories = eme_get_event_categories($event['event_id'],$extra_conditions);
          $cat_links = array();
          foreach ($categories as $category) {
-            $cat_link=eme_event_category_url($category);
+            $cat_link=eme_category_url($category);
             $cat_name=$category['category_name'];
             if ($target == "html")
                array_push($cat_links,"<a href='$cat_link' title='".eme_trans_sanitize_html($cat_name,$lang)."'>".eme_trans_sanitize_html($cat_name,$lang)."</a>");

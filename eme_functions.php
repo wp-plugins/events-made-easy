@@ -256,7 +256,7 @@ function eme_payment_url($payment_id) {
    return $the_link;
 }
 
-function eme_event_category_url($category) {
+function eme_category_url($category) {
    global $wp_rewrite;
 
    $def_language = eme_detect_lang();
