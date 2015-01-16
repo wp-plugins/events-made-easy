@@ -123,8 +123,8 @@ function eme_ical_link_shortcode($atts) {
 
 function eme_ical_single() {
    echo "BEGIN:VCALENDAR\r\n";
-   echo "METHOD:PUBLISH\r\n";
    echo "VERSION:2.0\r\n";
+   echo "METHOD:PUBLISH\r\n";
    echo "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n";
    $event=eme_get_event(intval($_GET ['event_id']));
    $title_format = get_option('eme_ical_title_format' );
@@ -135,8 +135,8 @@ function eme_ical_single() {
 
 function eme_ical() {
    echo "BEGIN:VCALENDAR\r\n";
-   echo "METHOD:PUBLISH\r\n";
    echo "VERSION:2.0\r\n";
+   echo "METHOD:PUBLISH\r\n";
    echo "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n";
    $title_format = get_option('eme_ical_title_format' );
    $description_format = get_option('eme_ical_description_format');
