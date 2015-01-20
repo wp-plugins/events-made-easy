@@ -75,6 +75,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Change: renamed function eme_event_category_url to eme_category_url
 * Improvement: Dutch language updates, thanks to Herman Boswijk
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
+* Improvement: German language updates, thanks to Joerg Knoerchen
 
 = 1.5.19 =
 * Feature: rsvp end date/time restriction can now be negative, so you can say "Allow RSVP until -2 days -1 hours before the event starts, indicating the rsvp can go on for 2 days and 1 hour AFTER the event has started. The rsvp end can never go beyond the event end date itself of course.
