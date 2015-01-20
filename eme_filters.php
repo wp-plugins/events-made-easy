@@ -182,9 +182,8 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
          if ($scope_fieldcount==0 && (empty($fields) || strstr($fields,'monthrange'))) {
             $replacement = "<input type='text' id='$localised_scope_post_name' name='$localised_scope_post_name' readonly='readonly' >";
             $replacement .= "<input type='hidden' id='$scope_post_name' name='$scope_post_name' value='".eme_sanitize_html($selected_scope)."'>";
-            wp_enqueue_script( 'jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js',array( 'jquery' ));
-            wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
-            wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
+            wp_enqueue_script('eme-jquery-datepick');
+            wp_enqueue_style('eme-jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
             // jquery ui locales are with dashes, not underscores
             $locale_code = get_locale();
             $locale_code = preg_replace( "/_/","-", $locale_code );
@@ -198,7 +197,7 @@ function eme_replace_filter_form_placeholders($format, $multiple, $multisize, $s
                   $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
                }
                if (file_exists($locale_file))
-                  wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
+                  wp_enqueue_script('eme-jquery-datepick-locale',$locale_file_url);
             }
 
             ob_start();

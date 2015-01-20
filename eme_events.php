@@ -3684,18 +3684,6 @@ function eme_change_canonical_url() {
    }
 }
 
-function eme_general_css() {
-   $eme_css_url= EME_PLUGIN_URL."events_manager.css";
-   wp_register_style('eme_stylesheet',$eme_css_url);
-   wp_enqueue_style('eme_stylesheet'); 
-
-   $eme_css_name=get_stylesheet_directory()."/eme.css";
-   $eme_css_url=get_stylesheet_directory_uri()."/eme.css";
-   if (file_exists($eme_css_name))
-      wp_register_style('eme_stylesheet_extra',$eme_css_url,'eme_stylesheet');
-   wp_enqueue_style('eme_stylesheet_extra'); 
-}
-
 function eme_general_footer() {
    global $eme_need_gmap_js;
    $gmap_is_active = get_option('eme_gmap_is_active' );
@@ -3874,7 +3862,7 @@ function eme_alert_events_page() {
 
 function eme_admin_enqueue_js(){
    global $plugin_page;
-   wp_enqueue_script('eme',EME_PLUGIN_URL."js/eme.js",array( 'jquery' ));
+   wp_enqueue_script('eme');
    wp_enqueue_style('eme',EME_PLUGIN_URL.'events_manager.css');
    $file_name= get_stylesheet_directory()."/eme.css";
    if (file_exists($file_name)) {
@@ -3887,10 +3875,9 @@ function eme_admin_enqueue_js(){
    //if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {
       // both datepick and timeentry need jquery.plugin, so let's include it upfront
-      wp_enqueue_script( 'jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js',array( 'jquery' ));
-      wp_enqueue_script('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.js",array( 'jquery' ));
+      wp_enqueue_script('eme-jquery-datepick');
       //wp_enqueue_style('jquery-ui-autocomplete',EME_PLUGIN_URL."js/jquery-autocomplete/jquery.autocomplete.css");
-      wp_enqueue_style('jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
+      wp_enqueue_style('eme-jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
       wp_enqueue_script('jquery-ui-autocomplete');
       // jquery ui locales are with dashes, not underscores
       $locale_code = get_locale();
@@ -3905,27 +3892,36 @@ function eme_admin_enqueue_js(){
             $locale_file_url = EME_PLUGIN_URL. "js/jquery-datepick/jquery.datepick-$locale_code.js";
          }
          if (file_exists($locale_file))
-            wp_enqueue_script('jquery-datepick-locale',$locale_file_url);
+            wp_enqueue_script('eme-jquery-datepick-locale',$locale_file_url);
       }
    }
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager') ) ) {
-      wp_enqueue_script( 'jquery-mousewheel', EME_PLUGIN_URL.'js/jquery-mousewheel/jquery.mousewheel.min.js', array('jquery'));
-      wp_enqueue_script( 'jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js');
-      wp_enqueue_script( 'eme-events',EME_PLUGIN_URL."js/eme_admin_events.js",array( 'jquery' ));
+      wp_enqueue_script( 'eme-jquery-timeentry');
+      // Now we can localize the script with our data.
+      // in our case: replace in the registered script "eme-events" the string eme.translate_name, eme.translate_date, eme.translate_fields_missing and
+      // eme.translate_enddate_required
+      $translation_array = array(
+                                 'translate_name' => __('Name','eme'),
+                                 'translate_date' => __('Date','eme'),
+                                 'translate_fields_missing' => __('Some required fields are missing:','eme'),
+                                 'translate_enddate_required' => __('Since the event is repeated, you must specify an end date','eme')
+                                );
+      wp_localize_script( 'eme-events', 'eme', $translation_array );
+      wp_enqueue_script( 'eme-events');
       // some inline js that gets shown at the top
       eme_admin_event_script();
       eme_admin_event_boxes();
    }
    if ( in_array( $plugin_page, array('eme-options') ) ) {
-      wp_enqueue_script('eme-options',EME_PLUGIN_URL."js/eme_admin_options.js",array( 'jquery' ));
+      wp_enqueue_script('eme-options');
    }
    if ( in_array( $plugin_page, array('eme-send-mails') ) ) {
-      wp_enqueue_script('eme-options',EME_PLUGIN_URL."js/eme_admin_send_mails.js",array( 'jquery' ));
+      wp_enqueue_script('eme-sendmails');
    }
    if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager','eme-people') ) ) {
-      wp_enqueue_script('jquery-datatables',EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
-      wp_enqueue_script('datatables-clearsearch',EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
-      wp_enqueue_style('jquery-datatables',EME_PLUGIN_URL.'js/jquery-datatables/css/jquery.dataTables.css');
+      wp_enqueue_script('eme-jquery-datatables');
+      wp_enqueue_script('eme-datatables-clearsearch');
+      wp_enqueue_style('eme-jquery-datatables',EME_PLUGIN_URL.'js/jquery-datatables/css/jquery.dataTables.css');
    }
 }
 

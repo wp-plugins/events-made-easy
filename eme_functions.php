@@ -377,10 +377,10 @@ function eme_get_all_caps() {
 }
 
 function eme_daydifference($date1,$date2) {
-   $datetime1 = date_create($date1);
-   $datetime2 = date_create($date2);
-   $interval = date_diff($datetime1, $datetime2, true);
-   return $interval->format('%a');
+   $datetime1 = new DateTime($date2);
+   $datetime2 = new DateTime($date1);
+   $interval = $datetime2->diff($datetime1);
+   return intval($interval->format('%r%a'));
 }
 
 function eme_hourdifference($date1,$date2) {
@@ -503,12 +503,10 @@ function eme_redefine_locale($locale) {
 }
 
 function eme_detect_lang_js_trans_function() {
-   if (function_exists('qtrans_getLanguage')) {
+   if (function_exists('qtrans_use')) {
       $function_name="qtrans_use";
-   } elseif (function_exists('ppqtrans_getLanguage')) {
+   } elseif (function_exists('ppqtrans_use')) {
       $function_name="pqtrans_use";
-   } elseif (function_exists('qtranxf_getLanguage')) {
-      $function_name="qtranxf_use";
    } else {
       $function_name="";
    }
@@ -525,7 +523,7 @@ function eme_detect_lang() {
       $language=ppqtrans_getLanguage();
    } elseif (function_exists('qtranxf_getLanguage')) {
       $language=qtranxf_getLanguage();
-   } elseif (function_exists('pll_current_language')) {
+   } elseif (function_exists('pll_current_language') && function_exists('pll_languages_list')) {
       $languages=pll_languages_list();
       foreach ($languages as $tmp_lang) {
          if (preg_match("/^$tmp_lang\/|\/$tmp_lang\//",$_SERVER['REQUEST_URI']))

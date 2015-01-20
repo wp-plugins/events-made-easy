@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 function eme_client_clock_enqueue_scripts() {
    // Embed client-clock.js in webpage header.
-   wp_enqueue_script('client_clock_submit', plugin_dir_url( __FILE__ ) . 'js/client-clock.js', array('jquery'));  
+   wp_enqueue_script('eme-client_clock_submit');
 }
 
 function eme_client_clock_callback() {

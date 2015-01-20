@@ -68,8 +68,11 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.20 =
-* Change: renamed function eme_event_category_url to eme_category_url
+* Bugfix: sometimes when multiple maps were shown (and dependant on the OS used), even multiple calls to microtime() return the same value
+          so as a result some javascript variables had the same name and thus the maps might show the same address
+          This is now fixed by adding a rand() call to the variable names
 * Bugfix: required formfields that were defined as dropdown were not allowed to post "0" as a return value for required fields
+* Change: renamed function eme_event_category_url to eme_category_url
 * Improvement: Dutch language updates, thanks to Herman Boswijk
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
 

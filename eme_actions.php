@@ -121,8 +121,6 @@ function eme_actions_admin_init() {
 }
 add_action('admin_init','eme_actions_admin_init');
 
-add_action('admin_enqueue_scripts','eme_admin_enqueue_js');
-
 function eme_actions_widgets_init() {
    register_widget( 'WP_Widget_eme_list' );
    register_widget( 'WP_Widget_eme_calendar' );
@@ -149,9 +147,39 @@ if (get_option('eme_load_js_in_header')) {
    add_action('wp_footer', 'eme_ajaxize_calendar');
 }
 
+function eme_admin_register_scripts() {
+   wp_register_script( 'eme-jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js');
+   wp_register_script( 'eme-jquery-datepick',EME_PLUGIN_URL.'js/jquery-datepick/jquery.datepick.js',array( 'jquery','eme-jquery-plugin' ));
+   wp_register_script( 'eme-jquery-mousewheel', EME_PLUGIN_URL.'js/jquery-mousewheel/jquery.mousewheel.min.js', array('jquery'));
+   wp_register_script( 'eme-jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js', array('jquery','eme-jquery-plugin','eme-jquery-mousewheel'));
+   wp_register_script( 'eme-jquery-datatables', EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
+   wp_register_script( 'eme-datatables-clearsearch', EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
+   wp_register_script( 'eme-client_clock_submit', EME_PLUGIN_URL.'js/client-clock.js', array('jquery'));  
+   wp_register_script( 'eme-google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
+   wp_register_script( 'eme', EME_PLUGIN_URL.'js/eme.js', array('jquery'));
+   wp_register_script( 'eme-events', EME_PLUGIN_URL.'js/eme_admin_events.js',array( 'jquery' ));
+   wp_register_script( 'eme-options', EME_PLUGIN_URL.'js/eme_admin_options.js',array( 'jquery' ));
+   wp_register_script( 'eme-sendmails', EME_PLUGIN_URL.'js/eme_admin_send_mails.js',array( 'jquery' ));
+   eme_admin_enqueue_js();
+}
+add_action('admin_enqueue_scripts','eme_admin_register_scripts');
+
+function eme_register_scripts() {
+   wp_register_script( 'eme-google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
+   wp_register_script( 'eme', EME_PLUGIN_URL.'js/eme.js', array('jquery'));
+   wp_register_style('eme_stylesheet',EME_PLUGIN_URL."events_manager.css");
+   wp_enqueue_style('eme_stylesheet');
+   $eme_css_name=get_stylesheet_directory()."/eme.css";
+   if (file_exists($eme_css_name)) {
+      $eme_css_url=get_stylesheet_directory_uri()."/eme.css";
+      wp_register_style('eme_stylesheet_extra',$eme_css_url,'eme_stylesheet');
+      wp_enqueue_style('eme_stylesheet_extra');
+   }
+}
+add_action('wp_enqueue_scripts','eme_register_scripts');
+
 add_action('template_redirect', 'eme_template_redir' );
 add_action('template_redirect', 'eme_change_canonical_url' );
-add_action('wp_enqueue_scripts','eme_general_css');
 add_action('admin_notices', 'eme_alert_events_page' );
 
 // when editing other profiles then your own

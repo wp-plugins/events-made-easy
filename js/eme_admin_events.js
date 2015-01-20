@@ -297,8 +297,8 @@ jQuery(document).ready( function() {
       var recurring = jQuery("input[name=repeated_event]:checked").val();
       //requiredFields= new Array('event_name', 'localised_event_start_date', 'location_name','location_address','location_town');
       var requiredFields = ['event_name', 'localised_event_start_date'];
-      var localisedRequiredFields = {'event_name':"<?php _e ( 'Name', 'eme' )?>",
-                      'localised_event_start_date':"<?php _e ( 'Date', 'eme' )?>"
+      var localisedRequiredFields = {'event_name':eme.translate_name,
+                      'localised_event_start_date':eme.translate_date
                      };
       
       var missingFields = [];
@@ -313,10 +313,10 @@ jQuery(document).ready( function() {
       }
    
       if (missingFields.length > 0) {
-         errors = "<?php echo _e ( 'Some required fields are missing:', 'eme' )?> " + missingFields.join(", ") + ".\n";
+         errors = eme.translate_fields_missing + missingFields.join(", ") + ".\n";
       }
       if (recurring && jQuery("input#localised-rec-end-date").val() == "" && jQuery("select#recurrence-frequency").val() != "specific") {
-         errors = errors +  "<?php _e ( 'Since the event is repeated, you must specify an end date', 'eme' )?>."; 
+         errors = errors + eme.translate_enddate_required; 
          jQuery("input#localised-rec-end-date").css('border','2px solid red');
       } else {
          jQuery("input#localised-rec-end-date").css('border','1px solid #DFDFDF');
