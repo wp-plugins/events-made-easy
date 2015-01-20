@@ -862,6 +862,7 @@ function eme_global_map($atts) {
       }
 
       $id_base = preg_replace("/\D/","_",microtime(1));
+      $id_base = rand()."_".$id_base;
       $result = "<div id='eme_global_map_$id_base' class='eme_global_map' style='width: {$width}px; height: {$height}px'>map</div>";
       // get the paging output ready
       if ($paging==1) {
@@ -1395,6 +1396,8 @@ function eme_single_location_map($location,$width=0,$height=0) {
       // the next is only possible when called from within an event (events-manager.php)
       if (isset($location['event_id'])) {
          $id_base = $location['event_id']."_".$id_base;
+      } else {
+         $id_base = rand()."_".$id_base;
       }
       $id="eme-location-map_".$id_base;
       $latitude_string="latitude_".$id_base;
