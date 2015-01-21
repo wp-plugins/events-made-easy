@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Events Manager Extended\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/events-made-easy\n"
 "POT-Creation-Date: 2015-01-02 09:46:10+00:00\n"
-"PO-Revision-Date: 2015-01-20 08:35+0100\n"
+"PO-Revision-Date: 2015-01-21 07:26+0100\n"
 "Last-Translator: Joerg Knoerchen <webmaster@sensorgrafie.de>\n"
 "Language-Team: EME <sebastian@maier-hallard.com>\n"
 "Language: de\n"
@@ -1008,7 +1008,8 @@ msgstr "Format für den Titel der Einzelveranstaltung"
 #: eme_events.php:3071 eme_events.php:3083 eme_events.php:3095
 msgid "Only fill this in if you want to override the default settings."
 msgstr ""
-"Bitte nur ausfüllen, wenn Du die Standardeinstellungen überschreiben willst"
+"Bitte nur ausfüllen, wenn Du die Standardeinstellungen überschreiben "
+"möchtest."
 
 #: eme_events.php:3002
 msgid "The time of the event beginning and end"
@@ -1252,7 +1253,7 @@ msgstr "Typ"
 
 #: eme_formfields.php:160
 msgid "Are you sure you want to delete these form fields?"
-msgstr "Bist du sicher das du diese Formularfelder löschen willst?"
+msgstr "Bist du sicher das du diese Formularfelder löschen möchtest?"
 
 #: eme_formfields.php:174
 msgid "No fields defined yet!"
@@ -1878,7 +1879,7 @@ msgid ""
 "calculate current day for the calendar."
 msgstr ""
 "Wähle diese Option, wenn für Zeitkalkulationen die Uhr-Einstellung des "
-"Webseiten-Besuchers nutzen willst."
+"Webseiten-Besuchers nutzen möchtest."
 
 #: eme_options.php:397
 msgid "Theme loop protection"
@@ -1915,7 +1916,7 @@ msgid ""
 "Check this option if you want to delete all EME data (database tables and "
 "options) when upgrading or deactivating the plugin."
 msgstr ""
-"Diese Option aktivieren, wenn du willst, dass die gesamten EME Daten "
+"Diese Option aktivieren, wenn du möchtest, dass die gesamten EME Daten "
 "entfernt werden, wenn das Plugin aktualisiert oder deaktiviert wird."
 
 #: eme_options.php:399
@@ -1928,8 +1929,8 @@ msgid ""
 "(affects shortcodes of any plugin used in widgets, so use with care)."
 msgstr ""
 "Aktiviere diese Option, wenn du die Benutzung von Shortcodes in Widgets "
-"ermöglichen willst (beeinflusst Shortcodes von allen Plugins in Widgets, sei "
-"also vorsichtig)."
+"ermöglichen möchtest (beeinflusst Shortcodes von allen Plugins in Widgets, "
+"sei also vorsichtig)."
 
 #: eme_options.php:400
 msgid "Enable placeholders in event notes"
@@ -2452,8 +2453,8 @@ msgstr ""
 "einzufügen. <br/>Nutze <code>#_ADDBOOKINGFORM</code>, um ein Formular "
 "einzufügen, das es dem Besucher erlaubt, sich für eine Veranstaltung "
 "anzumelden.<br/> Nutze <code>#_REMOVEBOOKINGFORM</code>, um ein Formular "
-"einzufügen, in dem ein Besucher eine Teilnahmebestätigung stornieren kann, "
-"indem er seinen Namen und seine E-Mail angibt."
+"einzufügen, in dem ein Besucher eine Buchung stornieren kann, indem er "
+"seinen Namen und seine E-Mail angibt."
 
 #: eme_options.php:474
 msgid ""
@@ -2846,7 +2847,7 @@ msgstr ""
 
 #: eme_options.php:553
 msgid "RSVP: registrations and bookings"
-msgstr "Teilnahmebestätigung: Anmeldungen und Buchungen"
+msgstr "Buchung: Anmeldungen und Buchungen"
 
 #: eme_options.php:558
 msgid "Default contact person"
@@ -2862,8 +2863,7 @@ msgstr ""
 
 #: eme_options.php:559
 msgid "By default enable registrations for new events?"
-msgstr ""
-"Teilnahmebestätigung für neue Veranstaltungen standardmässig aktivieren?"
+msgstr "Buchungen für neue Veranstaltungen standardmässig aktivieren?"
 
 #: eme_options.php:559
 msgid ""
@@ -2871,7 +2871,7 @@ msgid ""
 "events."
 msgstr ""
 "Aktiviere diese Option, wenn du Teilnahmebestätigungen für Veranstaltungen "
-"standardmässig aktivieren willst."
+"standardmässig aktivieren möchtest."
 
 #: eme_options.php:560
 msgid "By default require approval for registrations?"
@@ -2950,9 +2950,7 @@ msgstr ""
 
 #: eme_options.php:585
 msgid "Hide RSVP ended events?"
-msgstr ""
-"Verberge Veranstaltungen bei denen keine Teilnahmebestätigung mehr möglich "
-"ist?"
+msgstr "Verberge Veranstaltungen bei denen keine Buchung mehr möglich ist?"
 
 #: eme_options.php:585
 msgid ""
@@ -3078,7 +3076,7 @@ msgstr ""
 
 #: eme_options.php:599
 msgid "RSVP: form format"
-msgstr "Teilnahmebestätigung: Format des Formulars"
+msgstr "Buchung: Format des Formulars"
 
 #: eme_options.php:602
 msgid "Form format"
@@ -3108,11 +3106,11 @@ msgstr ""
 
 #: eme_options.php:613
 msgid "RSVP: mail options"
-msgstr "Teilnahmebestätigung: E-Mail Optionen"
+msgstr "Buchung: E-Mail Optionen"
 
 #: eme_options.php:616
 msgid "Enable the RSVP e-mail notifications?"
-msgstr "Teilnahmebestätigung E-Mail-Benachrichtigungen aktivieren?"
+msgstr "Buchung E-Mail-Benachrichtigungen aktivieren?"
 
 #: eme_options.php:616
 msgid ""
@@ -3220,7 +3218,7 @@ msgstr "E-Mail-Format für Anmeldende"
 
 #: eme_options.php:631
 msgid "Registration pending email subject format"
-msgstr "Das Format für den Betreff der Email: Teilnahmebestätigung ausstehend"
+msgstr "Das Format für den Betreff der Email: Buchung ausstehend"
 
 #: eme_options.php:631
 msgid ""
@@ -3228,7 +3226,7 @@ msgid ""
 "the event requires registration approval."
 msgstr ""
 "Das Format für den Betreff der Email die an den Besteller verschickt wird, "
-"wenn die Teilnahme zur Veranstaltung einer Teilnahmebestätigung erfordert."
+"wenn die Teilnahme zur Veranstaltung einer Buchung erfordert."
 
 #: eme_options.php:632
 msgid "Registration pending email format"
@@ -3242,7 +3240,7 @@ msgstr "E-Mail-Format für Anmeldungen, wenn eine Bestätigung erfolgen muss."
 
 #: eme_options.php:633
 msgid "Registration cancelled email subject format"
-msgstr "Das Format für den Betreff der Email: Teilnahmebestätigung storniert"
+msgstr "Das Format für den Betreff der Email: Buchung storniert"
 
 #: eme_options.php:633
 msgid ""
@@ -3264,7 +3262,7 @@ msgstr "E-Mail-Format für Angemeldete, die eine Anmeldung stornieren."
 
 #: eme_options.php:635
 msgid "Registration denied email subject format"
-msgstr "Das Format für den Betreff der Email: Teilnahmebestätigung abgelehnt"
+msgstr "Das Format für den Betreff der Email: Buchung abgelehnt"
 
 #: eme_options.php:635
 msgid ""
@@ -3274,7 +3272,7 @@ msgid ""
 msgstr ""
 "Das Format für den Betreff der Email die an den Besteller verschickt wird, "
 "wenn der Administrator die Anfrage zur Teilnahme ablehnt, sollte die "
-"Veranstaltung eine Teilnahmebestätigung erfordern."
+"Veranstaltung eine Buchung erfordern."
 
 #: eme_options.php:636
 msgid "Registration denied email format"
@@ -3290,8 +3288,7 @@ msgstr ""
 
 #: eme_options.php:637
 msgid "Registration updated email subject format"
-msgstr ""
-"Das Format für den Betreff der Email: Teilnahmebestätigung aktualisiert"
+msgstr "Das Format für den Betreff der Email: Buchung aktualisiert"
 
 #: eme_options.php:637
 msgid ""
@@ -3403,7 +3400,7 @@ msgstr ""
 
 #: eme_options.php:658
 msgid "RSVP: price options"
-msgstr "Teilnahmebestätigung: Preisoptionen"
+msgstr "Buchung: Preisoptionen"
 
 #: eme_options.php:661
 msgid "Default currency"
@@ -3495,7 +3492,7 @@ msgstr ""
 
 #: eme_options.php:672
 msgid "RSVP: paypal options"
-msgstr "Teilnahmebestätigung: Paypal Einstellungen"
+msgstr "Buchung: Paypal Einstellungen"
 
 #: eme_options.php:676
 msgid "PayPal live or test"
@@ -3515,7 +3512,7 @@ msgid ""
 "really use paypal."
 msgstr ""
 "Wähle ob du die Paypal Sandbox (zum Testen) oder die produktive Paypal "
-"Schnittstelle einsetzen willst."
+"Schnittstelle einsetzen möchtest."
 
 #: eme_options.php:677
 msgid "PayPal business info"
@@ -3588,7 +3585,7 @@ msgstr "Info: Die URL für Zahlungsmitteilungen ist: "
 
 #: eme_options.php:688
 msgid "RSVP: 2Checkout options"
-msgstr "Teilnahmebestätigung: 2Checkout-Optionen"
+msgstr "Buchung: 2Checkout-Optionen"
 
 #: eme_options.php:693
 msgid "2Checkout live or test"
@@ -3628,7 +3625,7 @@ msgstr "2Checkout Secret"
 
 #: eme_options.php:701
 msgid "RSVP: Webmoney options"
-msgstr "Teilnahmebestätigung: Webmoney-Optionen"
+msgstr "Buchung: Webmoney-Optionen"
 
 #: eme_options.php:706
 msgid "Webmoney live or test"
@@ -3668,7 +3665,7 @@ msgstr "Webmoney Secret"
 
 #: eme_options.php:714
 msgid "RSVP: Google Checkout options"
-msgstr "Teilnahmebestätigung: GoogleCheckout-Optionen"
+msgstr "Buchung: GoogleCheckout-Optionen"
 
 #: eme_options.php:717
 msgid "Google Checkout live or test"
@@ -3708,7 +3705,7 @@ msgstr "GoogleCheckout Händler-Schlüssel"
 
 #: eme_options.php:724
 msgid "RSVP: First Data options"
-msgstr "Teilnahmebestätigung: First Data (Zahlungssystem) Einstellungen"
+msgstr "Buchung: First Data (Zahlungssystem) Einstellungen"
 
 #: eme_options.php:729
 msgid "First Data live or test"
@@ -3728,7 +3725,7 @@ msgid ""
 "use First Datal."
 msgstr ""
 "Wähle ob du die First Data Sandbox (zum Testen) oder die produktive First "
-"Data Schnittstelle verwenden willst."
+"Data Schnittstelle verwenden möchtest."
 
 #: eme_options.php:730
 msgid "First Data Store Name"
