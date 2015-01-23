@@ -376,9 +376,21 @@ function eme_add_multibooking_form_shortcode($atts) {
 
 function eme_booking_list_shortcode($atts) {
    extract ( shortcode_atts ( array ('id'=>0,'template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
-   $event = eme_get_event(intval($id));
-   if ($event)
-      return eme_get_bookings_list_for($event,$template_id,$template_id_header,$template_id_footer);
+   if ($id>0) {
+   	$event = eme_get_event(intval($id));
+   	if ($event)
+      		return eme_get_bookings_list_for_event($event,$template_id,$template_id_header,$template_id_footer);
+   }
+}
+
+function eme_mybooking_list_shortcode($atts) {
+   extract ( shortcode_atts ( array ('template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0), $atts));
+   if (is_user_logged_in()) {
+	$booker_wp_id=get_current_user_id();
+	$person=eme_get_person_by_wp_id($booker_wp_id);
+	if ($person)
+		return eme_get_bookings_list_for_person($person,$template_id,$template_id_header,$template_id_footer);
+   }
 }
 
 function eme_attendee_list_shortcode($atts) {
@@ -1771,7 +1783,7 @@ function eme_get_attendees_list_for($event,$template_id=0,$template_id_header=0,
    return $res;
 }
 
-function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$template_id_footer=0) {
+function eme_get_bookings_list_for_event($event,$template_id=0,$template_id_header=0,$template_id_footer=0) {
    $ignore_pending=get_option('eme_bookings_list_ignore_pending');
    $bookings=eme_get_bookings_for($event['event_id'],$ignore_pending);
    $format=get_option('eme_bookings_list_format');
@@ -1807,6 +1819,40 @@ function eme_get_bookings_list_for($event,$template_id=0,$template_id_header=0,$
       $res.=$eme_format_footer;
    } else {
       $res="<p class='eme_no_bookings'>".__('No responses yet!','eme')."</p>";
+   }
+   return $res;
+}
+
+function eme_get_bookings_list_for_person($person,$template_id=0,$template_id_header=0,$template_id_footer=0) {
+   $bookings=eme_get_bookings_by_person_id($person['person_id']);
+   $format=get_option('eme_bookings_list_format');
+   $eme_format_header=get_option('eme_bookings_list_header_format');
+   $eme_format_footer=get_option('eme_bookings_list_footer_format');
+
+   if ($template_id) {
+      $format = eme_get_template_format($template_id);
+   }
+
+   // header and footer can't contain per booking info, so we don't replace booking placeholders there
+   // but for a person, no event info in header/footer either, so no replacement at all
+   if ($template_id_header) {
+      $eme_format_header = eme_get_template_format($template_id_header);
+   }
+   if ($template_id_footer) {
+      $eme_format_footer = eme_get_template_format($template_id_footer);
+   }
+
+   if ($bookings) {
+      $res=$eme_format_header;
+      foreach ($bookings as $booking) {
+	$event = eme_get_event($booking['event_id']);
+      	// don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+      	$format = eme_replace_placeholders($format, $event, "html", 0);
+        $res.= eme_replace_booking_placeholders($format,$event,$booking);
+      }
+      $res.=$eme_format_footer;
+   } else {
+      $res="<p class='eme_no_bookings'>".__("You have not made any bookings yet!",'eme')."</p>";
    }
    return $res;
 }

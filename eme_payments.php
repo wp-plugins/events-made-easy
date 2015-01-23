@@ -10,15 +10,15 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
    $booking_ids = eme_get_payment_booking_ids($payment_id);
    $booking_id = $booking_ids[0];
    $booking = eme_get_booking($booking_id);
-   if (empty($event))
-      $event = eme_get_event($booking['booking_id']);
-   $cur = $event['currency'];
    if (!is_array($booking))
       return $ret_string;
    if ($booking['booking_payed'])
       return $ret_string."<div class='eme-already-payed'>".__('This booking has already been payed for','eme')."</div>";
 
-   if (is_array($event) && eme_event_can_pay_online($event)) {
+   if (empty($event))
+      $event = eme_get_event($booking['event_id']);
+   $cur = $event['currency'];
+   if (eme_event_can_pay_online($event)) {
       $eme_payment_form_header_format=get_option('eme_payment_form_header_format');
       $total_price = eme_get_total_booking_price($event,$booking);
       if (!empty($eme_payment_form_header_format)) {
