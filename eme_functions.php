@@ -544,9 +544,11 @@ function eme_detect_lang() {
       $language=qtranxf_getLanguage();
    } elseif (function_exists('pll_current_language') && function_exists('pll_languages_list')) {
       $languages=pll_languages_list();
-      foreach ($languages as $tmp_lang) {
-         if (preg_match("/^$tmp_lang\/|\/$tmp_lang\//",$_SERVER['REQUEST_URI']))
-               $language=$tmp_lang;
+      if (is_array($languages)) {
+          foreach ($languages as $tmp_lang) {
+             if (preg_match("/^$tmp_lang\/|\/$tmp_lang\//",$_SERVER['REQUEST_URI']))
+                   $language=$tmp_lang;
+          }
       }
       if (empty($language))
          $language=pll_current_language('slug');

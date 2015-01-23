@@ -389,7 +389,7 @@ function eme_mybooking_list_shortcode($atts) {
 	$booker_wp_id=get_current_user_id();
 	$person=eme_get_person_by_wp_id($booker_wp_id);
 	if ($person)
-		return eme_get_bookings_list_for_person($person,$future,$template_id,$template_id_header,$template_id_footer);
+		return eme_get_bookings_list_for_person($person,$future,'',$template_id,$template_id_header,$template_id_footer);
    }
 }
 
@@ -1828,12 +1828,15 @@ function eme_get_bookings_list_for_event($event,$template_id=0,$template_id_head
    return $res;
 }
 
-function eme_get_bookings_list_for_person($person,$future=0,$template_id=0,$template_id_header=0,$template_id_footer=0) {
+function eme_get_bookings_list_for_person($person,$future=0,$template="",$template_id=0,$template_id_header=0,$template_id_footer=0) {
    $bookings=eme_get_bookings_by_person_id($person['person_id'], $future);
    $format=get_option('eme_bookings_list_format');
    $eme_format_header=get_option('eme_bookings_list_header_format');
    $eme_format_footer=get_option('eme_bookings_list_footer_format');
 
+   if ($template) {
+      $format=$template;
+   }
    if ($template_id) {
       $format = eme_get_template_format($template_id);
    }
