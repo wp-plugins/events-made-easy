@@ -603,24 +603,6 @@ function eme_events_page_content() {
       else
          $page_body = eme_multipayment_form($payment_id);
       return $page_body;
-   } elseif (isset($_GET['eme_unsub'])) {
-      if (is_user_logged_in()) {
-          $booking_id=intval($_GET['eme_unsub']);
-	  $booking=eme_get_booking($booking_id);
-          $current_userid=get_current_user_id();
-	  if ($booking['wp_id']==$current_userid) {
-		eme_delete_booking($booking_id);
-	  }
-          $event = eme_get_event($booking['event_id']);
-	  if (!empty($event['event_single_event_format']))
-		  $single_event_format = $event['event_single_event_format'];
-	  elseif ($event['event_properties']['event_single_event_format_tpl']>0)
-		  $single_event_format = eme_get_template_format($event['event_properties']['event_single_event_format_tpl']);
-	  else
-		  $single_event_format = get_option('eme_single_event_format' );
-	  $page_body = eme_replace_placeholders ( $single_event_format, $event );
-	  return $page_body;
-      }
    }
 
    if (get_query_var('eme_town')) {

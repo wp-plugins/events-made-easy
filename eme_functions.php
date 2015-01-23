@@ -319,7 +319,7 @@ function eme_unsubscribe_url($booking_id) {
    $def_language = eme_detect_lang();
    $language = $def_language;
 
-   $the_link = eme_get_events_page(true, false);
+   $the_link = "";
    // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
    $the_link = remove_query_arg('lang',$the_link);
    $the_link = add_query_arg( array( 'eme_unsub' => $booking_id ), $the_link );

@@ -99,6 +99,15 @@ function eme_actions_init() {
       eme_fdgg_notification();
       exit();
    }
+   if (isset($_GET['eme_unsub']) && is_user_logged_in()) {
+	   $booking_id=intval($_GET['eme_unsub']);
+	   $booking=eme_get_booking($booking_id);
+	   $current_userid=get_current_user_id();
+	   if ($booking['wp_id']==$current_userid) {
+		   eme_delete_booking($booking_id);
+	   }
+   }
+
 }
 add_action('init','eme_actions_init');
 
