@@ -31,6 +31,7 @@ add_shortcode('eme_add_booking_form','eme_add_booking_form_shortcode');
 add_shortcode('eme_add_multibooking_form','eme_add_multibooking_form_shortcode');
 add_shortcode('eme_delete_booking_form','eme_delete_booking_form_shortcode');
 add_shortcode('eme_bookings','eme_booking_list_shortcode');
+add_shortcode('eme_mybookings','eme_mybooking_list_shortcode');
 add_shortcode('eme_attendees','eme_attendee_list_shortcode');
 
 // old shortcode names
