@@ -702,6 +702,13 @@ function eme_get_booking_payment_id($booking_id) {
    return $wpdb->get_var($sql);
 }
 
+function eme_delete_payment_booking_id($booking_id) {
+   global $wpdb;
+   $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
+   $sql = $wpdb->prepare("DELETE FROM $payments_table WHERE FIND_IN_SET(%d,booking_ids)",$booking_id);
+   return $wpdb->get_var($sql);
+}
+
 function eme_get_bookings_payment_id($booking_ids) {
    global $wpdb;
    $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;

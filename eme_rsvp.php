@@ -1360,6 +1360,7 @@ function eme_delete_booking($booking_id) {
    // first delete all the answers
    eme_delete_answers($booking_id);
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
+   eme_delete_payment_booking_id($booking_id);
    $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE booking_id = %d",$booking_id);
    return $wpdb->query($sql);
 }
