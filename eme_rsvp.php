@@ -1862,6 +1862,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
 
    preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
    $person  = eme_get_person ($booking['person_id']);
+   $current_userid=get_current_user_id();
    $answers = eme_get_answers($booking['booking_id']);
    $payment_id = eme_get_booking_payment_id($booking['booking_id']);
    $is_multibooking=0;
@@ -1958,6 +1959,13 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_PAYMENT_URL/', $result)) {
          if ($payment_id && eme_event_can_pay_online($event))
             $replacement = eme_payment_url($payment_id);
+      } elseif (preg_match('/#_UNSUBSCRIBE$/', $result)) {
+	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
+		 $url = eme_unsubscribe_url($booking['booking_id']);
+	 $replacement="<a href='$url'>".__('Unsubscribe','eme')."</a>";
+      } elseif (preg_match('/#_UNSUBSCRIBE_URL$/', $result)) {
+	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
+		 $replacement = eme_unsubscribe_url($booking['booking_id']);
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {

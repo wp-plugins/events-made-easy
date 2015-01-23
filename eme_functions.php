@@ -309,6 +309,25 @@ function eme_payment_return_url($event,$payment_id,$resultcode) {
    return $the_link;
 }
 
+function eme_unsubscribe_url($booking_id) {
+   if (!is_user_logged_in()) return;
+
+   $booking=eme_get_booking($booking_id);
+   $current_userid=get_current_user_id();
+   if ($booking['wp_id']!=$current_userid) return;
+
+   $def_language = eme_detect_lang();
+   $language = $def_language;
+
+   $the_link = eme_get_events_page(true, false);
+   // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
+   $the_link = remove_query_arg('lang',$the_link);
+   $the_link = add_query_arg( array( 'eme_unsub' => $booking_id ), $the_link );
+   if (!empty($language))
+	   $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
+   return $the_link;
+}
+
 function eme_check_event_exists($event_id) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
