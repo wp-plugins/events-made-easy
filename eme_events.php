@@ -603,9 +603,9 @@ function eme_events_page_content() {
       else
          $page_body = eme_multipayment_form($payment_id);
       return $page_body;
-   } elseif (get_query_var('eme_unsub')) {
+   } elseif (isset($_GET['eme_unsub'])) {
       if (is_user_logged_in()) {
-          $booking_id=intval(get_query_var('eme_unsub'));
+          $booking_id=intval($_GET['eme_unsub']);
 	  $booking=eme_get_booking($booking_id);
           $current_userid=get_current_user_id();
 	  if ($booking['wp_id']==$current_userid) {
