@@ -705,6 +705,10 @@ function eme_add_person($name, $email, $phone, $wp_id, $lang) {
 function eme_user_profile($user) {
    //$eme_phone=get_user_meta($user,'eme_phone',true);
    $eme_phone=$user->eme_phone;
+   // only show future bookings
+   $future=1;
+   // define a simple template
+   $template="#_STARTDATE #_STARTTIME: #_EVENTNAME (#_RESPSPACES places). #_UNSUBSCRIBE";
    ?>
    <h3><?php _e('Events Made Easy settings', 'eme')?></h3>
    <table class='form-table'>
@@ -712,6 +716,10 @@ function eme_user_profile($user) {
          <th><label for="eme_phone"><?php _e('Phone number','eme');?></label></th>
          <td><input type="text" name="eme_phone" id="eme_phone" value="<?php echo $eme_phone; ?>" class="regular-text" /> <br />
          <?php _e('The phone number used by Events Made Easy when the user is indicated as the contact person for an event.','eme');?></td>
+      </tr>
+      <tr>
+         <th><label for="eme_phone"><?php _e('Future bookings made','eme');?></label></th>
+	 <td><?php echo eme_get_bookings_list_for_person($user,$future,$template); ?>
       </tr>
    </table>
    <?php
