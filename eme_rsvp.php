@@ -1860,7 +1860,7 @@ function eme_get_bookings_list_for_person($person,$future=0,$template="",$templa
       }
       $res.=$eme_format_footer;
    } else {
-      $res="<p class='eme_no_bookings'>".__("You have not made any bookings yet!",'eme')."</p>";
+      $res="<p class='eme_no_bookings'>".__("No bookings found.",'eme')."</p>";
    }
    return $res;
 }
