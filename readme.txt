@@ -72,8 +72,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   [eme_mybookings template_id=3 template_id_header=7 template_id_footer=9 future=0]
   [eme_mybookings template_id=3 future=1]
   Will show all bookings for the logged in user, based on the layout given by the templates or by the generic booking list format
-  Also added booking placeholders #_UNSUBSCRIBE and #_UNSUBSCRIBE_URL, so you can create a link to unsubscribe 1 specific booking too
-  Also: the list of future bookings made is now in the user's profile, with an unsubscribe link
+  Also added booking placeholders #_CANCEL_LINK and #_CANCEL_URL, so you can create a link to cancel 1 specific booking too (for future events only)
+  Also: the list of future bookings made is now in the user's profile, with an cancel link
 * Bugfix: sometimes when multiple maps were shown (and dependant on the OS used), even multiple calls to microtime() return the same value
           so as a result some javascript variables had the same name and thus the maps might show the same address
           This is now fixed by adding a rand() call to the variable names

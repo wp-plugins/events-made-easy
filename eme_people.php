@@ -709,7 +709,7 @@ function eme_user_profile($user) {
    // only show future bookings
    $future=1;
    // define a simple template
-   $template="#_STARTDATE #_STARTTIME: #_EVENTNAME (#_RESPSPACES places). #_UNSUBSCRIBE<br />";
+   $template="#_STARTDATE #_STARTTIME: #_EVENTNAME (#_RESPSPACES places). #_CANCEL_LINK<br />";
    ?>
    <h3><?php _e('Events Made Easy settings', 'eme')?></h3>
    <table class='form-table'>

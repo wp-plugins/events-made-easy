@@ -1973,7 +1973,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_CANCEL_LINK$/', $result)) {
 	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
 		 $url = eme_cancel_booking_url($booking['booking_id']);
-	 $replacement="<a href='$url'>".__('Unsubscribe','eme')."</a>";
+	 $replacement="<a href='$url'>".__('Cancel booking','eme')."</a>";
       } elseif (preg_match('/#_CANCEL_URL$/', $result)) {
 	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
 		 $replacement = eme_cancel_booking_url($booking['booking_id']);
