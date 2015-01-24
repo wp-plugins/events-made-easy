@@ -1097,10 +1097,13 @@ function eme_get_bookings_by_person_id($person_id,$future) {
    global $wpdb; 
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
-   if ($future)
-	   $sql= $wpdb->prepare("select bookings.* from $bookings_table as bookings,$events_table as events where person_id = %d AND bookings.event_id=events.event_id AND events.event_start_date>now();",$person_id);
-   else
+   if ($future) {
+      $today = date("Y-m-d");
+      $this_time = date ("H:i:00");
+	   $sql= $wpdb->prepare("select bookings.* from $bookings_table as bookings,$events_table as events where person_id = %d AND bookings.event_id=events.event_id AND CONCAT(events.event_start_date,' ',events.event_start_time)>'$today $this_time'",$person_id);
+   } else {
 	   $sql = $wpdb->prepare("SELECT * FROM $bookings_table WHERE person_id = %d",$person_id);
+   }
    $result = $wpdb->get_results($sql, ARRAY_A);
    return $result;
 }
@@ -1364,7 +1367,7 @@ function eme_delete_booking($booking_id) {
    // first delete all the answers
    eme_delete_answers($booking_id);
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   eme_delete_payment_booking_id($booking_id);
+   //eme_delete_payment_booking_id($booking_id);
    $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE booking_id = %d",$booking_id);
    return $wpdb->query($sql);
 }
@@ -1967,13 +1970,13 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
       } elseif (preg_match('/#_PAYMENT_URL/', $result)) {
          if ($payment_id && eme_event_can_pay_online($event))
             $replacement = eme_payment_url($payment_id);
-      } elseif (preg_match('/#_UNSUBSCRIBE$/', $result)) {
+      } elseif (preg_match('/#_CANCEL_LINK$/', $result)) {
 	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
-		 $url = eme_unsubscribe_url($booking['booking_id']);
+		 $url = eme_cancel_booking_url($booking['booking_id']);
 	 $replacement="<a href='$url'>".__('Unsubscribe','eme')."</a>";
-      } elseif (preg_match('/#_UNSUBSCRIBE_URL$/', $result)) {
+      } elseif (preg_match('/#_CANCEL_URL$/', $result)) {
 	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
-		 $replacement = eme_unsubscribe_url($booking['booking_id']);
+		 $replacement = eme_cancel_booking_url($booking['booking_id']);
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {

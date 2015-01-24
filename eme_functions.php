@@ -309,7 +309,7 @@ function eme_payment_return_url($event,$payment_id,$resultcode) {
    return $the_link;
 }
 
-function eme_unsubscribe_url($booking_id) {
+function eme_cancel_booking_url($booking_id) {
    if (!is_user_logged_in()) return;
 
    $booking=eme_get_booking($booking_id);
@@ -322,7 +322,7 @@ function eme_unsubscribe_url($booking_id) {
    $the_link = "";
    // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
    $the_link = remove_query_arg('lang',$the_link);
-   $the_link = add_query_arg( array( 'eme_unsub' => $booking_id ), $the_link );
+   $the_link = add_query_arg( array( 'eme_cancel_booking' => $booking_id ), $the_link );
    if (!empty($language))
 	   $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
    return $the_link;
