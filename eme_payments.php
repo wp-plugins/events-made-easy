@@ -71,10 +71,20 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
 
    // we take the currency of the first event in the series
    $event=eme_get_event_by_booking_id($booking_ids[0]);
+   $booking=eme_get_booking($booking_ids[0]);
    $cur = $event['currency'];
 
-   $ret_string .= "<div id='eme-payment-handling' class='eme-payment-handling'>".__('Payment handling','eme')."</div>";
-   $ret_string .= "<div id='eme-payment-price-info' class='eme-payment-price-info'>".sprintf(__("The booking price in %s is: %01.2f",'eme'),$cur,$total_price)."</div>";
+   $eme_multipayment_form_header_format=get_option('eme_multipayment_form_header_format');
+   if (!empty($eme_multipayment_form_header_format)) {
+      $result = eme_replace_placeholders($eme_multipayment_form_header_format, $event,"html",0);
+      $result = eme_replace_booking_placeholders($result, $event, $booking);
+      $ret_string .= "<div id='eme-payment-formtext' class='eme-payment-formtext'>";
+      $ret_string .= $result;
+      $ret_string .= "</div>";
+   } else {
+      $ret_string .= "<div id='eme-payment-handling' class='eme-payment-handling'>".__('Payment handling','eme')."</div>";
+      $ret_string .= "<div id='eme-payment-price-info' class='eme-payment-price-info'>".sprintf(__("The booking price in %s is: %01.2f",'eme'),$cur,$total_price)."</div>";
+   }
    $ret_string .= "<div id='eme-payment-form' class='eme-payment-form'>";
    if ($event['use_paypal'])
       $ret_string .= eme_paypal_form($event,$payment_id, $total_price,1);
@@ -88,6 +98,14 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
       $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,1);
    $ret_string .= "</div>";
 
+   $eme_multipayment_form_footer_format=get_option('eme_multipayment_form_footer_format');
+   if (!empty($eme_multipayment_form_footer_format)) {
+      $result = eme_replace_placeholders($eme_multipayment_form_footer_format, $event,"html",0);
+      $result = eme_replace_booking_placeholders($result, $event, $booking);
+      $ret_string .= "<div id='eme-payment-formtext' class='eme-payment-formtext'>";
+      $ret_string .= $result;
+      $ret_string .= "</div>";
+   }
    return $ret_string;
 }
 

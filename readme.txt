@@ -74,6 +74,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   Will show all bookings for the logged in user, based on the layout given by the templates or by the generic booking list format
   Also added booking placeholders #_CANCEL_LINK and #_CANCEL_URL, so you can create a link to cancel 1 specific booking too (for future events only)
   Also: the list of future bookings made is now in the user's profile, with an cancel link
+* Feature: you can now also change the text above/below the payment buttons for a multi-booking form
 * Bugfix: sometimes when multiple maps were shown (and dependant on the OS used), even multiple calls to microtime() return the same value
           so as a result some javascript variables had the same name and thus the maps might show the same address
           This is now fixed by adding a rand() call to the variable names

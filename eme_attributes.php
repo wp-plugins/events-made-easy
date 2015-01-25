@@ -30,6 +30,8 @@ function eme_attributes_form($eme_array) {
       get_option('eme_attendees_list_format' ).
       get_option('eme_payment_form_header_format' ).
       get_option('eme_payment_form_footer_format' ).
+      get_option('eme_multipayment_form_header_format' ).
+      get_option('eme_multipayment_form_footer_format' ).
       get_option('eme_bookings_list_format' );
       #get_option('eme_location_baloon_format' ).
       #get_option('eme_location_page_title_format' ).
