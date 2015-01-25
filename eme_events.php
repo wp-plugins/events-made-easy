@@ -654,25 +654,25 @@ function eme_events_page_content() {
       return $page_body;
    } elseif (get_query_var('calendar_day')) {
       $scope = eme_sanitize_request(get_query_var('calendar_day'));
-      $events_N = eme_events_count_for ( $scope );
+      $events_count = eme_events_count_for ( $scope );
       $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
       $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
       $notcategory = isset( $_GET['notcategory'] ) ? urldecode($_GET['notcategory']) : '';
       $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
       $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
 
-      if ($events_N > 1) {
+      if ($events_count > 1) {
+         // more than one event, so we show the list
          $event_list_item_format = get_option('eme_event_list_item_format' );
          //Add headers and footers to the events list
          $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
       } else {
-         # there's only one event for that day, so we show that event, but only if the event doesn't point to an external url
+         // only one event for that day, so we show that event or redir to the configured external url for it
          $events = eme_get_events ( 0, $scope);
          $event = $events[0];
          if ($event['event_url'] != '') {
-            $event_list_item_format = get_option('eme_event_list_item_format' );
-            //Add headers and footers to the events list
-            $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
+            // url not empty, so we redirect to it
+            $page_body = '<script type="text/javascript">window.location.href="'.$event['event_url'].'";</script>';
          } else {
             if (!empty($event['event_single_event_format']))
                $single_event_format = $event['event_single_event_format'];
