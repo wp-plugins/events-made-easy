@@ -196,8 +196,8 @@ define("PAYPAL_LIVE_URL","https://www.paypal.com/cgi-bin/webscr");
 define("PAYPAL_SANDBOX_URL","https://www.sandbox.paypal.com/cgi-bin/webscr");
 define("GOOGLE_LIVE","production");
 define("GOOGLE_SANDBOX","sandbox");
-define("FDGG_LIVE_URL","https://connect.merchanttest.firstdataglobalgateway.com/IPGConnect/gateway/processing");
-define("FDGG_SANDBOX_URL","https://connect.firstdataglobalgateway.com/IPGConnect/gateway/processing");
+define("FDGG_SANDBOX_URL","https://connect.merchanttest.firstdataglobalgateway.com/IPGConnect/gateway/processing");
+define("FDGG_LIVE_URL","https://connect.firstdataglobalgateway.com/IPGConnect/gateway/processing");
 
 // DEBUG constant for developing
 // if you are hacking this plugin, set to TRUE, a log will show in admin pages

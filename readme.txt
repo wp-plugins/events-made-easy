@@ -79,11 +79,13 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
           so as a result some javascript variables had the same name and thus the maps might show the same address
           This is now fixed by adding a rand() call to the variable names
 * Bugfix: required formfields that were defined as dropdown were not allowed to post "0" as a return value for required fields
+* Bugfix: fix some firstdata issues, thanks to ecoyork
 * Change: renamed function eme_event_category_url to eme_category_url
+* Change: removed #_IS_MULTIBOOKING placeholder, was not working correctly
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
 * Improvement: when clicking on a calendar day in the small calendar and there's only one event where the external url is set, we now redirect to that url
-* Improvement: Dutch language updates, thanks to Herman Boswijk
 * Improvement: German language updates, thanks to Joerg Knoerchen
+* Improvement: Dutch language updates, thanks to Herman Boswijk
 
 = 1.5.19 =
 * Feature: rsvp end date/time restriction can now be negative, so you can say "Allow RSVP until -2 days -1 hours before the event starts, indicating the rsvp can go on for 2 days and 1 hour AFTER the event has started. The rsvp end can never go beyond the event end date itself of course.

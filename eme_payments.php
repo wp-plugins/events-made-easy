@@ -235,7 +235,7 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='txntype' value='sale' />";
    $form_html.="<input type='hidden' name='mode' value='payonly' />";
    $form_html.="<input type='hidden' name='trxOrigin' value='ECI' />";
-   $form_html.="<input type='hidden' name='txndatetime' value='$datetime />";
+   $form_html.="<input type='hidden' name='txndatetime' value='$datetime' />";
    $form_html.="<input type='hidden' name='hash' value='".fdgg_createHash($store_name . $datetime . $price . $shared_secret)."' />";
    $form_html.="<input type='hidden' name='storename' value='$store_name' />";
    $form_html.="<input type='hidden' name='chargetotal' value='$price' />";
