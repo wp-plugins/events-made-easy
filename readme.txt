@@ -68,7 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.20 =
-* Feature: added shortcodes eme_mybookings with as optional arguments a template_id for header, content and footer, and an option to show future or all bookings
+* Feature: added shortcode eme_mybookings with as optional arguments a template_id for header, content and footer, and an option to show future or all bookings
   [eme_mybookings template_id=3 template_id_header=7 template_id_footer=9 future=0]
   [eme_mybookings template_id=3 future=1]
   Will show all bookings for the logged in user, based on the layout given by the templates or by the generic booking list format
@@ -80,9 +80,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
           This is now fixed by adding a rand() call to the variable names
 * Bugfix: required formfields that were defined as dropdown were not allowed to post "0" as a return value for required fields
 * Change: renamed function eme_event_category_url to eme_category_url
-* Improvement: Dutch language updates, thanks to Herman Boswijk
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
 * Improvement: when clicking on a calendar day in the small calendar and there's only one event where the external url is set, we now redirect to that url
+* Improvement: Dutch language updates, thanks to Herman Boswijk
 * Improvement: German language updates, thanks to Joerg Knoerchen
 
 = 1.5.19 =
