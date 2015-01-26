@@ -2844,6 +2844,7 @@ function eme_event_needs_approval($event_id) {
    return $wpdb->get_var( $sql );
 }
 
+// the next function returns the price for 1 booking, not taking into account the number of seats or anything
 function eme_get_booking_price($event,$booking) {
    if ($booking['booking_price']!=="")
       $basic_price=$booking['booking_price'];
@@ -2853,6 +2854,7 @@ function eme_get_booking_price($event,$booking) {
    return $basic_price;
 }
 
+// the next function returns the price for a specific booking, multiplied by the number of seats booked and multiprice taken into account
 function eme_get_total_booking_price($event,$booking) {
    $price=0;
    $basic_price= eme_get_booking_price($event,$booking);
