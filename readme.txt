@@ -75,6 +75,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   Also added booking placeholders #_CANCEL_LINK and #_CANCEL_URL, so you can create a link to cancel 1 specific booking too (for future events only)
   Also: the list of future bookings made is now in the user's profile, with an cancel link
 * Feature: you can now also change the text above/below the payment buttons for a multi-booking form
+* Feature: added filters eme_eval_booking_form_post_filter and eme_eval_multibooking_form_post_filter, which happen just after the POST of the booking form
+  (1 arg: $event for eme_eval_booking_form_post_filter, or $events of eme_eval_multibooking_form_post_filter; containing the event(s) details that are being booked for). The filter eme_eval_booking_form_post_filter differs from eme_eval_booking_form_filter in this sense that this filter happens immediately after the POST, while eme_eval_booking_form_filter happens after the booker has been created already (which is a bit stupid).
 * Bugfix: sometimes when multiple maps were shown (and dependant on the OS used), even multiple calls to microtime() return the same value
           so as a result some javascript variables had the same name and thus the maps might show the same address
           This is now fixed by adding a rand() call to the variable names

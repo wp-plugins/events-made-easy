@@ -30,10 +30,20 @@ function eme_add_booking_form($event_id,$show_message=1) {
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_booking' && isset($_POST['eme_event_id'])) {
       $event_id = intval($_POST['eme_event_id']);
       $event = eme_get_event($event_id);
-      $send_mail=1;
-      $booking_res = eme_book_seats($event,$send_mail);
-      $form_result_message = $booking_res[0];
-      $booking_id_done=$booking_res[1];
+      if (has_filter('eme_eval_booking_form_post_filter'))
+         $eval_filter_return=apply_filters('eme_eval_booking_form_post_filter',$event);
+      else
+         $eval_filter_return=array(0=>1,1=>'');
+      if (is_array($eval_filter_return) && !$eval_filter_return[0]) {
+         // the result of own eval rules failed, so let's use that as a result
+         $booking_ids_done = 0;
+         $form_result_message = $eval_filter_return[1];
+      } else {
+         $send_mail=1;
+         $booking_res = eme_book_seats($event,$send_mail);
+         $form_result_message = $booking_res[0];
+         $booking_id_done=$booking_res[1];
+      }
       $post_string="{";
       if ($booking_id_done && eme_event_can_pay_online($event)) {
          $payment_id = eme_get_booking_payment_id($booking_id_done);
@@ -205,10 +215,23 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'add_bookings' && isset($_POST['eme_event_ids'])) {
       $event_ids = $_POST['eme_event_ids'];
       $events = eme_get_event($event_ids);
-      $send_mail=1;
-      $booking_res = eme_multibook_seats($events,$send_mail,$format_entry);
-      $form_result_message = $booking_res[0];
-      $booking_ids_done=$booking_res[1];
+
+      if (has_filter('eme_eval_multibooking_form_post_filter'))
+         $eval_filter_return=apply_filters('eme_eval_multibooking_form_post_filter',$events);
+      else
+         $eval_filter_return=array(0=>1,1=>'');
+      if (is_array($eval_filter_return) && !$eval_filter_return[0]) {
+         // the result of own eval rules failed, so let's use that as a result
+         $booking_ids_done = 0;
+         $form_result_message = $eval_filter_return[1];
+      } else {
+         $send_mail=1;
+         $booking_res = eme_multibook_seats($events,$send_mail,$format_entry);
+         $form_result_message = $booking_res[0];
+         $booking_ids_done=$booking_res[1];
+      }
+
+
       $post_string="{";
       // let's decide for the first event wether or not payment is needed
       if ($booking_ids_done && eme_event_can_pay_online($events[0])) {
