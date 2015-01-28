@@ -83,6 +83,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
           This is now fixed by adding a rand() call to the variable names
 * Bugfix: required formfields that were defined as dropdown were not allowed to post "0" as a return value for required fields
 * Bugfix: fix some firstdata issues, thanks to ecoyork
+* Bugfix: when creating recurrent events, the last day was not taken into account
 * Change: renamed function eme_event_category_url to eme_category_url
 * Change: removed #_IS_MULTIBOOKING placeholder, was not working correctly
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
