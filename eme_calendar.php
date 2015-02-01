@@ -153,7 +153,7 @@ function eme_get_calendar($args="") {
    $iNextMonth = sprintf("%02d",$iNextMonth);
 
    // Get number of days of previous month
-   $iPrevDaysInMonth = (int)date('t', mktime(0, 0, 0, $iPrevMonth, $iNowDay, $iPrevYear));
+   $iPrevDaysInMonth = (int)date('t', mktime(0, 0, 0, $iPrevMonth, 1, $iPrevYear));
 
    // Get numeric representation of the day of the week of the first day of specified (current) month
    // remember: first day of week is a Sunday
