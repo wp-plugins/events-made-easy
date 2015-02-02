@@ -89,6 +89,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Change: removed #_IS_MULTIBOOKING placeholder, was not working correctly
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
 * Improvement: when clicking on a calendar day in the small calendar and there's only one event where the external url is set, we now redirect to that url
+* Improvement: #_PHONE and #_COMMENT can now also be used in header/footer parts in a multibooking form
 * Improvement: German language updates, thanks to Joerg Knoerchen
 * Improvement: Dutch language updates, thanks to Herman Boswijk
 

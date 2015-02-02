@@ -331,18 +331,18 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 
 	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_header);
 
-      $cur_time=time();
+	   $cur_time=time();
 	   foreach ($events as $event) {
 		   $event_id=$event['event_id'];
-         $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-         $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
+		   $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
+		   $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
 		   if ($event['event_properties']['rsvp_end_target']=='start')
 			   $event_rsvp_datetime = $event_rsvp_startdatetime;
 		   else
 			   $event_rsvp_datetime = $event_rsvp_enddatetime;
 
 		   if ($cur_time+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ||
-             $cur_time>=$event_rsvp_enddatetime) {
+				   $cur_time>=$event_rsvp_enddatetime) {
 			   //$form_html.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
 			   continue;
 		   }
@@ -678,11 +678,15 @@ function eme_multibook_seats($events, $send_mail, $format) {
 
       if (isset($_POST['bookings'][$event_id]['bookerPhone']))
          $bookerPhone = eme_strip_tags($_POST['bookings'][$event_id]['bookerPhone']); 
+      elseif (isset($_POST['bookerPhone']))
+         $bookerPhone = eme_strip_tags($_POST['bookerPhone']); 
       else
          $bookerPhone = "";
 
       if (isset($_POST['bookings'][$event_id]['bookerComment']))
          $bookerComment = eme_strip_tags($_POST['bookings'][$event_id]['bookerComment']);
+      elseif (isset($_POST['bookerComment']))
+         $bookerComment = eme_strip_tags($_POST['bookerComment']); 
       else
          $bookerComment = "";
 
