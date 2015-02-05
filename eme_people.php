@@ -659,12 +659,12 @@ function eme_get_persons($person_ids="",$not_person_ids="") {
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    if ($person_ids != "") {
       $tmp_ids=join(",",$person_ids);
-      $sql = "SELECT * FROM $people_table WHERE person_id IN ($tmp_ids);" ;
+      $sql = "SELECT * FROM $people_table WHERE person_id IN ($tmp_ids) ORDER BY person_id" ;
    } elseif ($not_person_ids != "") {
       $tmp_ids=join(",",$not_person_ids);
-      $sql = "SELECT * FROM $people_table WHERE person_id NOT IN ($tmp_ids);" ;
+      $sql = "SELECT * FROM $people_table WHERE person_id NOT IN ($tmp_ids) ORDER BY person_id" ;
    } else {
-      $sql = "SELECT *  FROM $people_table";
+      $sql = "SELECT * FROM $people_table ORDER BY person_id";
    }
    $lines = $wpdb->get_results($sql, ARRAY_A);
    $result = array();
