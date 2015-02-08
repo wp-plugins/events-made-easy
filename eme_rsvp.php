@@ -1126,7 +1126,7 @@ function eme_get_bookings_by_person_id($person_id,$future) {
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    if ($future) {
       $today = date("Y-m-d");
-      $this_time = date ("H:i:00");
+      $this_time = date("H:i:00");
 	   $sql= $wpdb->prepare("select bookings.* from $bookings_table as bookings,$events_table as events where person_id = %d AND bookings.event_id=events.event_id AND CONCAT(events.event_start_date,' ',events.event_start_time)>'$today $this_time'",$person_id);
    } else {
 	   $sql = $wpdb->prepare("SELECT * FROM $bookings_table WHERE person_id = %d",$person_id);

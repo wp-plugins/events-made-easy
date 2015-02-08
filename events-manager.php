@@ -103,7 +103,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 68);
+define('EME_DB_VERSION', 69);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -185,6 +185,7 @@ define('DEFAULT_SEO_PERMALINK', true);
 define('DEFAULT_SHOW_PERIOD_MONTHLY_DATEFORMAT', "F, Y");
 define('DEFAULT_SHOW_PERIOD_YEARLY_DATEFORMAT', "Y");
 define('DEFAULT_FILTER_FORM_FORMAT', "#_FILTER_CATS #_FILTER_LOCS");
+define('EME_DEFAULT_CSV_SEPARATOR',',');
 define('STATUS_PUBLIC', 1);
 define('STATUS_PRIVATE', 2);
 define('STATUS_DRAFT', 5);
@@ -198,10 +199,6 @@ define("GOOGLE_LIVE","production");
 define("GOOGLE_SANDBOX","sandbox");
 define("FDGG_SANDBOX_URL","https://connect.merchanttest.firstdataglobalgateway.com/IPGConnect/gateway/processing");
 define("FDGG_LIVE_URL","https://connect.firstdataglobalgateway.com/IPGConnect/gateway/processing");
-
-// DEBUG constant for developing
-// if you are hacking this plugin, set to TRUE, a log will show in admin pages
-define('DEBUG', false);
 
 // make sure the locale is set correct asap
 add_filter('locale','eme_redefine_locale',10);  
@@ -567,7 +564,7 @@ function eme_create_events_table($charset,$collate) {
          ) $charset $collate;";
       
       maybe_create_table($table_name,$sql);
-      //--------------  DEBUG CODE to insert a few events n the new table
+      // insert a few events in the new table
       // get the current timestamp into an array
       $timestamp = time();
       $date_time_array = getdate($timestamp);
