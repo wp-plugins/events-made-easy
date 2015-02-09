@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.5.19
+Stable tag: 1.5.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,15 +78,19 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added filters eme_eval_booking_form_post_filter and eme_eval_multibooking_form_post_filter, which happen just after the POST of the booking form
   (1 arg: $event for eme_eval_booking_form_post_filter, or $events of eme_eval_multibooking_form_post_filter; containing the event(s) details that are being booked for). The filter eme_eval_booking_form_post_filter differs from eme_eval_booking_form_filter in this sense that this filter happens immediately after the POST, while eme_eval_booking_form_filter happens after the booker has been created already (which is a bit stupid).
 * Feature: added option no_events_message to the shortcode eme_events, so you can adjust the text when there're no events per shortcode usage if wanted
+* Feature: the CSV separator can now be changed in the 'Other' section of the EME settings
 * Bugfix: sometimes when multiple maps were shown (and dependant on the OS used), even multiple calls to microtime() return the same value
           so as a result some javascript variables had the same name and thus the maps might show the same address
           This is now fixed by adding a rand() call to the variable names
 * Bugfix: required formfields that were defined as dropdown were not allowed to post "0" as a return value for required fields
 * Bugfix: fix some firstdata issues, thanks to ecoyork
+* Bugfix: when creating recurrent events, the last day was not taken into account
+* Bugfix: show correct number of days in months in the calendar
 * Change: renamed function eme_event_category_url to eme_category_url
 * Change: removed #_IS_MULTIBOOKING placeholder, was not working correctly
 * Improvement: when using custom fields in a form, FIELD{03} and FIELD{3} (thus leading zero's) are now supported. This was already working ok for storing the values, but not for checking the required field values
 * Improvement: when clicking on a calendar day in the small calendar and there's only one event where the external url is set, we now redirect to that url
+* Improvement: #_PHONE and #_COMMENT can now also be used in header/footer parts in a multibooking form
 * Improvement: German language updates, thanks to Joerg Knoerchen
 * Improvement: Dutch language updates, thanks to Herman Boswijk
 

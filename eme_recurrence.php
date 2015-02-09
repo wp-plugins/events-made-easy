@@ -33,7 +33,7 @@ function eme_get_recurrence_days($recurrence){
    $start_monthday = date("j", $start_date);
    $cycle_date = $start_date;
 
-   while ($cycle_date < $end_date) {
+   while ($cycle_date <= $end_date) {
     //echo (date("d-M-Y", $cycle_date));
       $style = "";
       $monthweek =  floor(((date("d", $cycle_date)-1)/7))+1;
