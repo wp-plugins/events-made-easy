@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Made Easy
-Version: 1.5.20
+Version: 1.5.21
 Plugin URI: http://www.e-dynamics.be/wordpress
 Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
@@ -1648,7 +1648,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_BOOKINGS/', $result)) {
-         $replacement=eme_get_bookings_list_for($event);
+         $replacement=eme_get_bookings_list_for_event($event);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
