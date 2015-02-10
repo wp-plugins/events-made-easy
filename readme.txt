@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.21 =
+* Bugfix: make #_BOOKINGS work again (typo fix)
+
 = 1.5.20 =
 * Feature: added shortcode eme_mybookings with as optional arguments a template_id for header, content and footer, and an option to show future or all bookings
   [eme_mybookings template_id=3 template_id_header=7 template_id_footer=9 future=0]
