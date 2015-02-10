@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.22 =
+* Bugfix: another function rename that came back to haunt me is fixed
+
 = 1.5.21 =
 * Bugfix: make #_BOOKINGS work again (typo fix)
 

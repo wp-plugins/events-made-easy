@@ -64,10 +64,12 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
    $ret_string .= "</div>";
 
-   $total_price=eme_get_payment_total_booking_price($payment_id);
    $booking_ids = eme_get_payment_booking_ids($payment_id);
    if (!$booking_ids)
       return $ret_string;
+
+   $bookings = eme_get_bookings($booking_ids);
+   $total_price=eme_bookings_total_booking_price($bookings);
 
    // we take the currency of the first event in the series
    $event=eme_get_event_by_booking_id($booking_ids[0]);
