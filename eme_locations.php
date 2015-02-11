@@ -172,7 +172,6 @@ function eme_locations_edit_layout($location, $message = "") {
       $action="add";
    else
       $action="edit";
-   eme_admin_map_script();
    ?>
    <div class="wrap">
       <div id="poststuff">
@@ -387,7 +386,6 @@ jQuery(document).ready(function($){
 
 function eme_locations_table_layout($message = "") {
    $locations = eme_get_locations();
-   eme_admin_map_script();
 
    ?>
       <div class="wrap nosubsub">

@@ -2227,7 +2227,6 @@ function eme_events_table($message="",$scope="future") {
 function eme_event_form($event, $title, $element) {
    
    admin_show_warnings();
-   eme_admin_map_script();
    global $plugin_page;
    $event_status_array = eme_status_array ();
    $saved_bydays = array();
@@ -3304,14 +3303,7 @@ function eme_meta_box_div_event_url($event) {
 }
 
 function eme_admin_map_script() {
-   global $plugin_page;
-   if ( !in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-locations') ) ) {
-      return;
-   }
-   if (!get_option('eme_gmap_is_active' ))
-      return;
 ?>
-<script src="//maps.google.com/maps/api/js?v=3.16&amp;sensor=false" type="text/javascript"></script>
 <script type="text/javascript">
           //<![CDATA[
           var lang = '<?php echo eme_detect_lang(); ?>';
@@ -3855,6 +3847,13 @@ function eme_admin_enqueue_js(){
    if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager') ) ) {
       // we need this to have the "postbox" javascript loaded, so closing/opening works for those divs
       wp_enqueue_script('post');
+      if (get_option('eme_gmap_is_active' )) {
+        wp_enqueue_script('eme-google-maps');
+	// we use add_action admin_head, to include the eme_admin_map_script javascript after all the other javascripts
+	// defined by enqueue script are loaded in the header, otherwise we get the 'green screen of death' for the map in the beginning
+	// since the eme_admin_map_script javascript would get executed before the google map api got loaded
+        add_action('admin_head', 'eme_admin_map_script');
+      }
    }
    //if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {

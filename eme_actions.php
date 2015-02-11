@@ -138,15 +138,9 @@ function eme_actions_widgets_init() {
 }
 add_action( 'widgets_init', 'eme_actions_widgets_init' );
 
-// Client clock usage, if wanted
-if (get_option('eme_use_client_clock')) {
+// Client clock usage and captcha need a session
+if (get_option('eme_use_client_clock') || get_option('eme_captcha_for_booking')) {
    // If needed, add high priority action to enable session variables.
-   if (!session_id()) add_action('init', 'session_start', 1);
-   add_action('wp_enqueue_scripts', 'eme_client_clock_enqueue_scripts');
-}
-
-if (get_option('eme_captcha_for_booking')) {
-   // the captcha needs a session
    if (!session_id()) add_action('init', 'session_start', 1);
 }
 
@@ -165,7 +159,6 @@ function eme_admin_register_scripts() {
    wp_register_script( 'eme-jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js', array('jquery','eme-jquery-plugin','eme-jquery-mousewheel'));
    wp_register_script( 'eme-jquery-datatables', EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
    wp_register_script( 'eme-datatables-clearsearch', EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
-   wp_register_script( 'eme-client_clock_submit', EME_PLUGIN_URL.'js/client-clock.js', array('jquery'));  
    wp_register_script( 'eme-google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
    wp_register_script( 'eme', EME_PLUGIN_URL.'js/eme.js', array('jquery'));
    wp_register_script( 'eme-events', EME_PLUGIN_URL.'js/eme_admin_events.js',array( 'jquery' ));
@@ -176,9 +169,12 @@ function eme_admin_register_scripts() {
 add_action('admin_enqueue_scripts','eme_admin_register_scripts');
 
 function eme_register_scripts() {
-   wp_register_script( 'eme-google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
-   wp_register_script( 'eme', EME_PLUGIN_URL.'js/eme.js', array('jquery'));
    wp_register_style('eme_stylesheet',EME_PLUGIN_URL."events_manager.css");
+   if (get_option('eme_use_client_clock')) {
+   	wp_register_script( 'eme-client_clock_submit', EME_PLUGIN_URL.'js/client-clock.js', array('jquery'));
+	wp_enqueue_script('eme-client_clock_submit');
+   }
+	
    wp_enqueue_style('eme_stylesheet');
    $eme_css_name=get_stylesheet_directory()."/eme.css";
    if (file_exists($eme_css_name)) {

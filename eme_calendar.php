@@ -94,7 +94,7 @@ function eme_get_calendar($args="") {
    // this comes from global wordpress preferences
    $start_of_week = get_option('start_of_week');
 
-   if (get_option('eme_use_client_clock')) {
+   if (get_option('eme_use_client_clock') && isset($_SESSION['eme_client_mday']) && isset($_SESSION['eme_client_month']) && isset($_SESSION['eme_client_fullyear'])) {
       // these come from client unless their clock is wrong
       $iNowDay= sprintf("%02d",$_SESSION['eme_client_mday']);
       $iNowMonth= sprintf("%02d",$_SESSION['eme_client_month']);
