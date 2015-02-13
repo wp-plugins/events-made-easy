@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.24 =
+* Bugfix: eme_mybookings was only replacing 'event' level placeholders once for all bookings
+
 = 1.5.23 =
 * Bugfix: make client clock checking work again for the calendar
 * Improvement: optimize the inclusion of javascript files the way wordpress likes it most

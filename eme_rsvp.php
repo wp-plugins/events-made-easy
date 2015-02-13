@@ -1885,8 +1885,8 @@ function eme_get_bookings_list_for_person($person,$future=0,$template="",$templa
       foreach ($bookings as $booking) {
 	$event = eme_get_event($booking['event_id']);
       	// don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-      	$format = eme_replace_placeholders($format, $event, "html", 0);
-        $res.= eme_replace_booking_placeholders($format,$event,$booking);
+      	$tmp_format = eme_replace_placeholders($format, $event, "html", 0);
+        $res.= eme_replace_booking_placeholders($tmp_format,$event,$booking);
       }
       $res.=$eme_format_footer;
    } else {
