@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.25 =
+* Bugfix: the setting "Default location list format footer" was overwriting the format header, not footer
+
 = 1.5.24 =
 * Bugfix: eme_mybookings was only replacing 'event' level placeholders once for all bookings
 
