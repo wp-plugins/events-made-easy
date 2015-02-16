@@ -92,6 +92,7 @@ class WP_Widget_eme_list extends WP_Widget {
       $recurrence_only_once = empty( $instance['recurrence_only_once'] ) ? '' : eme_sanitize_html($instance['recurrence_only_once']);
       $authorid = empty( $instance['authorid'] ) ? '' : eme_sanitize_html($instance['authorid']);
       $categories = eme_get_categories();
+      $option_categories=array();
       foreach ($categories as $cat) {
          $id=$cat['category_id'];
          $option_categories[$id]=$cat['category_name'];
@@ -253,6 +254,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $long_events = isset( $instance['long_events'] ) ? eme_sanitize_html($instance['long_events']) : false;
       $authorid = isset( $instance['authorid'] ) ? eme_sanitize_html($instance['authorid']) : '';
       $categories = eme_get_categories();
+      $option_categories=array();
       foreach ($categories as $cat) {
          $id=$cat['category_id'];
          $option_categories[$id]=$cat['category_name'];
