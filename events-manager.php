@@ -3,7 +3,7 @@
 Plugin Name: Events Made Easy
 Version: 1.5.23
 Plugin URI: http://www.e-dynamics.be/wordpress
-Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and Google Checkout. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donate</a>
+Description: Manage and display events. Includes recurring events; locations; widgets; Google maps; RSVP; ICAL and RSS feeds; Paypal, 2Checkout and others. <a href="admin.php?page=eme-options">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=SMGDS4GLCYWNG&lc=BE&item_name=To%20support%20development%20of%20EME&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donate</a>
 Author: Franky Van Liedekerke
 Author URI: http://www.e-dynamics.be/
 */
@@ -14,6 +14,7 @@ Copyright (c) 2011, Franky Van Liedekerke.
 Copyright (c) 2012, Franky Van Liedekerke.
 Copyright (c) 2013, Franky Van Liedekerke.
 Copyright (c) 2014, Franky Van Liedekerke.
+Copyright (c) 2015, Franky Van Liedekerke.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -365,6 +366,12 @@ function _eme_install() {
       $smtp_port=get_option('eme_rsvp_mail_port');
       delete_option('eme_rsvp_mail_port');
       update_option('eme_smtp_port', $smtp_port); 
+   }
+   if ($db_version<69) {
+      delete_option('eme_google_checkout_type');
+      delete_option('eme_google_merchant_id');
+      delete_option('eme_google_merchant_key');
+      delete_option('eme_google_cost');
    }
 
    // make sure the captcha doesn't cause problems

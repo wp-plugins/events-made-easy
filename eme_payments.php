@@ -38,8 +38,6 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
          $ret_string .= eme_2co_form($event,$payment_id, $total_price);
       if ($event['use_webmoney'])
          $ret_string .= eme_webmoney_form($event,$payment_id, $total_price);
-      if ($event['use_google'])
-         $ret_string .= eme_google_form($event,$payment_id, $total_price);
       if ($event['use_fdgg'])
          $ret_string .= eme_fdgg_form($event,$payment_id, $total_price);
       $ret_string .= "</div>";
@@ -94,8 +92,6 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
       $ret_string .= eme_2co_form($event,$payment_id, $total_price,1);
    if ($event['use_webmoney'])
       $ret_string .= eme_webmoney_form($event,$payment_id, $total_price,1);
-   if ($event['use_google'])
-      $ret_string .= eme_google_form($event,$payment_id, $total_price,1);
    if ($event['use_fdgg'])
       $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,1);
    $ret_string .= "</div>";
@@ -252,40 +248,6 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    return $form_html;
 }
 
-function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
-   global $post;
-   $quantity=1;
-   $charge=eme_payment_extra_charge($price,get_option('eme_google_cost'));
-   $price+=$charge;
-   $events_page_link = eme_get_events_page(true, false);
-   if ($multi_booking) {
-      $success_link = get_permalink($post->ID);
-      $fail_link = $success_link;
-      $name = __("Multiple booking request","eme");
-   } else {
-      $success_link = eme_payment_return_url($event,$payment_id,1);
-      $fail_link = eme_payment_return_url($event,$payment_id,2);
-      $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
-   }
-
-   require_once('google_checkout/googlecart.php');
-   require_once('google_checkout/googleitem.php');
-   $merchant_id = get_option('eme_google_merchant_id');  // Your Merchant ID
-   $merchant_key = get_option('eme_google_merchant_key');  // Your Merchant Key
-   $server_type = get_option('eme_google_checkout_type');
-   $cart = new GoogleCart($merchant_id, $merchant_key, $server_type, $event['currency']);
-   $cart->SetContinueShoppingUrl($success_link);
-   $item_1 = new GoogleItem("Booking", // Item name
-                            $name, // Item description
-                            $quantity, // Quantity
-                            $price); // Unit price
-   $item_1->SetMerchantItemId($payment_id);
-   $cart->AddItem($item_1);
-   $form_html = eme_payment_provider_button_info("Google Checkout");
-   $form_html.= eme_payment_provider_extra_charge("Google Checkout",$charge,$event['currency']);
-   return $form_html.$cart->CheckoutButtonCode("SMALL");
-}
-
 function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
@@ -411,149 +373,6 @@ function eme_paypal_notification() {
    }
 }
 
-function eme_google_notification() {
-  // this function is here for google payment handling, but since that
-  // needs a certificate, I don't use it yet
-  // Even for just the callback uri, https is required if not using the sandbox
-  require_once('google_checkout/googleresponse.php');
-  require_once('google_checkout/googleresult.php');
-  require_once('google_checkout/googlerequest.php');
-
-  define('RESPONSE_HANDLER_ERROR_LOG_FILE', 'googleerror.log');
-  define('RESPONSE_HANDLER_LOG_FILE', 'googlemessage.log');
-
-  $merchant_id = get_option('eme_google_merchant_id');  // Your Merchant ID
-  $merchant_key = get_option('eme_google_merchant_key');  // Your Merchant Key
-  $server_type = get_option('eme_google_checkout_type');
-
-  $Gresponse = new GoogleResponse($merchant_id, $merchant_key);
-  $Grequest = new GoogleRequest($merchant_id, $merchant_key, $server_type, $event['currency']);
-  $GRequest->SetCertificatePath($certificate_path);
-
-  //Setup the log file
-  //$Gresponse->SetLogFiles(RESPONSE_HANDLER_ERROR_LOG_FILE, 
-  //                                      RESPONSE_HANDLER_LOG_FILE, L_ALL);
-
-  // Retrieve the XML sent in the HTTP POST request to the ResponseHandler
-  $xml_response = isset($HTTP_RAW_POST_DATA)?
-                    $HTTP_RAW_POST_DATA:file_get_contents("php://input");
-  if (get_magic_quotes_gpc()) {
-    $xml_response = stripslashes($xml_response);
-  }
-  list($root, $data) = $Gresponse->GetParsedXML($xml_response);
-  $Gresponse->SetMerchantAuthentication($merchant_id, $merchant_key);
-
-  /*$status = $Gresponse->HttpAuthentication();
-  if(! $status) {
-    die('authentication failed');
-  }*/
-
-  /* Commands to send the various order processing APIs
-   * Send charge order : $Grequest->SendChargeOrder($data[$root]
-   *    ['google-order-number']['VALUE'], <amount>);
-   * Send process order : $Grequest->SendProcessOrder($data[$root]
-   *    ['google-order-number']['VALUE']);
-   * Send deliver order: $Grequest->SendDeliverOrder($data[$root]
-   *    ['google-order-number']['VALUE'], <carrier>, <tracking-number>,
-   *    <send_mail>);
-   * Send archive order: $Grequest->SendArchiveOrder($data[$root]
-   *    ['google-order-number']['VALUE']);
-   *
-   */
-
-  switch ($root) {
-    case "request-received": {
-      break;
-    }
-    case "error": {
-      break;
-    }
-    case "diagnosis": {
-      break;
-    }
-    case "checkout-redirect": {
-      break;
-    }
-    case "merchant-calculation-callback": {
-      break;
-    }
-    case "new-order-notification": {
-      $Gresponse->SendAck();
-      break;
-    }
-    case "order-state-change-notification": {
-      $Gresponse->SendAck();
-      $new_financial_state = $data[$root]['new-financial-order-state']['VALUE'];
-      $new_fulfillment_order = $data[$root]['new-fulfillment-order-state']['VALUE'];
-
-      switch($new_financial_state) {
-        case 'REVIEWING': {
-          break;
-        }
-        case 'CHARGEABLE': {
-          $Grequest->SendProcessOrder($data[$root]['google-order-number']['VALUE']);
-          $Grequest->SendChargeOrder($data[$root]['google-order-number']['VALUE'],'');
-          break;
-        }
-        case 'CHARGING': {
-          break;
-        }
-        case 'CHARGED': {
-          $payment_id=intval($data[$root]['google-order-number']['VALUE']);
-          $booking_ids=eme_get_payment_booking_ids($payment_id);
-          foreach ($booking_ids as $booking_id) {
-             $booking=eme_get_booking($booking_id);
-             $event = eme_get_event_by_booking_id($booking_id);
-             if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
-                eme_update_booking_payed($booking_id,1,1);
-             else
-                eme_update_booking_payed($booking_id,1,0);
-             if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
-          }
-          break;
-        }
-        case 'PAYMENT_DECLINED': {
-          break;
-        }
-        case 'CANCELLED': {
-          break;
-        }
-        case 'CANCELLED_BY_GOOGLE': {
-          //$Grequest->SendBuyerMessage($data[$root]['google-order-number']['VALUE'],
-          //    "Sorry, your order is cancelled by Google", true);
-          break;
-        }
-        default:
-          break;
-      }
-
-      break;
-    }
-    case "charge-amount-notification": {
-      //$Grequest->SendDeliverOrder($data[$root]['google-order-number']['VALUE'],
-      //    <carrier>, <tracking-number>, <send-email>);
-      //$Grequest->SendArchiveOrder($data[$root]['google-order-number']['VALUE'] );
-      $Gresponse->SendAck();
-      break;
-    }
-    case "chargeback-amount-notification": {
-      $Gresponse->SendAck();
-      break;
-    }
-    case "refund-amount-notification": {
-      $Gresponse->SendAck();
-      break;
-    }
-    case "risk-information-notification": {
-      $Gresponse->SendAck();
-      break;
-    }
-    default:
-      $Gresponse->SendBadRequestStatus("Invalid or not supported Message");
-      break;
-  }
-}
-
 function eme_2co_notification() {
    $business=get_option('eme_2co_business');
    $secret=get_option('eme_2co_secret');
@@ -664,7 +483,7 @@ function eme_fdgg_notification() {
 }
 
 function eme_event_can_pay_online ($event) {
-   if ($event['use_paypal'] || $event['use_google'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'])
+   if ($event['use_paypal'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'])
       return 1;
    else
       return 0;

@@ -11,7 +11,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Manage and display events, recurring events, locations and maps, widgets, RSVP, ICAL and RSS feeds, payment gateways support. SEO compatible.
              
 == Description ==
-Events Made Easy is a full-featured event management solution for Wordpress. Events Made Easy supports public, private, draft and recurring events, locations management, RSVP (+ optional approval), Paypal, 2Checkout, Google Checkout and Google maps. With Events Made Easy you can plan and publish your event, or let people reserve spaces for your weekly meetings. You can add events list, calendars and description to your blog using multiple sidebar widgets or shortcodes; if you are a web designer you can simply employ the template tags provided by Events Made Easy. 
+Events Made Easy is a full-featured event management solution for Wordpress. Events Made Easy supports public, private, draft and recurring events, locations management, RSVP (+ optional approval), Paypal, 2Checkout, FirstData and Google maps. With Events Made Easy you can plan and publish your event, or let people reserve spaces for your weekly meetings. You can add events list, calendars and description to your blog using multiple sidebar widgets or shortcodes; if you are a web designer you can simply employ the template tags provided by Events Made Easy. 
 
 Events Made Easy integrates with Google Maps; thanks to geocoding, Events Made Easy can find the location of your event and accordingly display a map. 
 Events Made Easy handles RSVP and bookings, integrates payments for events using paypal and other payment gateways and allows payment tracking.
@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.25 =
 * Bugfix: the setting "Default location list format footer" was overwriting the format header, not footer
+* Removed old Google Checkout
 
 = 1.5.24 =
 * Bugfix: eme_mybookings was only replacing 'event' level placeholders once for all bookings

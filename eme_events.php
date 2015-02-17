@@ -13,7 +13,6 @@ function eme_new_event() {
       "event_notes" => '',
       "event_rsvp" => get_option('eme_rsvp_reg_for_new_events')? 1:0,
       "use_paypal" => get_option('eme_paypal_business')? 1:0,
-      "use_google" => get_option('eme_google_merchant_id')? 1:0,
       "use_2co" => get_option('eme_2co_business')? 1:0,
       "use_webmoney" => get_option('eme_webmoney_purse')? 1:0,
       "use_fdgg" => get_option('eme_fdgg_store_name')? 1:0,
@@ -284,7 +283,6 @@ function eme_events_page() {
       $event['use_paypal'] = (isset ($_POST['use_paypal']) && is_numeric($_POST['use_paypal'])) ? $_POST['use_paypal']:0;
       $event['use_2co'] = (isset ($_POST['use_2co']) && is_numeric($_POST['use_2co'])) ? $_POST['use_2co']:0;
       $event['use_webmoney'] = (isset ($_POST['use_webmoney']) && is_numeric($_POST['use_webmoney'])) ? $_POST['use_webmoney']:0;
-      $event['use_google'] = (isset ($_POST['use_google']) && is_numeric($_POST['use_google'])) ? $_POST['use_google']:0;
       $event['use_fdgg'] = (isset ($_POST['use_fdgg']) && is_numeric($_POST['use_fdgg'])) ? $_POST['use_fdgg']:0;
       $event['price'] = isset ($_POST['price']) ? $_POST['price']:0;
       if (preg_match("/\|\|/",$event['price'])) {
@@ -2289,7 +2287,6 @@ function eme_event_form($event, $title, $element) {
    $registration_requires_approval = ($event['registration_requires_approval']) ? "checked='checked'" : "";
 
    $use_paypal_checked = ($event['use_paypal']) ? "checked='checked'" : "";
-   $use_google_checked = ($event['use_google']) ? "checked='checked'" : "";
    $use_2co_checked = ($event['use_2co']) ? "checked='checked'" : "";
    $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : "";
    $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : "";
@@ -2570,7 +2567,6 @@ function eme_event_form($event, $title, $element) {
                               <input id="paypal-checkbox" name='use_paypal' value='1' type='checkbox' <?php echo $use_paypal_checked; ?> /><?php _e ( 'Paypal','eme' ); ?><br />
                               <input id="2co-checkbox" name='use_2co' value='1' type='checkbox' <?php echo $use_2co_checked; ?> /><?php _e ( '2Checkout','eme' ); ?><br />
                               <input id="webmoney-checkbox" name='use_webmoney' value='1' type='checkbox' <?php echo $use_webmoney_checked; ?> /><?php _e ( 'Webmoney','eme' ); ?><br />
-                              <input id="google-checkbox" name='use_google' value='1' type='checkbox' <?php echo $use_google_checked; ?> /><?php _e ( 'Google Checkout','eme' ); ?><br />
                               <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'First Data','eme' ); ?><br />
                            </p>
                            <?php if ($event['event_rsvp'] && $pref != "recurrence") {
