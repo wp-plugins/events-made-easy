@@ -281,9 +281,6 @@ function eme_google_form($event,$payment_id,$price,$multi_booking=0) {
                             $price); // Unit price
    $item_1->SetMerchantItemId($payment_id);
    $cart->AddItem($item_1);
-   $form_html = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),"Google Checkout");
-   if ($charge>0)
-      $form_html.="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),"Google Checkout",$charge,$event['currency']);
    $form_html = eme_payment_provider_button_info("Google Checkout");
    $form_html.= eme_payment_provider_extra_charge("Google Checkout",$charge,$event['currency']);
    return $form_html.$cart->CheckoutButtonCode("SMALL");
