@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.25 =
 * Bugfix: the setting "Default location list format footer" was overwriting the format header, not footer
+* Bugfix: small template fix when listing the bookings per person
 * Removed old Google Checkout
 
 = 1.5.24 =

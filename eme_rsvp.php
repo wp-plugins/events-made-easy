@@ -1860,13 +1860,17 @@ function eme_get_bookings_list_for_event($event,$template_id=0,$template_id_head
 
 function eme_get_bookings_list_for_person($person,$future=0,$template="",$template_id=0,$template_id_header=0,$template_id_footer=0) {
    $bookings=eme_get_bookings_by_person_id($person['person_id'], $future);
-   $format=get_option('eme_bookings_list_format');
-   $eme_format_header=get_option('eme_bookings_list_header_format');
-   $eme_format_footer=get_option('eme_bookings_list_footer_format');
 
    if ($template) {
       $format=$template;
+      $eme_format_header="";
+      $eme_format_footer="";
+   } else {
+      $format=get_option('eme_bookings_list_format');
+      $eme_format_header=get_option('eme_bookings_list_header_format');
+      $eme_format_footer=get_option('eme_bookings_list_footer_format');
    }
+
    if ($template_id) {
       $format = eme_get_template_format($template_id);
    }
