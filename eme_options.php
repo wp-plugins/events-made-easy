@@ -743,7 +743,7 @@ function eme_options_page() {
 
       eme_options_input_text (__('Mollie API key','eme'),'eme_mollie_api_key', __('Mollie API key','eme'));
       eme_options_input_text (__('Extra charge','eme'),'eme_mollie_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
-      eme_options_input_text (__('Extra charge 2','eme'),'eme_mollie2_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
+      eme_options_input_text (__('Extra charge 2','eme'),'eme_mollie_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
