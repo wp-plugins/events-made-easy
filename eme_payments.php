@@ -297,29 +297,36 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    $mollie->setApiKey($mollie_api_key);
    $methods = $mollie->methods->all();
 
-   $payment = $mollie->payments->create(
-			   array(
-				   'amount'      => $price,
-				   'description' => $name,
-				   'redirectUrl' => $success_link,
-                                   'webhookUrl'  => $notification_link,
-				   'metadata'    => array(
-					   		'payment_id' => $payment_id
-					   		)
-				)
-			   );
-   $url = $payment->getPaymentUrl();
-
-   $form_html = eme_payment_provider_button_info("Mollie");
-   $form_html.= eme_payment_provider_extra_charge_html("Mollie",$charge,$event['currency']);
-   $form_html.="<form action='$url' method='post'>";
-   $form_html.="<input name='submit' type='submit' value='".__('Pay via Mollie','eme')."' /><br />";
-   $form_html.=__('Using Mollie, you can pay using one of the following methods:','eme')."<br />";
-   foreach ($methods as $method) {
-       $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '" alt="'.htmlspecialchars($method->description).'" title="'.htmlspecialchars($method->description).'"> ';
+   try {
+      $payment = $mollie->payments->create(
+            array(
+               'amount'      => $price,
+               'description' => $name,
+               'redirectUrl' => $success_link,
+               'webhookUrl'  => $notification_link,
+               'metadata'    => array(
+                  'payment_id' => $payment_id
+                  )
+               )
+            );
+      $url = $payment->getPaymentUrl();
    }
-   $form_html.="</form>";
-   return $form_html;
+   catch (Mollie_API_Exception $e) {
+      $url="";
+   }
+
+   if (!empty($url)) {
+      $form_html = eme_payment_provider_button_info("Mollie");
+      $form_html.= eme_payment_provider_extra_charge_html("Mollie",$charge,$event['currency']);
+      $form_html.="<form action='$url' method='post'>";
+      $form_html.="<input name='submit' type='submit' value='".__('Pay via Mollie','eme')."' /><br />";
+      $form_html.=__('Using Mollie, you can pay using one of the following methods:','eme')."<br />";
+      foreach ($methods as $method) {
+         $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '" alt="'.htmlspecialchars($method->description).'" title="'.htmlspecialchars($method->description).'"> ';
+      }
+      $form_html.="</form>";
+      return $form_html;
+   }
 }
 
 function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
