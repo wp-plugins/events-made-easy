@@ -313,12 +313,10 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html = eme_payment_provider_button_info("Mollie");
    $form_html.= eme_payment_provider_extra_charge_html("Mollie",$charge,$event['currency']);
    $form_html.="<form action='$url' method='post'>";
-   $form_html.="<input name='submit' type='submit' value='".__('Pay via Mollie','eme')."' />";
+   $form_html.="<input name='submit' type='submit' value='".__('Pay via Mollie','eme')."' /><br />";
+   $form_html.=__('Using Mollie, you can pay using one of the following methods:','eme')."<br />";
    foreach ($methods as $method) {
-       $form_html.= '<div style="line-height:40px; vertical-align:top">';
-       $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '"> ';
-       $form_html.= htmlspecialchars($method->description) . ' (' .  htmlspecialchars($method->id) . ')';
-       $form_html.= '</div>';
+       $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '" alt="'.htmlspecialchars($method->description).'" title="'.htmlspecialchars($method->description).'"> ';
    }
    $form_html.="</form>";
    return $form_html;

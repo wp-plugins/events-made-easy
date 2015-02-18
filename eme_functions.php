@@ -522,10 +522,10 @@ function eme_redefine_locale($locale) {
 }
 
 function eme_detect_lang_js_trans_function() {
-   if (function_exists('qtrans_use')) {
-      $function_name="qtrans_use";
-   } elseif (function_exists('ppqtrans_use')) {
+   if (function_exists('ppqtrans_use')) {
       $function_name="pqtrans_use";
+   } elseif (function_exists('qtrans_use')) {
+      $function_name="qtrans_use";
    } else {
       $function_name="";
    }

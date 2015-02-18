@@ -3303,11 +3303,12 @@ function eme_meta_box_div_event_url($event) {
 }
 
 function eme_admin_map_script() {
+          $lang_js_trans_function=eme_detect_lang_js_trans_function();
 ?>
 <script type="text/javascript">
           //<![CDATA[
           var lang = '<?php echo eme_detect_lang(); ?>';
-          var lang_trans_function = '<?php echo eme_detect_lang_js_trans_function(); ?>';
+          var lang_trans_function = '<?php echo $lang_js_trans_function; ?>';
           function loadMap(location, town, address) {
             var latlng = new google.maps.LatLng(-34.397, 150.644);
             var myOptions = {
@@ -3328,9 +3329,11 @@ function eme_admin_map_script() {
             } else {
                searchKey =  location + ", " + town;
             }
-            if (lang!='' && lang_trans_function!='') {
-               location=<?php echo eme_detect_lang_js_trans_function(); ?>(lang,location);
-            }
+            <?php if (!empty($lang_js_trans_function)) { ?>
+               if (lang!='' && typeof(lang_trans_function)=='function' ) {
+                  location=window[lang_js_trans_function](lang,location);
+               }
+            <?php } ?>
                
             if (address !="" || town!="") {
                geocoder.geocode( { 'address': searchKey}, function(results, status) {
@@ -3366,9 +3369,11 @@ function eme_admin_map_script() {
             if (long === undefined) {
                long = 0;
             }
-            if (lang!='' && lang_trans_function!='') {
-               location=<?php echo eme_detect_lang_js_trans_function(); ?>(lang,location);
-            }
+            <?php if (!empty($lang_js_trans_function)) { ?>
+               if (lang!='' && typeof(lang_trans_function)=='function' ) {
+                  location=window[lang_js_trans_function](lang,location);
+               }
+            <?php } ?>
                
             if (lat != 0 && long != 0) {
                var latlng = new google.maps.LatLng(lat, long);
