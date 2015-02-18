@@ -99,7 +99,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 69);
+define('EME_DB_VERSION', 70);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -367,7 +367,7 @@ function _eme_install() {
       delete_option('eme_rsvp_mail_port');
       update_option('eme_smtp_port', $smtp_port); 
    }
-   if ($db_version<69) {
+   if ($db_version<70) {
       delete_option('eme_google_checkout_type');
       delete_option('eme_google_merchant_id');
       delete_option('eme_google_merchant_key');
@@ -533,10 +533,10 @@ function eme_create_events_table($charset,$collate) {
          event_notes longtext DEFAULT NULL,
          event_rsvp bool DEFAULT 0,
          use_paypal bool DEFAULT 0,
-         use_google bool DEFAULT 0,
          use_2co bool DEFAULT 0,
          use_webmoney bool DEFAULT 0,
          use_fdgg bool DEFAULT 0,
+         use_mollie bool DEFAULT 0,
          price text DEFAULT NULL,
          currency text DEFAULT NULL,
          rsvp_number_days tinyint unsigned DEFAULT 0,
@@ -599,10 +599,10 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'event_end_time', "alter table $table_name add event_end_time time NOT NULL;"); 
       maybe_add_column($table_name, 'event_rsvp', "alter table $table_name add event_rsvp bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_paypal', "alter table $table_name add use_paypal bool DEFAULT 0;");
-      maybe_add_column($table_name, 'use_google', "alter table $table_name add use_google bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_2co', "alter table $table_name add use_2co bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_webmoney', "alter table $table_name add use_webmoney bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_fdgg', "alter table $table_name add use_fdgg bool DEFAULT 0;");
+      maybe_add_column($table_name, 'use_mollie', "alter table $table_name add use_mollie bool DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_hours', "alter table $table_name add rsvp_number_hours tinyint DEFAULT 0;");
       maybe_add_column($table_name, 'price', "alter table $table_name add price text DEFAULT NULL;");
@@ -669,6 +669,9 @@ function eme_create_events_table($charset,$collate) {
       if ($db_version<68) {
          $wpdb->query("ALTER TABLE $table_name MODIFY rsvp_number_days tinyint DEFAULT 0;");
          $wpdb->query("ALTER TABLE $table_name MODIFY rsvp_number_hours tinyint DEFAULT 0;");
+      }
+      if ($db_version<70) {
+         $wpdb->query("ALTER TABLE $table_name DROP COLUMN use_google;");
       }
    }
 }

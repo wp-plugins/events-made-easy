@@ -40,6 +40,8 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
          $ret_string .= eme_webmoney_form($event,$payment_id, $total_price);
       if ($event['use_fdgg'])
          $ret_string .= eme_fdgg_form($event,$payment_id, $total_price);
+      if ($event['use_mollie'])
+         $ret_string .= eme_mollie_form($event,$payment_id, $total_price);
       $ret_string .= "</div>";
 
       $eme_payment_form_footer_format=get_option('eme_payment_form_footer_format');
@@ -94,6 +96,8 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
       $ret_string .= eme_webmoney_form($event,$payment_id, $total_price,1);
    if ($event['use_fdgg'])
       $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,1);
+   if ($event['use_mollie'])
+      $ret_string .= eme_mollie_form($event,$payment_id, $total_price,1);
    $ret_string .= "</div>";
 
    $eme_multipayment_form_footer_format=get_option('eme_multipayment_form_footer_format');
@@ -271,6 +275,55 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    return $form_html;
 }
 
+function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
+   global $post;
+   $charge=eme_payment_provider_extra_charge($price,'fdgg');
+   $price+=$charge;
+   $events_page_link = eme_get_events_page(true, false);
+   if ($multi_booking) {
+      $success_link = get_permalink($post->ID);
+      $fail_link = $success_link;
+      $name = __("Multiple booking request","eme");
+   } else {
+      $success_link = eme_payment_return_url($event,$payment_id,1);
+      $fail_link = eme_payment_return_url($event,$payment_id,2);
+      $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
+   }
+   $notification_link = add_query_arg(array('eme_eventAction'=>'mollie_notification'),$events_page_link);
+   $mollie_api_key = get_option('eme_mollie_api_key');
+
+   require_once 'payment_gateways/Mollie/API/Autoloader.php';
+   $mollie = new Mollie_API_Client;
+   $mollie->setApiKey($mollie_api_key);
+   $methods = $mollie->methods->all();
+
+   $payment = $mollie->payments->create(
+			   array(
+				   'amount'      => $price,
+				   'description' => $name,
+				   'redirectUrl' => $success_link,
+                                   'webhookUrl'  => $notification_link,
+				   'metadata'    => array(
+					   		'payment_id' => $payment_id
+					   		)
+				)
+			   );
+   $url = $payment->getPaymentUrl();
+
+   $form_html = eme_payment_provider_button_info("Mollie");
+   $form_html.= eme_payment_provider_extra_charge_html("Mollie",$charge,$event['currency']);
+   $form_html.="<form action='$url' method='post'>";
+   $form_html.="<input name='submit' type='submit' value='".__('Pay via Mollie','eme')."' />";
+   foreach ($methods as $method) {
+       $form_html.= '<div style="line-height:40px; vertical-align:top">';
+       $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '"> ';
+       $form_html.= htmlspecialchars($method->description) . ' (' .  htmlspecialchars($method->id) . ')';
+       $form_html.= '</div>';
+   }
+   $form_html.="</form>";
+   return $form_html;
+}
+
 function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $quantity=1;
@@ -382,16 +435,7 @@ function eme_paypal_notification() {
          The complete() method below logs the valid IPN to the places you choose
        */
       $payment_id=intval($ipn->ipn['item_number']);
-      $booking_ids=eme_get_payment_booking_ids($payment_id);
-      foreach ($booking_ids as $booking_id) {
-         $booking=eme_get_booking($booking_id);
-         $event = eme_get_event_by_booking_id($booking_id);
-         if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
-            eme_update_booking_payed($booking_id,1,1);
-         else
-            eme_update_booking_payed($booking_id,1,0);
-         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
-      }
+      eme_update_payment_payed($payment_id);
       $ipn->complete();
    }
 }
@@ -420,17 +464,8 @@ function eme_2co_notification() {
       }
 
       if ($insMessage['invoice_status'] == 'approved' || $insMessage['invoice_status'] == 'deposited') {
-         $booking_id=intval($insMessage['item_id_1']);
-         // TODO: do some extra checks, like the price payed and such
-#$booking=eme_get_booking($booking_id);
-#$event = eme_get_event($booking['event_id']);
-         $booking=eme_get_booking($booking_id);
-         $event = eme_get_event_by_booking_id($booking_id);
-         if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
-            eme_update_booking_payed($booking_id,1,1);
-         else
-            eme_update_booking_payed($booking_id,1,0);
-         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
+         $payment_id=intval($insMessage['item_id_1']);
+         eme_update_payment_payed($payment_id);
       }
    }
 }
@@ -451,16 +486,7 @@ function eme_webmoney_notification() {
       #}
       $payment_id=intval($wm_notif->payment_no);
       if ($wm_notif->CheckMD5($webmoney_purse, $amount, $payment_id, $webmoney_secret) == WM_RES_OK) {
-         $booking_ids=eme_get_payment_booking_ids($payment_id);
-         foreach ($booking_ids as $booking_id) {
-            $booking=eme_get_booking($booking_id);
-            $event = eme_get_event_by_booking_id($booking_id);
-            if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
-               eme_update_booking_payed($booking_id,1,1);
-            else
-               eme_update_booking_payed($booking_id,1,0);
-            if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
-         }
+         eme_update_payment_payed($payment_id);
       }
    }
 }
@@ -492,21 +518,25 @@ function eme_fdgg_notification() {
    #$price=eme_get_total_booking_price($event,$booking);
 
    if (strtolower($response_status) == 'approved') {
-      $booking_ids=eme_get_payment_booking_ids($payment_id);
-      foreach ($booking_ids as $booking_id) {
-         $booking=eme_get_booking($booking_id);
-         $event = eme_get_event_by_booking_id($booking_id);
-         if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
-            eme_update_booking_payed($booking_id,1,1);
-         else
-            eme_update_booking_payed($booking_id,1,0);
-         if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
-      }
+      eme_update_payment_payed($payment_id);
+   }
+}
+
+function eme_mollie_notification() {
+   $api_key = get_option('eme_mollie_api_key');
+   require_once 'payment_gateways/Mollie/API/Autoloader.php';
+
+   $mollie = new Mollie_API_Client;
+   $mollie->setApiKey($api_key);
+   $payment = $mollie->payments->get($_POST["id"]);
+   $payment_id = $payment->metadata->payment_id;
+   if ($payment->isPaid()) {
+      eme_update_payment_payed($payment_id);
    }
 }
 
 function eme_event_can_pay_online ($event) {
-   if ($event['use_paypal'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'])
+   if ($event['use_paypal'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'] || $event['use_mollie'])
       return 1;
    else
       return 0;
@@ -575,4 +605,16 @@ function eme_get_bookings_payment_id($booking_ids) {
    return $wpdb->get_var($sql);
 }
 
+function eme_update_payment_payed($payment_id) {
+   $booking_ids=eme_get_payment_booking_ids($payment_id);
+   foreach ($booking_ids as $booking_id) {
+       $booking=eme_get_booking($booking_id);
+       $event = eme_get_event_by_booking_id($booking_id);
+       if ($event['event_properties']['auto_approve'] == 1 && $booking['booking_approved']==0)
+           eme_update_booking_payed($booking_id,1,1);
+       else
+           eme_update_booking_payed($booking_id,1,0);
+       if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
+   }
+}
 ?>

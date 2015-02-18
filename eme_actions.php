@@ -95,6 +95,10 @@ function eme_actions_init() {
       eme_webmoney_notification();
       exit();
    }
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="mollie_notification") {
+      eme_mollie_notification();
+      exit();
+   }
    if (isset($_POST['eme_eventAction']) && ($_POST['eme_eventAction']=="fdgg_notification" || $_POST['eme_eventAction']=="fdgg_ipn")) {
       eme_fdgg_notification();
       exit();

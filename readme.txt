@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.25 =
 * Feature: implement a second extra charge option for payment providers (so you can use a percentage and a fixed amount together)
+* Feature: add Mollie payment gateway
 * Bugfix: the setting "Default location list format footer" was overwriting the format header, not footer
 * Bugfix: small template fix when listing the bookings per person
 * Removed old Google Checkout
