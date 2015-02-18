@@ -295,7 +295,6 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    require_once 'payment_gateways/Mollie/API/Autoloader.php';
    $mollie = new Mollie_API_Client;
    $mollie->setApiKey($mollie_api_key);
-   $methods = $mollie->methods->all();
 
    try {
       $payment = $mollie->payments->create(
@@ -313,6 +312,7 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    }
    catch (Mollie_API_Exception $e) {
       $url="";
+      $form_html = "Mollie API call failed: " . htmlspecialchars($e->getMessage()) . " on field " . htmlspecialchars($e->getField());
    }
 
    if (!empty($url)) {
@@ -321,12 +321,13 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
       $form_html.="<form action='$url' method='post'>";
       $form_html.="<input name='submit' type='submit' value='".__('Pay via Mollie','eme')."' /><br />";
       $form_html.=__('Using Mollie, you can pay using one of the following methods:','eme')."<br />";
+      $methods = $mollie->methods->all();
       foreach ($methods as $method) {
          $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '" alt="'.htmlspecialchars($method->description).'" title="'.htmlspecialchars($method->description).'"> ';
       }
       $form_html.="</form>";
-      return $form_html;
    }
+   return $form_html;
 }
 
 function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
