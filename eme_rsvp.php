@@ -1980,7 +1980,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          }
       } elseif (preg_match('/#_CHARGE\{(.+)\}$/', $result, $matches)) {
          $price = eme_get_total_booking_price($event,$booking);
-         $replacement = eme_payment_extra_charge($price,get_option('eme_'.$matches[1].'_cost'));
+         $replacement = eme_payment_provider_extra_charge($price,$matches[1]);
       } elseif (preg_match('/#_RESPSPACES$/', $result)) {
          $replacement = eme_get_multitotal($booking['booking_seats']);
       } elseif (preg_match('/#_BOOKINGCREATIONDATE/', $result)) {
