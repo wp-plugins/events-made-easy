@@ -277,7 +277,7 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
 
 function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
-   $charge=eme_payment_provider_extra_charge($price,'fdgg');
+   $charge=eme_payment_provider_extra_charge($price,'mollie');
    $price+=$charge;
    $events_page_link = eme_get_events_page(true, false);
    if ($multi_booking) {
