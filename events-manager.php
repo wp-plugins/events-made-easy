@@ -1544,6 +1544,11 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (isset($tmp_event['event_attributes'][$tmp_event_attkey]))
             $replacement = $tmp_event['event_attributes'][$tmp_event_attkey];
 
+      } elseif ($event && preg_match('/#_MYLOCATIONATT\{(.+)\}/', $result, $matches)) {
+         $tmp_attkey=$matches[1];
+         if (isset($location['location_attributes'][$tmp_attkey]))
+            $replacement = $location['location_attributes'][$tmp_attkey];
+
       } elseif ($event && preg_match('/#_EVENTPAGEURL\{(.+)\}/', $result, $matches)) {
          $events_page_link = eme_get_events_page(true, false);
          $replacement = add_query_arg(array('event_id'=>intval($matches[1])),$events_page_link);
