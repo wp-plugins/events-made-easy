@@ -111,13 +111,6 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
    return $ret_string;
 }
 
-function eme_payment_provider_button_info($provider) {
-   $provider_id = sanitize_title_with_dashes(remove_accents($provider));
-   $result = "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),$provider);
-   if (has_filter('eme_payment_provider_button_info_filter')) $result=apply_filters('eme_payment_provider_button_info_filter',$provider, $result);
-   return "<span id=eme_button-$provider_id>$result</span>";
-}
-
 function eme_payment_provider_extra_charge($price,$provider) {
    $extra=get_option('eme_'.$provider.'_cost');
    $result=0;
@@ -141,18 +134,6 @@ function eme_payment_provider_extra_charge($price,$provider) {
    return $result;
 }
 
-function eme_payment_provider_extra_charge_html($provider,$charge,$currency) {
-   $extra_charge_text="<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),$provider,$charge,$currency);
-   if (has_filter('eme_payment_provider_extra_charge_filter'))
-      $extra_charge_text=apply_filters('eme_payment_provider_extra_charge_filter',$provider, $charge,$currency,$extra_charge_text);
-   
-   $provider_id = sanitize_title_with_dashes(remove_accents($provider));
-   if ($charge>0)
-      return "<span id=eme_charge-$provider_id>$extra_charge_text</span>";
-   else
-      return "";
-}
-
 function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    global $post;
    $charge=eme_payment_provider_extra_charge($price,'webmoney');
@@ -167,6 +148,10 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
       $fail_link = eme_payment_return_url($event,$payment_id,2);
       $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
    }
+
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_above'),"Webmoney",$charge,$event['currency']);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_label'),"Webmoney",$charge,$event['currency']);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_below'),"Webmoney",$charge,$event['currency']);
 
    require_once('webmoney/webmoney.inc.php');
    $wm_request = new WM_Request();
@@ -183,11 +168,11 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    if (get_option('eme_webmoney_demo')) {
       $wm_request->sim_mode = WM_ALL_SUCCESS;
    }
-   $wm_request->btn_label = sprintf(__('Pay via %s','eme'),"Webmoney");
+   $wm_request->btn_label = $button_label;
 
-   $form_html = eme_payment_provider_button_info("Webmoney");
-   $form_html.= eme_payment_provider_extra_charge_html("Webmoney",$charge,$event['currency']);
+   $form_html = $button_above;
    $form_html .= $wm_request->SetForm(false);
+   $form_html .= $button_below;
    return $form_html;
 }
 
@@ -210,8 +195,10 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    $quantity=1;
    $cur=$event['currency'];
 
-   $form_html = eme_payment_provider_button_info("2Checkout");
-   $form_html.= eme_payment_provider_extra_charge_html("2Checkout",$charge,$event['currency']);
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_above'),"2Checkout",$charge,$event['currency']);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_label'),"2Checkout",$charge,$event['currency']);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_below'),"2Checkout",$charge,$event['currency']);
+   $form_html = $button_above;
    $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='sid' value='$business' />";
@@ -223,11 +210,12 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='li_0_price' value='$price' />";
    $form_html.="<input type='hidden' name='li_0_quantity' value='$quantity' />";
    $form_html.="<input type='hidden' name='currency_code' value='$cur' />";
-   $form_html.="<input name='submit' type='submit' value='".sprintf(__('Pay via %s','eme'),"2Checkout")."' />";
+   $form_html.="<input name='submit' type='submit' value='$button_label' />";
    if (get_option('eme_2co_demo')) {
       $form_html.="<input type='hidden' name='demo' value='Y' />";
    }
    $form_html.="</form>";
+   $form_html.= $button_below;
    return $form_html;
 }
 
@@ -257,9 +245,12 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $datetime=date("Y:m:d-H:i:s",strtotime($payment['creation_date_gmt']));
    $timezone_short="GMT";
 
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_above'),"First Data",$charge,$event['currency']);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_label'),"First Data",$charge,$event['currency']);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_below'),"First Data",$charge,$event['currency']);
+
    require_once('fdgg/fdgg-util_sha2.php');
-   $form_html = eme_payment_provider_button_info("First Data");
-   $form_html.= eme_payment_provider_extra_charge_html("First Data",$charge,$event['currency']);
+   $form_html = $button_above;
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
    $form_html.="<input type='hidden' name='authenticateTransaction' value='false' />";
@@ -276,8 +267,9 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='responseSuccessURL' value='$success_link' />";
    $form_html.="<input type='hidden' name='responseFailURL' value='$fail_link' />";
    $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_notification' />";
-   $form_html.="<input name='submit' type='submit' value='".sprintf(__('Pay via %s','eme'),"First Data")."' />";
+   $form_html.="<input name='submit' type='submit' value='$button_label' />";
    $form_html.="</form>";
+   $form_html.= $button_below;
    return $form_html;
 }
 
@@ -297,6 +289,10 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    }
    $notification_link = add_query_arg(array('eme_eventAction'=>'mollie_notification'),$events_page_link);
    $mollie_api_key = get_option('eme_mollie_api_key');
+
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_above'),"Mollie",$charge,$event['currency']);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_label'),"Mollie",$charge,$event['currency']);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_below'),"Mollie",$charge,$event['currency']);
 
    require_once 'payment_gateways/Mollie/API/Autoloader.php';
    $mollie = new Mollie_API_Client;
@@ -322,16 +318,16 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    }
 
    if (!empty($url)) {
-      $form_html = eme_payment_provider_button_info("Mollie");
-      $form_html.= eme_payment_provider_extra_charge_html("Mollie",$charge,$event['currency']);
+      $form_html = $button_above;
       $form_html.="<form action='$url' method='post'>";
-      $form_html.="<input name='submit' type='submit' value='".sprintf(__('Pay via %s','eme'),"Mollie")."' /><br />";
+      $form_html.="<input name='submit' type='submit' value='$button_label' /><br />";
       $form_html.=__('Using Mollie, you can pay using one of the following methods:','eme')."<br />";
       $methods = $mollie->methods->all();
       foreach ($methods as $method) {
          $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '" alt="'.htmlspecialchars($method->description).'" title="'.htmlspecialchars($method->description).'"> ';
       }
       $form_html.="</form>";
+      $form_html = $button_below;
    }
    return $form_html;
 }
@@ -353,8 +349,10 @@ function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    }
    $notification_link = add_query_arg(array('eme_eventAction'=>'paypal_notification'),$events_page_link);
 
-   $form_html = eme_payment_provider_button_info("PayPal");
-   $form_html.= eme_payment_provider_extra_charge_html("PayPal",$charge,$event['currency']);
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_above'),"Paypal",$charge,$event['currency']);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_label'),"Paypal",$charge,$event['currency']);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_below'),"Paypal",$charge,$event['currency']);
+
    require_once "paypal/Paypal.php";
    $p = new Paypal;
 
@@ -369,7 +367,7 @@ function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
 
    // the button label
    // false to disable button (if you want to rely only on the javascript auto-submission) not recommended
-   $p->button = sprintf(__('Pay via %s','eme'),"Paypal");
+   $p->button = $button_label;
 
    if (get_option('eme_paypal_s_encrypt')) {
       // use encryption (strongly recommended!)
@@ -395,7 +393,9 @@ function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    $p->add_field('amount', $price);
    $p->add_field('quantity', $quantity);
 
+   $form_html = $button_above;
    $form_html .= $p->get_button();
+   $form_html .= $button_below;
    return $form_html;
 }
 
@@ -628,5 +628,32 @@ function eme_update_payment_payed($payment_id) {
            eme_update_booking_payed($booking_id,1,0);
        if (has_action('eme_ipn_action')) do_action('eme_ipn_action',$booking);
    }
+}
+
+function eme_replace_payment_provider_placeholders($format, $provider, $charge, $currency) {
+   preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
+
+   usort($placeholders[0],'sort_stringlenth');
+   foreach($placeholders[0] as $result) {
+      $replacement='';
+      $found = 1;
+      $orig_result = $result;
+      if (preg_match('/#_PROVIDER$/', $result)) {
+         $replacement = $provider;
+      } elseif (preg_match('/#_EXTRACHARGE$/', $result)) {
+         $replacement = $charge;
+      } elseif (preg_match('/#_CURRENCY$/', $result)) {
+         $replacement = $currency;
+      } else {
+         $found = 0;
+      }
+      if ($found)
+         $format = str_replace($orig_result, $replacement ,$format );
+   }
+
+   // now, replace any language tags found in the format itself
+   $format = eme_translate($format,$lang);
+
+   return do_shortcode($format);
 }
 ?>

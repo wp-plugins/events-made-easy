@@ -71,24 +71,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: implement a second extra charge option for payment providers (so you can use a percentage and a fixed amount together)
 * Feature: add Mollie payment gateway
 * Feature: add event placeholder #_MYLOCATIONATT{xx} (see doc)
-* Feature: added filter eme_payment_provider_extra_charge_filter with 4 arguments: the payment provider string, the extra charge, the currency and the text. By default this is
-  "<br />".sprintf(__("When paying via %s, an extra charge of %01.2f %s will be added to the price.",'eme'),$provider,$charge,$currency);
-  Using this filter you can change the extra-charge text per payment provider
-  Example usage:
-  add_filter('eme_payment_provider_extra_charge_filter','my_extra_charge_filter');
-  function my_extra_charge_filter($provider,$charge,$currency,$text) {
-     $my_text=....
-     return $my_text;
-  }
-* Feature: added filter eme_payment_provider_button_info_filter with 2 arguments: the payment provider string and the text. By default this is:
-  "<br />".sprintf(__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme'),$provider)
-  Using this filter you can change the button explanation per payment provider
-  Example usage:
-  add_filter('eme_payment_provider_button_info_filter','my_button_info');
-  function my_button_info($provider,$text) {
-     $my_text=....
-     return $my_text;
-  }
+* Feature: per payment gateway, you can now customize the button label and the text above/below the button. You can use #_PROVIDER, #_EXTRACHARGE and #_CURRENCY as placeholders
 * Bugfix: the setting "Default location list format footer" was overwriting the format header, not footer
 * Bugfix: small template fix when listing the bookings per person
 * Removed old Google Checkout
