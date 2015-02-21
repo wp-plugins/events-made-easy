@@ -715,8 +715,8 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge 2','eme'),'eme_paypal_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_paypal_button_label', __('The text shown inside the payment button','eme'));
       eme_options_input_text (__('Payment button image','eme'),'eme_paypal_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
-      eme_options_input_text (__('Text above payment button','eme'),'eme_paypal_button_above', __('The text shown just above the payment button','eme'));
-      eme_options_input_text (__('Text below payment button','eme'),'eme_paypal_button_below', __('The text shown just after the payment button','eme'));
+      eme_options_input_text (__('Text above payment button','eme'),'eme_paypal_button_above', __('The text shown just above the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
+      eme_options_input_text (__('Text below payment button','eme'),'eme_paypal_button_below', __('The text shown just below the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
@@ -733,8 +733,8 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge 2','eme'),'eme_2co_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_2co_button_label', __('The text shown inside the payment button','eme'));
       eme_options_input_text (__('Payment button image','eme'),'eme_2co_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
-      eme_options_input_text (__('Text above payment button','eme'),'eme_2co_button_above', __('The text shown just above the payment button','eme'));
-      eme_options_input_text (__('Text below payment button','eme'),'eme_2co_button_below', __('The text shown just after the payment button','eme'));
+      eme_options_input_text (__('Text above payment button','eme'),'eme_2co_button_above', __('The text shown just above the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
+      eme_options_input_text (__('Text below payment button','eme'),'eme_2co_button_below', __('The text shown just below the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
@@ -751,8 +751,8 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge 2','eme'),'eme_webmoney_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_webmoney_button_label', __('The text shown inside the payment button','eme'));
       eme_options_input_text (__('Payment button image','eme'),'eme_webmoney_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
-      eme_options_input_text (__('Text above payment button','eme'),'eme_webmoney_button_above', __('The text shown just above the payment button','eme'));
-      eme_options_input_text (__('Text below payment button','eme'),'eme_webmoney_button_below', __('The text shown just after the payment button','eme'));
+      eme_options_input_text (__('Text above payment button','eme'),'eme_webmoney_button_above', __('The text shown just above the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
+      eme_options_input_text (__('Text below payment button','eme'),'eme_webmoney_button_below', __('The text shown just below the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
@@ -769,8 +769,8 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge 2','eme'),'eme_fdgg_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_fdgg_button_label', __('The text shown inside the payment button','eme'));
       eme_options_input_text (__('Payment button image','eme'),'eme_fdgg_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
-      eme_options_input_text (__('Text above payment button','eme'),'eme_fdgg_button_above', __('The text shown just above the payment button','eme'));
-      eme_options_input_text (__('Text below payment button','eme'),'eme_fdgg_button_below', __('The text shown just after the payment button','eme'));
+      eme_options_input_text (__('Text above payment button','eme'),'eme_fdgg_button_above', __('The text shown just above the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
+      eme_options_input_text (__('Text below payment button','eme'),'eme_fdgg_button_below', __('The text shown just below the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
@@ -785,8 +785,8 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge 2','eme'),'eme_mollie_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_mollie_button_label', __('The text shown inside the payment button','eme'));
       eme_options_input_text (__('Payment button image','eme'),'eme_mollie_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
-      eme_options_input_text (__('Text above payment button','eme'),'eme_mollie_button_above', __('The text shown just above the payment button','eme'));
-      eme_options_input_text (__('Text below payment button','eme'),'eme_mollie_button_below', __('The text shown just after the payment button','eme'));
+      eme_options_input_text (__('Text above payment button','eme'),'eme_mollie_button_above', __('The text shown just above the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
+      eme_options_input_text (__('Text below payment button','eme'),'eme_mollie_button_below', __('The text shown just below the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
    ?>
 </table>
