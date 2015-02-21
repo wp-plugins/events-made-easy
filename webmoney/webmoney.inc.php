@@ -53,6 +53,7 @@ class WM_Request
 
   var $action = 'https://merchant.wmtransfer.com/lmi/payment.asp';
   var $btn_label = 'Pay Webmoney';
+  var $btn_img_url = '';
 
   function SetForm($output = true)
   {
@@ -169,7 +170,10 @@ class WM_Request
       $frm .= '" value="' . htmlentities($value) . '" />' . "\n";
     }
 
-    $frm .= '<input type="submit" id="wmbtn" value="' . htmlentities($this->btn_label) . '" />' . "\n";
+    if (!empty($this->btn_img_url))
+       $frm .= '<input type="image" id="wmbtn" src="' . htmlentities($this->btn_img_url) . '" alt="' . htmlentities($this->btn_label) . '" title="' . htmlentities($this->btn_label) . '" />' . "\n";
+    else
+       $frm .= '<input type="submit" id="wmbtn" value="' . htmlentities($this->btn_label) . '" />' . "\n";
 
     $frm .= '</form>' . "\n";
 

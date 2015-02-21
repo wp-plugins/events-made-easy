@@ -35,8 +35,8 @@ function eme_add_options($reset=0) {
             </table>
             #_SUBMIT
             ";
-   $eme_payment_button_label_localizable = __('Pay via #_PROVIDER','eme');
-   $eme_payment_button_above_localizable = "<br />".__("You can pay for this event via #_PROVIDER. If you wish to do so, click the button below.",'eme');
+   $eme_payment_button_label_localizable = __('Pay via %s','eme');
+   $eme_payment_button_above_localizable = "<br />".__("You can pay for this event via %s. If you wish to do so, click the button below.",'eme');
 
    $eme_options = array('eme_event_list_item_format' => DEFAULT_EVENT_LIST_ITEM_FORMAT,
    'eme_display_calendar_in_events_page' => 0,
@@ -164,39 +164,44 @@ function eme_add_options($reset=0) {
    'eme_paypal_s_certid' => '',
    'eme_paypal_cost' => 0,
    'eme_paypal_cost2' => 0,
-   'eme_paypal_button_label' => $eme_payment_button_label_localizable,
-   'eme_paypal_button_above' => $eme_payment_button_above_localizable,
+   'eme_paypal_button_label' => sprintf($eme_payment_button_label_localizable,"Paypal"),
+   'eme_paypal_button_img_url' => '',
+   'eme_paypal_button_above' => sprintf($eme_payment_button_above_localizable,"Paypal"),
    'eme_paypal_button_below' => '',
    'eme_2co_demo' => 0,
    'eme_2co_business' => '',
    'eme_2co_secret' => '',
    'eme_2co_cost' => 0,
    'eme_2co_cost2' => 0,
-   'eme_2co_button_label' => $eme_payment_button_label_localizable,
-   'eme_2co_button_above' => $eme_payment_button_above_localizable,
+   'eme_2co_button_label' => sprintf($eme_payment_button_label_localizable,"2Checkout"),
+   'eme_2co_button_img_url' => '',
+   'eme_2co_button_above' => sprintf($eme_payment_button_above_localizable,"2Checkout"),
    'eme_2co_button_below' => '',
    'eme_webmoney_demo' => 0,
    'eme_webmoney_purse' => '',
    'eme_webmoney_secret' => '',
    'eme_webmoney_cost' => 0,
    'eme_webmoney_cost2' => 0,
-   'eme_webmoney_button_label' => $eme_payment_button_label_localizable,
-   'eme_webmoney_button_above' => $eme_payment_button_above_localizable,
+   'eme_webmoney_button_label' => sprintf($eme_payment_button_label_localizable,"Webmoney"),
+   'eme_webmoney_button_img_url' => '',
+   'eme_webmoney_button_above' => sprintf($eme_payment_button_above_localizable,"Webmoney"),
    'eme_webmoney_button_below' => '',
    'eme_fdgg_url' => FDGG_LIVE_URL,
    'eme_fdgg_store_name' => '',
    'eme_fdgg_shared_secret' => '',
    'eme_fdgg_cost' => 0,
    'eme_fdgg_cost2' => 0,
-   'eme_fdgg_button_label' => $eme_payment_button_label_localizable,
-   'eme_fdgg_button_above' => $eme_payment_button_above_localizable,
+   'eme_fdgg_button_label' => sprintf($eme_payment_button_label_localizable,"First Data"),
+   'eme_fdgg_button_img_url' => '',
+   'eme_fdgg_button_above' => sprintf($eme_payment_button_above_localizable,"First Data"),
    'eme_fdgg_button_below' => '',
    'eme_mollie_api_key' => '',
    'eme_mollie_cost' => 0,
    'eme_mollie_cost2' => 0,
-   'eme_mollie_button_label' => $eme_payment_button_label_localizable,
-   'eme_mollie_button_above' => $eme_payment_button_above_localizable,
-   'eme_mollie_button_below' => __('Using #_PROVIDER, you can pay using one of the following methods:','eme')."<br />",
+   'eme_mollie_button_label' => sprintf($eme_payment_button_label_localizable,"Mollie"),
+   'eme_mollie_button_img_url' => '',
+   'eme_mollie_button_above' => sprintf($eme_payment_button_above_localizable,"Mollie"),
+   'eme_mollie_button_below' => __('Using Mollie, you can pay using one of the following methods:','eme')."<br />",
    'eme_event_initial_state' => STATUS_DRAFT,
    'eme_default_currency' => 'EUR',
    'eme_default_price' => '0',
@@ -302,7 +307,7 @@ function eme_options_register() {
                  $options = array ('eme_rsvp_mail_notify_is_active','eme_deny_mail_event_edit','eme_contactperson_email_subject', 'eme_contactperson_cancelled_email_subject', 'eme_contactperson_pending_email_subject','eme_contactperson_email_body','eme_contactperson_cancelled_email_body','eme_contactperson_pending_email_body','eme_respondent_email_subject','eme_respondent_email_body','eme_registration_pending_email_subject','eme_registration_pending_email_body','eme_registration_cancelled_email_subject','eme_registration_cancelled_email_body','eme_registration_denied_email_subject','eme_registration_denied_email_body','eme_registration_updated_email_subject','eme_registration_updated_email_body','eme_mail_sender_name','eme_mail_sender_address','eme_rsvp_mail_send_method','eme_smtp_host','eme_smtp_port','eme_rsvp_mail_SMTPAuth','eme_smtp_username','eme_smtp_password', 'eme_smtp_debug','eme_rsvp_send_html');
 	         break;
 	      case 'payments' :
-                 $options = array ('eme_payment_form_header_format','eme_payment_form_footer_format','eme_multipayment_form_header_format','eme_multipayment_form_footer_format','eme_payment_show_custom_return_page','eme_payment_succes_format','eme_payment_fail_format','eme_payment_add_bookingid_to_return','eme_default_currency','eme_default_price','eme_paypal_url','eme_paypal_business','eme_2co_demo','eme_2co_business','eme_2co_secret','eme_webmoney_purse', 'eme_webmoney_secret', 'eme_webmoney_demo', 'eme_paypal_s_encrypt', 'eme_paypal_s_pubcert', 'eme_paypal_s_privkey', 'eme_paypal_s_paypalcert', 'eme_paypal_s_certid','eme_fdgg_url','eme_fdgg_store_name','eme_fdgg_shared_secret','eme_2co_cost','eme_paypal_cost','eme_fdgg_cost','eme_webmoney_cost','eme_2co_cost2','eme_paypal_cost2','eme_fdgg_cost2','eme_webmoney_cost2','eme_mollie_api_key','eme_mollie_cost','eme_mollie_cost2','eme_paypal_button_label','eme_paypal_button_above','eme_paypal_button_below','eme_2co_button_label','eme_2co_button_above','eme_2co_button_below','eme_fdgg_button_label','eme_fdgg_button_above','eme_fdgg_button_below','eme_webmoney_button_label','eme_webmoney_button_above','eme_webmoney_button_below','eme_mollie_button_label','eme_mollie_button_above','eme_mollie_button_below');
+                 $options = array ('eme_payment_form_header_format','eme_payment_form_footer_format','eme_multipayment_form_header_format','eme_multipayment_form_footer_format','eme_payment_show_custom_return_page','eme_payment_succes_format','eme_payment_fail_format','eme_payment_add_bookingid_to_return','eme_default_currency','eme_default_price','eme_paypal_url','eme_paypal_business','eme_2co_demo','eme_2co_business','eme_2co_secret','eme_webmoney_purse', 'eme_webmoney_secret', 'eme_webmoney_demo', 'eme_paypal_s_encrypt', 'eme_paypal_s_pubcert', 'eme_paypal_s_privkey', 'eme_paypal_s_paypalcert', 'eme_paypal_s_certid','eme_fdgg_url','eme_fdgg_store_name','eme_fdgg_shared_secret','eme_2co_cost','eme_paypal_cost','eme_fdgg_cost','eme_webmoney_cost','eme_2co_cost2','eme_paypal_cost2','eme_fdgg_cost2','eme_webmoney_cost2','eme_mollie_api_key','eme_mollie_cost','eme_mollie_cost2','eme_paypal_button_label','eme_paypal_button_above','eme_paypal_button_below','eme_2co_button_label','eme_2co_button_above','eme_2co_button_below','eme_fdgg_button_label','eme_fdgg_button_above','eme_fdgg_button_below','eme_webmoney_button_label','eme_webmoney_button_above','eme_webmoney_button_below','eme_mollie_button_label','eme_mollie_button_above','eme_mollie_button_below','eme_paypal_button_img_url','eme_2co_button_img_url','eme_fdgg_button_img_url','eme_webmoney_button_img_url','eme_mollie_button_img_url');
 	         break;
 	      case 'other' :
                  $options = array ('eme_thumbnail_size','eme_image_max_width','eme_image_max_height','eme_image_max_size','eme_event_html_headers_format','eme_location_html_headers_format','eme_fb_app_id','eme_global_zoom_factor','eme_indiv_zoom_factor','eme_global_maptype','eme_indiv_maptype','eme_csv_separator');
@@ -709,6 +714,7 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge','eme'),'eme_paypal_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Extra charge 2','eme'),'eme_paypal_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_paypal_button_label', __('The text shown inside the payment button','eme'));
+      eme_options_input_text (__('Payment button image','eme'),'eme_paypal_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
       eme_options_input_text (__('Text above payment button','eme'),'eme_paypal_button_above', __('The text shown just above the payment button','eme'));
       eme_options_input_text (__('Text below payment button','eme'),'eme_paypal_button_below', __('The text shown just after the payment button','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
@@ -726,6 +732,7 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge','eme'),'eme_2co_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Extra charge 2','eme'),'eme_2co_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_2co_button_label', __('The text shown inside the payment button','eme'));
+      eme_options_input_text (__('Payment button image','eme'),'eme_2co_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
       eme_options_input_text (__('Text above payment button','eme'),'eme_2co_button_above', __('The text shown just above the payment button','eme'));
       eme_options_input_text (__('Text below payment button','eme'),'eme_2co_button_below', __('The text shown just after the payment button','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
@@ -743,6 +750,7 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge','eme'),'eme_webmoney_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Extra charge 2','eme'),'eme_webmoney_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_webmoney_button_label', __('The text shown inside the payment button','eme'));
+      eme_options_input_text (__('Payment button image','eme'),'eme_webmoney_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
       eme_options_input_text (__('Text above payment button','eme'),'eme_webmoney_button_above', __('The text shown just above the payment button','eme'));
       eme_options_input_text (__('Text below payment button','eme'),'eme_webmoney_button_below', __('The text shown just after the payment button','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
@@ -760,6 +768,7 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge','eme'),'eme_fdgg_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Extra charge 2','eme'),'eme_fdgg_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_fdgg_button_label', __('The text shown inside the payment button','eme'));
+      eme_options_input_text (__('Payment button image','eme'),'eme_fdgg_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
       eme_options_input_text (__('Text above payment button','eme'),'eme_fdgg_button_above', __('The text shown just above the payment button','eme'));
       eme_options_input_text (__('Text below payment button','eme'),'eme_fdgg_button_below', __('The text shown just after the payment button','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';
@@ -775,6 +784,7 @@ function eme_options_page() {
       eme_options_input_text (__('Extra charge','eme'),'eme_mollie_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Extra charge 2','eme'),'eme_mollie_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
       eme_options_input_text (__('Payment button label','eme'),'eme_mollie_button_label', __('The text shown inside the payment button','eme'));
+      eme_options_input_text (__('Payment button image','eme'),'eme_mollie_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
       eme_options_input_text (__('Text above payment button','eme'),'eme_mollie_button_above', __('The text shown just above the payment button','eme'));
       eme_options_input_text (__('Text below payment button','eme'),'eme_mollie_button_below', __('The text shown just after the payment button','eme'));
       echo "<tr><td colspan='2'>".__('Info: the url for payment notifications is: ','eme').$notification_link.'</td></tr>';

@@ -33,15 +33,15 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
       }
       $ret_string .= "<div id='eme-payment-form' class='eme-payment-form'>";
       if ($event['use_paypal'])
-         $ret_string .= eme_paypal_form($event,$payment_id, $total_price);
+         $ret_string .= eme_paypal_form($event,$payment_id, $total_price,$booking['lang']);
       if ($event['use_2co'])
-         $ret_string .= eme_2co_form($event,$payment_id, $total_price);
+         $ret_string .= eme_2co_form($event,$payment_id, $total_price,$booking['lang']);
       if ($event['use_webmoney'])
-         $ret_string .= eme_webmoney_form($event,$payment_id, $total_price);
+         $ret_string .= eme_webmoney_form($event,$payment_id, $total_price,$booking['lang']);
       if ($event['use_fdgg'])
-         $ret_string .= eme_fdgg_form($event,$payment_id, $total_price);
+         $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,$booking['lang']);
       if ($event['use_mollie'])
-         $ret_string .= eme_mollie_form($event,$payment_id, $total_price);
+         $ret_string .= eme_mollie_form($event,$payment_id, $total_price,$booking['lang']);
       $ret_string .= "</div>";
 
       $eme_payment_form_footer_format=get_option('eme_payment_form_footer_format');
@@ -89,15 +89,15 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
    }
    $ret_string .= "<div id='eme-payment-form' class='eme-payment-form'>";
    if ($event['use_paypal'])
-      $ret_string .= eme_paypal_form($event,$payment_id, $total_price,1);
+      $ret_string .= eme_paypal_form($event,$payment_id, $total_price,$booking['lang'],1);
    if ($event['use_2co'])
-      $ret_string .= eme_2co_form($event,$payment_id, $total_price,1);
+      $ret_string .= eme_2co_form($event,$payment_id, $total_price,$booking['lang'],1);
    if ($event['use_webmoney'])
-      $ret_string .= eme_webmoney_form($event,$payment_id, $total_price,1);
+      $ret_string .= eme_webmoney_form($event,$payment_id, $total_price,$booking['lang'],1);
    if ($event['use_fdgg'])
-      $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,1);
+      $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,$booking['lang'],1);
    if ($event['use_mollie'])
-      $ret_string .= eme_mollie_form($event,$payment_id, $total_price,1);
+      $ret_string .= eme_mollie_form($event,$payment_id, $total_price,$booking['lang'],1);
    $ret_string .= "</div>";
 
    $eme_multipayment_form_footer_format=get_option('eme_multipayment_form_footer_format');
@@ -134,7 +134,7 @@ function eme_payment_provider_extra_charge($price,$provider) {
    return $result;
 }
 
-function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
+function eme_webmoney_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    global $post;
    $charge=eme_payment_provider_extra_charge($price,'webmoney');
    $price+=$charge;
@@ -149,9 +149,10 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
       $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
    }
 
-   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_above'),"Webmoney",$charge,$event['currency']);
-   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_label'),"Webmoney",$charge,$event['currency']);
-   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_below'),"Webmoney",$charge,$event['currency']);
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_above'),$charge,$event['currency'],$lang);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_label'),$charge,$event['currency'],$lang);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_below'),$charge,$event['currency'],$lang);
+   $button_img_url = get_option('eme_webmoney_button_img_url');
 
    require_once('webmoney/webmoney.inc.php');
    $wm_request = new WM_Request();
@@ -169,6 +170,8 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
       $wm_request->sim_mode = WM_ALL_SUCCESS;
    }
    $wm_request->btn_label = $button_label;
+   if (!empty($button_img_url))
+      $wm_request->btn_img_url = $button_img_url;
 
    $form_html = $button_above;
    $form_html .= $wm_request->SetForm(false);
@@ -176,7 +179,7 @@ function eme_webmoney_form($event,$payment_id,$price,$multi_booking=0) {
    return $form_html;
 }
 
-function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
+function eme_2co_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    global $post;
    $charge=eme_payment_provider_extra_charge($price,'2co');
    $price+=$charge;
@@ -195,9 +198,10 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    $quantity=1;
    $cur=$event['currency'];
 
-   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_above'),"2Checkout",$charge,$event['currency']);
-   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_label'),"2Checkout",$charge,$event['currency']);
-   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_below'),"2Checkout",$charge,$event['currency']);
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_above'),$charge,$event['currency'],$lang);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_label'),$charge,$event['currency'],$lang);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_below'),$charge,$event['currency'],$lang);
+   $button_img_url = get_option('eme_2co_button_img_url');
    $form_html = $button_above;
    $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
@@ -210,7 +214,11 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='li_0_price' value='$price' />";
    $form_html.="<input type='hidden' name='li_0_quantity' value='$quantity' />";
    $form_html.="<input type='hidden' name='currency_code' value='$cur' />";
-   $form_html.="<input name='submit' type='submit' value='$button_label' />";
+   $button_label=htmlentities($button_label);
+   if (!empty($button_img_url))
+      $form_html.="<input type='image' alt='$button_label' title='$button_label' src='$button_img_url' />";
+   else
+      $form_html.="<input type='submit' value='$button_label' />";
    if (get_option('eme_2co_demo')) {
       $form_html.="<input type='hidden' name='demo' value='Y' />";
    }
@@ -219,7 +227,7 @@ function eme_2co_form($event,$payment_id,$price,$multi_booking=0) {
    return $form_html;
 }
 
-function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
+function eme_fdgg_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    global $post;
    $charge=eme_payment_provider_extra_charge($price,'fdgg');
    $price+=$charge;
@@ -245,9 +253,10 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $datetime=date("Y:m:d-H:i:s",strtotime($payment['creation_date_gmt']));
    $timezone_short="GMT";
 
-   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_above'),"First Data",$charge,$event['currency']);
-   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_label'),"First Data",$charge,$event['currency']);
-   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_below'),"First Data",$charge,$event['currency']);
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_above'),$charge,$event['currency'],$lang);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_label'),$charge,$event['currency'],$lang);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_below'),$charge,$event['currency'],$lang);
+   $button_img_url = get_option('eme_fdgg_button_img_url');
 
    require_once('fdgg/fdgg-util_sha2.php');
    $form_html = $button_above;
@@ -267,13 +276,17 @@ function eme_fdgg_form($event,$payment_id,$price,$multi_booking=0) {
    $form_html.="<input type='hidden' name='responseSuccessURL' value='$success_link' />";
    $form_html.="<input type='hidden' name='responseFailURL' value='$fail_link' />";
    $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_notification' />";
-   $form_html.="<input name='submit' type='submit' value='$button_label' />";
+   $button_label=htmlentities($button_label);
+   if (!empty($button_img_url))
+      $form_html.="<input type='image' src='$button_img_url' alt='$button_label' title='$button_label' />";
+   else
+      $form_html.="<input type='submit' value='$button_label' />";
    $form_html.="</form>";
    $form_html.= $button_below;
    return $form_html;
 }
 
-function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
+function eme_mollie_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    global $post;
    $charge=eme_payment_provider_extra_charge($price,'mollie');
    $price+=$charge;
@@ -290,9 +303,10 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    $notification_link = add_query_arg(array('eme_eventAction'=>'mollie_notification'),$events_page_link);
    $mollie_api_key = get_option('eme_mollie_api_key');
 
-   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_above'),"Mollie",$charge,$event['currency']);
-   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_label'),"Mollie",$charge,$event['currency']);
-   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_below'),"Mollie",$charge,$event['currency']);
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_above'),$charge,$event['currency'],$lang);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_label'),$charge,$event['currency'],$lang);
+   $button_img_url = get_option('eme_mollie_button_img_url');
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_mollie_button_below'),$charge,$event['currency'],$lang);
 
    require_once 'payment_gateways/Mollie/API/Autoloader.php';
    $mollie = new Mollie_API_Client;
@@ -317,10 +331,14 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
       $form_html = "Mollie API call failed: " . htmlspecialchars($e->getMessage()) . " on field " . htmlspecialchars($e->getField());
    }
 
+   $button_label=htmlentities($button_label);
    if (!empty($url)) {
       $form_html = $button_above;
       $form_html.="<form action='$url' method='post'>";
-      $form_html.="<input name='submit' type='submit' value='$button_label' /><br />";
+      if (!empty($button_img_url))
+         $form_html.="<input type='image' src='$button_img_url' alt='$button_label' title='$button_label' />";
+      else
+         $form_html.="<input type='submit' value='$button_label' /><br />";
       $form_html.=__('Using Mollie, you can pay using one of the following methods:','eme')."<br />";
       $methods = $mollie->methods->all();
       foreach ($methods as $method) {
@@ -332,7 +350,7 @@ function eme_mollie_form($event,$payment_id,$price,$multi_booking=0) {
    return $form_html;
 }
 
-function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
+function eme_paypal_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    global $post;
    $quantity=1;
    $charge=eme_payment_provider_extra_charge($price,'paypal');
@@ -349,9 +367,10 @@ function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
    }
    $notification_link = add_query_arg(array('eme_eventAction'=>'paypal_notification'),$events_page_link);
 
-   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_above'),"Paypal",$charge,$event['currency']);
-   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_label'),"Paypal",$charge,$event['currency']);
-   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_below'),"Paypal",$charge,$event['currency']);
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_above'),$charge,$event['currency'],$lang);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_label'),$charge,$event['currency'],$lang);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_below'),$charge,$event['currency'],$lang);
+   $button_img_url = get_option('eme_paypal_button_img_url');
 
    require_once "paypal/Paypal.php";
    $p = new Paypal;
@@ -367,7 +386,10 @@ function eme_paypal_form($event,$payment_id,$price,$multi_booking=0) {
 
    // the button label
    // false to disable button (if you want to rely only on the javascript auto-submission) not recommended
+   $button_label=htmlentities($button_label);
    $p->button = $button_label;
+   if (!empty($button_img_url))
+      $p->button_img_url = $button_img_url;
 
    if (get_option('eme_paypal_s_encrypt')) {
       // use encryption (strongly recommended!)
@@ -630,7 +652,7 @@ function eme_update_payment_payed($payment_id) {
    }
 }
 
-function eme_replace_payment_provider_placeholders($format, $provider, $charge, $currency) {
+function eme_replace_payment_provider_placeholders($format, $charge, $currency, $lang) {
    preg_match_all("/#_?[A-Za-z0-9_]+/", $format, $placeholders);
 
    usort($placeholders[0],'sort_stringlenth');
@@ -638,9 +660,7 @@ function eme_replace_payment_provider_placeholders($format, $provider, $charge, 
       $replacement='';
       $found = 1;
       $orig_result = $result;
-      if (preg_match('/#_PROVIDER$/', $result)) {
-         $replacement = $provider;
-      } elseif (preg_match('/#_EXTRACHARGE$/', $result)) {
+      if (preg_match('/#_EXTRACHARGE$/', $result)) {
          $replacement = $charge;
       } elseif (preg_match('/#_CURRENCY$/', $result)) {
          $replacement = $currency;

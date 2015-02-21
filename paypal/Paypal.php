@@ -33,6 +33,7 @@ class Paypal {
 
 	// the label for the submit button. or false to disable it (depend on js to submit, not recommended)
 	public $button = 'Buy Now';
+	public $button_img_url = '';
 
 	// use encryption
 	public $encrypt = true;
@@ -85,8 +86,11 @@ class Paypal {
 			$form .= $this->get_button_plain();
 		}
 
-		if($this->button) {
-			$form .= '<input type="submit" value="'.$this->button.'"/>'."\n";
+		if($this->button_img_url) {
+			$form .= '<input type="image" src="'.$this->button_img_url.'" alt="'.$this->button.'" title="'.$this->button.'"/>'."\n";
+		}
+		elseif($this->button) {
+			$form .= '<input type="submit" value="'.$this->button.'" />'."\n";
 		}
 
 		$form .= '</form>';
