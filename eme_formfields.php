@@ -469,7 +469,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
    }
 
    if (preg_match('/#_SUBMIT\{.+\}/', $format)) {
-      $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
+      $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
       $required_fields_count++;
    }
 
@@ -483,7 +483,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
    }
 
    if ($deprecated && preg_match('/#_SUBMIT\[.+\]/', $format)) {
-      $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
+      $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
       $required_fields_count++;
    }
 
@@ -529,7 +529,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_del_booking'><br /><input required='required' type='text' name='captcha_check' autocomplete='off' />";
          $required_fields_count++;
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
-         $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_delbooking_submit_string'))."' />";
+         $replacement = "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_delbooking_submit_string'))."' />";
          $required_fields_count++;
       } else {
          $found = 0;
@@ -585,7 +585,7 @@ function eme_replace_multibooking_formfields_placeholders ($format) {
    }
 
    if (preg_match('/#_SUBMIT\{.+\}/', $format)) {
-      $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
+      $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
    }
 
    // now the normal placeholders
@@ -634,7 +634,7 @@ function eme_replace_multibooking_formfields_placeholders ($format) {
       } elseif (preg_match('/#_CAPTCHA/', $result) && $eme_captcha_for_booking) {
          $replacement = "<img src='".EME_PLUGIN_URL."captcha.php?sessionvar=eme_add_booking'><br /><input required='required' type='text' name='captcha_check' autocomplete='off' />";
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
-         $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."' />";
+         $replacement = "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."' />";
       } elseif (preg_match('/#_FIELDNAME\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
@@ -893,9 +893,9 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 
    if (preg_match('/#_SUBMIT\{.+\}/', $format)) {
       if ($editing_booking_from_backend)
-         $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".__('Update booking','eme')."' />" ,$format );
+         $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input name='eme_submit_button' type='submit' value='".__('Update booking','eme')."' />" ,$format );
       else
-         $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
+         $format = preg_replace('/#_SUBMIT\{(.+?)\}/', "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
       if (!$eme_multibooking)
          $required_fields_count++;
    }
@@ -911,9 +911,9 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 
    if ($deprecated && preg_match('/#_SUBMIT\[.+\]/', $format)) {
       if ($editing_booking_from_backend)
-         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".__('Update booking','eme')."' />" ,$format );
+         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input name='eme_submit_button' type='submit' value='".__('Update booking','eme')."' />" ,$format );
       else
-         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
+         $format = preg_replace('/#_SUBMIT\[(.+?)\]/', "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html('$1')."' />" ,$format );
       if (!$eme_multibooking)
          $required_fields_count++;
    }
@@ -1042,9 +1042,9 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       } elseif (preg_match('/#_SUBMIT/', $result, $matches)) {
          if (!$eme_multibooking) {
             if ($editing_booking_from_backend)
-               $replacement = "<input type='submit' value='".__('Update booking','eme')."' />";
+               $replacement = "<input name='eme_submit_button' type='submit' value='".__('Update booking','eme')."' />";
             else
-               $replacement = "<input type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."' />";
+               $replacement = "<input name='eme_submit_button' type='submit' value='".eme_trans_sanitize_html(get_option('eme_rsvp_addbooking_submit_string'))."' />";
             $required_fields_count++;
          }
       } else {

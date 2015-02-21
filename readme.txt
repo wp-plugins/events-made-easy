@@ -72,6 +72,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: add Mollie payment gateway
 * Feature: add event placeholder #_MYLOCATIONATT{xx} (see doc)
 * Feature: per payment gateway, you can now customize the button label and the text above/below the button. You can use #_EXTRACHARGE and #_CURRENCY as placeholders, multilanguage ready too. Also, the button can be an image if wanted.
+* Improvement: prevent double click on form submit
 * Bugfix: the setting "Default location list format footer" was overwriting the format header, not footer
 * Bugfix: small template fix when listing the bookings per person
 * Removed old Google Checkout

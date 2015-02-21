@@ -159,7 +159,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $ret_string.="<div class='eme-rsvp-message'>".__('Bookings no longer possible: no seats available anymore', 'eme')."</div>";
    } else {
       if (!$message_is_result_of_booking || ($message_is_result_of_booking && get_option('eme_rsvp_show_form_after_booking'))) {
-         $form_html = "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination'>";
+         $form_html = "<form id='eme-rsvp-form' name='booking-form' method='post' action='$destination' onsubmit='eme_submit_button.disabled=true; return true;'>";
          $form_html .= eme_replace_formfields_placeholders ($event);
          // add a nonce for extra security
          $form_html .= wp_nonce_field('add_booking','eme_rsvp_nonce',false,false);
