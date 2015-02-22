@@ -615,4 +615,12 @@ if (!function_exists('array_replace_recursive')) {
       return $array;
    }
 }
+
+function eme_get_query_arg($arg) {
+   if (isset($_GET[$arg]))
+      return eme_strip_tags($_GET[$arg]);
+   else
+      return false;
+}
+
 ?>

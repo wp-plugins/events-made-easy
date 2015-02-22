@@ -154,7 +154,7 @@ function eme_webmoney_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    $button_below = eme_replace_payment_provider_placeholders(get_option('eme_webmoney_button_below'),$charge,$event['currency'],$lang);
    $button_img_url = get_option('eme_webmoney_button_img_url');
 
-   require_once('webmoney/webmoney.inc.php');
+   require_once('payment_gateways/webmoney/webmoney.inc.php');
    $wm_request = new WM_Request();
    $wm_request->payment_amount =$price;
    $wm_request->payment_desc = $name;
@@ -258,7 +258,7 @@ function eme_fdgg_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    $button_below = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_below'),$charge,$event['currency'],$lang);
    $button_img_url = get_option('eme_fdgg_button_img_url');
 
-   require_once('fdgg/fdgg-util_sha2.php');
+   require_once('payment_gateways/fdgg/fdgg-util_sha2.php');
    $form_html = $button_above;
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='timezone' value='$timezone_short' />";
@@ -372,7 +372,7 @@ function eme_paypal_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    $button_below = eme_replace_payment_provider_placeholders(get_option('eme_paypal_button_below'),$charge,$event['currency'],$lang);
    $button_img_url = get_option('eme_paypal_button_img_url');
 
-   require_once "paypal/Paypal.php";
+   require_once "payment_gateways/paypal/Paypal.php";
    $p = new Paypal;
 
    // the paypal or paypal sandbox url
@@ -422,7 +422,7 @@ function eme_paypal_form($event,$payment_id,$price,$lang,$multi_booking=0) {
 }
 
 function eme_paypal_notification() {
-   require_once 'paypal/IPN.php';
+   require_once 'payment_gateways/paypal/IPN.php';
    $ipn = new IPN;
 
    // the paypal url, or the sandbox url, or the ipn test url
@@ -508,7 +508,7 @@ function eme_webmoney_notification() {
    $webmoney_purse = get_option('eme_webmoney_purse');
    $webmoney_secret = get_option('eme_webmoney_secret');
 
-   require_once('webmoney/webmoney.inc.php');
+   require_once('payment_gateways/webmoney/webmoney.inc.php');
    $wm_notif = new WM_Notification(); 
    if ($wm_notif->GetForm() != WM_RES_NOPARAM) {
       $amount=$wm_notif->payment_amount;
@@ -528,7 +528,7 @@ function eme_webmoney_notification() {
 function eme_fdgg_notification() {
    $store_name = get_option('eme_fdgg_store_name');
    $shared_secret = get_option('eme_fdgg_shared_secret');
-   require_once('fdgg/fdgg-util_sha2.php');
+   require_once('payment_gateways/fdgg/fdgg-util_sha2.php');
 
    $payment_id      = intval($_POST['invoicenumber']);
    $charge_total    = $_POST['charge_total'];
