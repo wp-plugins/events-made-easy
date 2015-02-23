@@ -3,8 +3,8 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
-Tested up to: 4.1
-Stable tag: 1.5.23
+Tested up to: 4.1.1
+Stable tag: 1.5.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.25 =
+= 1.5.24 =
 * Feature: implement a second extra charge option for payment providers (so you can use a percentage and a fixed amount together)
 * Feature: add Mollie payment gateway
 * Feature: add event placeholder #_MYLOCATIONATT{xx} (see doc)
@@ -76,10 +76,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: German language updates, thanks to Joerg Knoerchen
 * Bugfix: the setting "Default location list format footer" was overwriting the format header, not footer
 * Bugfix: small template fix when listing the bookings per person
-* Removed old Google Checkout
-
-= 1.5.24 =
 * Bugfix: eme_mybookings was only replacing 'event' level placeholders once for all bookings
+* Removed old Google Checkout
 
 = 1.5.23 =
 * Bugfix: make client clock checking work again for the calendar
