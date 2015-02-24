@@ -10,13 +10,23 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
       $fromMail = get_option('eme_mail_sender_address');
       $fromName = get_option('eme_mail_sender_name'); // This is the from name in the email, you can put anything you like here
    }
+   $eme_bcc_address= get_option('eme_mail_bcc_address');
+
    if ($eme_rsvp_mail_send_method == 'wp_mail') {
+      // Set the correct mail headers
       $headers[] = "From: $fromName <$fromMail>";
       if ($replytoemail != "")
          $headers[] = "ReplyTo: $replytoname <$replytoemail>";
+      if (!empty($eme_bcc_address))
+         $headers[] = "Bcc: $eme_bcc_address";
+
+      // set the correct content type
       if (get_option('eme_rsvp_send_html') == '1')
           add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
+
+      // now send it
       wp_mail( $receiveremail, $subject, $body, $headers );  
+
       // Reset content-type to avoid conflicts -- http://core.trac.wordpress.org/ticket/23578
       if (get_option('eme_rsvp_send_html') == '1')
          remove_filter('wp_mail_content_type', 'set_html_content_type' );
@@ -70,10 +80,12 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
          else
             $mail->Body = $body;
          $mail->Subject = $subject;
-         if ($replytoemail != "")
+         if (!empty($replytoemail))
             $mail->AddReplyTo($replytoemail,$replytoname);
+         if (!empty($eme_bcc_address))
+            $mail->AddBCC($eme_bcc_address);
 
-         if ($receiveremail != "") {
+         if (!empty($receiveremail)) {
             $mail->AddAddress($receiveremail,$receivername);
             if (get_option('eme_smtp_debug'))
                $mail->SMTPDebug = true;
