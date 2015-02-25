@@ -339,13 +339,12 @@ function eme_mollie_form($event,$payment_id,$price,$lang,$multi_booking=0) {
          $form_html.="<input type='image' src='$button_img_url' alt='$button_label' title='$button_label' />";
       else
          $form_html.="<input type='submit' value='$button_label' /><br />";
-      $form_html.=__('Using Mollie, you can pay using one of the following methods:','eme')."<br />";
+      $form_html.= $button_below;
       $methods = $mollie->methods->all();
       foreach ($methods as $method) {
          $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '" alt="'.htmlspecialchars($method->description).'" title="'.htmlspecialchars($method->description).'"> ';
       }
       $form_html.="</form>";
-      $form_html.= $button_below;
    }
    return $form_html;
 }
