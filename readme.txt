@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.25 =
 * Feature: added the possibility to add a Bcc address to all outgoing mails
+* Bugfix: Mollie form was not being displayed
 
 = 1.5.24 =
 * Feature: implement a second extra charge option for payment providers (so you can use a percentage and a fixed amount together)

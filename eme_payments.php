@@ -345,7 +345,7 @@ function eme_mollie_form($event,$payment_id,$price,$lang,$multi_booking=0) {
          $form_html.= '<img src="' . htmlspecialchars($method->image->normal) . '" alt="'.htmlspecialchars($method->description).'" title="'.htmlspecialchars($method->description).'"> ';
       }
       $form_html.="</form>";
-      $form_html = $button_below;
+      $form_html.= $button_below;
    }
    return $form_html;
 }
