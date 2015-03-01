@@ -298,7 +298,7 @@ function eme_mollie_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    } else {
       $success_link = eme_payment_return_url($event,$payment_id,1);
       $fail_link = eme_payment_return_url($event,$payment_id,2);
-      $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
+      $name = sprintf(__("Booking for '%s'","eme"),$event['event_name']);
    }
    $notification_link = add_query_arg(array('eme_eventAction'=>'mollie_notification'),$events_page_link);
    $mollie_api_key = get_option('eme_mollie_api_key');
