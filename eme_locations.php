@@ -29,8 +29,8 @@ function eme_init_location_props($props) {
 
 function eme_locations_page() {
    $current_userid=get_current_user_id();
-   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "editlocation") { 
-      $location_id = intval($_GET['location_ID']);
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edit_location") { 
+      $location_id = intval($_GET['location_id']);
       $location = eme_get_location($location_id);
       if (current_user_can( get_option('eme_cap_edit_locations')) ||
             (current_user_can( get_option('eme_cap_author_locations')) && ($location['location_author']==$current_userid))) {
@@ -40,8 +40,8 @@ function eme_locations_page() {
          $message = __('You have no right to edit this location!','eme');
          eme_locations_table_layout($message);
       }
-   } elseif (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "copylocation") { 
-      $location_id = intval($_GET['location_ID']);
+   } elseif (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "copy_location") { 
+      $location_id = intval($_GET['location_id']);
       $location = eme_get_location($location_id);
       // make it look like a new location
       unset($location['location_id']);
@@ -75,7 +75,7 @@ function eme_locations_page() {
    } elseif (isset($_POST['eme_admin_action']) && ($_POST['eme_admin_action'] == "do_editlocation" || $_POST['eme_admin_action'] == "do_addlocation")) { 
       $action = $_POST['eme_admin_action'];
       if ($action == "do_editlocation")
-         $orig_location=eme_get_location(intval($_POST['location_ID']));
+         $orig_location=eme_get_location(intval($_POST['location_id']));
 
       if ($action == "do_addlocation" && !current_user_can( get_option('eme_cap_add_locations'))) {
          $message = __('You have no right to add a location!','eme');
@@ -148,7 +148,7 @@ function eme_locations_page() {
                   $message = __('There has been a problem adding the location.', 'eme'); 
                }      
             } elseif ($action == "do_editlocation") {      
-               $location['location_id'] = intval($_POST['location_ID']);
+               $location['location_id'] = intval($_POST['location_id']);
                if (eme_update_location($location)) {
                   $message = __('The location has been updated.', 'eme');
                } else {
@@ -198,7 +198,7 @@ function eme_locations_edit_layout($location, $message = "") {
          <input type="hidden" name="eme_admin_action" value="do_addlocation" />
          <?php } else { ?>
          <input type="hidden" name="eme_admin_action" value="do_editlocation" />
-         <input type="hidden" name="location_ID" value="<?php echo $location['location_id'] ?>" />
+         <input type="hidden" name="location_id" value="<?php echo $location['location_id'] ?>" />
          <?php } ?>
          
          <!-- we need titlediv and title for qtranslate as ID -->
@@ -440,10 +440,10 @@ function eme_locations_table_layout($message = "") {
                         <tr>
                            <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id']; ?>" name="locations[]" /></td>
                            <td><?php echo $this_location['location_id']; ?></td>
-                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=editlocation&amp;location_ID=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_town']); ?></td>
-                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=copylocation&amp;location_ID=".$this_location['location_id']); ?>" title="<?php _e('Duplicate this location','eme'); ?>">+</a></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=copy_location&amp;location_id=".$this_location['location_id']); ?>" title="<?php _e('Duplicate this location','eme'); ?>">+</a></td>
                         </tr>
                         <?php endforeach; ?>
                      </tbody>
@@ -725,8 +725,8 @@ function eme_insert_location($location,$force=0) {
          $wpdb->show_errors(false);
          return false;
       } else {
-         $location_ID = $wpdb->insert_id;
-         $new_location = eme_get_location($location_ID);
+         $location_id = $wpdb->insert_id;
+         $new_location = eme_get_location($location_id);
          $wpdb->show_errors(false);
          return $new_location;
       }
@@ -1275,6 +1275,18 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
             $replacement = apply_filters('eme_text', $replacement);
+         }
+
+      } elseif ($event && preg_match('/#_EDITLOCATIONLINK/', $result)) {
+         if (current_user_can( get_option('eme_cap_edit_locations')) ||
+            (current_user_can( get_option('eme_cap_author_locations')) && ($location['location_author']==$current_userid))) {
+            $replacement = "<a href=' ".admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$location['location_id'])."'>".__('Edit')."</a>";
+         }
+
+      } elseif ($event && preg_match('/#_EDITLOCATIONURL/', $result)) {
+         if (current_user_can( get_option('eme_cap_edit_locations')) ||
+            (current_user_can( get_option('eme_cap_author_locations')) && ($location['location_author']==$current_userid))) {
+            $replacement = admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$location['location_id']);
          }
 
       } elseif (preg_match('/#_IS_SINGLE_LOC/', $result)) {

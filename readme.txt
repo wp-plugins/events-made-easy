@@ -67,6 +67,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.26 =
+* Feature: added location placeholders #_EDITLOCATIONLINK and #_EDITLOCATIONURL
 = 1.5.25 =
 * Feature: added the possibility to add a Bcc address to all outgoing mails
 * Bugfix: Mollie form was not being displayed
