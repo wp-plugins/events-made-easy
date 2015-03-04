@@ -8,7 +8,7 @@ function eme_templates_page() {
       eme_templates_table_layout($message);
       return;
    }
-   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edittemplate") { 
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == "edit_template") { 
       // edit template  
       eme_templates_edit_layout();
       return;
@@ -19,19 +19,29 @@ function eme_templates_page() {
    if (isset($_POST['eme_admin_action'])) {
       // Insert/Update/Delete Record
       $templates_table = $wpdb->prefix.TEMPLATES_TBNAME;
-      if ($_POST['eme_admin_action'] == "edit" ) {
+      if ($_POST['eme_admin_action'] == "do_edittemplate" ) {
          // template update required  
          $template = array();
          $template['format'] = trim(stripslashes($_POST['format']));
          $template['description'] = trim(stripslashes($_POST['description']));
-         $validation_result = $wpdb->update( $templates_table, $template, array('id' => intval($_POST['template_ID'])) );
-      } elseif ($_POST['eme_admin_action'] == "add" ) {
+         $validation_result = $wpdb->update( $templates_table, $template, array('id' => intval($_POST['template_id'])) );
+         if ($validation_result !== false && !empty($validation_result) ) {
+            $message = __("Successfully edited the template.", "eme");
+         } else {
+            $message = __("There was a problem editing your template, please try again.","eme");
+         }
+      } elseif ($_POST['eme_admin_action'] == "do_addtemplate" ) {
          // Add a new template
          $template = array();
          $template['format'] = trim(stripslashes($_POST['format']));
          $template['description'] = trim(stripslashes($_POST['description']));
          $validation_result = $wpdb->insert($templates_table, $template);
-      } elseif ($_POST['eme_admin_action'] == "delete" && isset($_POST['templates'])) {
+         if ($validation_result !== false && !empty($validation_result) ) {
+            $message = __("Successfully added the template.", "eme");
+         } else {
+            $message = __("There was a problem adding your template, please try again.","eme");
+         }
+      } elseif ($_POST['eme_admin_action'] == "do_deletetemplate" && isset($_POST['templates'])) {
          // Delete template or multiple
          $templates = $_POST['templates'];
          if (is_array($templates)) {
@@ -39,7 +49,9 @@ function eme_templates_page() {
             if (count($templates > 0)) {
                $validation_result = $wpdb->query( "DELETE FROM $templates_table WHERE id IN (". implode(",",$templates) .")" );
                if ($validation_result !== false )
-                  $message = __("Successfully deleted the template(s).","eme");
+                  $message = __("Successfully deleted the selected template(s).","eme");
+               else
+                  $message = __("There was a problem deleting the selected template(s), please try again.","eme");
             } else {
                $validation_result = false;
                $message = __("Couldn't delete the templates. Incorrect template IDs supplied. Please try again.","eme");
@@ -48,11 +60,6 @@ function eme_templates_page() {
             $validation_result = false;
             $message = __("Couldn't delete the templates. Incorrect template IDs supplied. Please try again.","eme");
          }
-      }
-      if ($validation_result !== false ) {
-         $message = (isset($message)) ? $message : __("Successfully {$_POST['eme_admin_action']}ed template", "eme");
-      } else {
-         $message = (isset($message)) ? $message : __("There was a problem {$_POST['eme_admin_action']}ing the template, please try again.");
       }
    }
    eme_templates_table_layout($message);
@@ -82,7 +89,7 @@ function eme_templates_table_layout($message = "") {
             <div id='col-right'>
              <div class='col-wrap'>
                 <form id='bookings-filter' method='post' action='".$destination."'>
-                  <input type='hidden' name='eme_admin_action' value='delete' />";
+                  <input type='hidden' name='eme_admin_action' value='do_deletetemplate' />";
                   if (count($templates)>0) {
                      $table .= "<table class='widefat'>
                         <thead>
@@ -104,8 +111,8 @@ function eme_templates_table_layout($message = "") {
                         $table .= "    
                            <tr>
                            <td><input type='checkbox' class ='row-selector' value='".$this_template['id']."' name='templates[]' /></td>
-                           <td><a href='".admin_url("admin.php?page=eme-templates&amp;eme_admin_action=edittemplate&amp;template_ID=".$this_template['id'])."'>".$this_template['id']."</a></td>
-                           <td><a href='".admin_url("admin.php?page=eme-templates&amp;eme_admin_action=edittemplate&amp;template_ID=".$this_template['id'])."'>".$this_template['description']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-templates&amp;eme_admin_action=edit_template&amp;template_id=".$this_template['id'])."'>".$this_template['id']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-templates&amp;eme_admin_action=edit_template&amp;template_id=".$this_template['id'])."'>".$this_template['description']."</a></td>
                            </tr>
                         ";
                      }
@@ -139,7 +146,7 @@ EOT;
                      <div id='ajax-response'/>
                   <h3>".__('Add template', 'eme')."</h3>
                       <form name='add' id='add' method='post' action='".$destination."' class='add:the-list: validate'>
-                        <input type='hidden' name='eme_admin_action' value='add' />
+                        <input type='hidden' name='eme_admin_action' value='do_addtemplate' />
                          <div class='form-field form-required'>
                            <label for='description'>".__('Template description', 'eme')."</label>
                            <input type='text' name='description' id='description' value='' size='40' />
@@ -159,7 +166,7 @@ EOT;
 }
 
 function eme_templates_edit_layout($message = "") {
-   $template_id = intval($_GET['template_ID']);
+   $template_id = intval($_GET['template_id']);
    $template = eme_get_template($template_id);
    $layout = "
    <div class='wrap'>
@@ -178,9 +185,9 @@ function eme_templates_edit_layout($message = "") {
       $layout .= "
       <div id='ajax-response'></div>
 
-      <form name='edittemplate' id='edittemplate' method='post' action='".admin_url("admin.php?page=eme-templates")."' class='validate'>
-      <input type='hidden' name='eme_admin_action' value='edit' />
-      <input type='hidden' name='template_ID' value='".$template['id']."' />";
+      <form name='edit_template' id='edit_template' method='post' action='".admin_url("admin.php?page=eme-templates")."' class='validate'>
+      <input type='hidden' name='eme_admin_action' value='do_edittemplate' />
+      <input type='hidden' name='template_id' value='".$template['id']."' />";
       
       $layout .= "
          <table class='form-table'>

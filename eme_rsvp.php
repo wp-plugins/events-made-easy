@@ -2668,25 +2668,25 @@ function eme_send_mails_page() {
    $action = isset($_POST ['eme_admin_action']) ? $_POST ['eme_admin_action'] : '';
    $onchange = isset($_POST ['onchange']) ? intval($_POST ['onchange']) : 0;
 
-   if (isset($_POST ['subject']) && !empty($_POST ['subject']))
-      $subject = stripslashes_deep($_POST ['subject']);
+   if (isset($_POST ['mail_subject']) && !empty($_POST ['mail_subject']))
+      $mail_subject = stripslashes_deep($_POST ['mail_subject']);
    elseif (isset($_POST ['subject_template']) && intval($_POST ['subject_template'])>0)
-      $subject = eme_get_template_format(intval($_POST ['subject_template']));
+      $mail_subject = eme_get_template_format(intval($_POST ['subject_template']));
    else
-      $subject = "";
+      $mail_subject = "";
 
-   if (isset($_POST ['message']) && !empty($_POST ['message']))
-      $message = stripslashes_deep($_POST ['message']);
+   if (isset($_POST ['mail_message']) && !empty($_POST ['mail_message']))
+      $mail_message = stripslashes_deep($_POST ['mail_message']);
    elseif (isset($_POST ['message_template']) && intval($_POST ['message_template'])>0)
-      $message = eme_get_template_format(intval($_POST ['message_template']));
+      $mail_message = eme_get_template_format(intval($_POST ['message_template']));
    else
-      $message = "";
+      $mail_message = "";
 
    if (!$onchange && $event_id>0 && $action == 'send_mail') {
       $pending_approved = isset($_POST ['pending_approved']) ? $_POST ['pending_approved'] : 0;
       $only_unpayed = isset($_POST ['only_unpayed']) ? $_POST ['only_unpayed'] : 0;
       $eme_mail_type = isset($_POST ['eme_mail_type']) ? $_POST ['eme_mail_type'] : 'attendees';
-	   if (empty($subject) || empty($message)) {
+	   if (empty($mail_subject) || empty($mail_message)) {
 		   print "<div id='message' class='error'><p>".__('Please enter both subject and message for the mail to be sent.','eme')."</p></div>";
 	   } else {
 		   $event = eme_get_event($event_id);
@@ -2703,8 +2703,8 @@ function eme_send_mails_page() {
             if ($eme_mail_type == 'attendees') {
                $attendees = eme_get_attendees_for($event_id,$pending_approved,$only_unpayed);
                foreach ( $attendees as $attendee ) {
-                  $tmp_subject = eme_replace_placeholders($subject, $event, "text",0,$attendee['lang']);
-                  $tmp_message = eme_replace_placeholders($message, $event, $mail_text_html,0,$attendee['lang']);
+                  $tmp_subject = eme_replace_placeholders($mail_subject, $event, "text",0,$attendee['lang']);
+                  $tmp_message = eme_replace_placeholders($mail_message, $event, $mail_text_html,0,$attendee['lang']);
                   $tmp_subject = eme_replace_attendees_placeholders($tmp_subject, $event, $attendee, "text",0,$attendee['lang']);
                   $tmp_message = eme_replace_attendees_placeholders($tmp_message, $event, $attendee, $mail_text_html,0,$attendee['lang']);
                   $tmp_subject = eme_translate($tmp_subject,$attendee['lang']);
@@ -2714,12 +2714,10 @@ function eme_send_mails_page() {
             } elseif ($eme_mail_type == 'bookings') {
                $bookings = eme_get_bookings_for($event_id,$pending_approved,$only_unpayed);
                foreach ( $bookings as $booking ) {
-                  $tmp_subject = eme_replace_placeholders($subject, $event, "text",0,$booking['lang']);
-                  $tmp_message = eme_replace_placeholders($message, $event, $mail_text_html,0,$booking['lang']);
                   $attendee = eme_get_person($booking['person_id']);
                   if ($attendee && is_array($attendee)) {
-                     $tmp_subject = eme_replace_booking_placeholders($subject, $event, $booking, "text",0,$booking['lang']);
-                     $tmp_message = eme_replace_booking_placeholders($message, $event, $booking, $mail_text_html,0,$booking['lang']);
+                     $tmp_subject = eme_replace_booking_placeholders($mail_subject, $event, $booking, "text",0,$booking['lang']);
+                     $tmp_message = eme_replace_booking_placeholders($mail_message, $event, $booking, $mail_text_html,0,$booking['lang']);
                      $tmp_subject = eme_translate($tmp_subject,$booking['lang']);
                      $tmp_message = eme_translate($tmp_message,$booking['lang']);
                      eme_send_mail($tmp_subject,$tmp_message, $attendee['person_email'], $attendee['person_name'], $contact_email, $contact_name);
@@ -2727,19 +2725,19 @@ function eme_send_mails_page() {
                }
             } elseif ($eme_mail_type == 'all_wp') {
                $wp_users = get_users();
-               $subject = eme_replace_placeholders($subject, $event, "text");
-               $message = eme_replace_placeholders($message, $event, $mail_text_html);
+               $mail_subject = eme_replace_placeholders($mail_subject, $event, "text");
+               $mail_message = eme_replace_placeholders($mail_message, $event, $mail_text_html);
                foreach ( $wp_users as $wp_user ) {
-                  eme_send_mail($subject,$message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
+                  eme_send_mail($mail_subject,$mail_message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
                }
             } elseif ($eme_mail_type == 'all_wp_not_registered') {
                $wp_users = get_users();
                $attendee_wp_ids = eme_get_wp_ids_for($event_id);
-               $subject = eme_replace_placeholders($subject, $event, "text");
-               $message = eme_replace_placeholders($message, $event, $mail_text_html);
+               $mail_subject = eme_replace_placeholders($mail_subject, $event, "text");
+               $mail_message = eme_replace_placeholders($mail_message, $event, $mail_text_html);
                foreach ( $wp_users as $wp_user ) {
                   if (!in_array($wp_user->ID,$attendee_wp_ids))
-                     eme_send_mail($subject,$message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
+                     eme_send_mail($mail_subject,$mail_message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
                }
             }
 			   print "<div id='message' class='updated'><p>".__('The mail has been sent.','eme')."</p></div>";
@@ -2774,7 +2772,7 @@ function eme_send_mail_form($event_id=0) {
    ksort($templates_array);
 ?>
    </p></div>
-   <form id='send-mail' name='send-mail' action="" method="post">
+   <form id='send_mail' name='send_mail' action="" method="post">
    <input type='hidden' name='page' value='eme-send-mails' />
    <input type='hidden' name='eme_admin_action' value='send_mail' />
    <input type='hidden' id='onchange' name='onchange' value='0' />
@@ -2830,13 +2828,13 @@ function eme_send_mail_form($event_id=0) {
       <b><?php _e('Subject','eme'); ?></b><br />
       <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'subject_template',$templates_array); ?><br />
       <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?>
-      <input type="text" name="subject" value="" /></p>
+      <input type="text" name="mail_subject" id="mail_subject" value="" /></p>
 	   </div>
 	   <div class="form-field form-required"><p>
 	   <b><?php _e('Message','eme'); ?></b><br />
       <?php _e('Either choose from a template: ','eme'); echo eme_ui_select(0,'message_template',$templates_array); ?><br />
       <?php _e('Or enter your own (if anything is entered here, it takes precedence over the selected template): ','eme');?>
-	   <textarea name="message" value="" rows=10></textarea> </p>
+	   <textarea name="mail_message" id="mail_message" value="" rows=10></textarea> </p>
 	   </div>
 	   <div>
 	   <?php _e('You can use any placeholders mentioned here:','eme');
