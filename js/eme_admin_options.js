@@ -35,13 +35,13 @@ function updateShowHideRsvpMailNotify () {
 function updateShowHideRsvpMailSendMethod () {
    if (jQuery('select[name=eme_rsvp_mail_send_method]').val() == "smtp") {
          jQuery('tr#eme_smtp_host_row').show();
-         jQuery('tr#eme_smtp_port').show(); 
+         jQuery('tr#eme_smtp_port_row').show(); 
          jQuery('tr#eme_rsvp_mail_SMTPAuth_row').show();
          jQuery('tr#eme_smtp_username_row').show(); 
          jQuery('tr#eme_smtp_password_row').show(); 
    } else {
          jQuery('tr#eme_smtp_host_row').hide();
-         jQuery('tr#eme_smtp_port').hide(); 
+         jQuery('tr#eme_smtp_port_row').hide(); 
          jQuery('tr#eme_rsvp_mail_SMTPAuth_row').hide();
          jQuery('tr#eme_smtp_username_row').hide(); 
          jQuery('tr#eme_smtp_password_row').hide();

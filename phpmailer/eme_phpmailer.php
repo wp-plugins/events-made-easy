@@ -49,29 +49,34 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
             $mail->IsQmail();
          else
             $mail->Mailer = $eme_rsvp_mail_send_method;
-         if (get_option('eme_smtp_host'))
-            $mail->Host = get_option('eme_smtp_host');
-         else
-            $mail->Host = "localhost";
 
-         if (strstr($mail->Host,'ssl://')) {
-            $mail->SMTPSecure="ssl";
-            $mail->Host = str_replace("ssl://","",$mail->Host);
-         }
-         if (strstr($mail->Host,'tls://')) {
-            $mail->SMTPSecure="tls";
-            $mail->Host = str_replace("tls://","",$mail->Host);
-         }
+         if ($eme_rsvp_mail_send_method == 'smtp') {
+            if (get_option('eme_smtp_host'))
+               $mail->Host = get_option('eme_smtp_host');
+            else
+               $mail->Host = "localhost";
 
-         if (get_option('eme_smtp_port'))
-            $mail->port = get_option('eme_smtp_port');
-         else
-            $mail->port = 25;
+            if (strstr($mail->Host,'ssl://')) {
+               $mail->SMTPSecure="ssl";
+               $mail->Host = str_replace("ssl://","",$mail->Host);
+            }
+            if (strstr($mail->Host,'tls://')) {
+               $mail->SMTPSecure="tls";
+               $mail->Host = str_replace("tls://","",$mail->Host);
+            }
 
-         if (get_option('eme_rsvp_mail_SMTPAuth') == '1') {
-            $mail->SMTPAuth = TRUE;
-            $mail->Username = get_option('eme_smtp_username');
-            $mail->Password = get_option('eme_smtp_password');
+            if (get_option('eme_smtp_port'))
+               $mail->port = get_option('eme_smtp_port');
+            else
+               $mail->port = 25;
+
+            if (get_option('eme_rsvp_mail_SMTPAuth') == '1') {
+               $mail->SMTPAuth = true;
+               $mail->Username = get_option('eme_smtp_username');
+               $mail->Password = get_option('eme_smtp_password');
+            }
+            if (get_option('eme_smtp_debug'))
+               $mail->SMTPDebug = true;
          }
          $mail->From = $fromMail;
          $mail->FromName = $fromName;
@@ -87,8 +92,6 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
 
          if (!empty($receiveremail)) {
             $mail->AddAddress($receiveremail,$receivername);
-            if (get_option('eme_smtp_debug'))
-               $mail->SMTPDebug = true;
             if(!$mail->Send()){
                #echo "<br />Message was not sent<br/ >";
                #echo "Mailer Error: " . $mail->ErrorInfo;
