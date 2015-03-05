@@ -831,13 +831,6 @@ function eme_options_page() {
    ?>
 </table>
 
-<table class="form-table">
-   <?php
-   eme_options_textarea ( __ ( 'Extra event html headers', 'eme' ), 'eme_event_html_headers_format', __ ( 'Here you can define extra html headers when viewing a single event, typically used to add meta tags for facebook or SEO. All event placeholders can be used, but will be stripped from resulting html.', 'eme' ) );
-   eme_options_textarea ( __ ( 'Extra location html headers', 'eme' ), 'eme_location_html_headers_format', __ ( 'Here you can define extra html headers when viewing a single location, typically used to add meta tags for facebook or SEO. All location placeholders can be used, but will be stripped from resulting html.', 'eme' ) );
-   ?>
-</table>
-
 <h3><?php _e ( 'Facebook info', 'eme' ); ?></h3>
 <table class='form-table'>
    <?php

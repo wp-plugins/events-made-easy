@@ -70,6 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.5.26 =
 * Feature: added location placeholders #_EDITLOCATIONLINK and #_EDITLOCATIONURL
 * Bugfix: the 'no events message' was not always being shown
+* Bugfix: fix the double headers-options in EME settings (tab 'Other')
 * Improvement: the smtp port setting should not be shown if smtp is not used for sending mails
 
 = 1.5.25 =
