@@ -1242,7 +1242,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    } else {
       if (empty($no_events_message))
          $no_events_message=get_option('eme_no_events_message');
-      $output = "<div id='events-no-events'>" . $eme_no_events_message . "</div>";
+      $output = "<div id='events-no-events'>" . $no_events_message . "</div>";
    }
 
    // add the pagination if needed
