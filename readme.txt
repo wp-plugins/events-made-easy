@@ -72,6 +72,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added generic "eme html header" and "eme html footer" settings, so you can add javascript in there if wanted without needing to change your theme
 * Bugfix: the 'no events message' was not always being shown
 * Bugfix: fix the double headers-options in EME settings (tab 'Other')
+* Bugfix: datapicker was not being added in the front end (for the monthly filter)
 * Improvement: the smtp port setting should not be shown if smtp is not used for sending mails
 
 = 1.5.25 =
