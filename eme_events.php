@@ -3618,13 +3618,18 @@ Weblog Editor 2.0
 }
 
 function eme_general_head() {
+   $extra_html_header=get_option('eme_html_header');
+   $extra_html_header=trim(preg_replace('/\r\n/', "\n", $extra_html_header));
+   if (!empty($extra_html_header))
+      echo $extra_html_header."\n";
+
    if (eme_is_single_event_page()) {
       $event=eme_get_event(get_query_var('event_id'));
       // I don't know if the canonical rel-link is needed, but since WP adds it by default ...
       $canon_url=eme_event_url($event);
       echo "<link rel=\"canonical\" href=\"$canon_url\" />\n";
       $extra_headers_format=get_option('eme_event_html_headers_format');
-      if ($extra_headers_format != "") {
+      if (!empty($extra_headers_format)) {
          $extra_headers_lines = explode ("\n",$extra_headers_format);
          foreach ($extra_headers_lines as $extra_header_format) {
             # the text format already removes most of html code, so let's use that
@@ -3640,14 +3645,14 @@ function eme_general_head() {
       $canon_url=eme_location_url($location);
       echo "<link rel=\"canonical\" href=\"$canon_url\" />\n";
       $extra_headers_format=get_option('eme_location_html_headers_format');
-      if ($extra_headers_format != "") {
+      if (!empty($extra_headers_format)) {
          $extra_headers_lines = explode ("\n",$extra_headers_format);
          foreach ($extra_headers_lines as $extra_header_format) {
             # the text format already removes most of html code, so let's use that
             $extra_header = strip_shortcodes(eme_replace_locations_placeholders ($extra_header_format, $location, "text", 0 ));
             # the text format converts \n to \r\n but we want one line only
             $extra_header = trim(preg_replace('/\r\n/', "", $extra_header));
-            if ($extra_header != "")
+            if (!empty($extra_header))
                echo $extra_header."\n";
          }
       }
@@ -3673,6 +3678,11 @@ function eme_general_footer() {
    if (!$load_js_in_header && $gmap_is_active && $eme_need_gmap_js) {
       echo "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_location_map.js'></script>\n";
    }
+   $extra_html_footer=get_option('eme_html_footer');
+   $extra_html_footer=trim(preg_replace('/\r\n/', "\n", $extra_html_footer));
+   if (!empty($extra_html_footer))
+      echo $extra_html_footer."\n";
+
 }
 
 function eme_db_insert_event($event,$event_is_part_of_recurrence=0) {

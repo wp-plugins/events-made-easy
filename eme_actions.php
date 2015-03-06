@@ -173,6 +173,9 @@ function eme_admin_register_scripts() {
 add_action('admin_enqueue_scripts','eme_admin_register_scripts');
 
 function eme_register_scripts() {
+   // the frontend also needs the datepicker (the month filter)
+   wp_register_script( 'eme-jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js');
+   wp_register_script( 'eme-jquery-datepick',EME_PLUGIN_URL.'js/jquery-datepick/jquery.datepick.js',array( 'jquery','eme-jquery-plugin' ));
    wp_register_style('eme_stylesheet',EME_PLUGIN_URL."events_manager.css");
    if (get_option('eme_use_client_clock')) {
    	wp_register_script( 'eme-client_clock_submit', EME_PLUGIN_URL.'js/client-clock.js', array('jquery'));

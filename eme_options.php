@@ -155,6 +155,8 @@ function eme_add_options($reset=0) {
    'eme_cap_settings' => DEFAULT_CAP_SETTINGS,
    'eme_cap_send_mails' => DEFAULT_CAP_SEND_MAILS,
    'eme_cap_send_other_mails' => DEFAULT_CAP_SEND_OTHER_MAILS,
+   'eme_html_header' => '',
+   'eme_html_footer' => '',
    'eme_event_html_headers_format' => '',
    'eme_location_html_headers_format' => '',
    'eme_paypal_url' => PAYPAL_LIVE_URL,
@@ -312,7 +314,7 @@ function eme_options_register() {
                  $options = array ('eme_payment_form_header_format','eme_payment_form_footer_format','eme_multipayment_form_header_format','eme_multipayment_form_footer_format','eme_payment_show_custom_return_page','eme_payment_succes_format','eme_payment_fail_format','eme_payment_add_bookingid_to_return','eme_default_currency','eme_default_price','eme_paypal_url','eme_paypal_business','eme_2co_demo','eme_2co_business','eme_2co_secret','eme_webmoney_purse', 'eme_webmoney_secret', 'eme_webmoney_demo', 'eme_paypal_s_encrypt', 'eme_paypal_s_pubcert', 'eme_paypal_s_privkey', 'eme_paypal_s_paypalcert', 'eme_paypal_s_certid','eme_fdgg_url','eme_fdgg_store_name','eme_fdgg_shared_secret','eme_2co_cost','eme_paypal_cost','eme_fdgg_cost','eme_webmoney_cost','eme_2co_cost2','eme_paypal_cost2','eme_fdgg_cost2','eme_webmoney_cost2','eme_mollie_api_key','eme_mollie_cost','eme_mollie_cost2','eme_paypal_button_label','eme_paypal_button_above','eme_paypal_button_below','eme_2co_button_label','eme_2co_button_above','eme_2co_button_below','eme_fdgg_button_label','eme_fdgg_button_above','eme_fdgg_button_below','eme_webmoney_button_label','eme_webmoney_button_above','eme_webmoney_button_below','eme_mollie_button_label','eme_mollie_button_above','eme_mollie_button_below','eme_paypal_button_img_url','eme_2co_button_img_url','eme_fdgg_button_img_url','eme_webmoney_button_img_url','eme_mollie_button_img_url');
 	         break;
 	      case 'other' :
-                 $options = array ('eme_thumbnail_size','eme_image_max_width','eme_image_max_height','eme_image_max_size','eme_event_html_headers_format','eme_location_html_headers_format','eme_fb_app_id','eme_global_zoom_factor','eme_indiv_zoom_factor','eme_global_maptype','eme_indiv_maptype','eme_csv_separator');
+                 $options = array ('eme_thumbnail_size','eme_image_max_width','eme_image_max_height','eme_image_max_size','eme_html_header','eme_html_footer','eme_event_html_headers_format','eme_location_html_headers_format','eme_fb_app_id','eme_global_zoom_factor','eme_indiv_zoom_factor','eme_global_maptype','eme_indiv_maptype','eme_csv_separator');
 	         break;
    }
 
@@ -826,6 +828,8 @@ function eme_options_page() {
 <h3><?php _e ( 'Extra html headers', 'eme' ); ?></h3>
 <table class="form-table">
    <?php
+   eme_options_textarea ( __ ( 'Extra html header', 'eme' ), 'eme_html_header', __ ( 'Here you can define extra html headers, no placeholders can be used, no html will be stripped. Can be used to add custom javascript, ...', 'eme' ) );
+   eme_options_textarea ( __ ( 'Extra html footer', 'eme' ), 'eme_html_footer', __ ( 'Here you can define extra html footer, no placeholders can be used, no html will be stripped. Can be used to add custom javascript, ...', 'eme' ) );
    eme_options_textarea ( __ ( 'Extra event html headers', 'eme' ), 'eme_event_html_headers_format', __ ( 'Here you can define extra html headers when viewing a single event, typically used to add meta tags for facebook or SEO. All event placeholders can be used, but will be stripped from resulting html.', 'eme' ) );
    eme_options_textarea ( __ ( 'Extra location html headers', 'eme' ), 'eme_location_html_headers_format', __ ( 'Here you can define extra html headers when viewing a single location, typically used to add meta tags for facebook or SEO. All location placeholders can be used, but will be stripped from resulting html.', 'eme' ) );
    ?>
