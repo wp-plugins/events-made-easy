@@ -163,7 +163,7 @@ function eme_admin_register_scripts() {
    wp_register_script( 'eme-jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js', array('jquery','eme-jquery-plugin','eme-jquery-mousewheel'));
    wp_register_script( 'eme-jquery-datatables', EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
    wp_register_script( 'eme-datatables-clearsearch', EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
-   wp_register_script( 'eme-google-maps', 'http://maps.google.com/maps/api/js?v=3.1&sensor=false');
+   wp_register_script( 'eme-google-maps', '//maps.google.com/maps/api/js?v=3.1&sensor=false');
    wp_register_script( 'eme', EME_PLUGIN_URL.'js/eme.js', array('jquery'));
    wp_register_script( 'eme-events', EME_PLUGIN_URL.'js/eme_admin_events.js',array( 'jquery' ));
    wp_register_script( 'eme-options', EME_PLUGIN_URL.'js/eme_admin_options.js',array( 'jquery' ));
