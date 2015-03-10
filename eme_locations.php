@@ -1277,13 +1277,13 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_EDITLOCATIONLINK/', $result)) {
+      } elseif (preg_match('/#_EDITLOCATIONLINK/', $result)) {
          if (current_user_can( get_option('eme_cap_edit_locations')) ||
             (current_user_can( get_option('eme_cap_author_locations')) && ($location['location_author']==$current_userid))) {
             $replacement = "<a href=' ".admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$location['location_id'])."'>".__('Edit')."</a>";
          }
 
-      } elseif ($event && preg_match('/#_EDITLOCATIONURL/', $result)) {
+      } elseif (preg_match('/#_EDITLOCATIONURL/', $result)) {
          if (current_user_can( get_option('eme_cap_edit_locations')) ||
             (current_user_can( get_option('eme_cap_author_locations')) && ($location['location_author']==$current_userid))) {
             $replacement = admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$location['location_id']);

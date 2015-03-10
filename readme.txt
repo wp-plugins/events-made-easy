@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.27 =
+* Bugfix: make #_EDITLOCATIONLINK and #_EDITLOCATIONURL actually work ...
+
 = 1.5.26 =
 * Feature: added location placeholders #_EDITLOCATIONLINK and #_EDITLOCATIONURL
 * Feature: added generic "eme html header" and "eme html footer" settings, so you can add javascript in there if wanted without needing to change your theme
