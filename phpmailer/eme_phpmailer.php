@@ -76,7 +76,7 @@ function eme_send_mail($subject="no title",$body="No message specified", $receiv
                $mail->Password = get_option('eme_smtp_password');
             }
             if (get_option('eme_smtp_debug'))
-               $mail->SMTPDebug = true;
+               $mail->SMTPDebug = 2;
          }
          $mail->From = $fromMail;
          $mail->FromName = $fromName;
