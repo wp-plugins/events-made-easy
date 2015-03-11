@@ -731,7 +731,7 @@ function eme_options_page() {
    <?php
       $notification_link = add_query_arg(array('eme_eventAction'=>'2co_notification'),$events_page_link);
 
-      eme_options_select ( __('2Checkout live or test','eme'), 'eme_2co_demo', array (1 => __('2Checkout Sandbox (for testing)','eme'), 0 => __ ( '2Checkout Live', 'eme' )), __('Choose wether you want to test 2Checkout in a sandbox or go live and really use 2Checkout.','eme') );
+      eme_options_select ( __('2Checkout live or test','eme'), 'eme_2co_demo', array (2 => __('2Checkout Sandbox (for testing)','eme'), 1 => __('2Checkout Test (the "demo" mode)','eme'), 0 => __ ( '2Checkout Live', 'eme' )), __('Choose wether you want to test 2Checkout in a sandbox or go live and really use 2Checkout.','eme') );
       eme_options_input_text (__('2Checkout Account number','eme'),'eme_2co_business', __("2Checkout Account number.",'eme'));
       eme_options_input_text (__('2Checkout Secret','eme'),'eme_2co_secret', __("2Checkout secret.",'eme'));
       eme_options_input_text (__('Extra charge','eme'),'eme_2co_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));

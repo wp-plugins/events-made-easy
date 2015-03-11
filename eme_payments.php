@@ -194,7 +194,10 @@ function eme_2co_form($event,$payment_id,$price,$lang,$multi_booking=0) {
       $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
    }
    $business=get_option('eme_2co_business');
-   $url=CO_URL;
+   if (get_option('eme_2co_demo')==2)
+      $url=CO_SANDBOX_URL;
+   else
+      $url=CO_LIVE_URL;
    $quantity=1;
    $cur=$event['currency'];
 
@@ -218,7 +221,7 @@ function eme_2co_form($event,$payment_id,$price,$lang,$multi_booking=0) {
       $form_html.="<input type='image' alt='$button_label' title='$button_label' src='$button_img_url' />";
    else
       $form_html.="<input type='submit' value='$button_label' />";
-   if (get_option('eme_2co_demo')) {
+   if (get_option('eme_2co_demo')==1) {
       $form_html.="<input type='hidden' name='demo' value='Y' />";
    }
    $form_html.="</form>";

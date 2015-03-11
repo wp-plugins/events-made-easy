@@ -640,18 +640,8 @@ function eme_events_page_content() {
    //if (isset ( $_REQUEST['event_id'] ) && $_REQUEST['event_id'] != '') {
    if (eme_is_single_event_page()) {
       // single event page
-      $event_ID = intval(get_query_var('event_id'));
-      $event = eme_get_event ( $event_ID );
-      if (!empty($event['event_single_event_format']))
-         $single_event_format = $event['event_single_event_format'];
-      elseif ($event['event_properties']['event_single_event_format_tpl']>0)
-         $single_event_format = eme_get_template_format($event['event_properties']['event_single_event_format_tpl']);
-      else
-         $single_event_format = get_option('eme_single_event_format' );
-      //$page_body = eme_replace_placeholders ( $single_event_format, $event, 'stop' );
-      if (count($event) > 0 && ($event['event_status'] == STATUS_PRIVATE && is_user_logged_in() || $event['event_status'] != STATUS_PRIVATE))
-         $page_body = eme_replace_placeholders ( $single_event_format, $event );
-      return $page_body;
+      $event_id = intval(get_query_var('event_id'));
+      return eme_display_single_event($event_id);
    } elseif (get_query_var('calendar_day')) {
       $scope = eme_sanitize_request(get_query_var('calendar_day'));
       $events_count = eme_events_count_for ( $scope );
@@ -667,21 +657,10 @@ function eme_events_page_content() {
          //Add headers and footers to the events list
          $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
       } else {
-         // only one event for that day, so we show that event or redir to the configured external url for it
+         // only one event for that day, so we show that event
          $events = eme_get_events ( 0, $scope);
          $event = $events[0];
-         if ($event['event_url'] != '') {
-            // url not empty, so we redirect to it
-            $page_body = '<script type="text/javascript">window.location.href="'.$event['event_url'].'";</script>';
-         } else {
-            if (!empty($event['event_single_event_format']))
-               $single_event_format = $event['event_single_event_format'];
-            elseif ($event['event_properties']['event_single_event_format_tpl']>0)
-               $single_event_format = eme_get_template_format($event['event_properties']['event_single_event_format_tpl']);
-            else
-               $single_event_format = get_option('eme_single_event_format' );
-            $page_body = eme_replace_placeholders ( $single_event_format, $event );
-         }
+         $page_body =  eme_display_single_event($event['event_id']);
       }
       return $page_body;
    } else {
@@ -1301,7 +1280,10 @@ function eme_get_events_list_shortcode($atts) {
 
 function eme_display_single_event($event_id,$template_id=0) {
    $event = eme_get_event ( intval($event_id) );
-   if ($template_id) {
+   if ($event['event_url'] != '') {
+      // url not empty, so we redirect to it
+      $page_body = '<script type="text/javascript">window.location.href="'.$event['event_url'].'";</script>';
+   } elseif ($template_id) {
       $single_event_format= eme_get_template_format($template_id);
    } else {
       if (!empty($event['event_single_event_format']))
@@ -1311,7 +1293,10 @@ function eme_display_single_event($event_id,$template_id=0) {
       else
          $single_event_format = get_option('eme_single_event_format' );
    }
-   $page_body = eme_replace_placeholders ($single_event_format, $event);
+   if ($event['event_status'] == STATUS_PRIVATE && is_user_logged_in() || $event['event_status'] != STATUS_PRIVATE)
+      $page_body = eme_replace_placeholders ($single_event_format, $event);
+   else
+      $page_body = "";
    return $page_body;
 }
 
