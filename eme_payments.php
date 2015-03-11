@@ -203,7 +203,6 @@ function eme_2co_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    $button_below = eme_replace_payment_provider_placeholders(get_option('eme_2co_button_below'),$charge,$event['currency'],$lang);
    $button_img_url = get_option('eme_2co_button_img_url');
    $form_html = $button_above;
-   $form_html .= $wm_request->SetForm(false);
    $form_html.="<form action='$url' method='post'>";
    $form_html.="<input type='hidden' name='sid' value='$business' />";
    $form_html.="<input type='hidden' name='mode' value='2CO' />";

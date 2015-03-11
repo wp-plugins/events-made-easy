@@ -1603,9 +1603,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "today--this_week") {
       $start_of_week = get_option('start_of_week');
-      $day_offset=date('w')-$start_of_week;
-      if ($day_offset<0) $day_offset+=7;
-      $end_day=$day_offset+6;
+      $end_day=6-date('w')+$start_of_week;
       $limit_start = $today;
       $limit_end   = eme_date_calc("+$end_day days");
       if ($show_ongoing)
@@ -1614,9 +1612,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
          $conditions[] = " (event_start_date BETWEEN '$limit_start' AND '$limit_end')";
    } elseif ($scope == "today--this_week_plus_one") {
       $start_of_week = get_option('start_of_week');
-      $day_offset=date('w')-$start_of_week;
-      if ($day_offset<0) $day_offset+=7;
-      $end_day=$day_offset+7;
+      $end_day=7-date('w')+$start_of_week;
       $limit_start = $today;
       $limit_end   = eme_date_calc("+$end_day days");
       if ($show_ongoing)
@@ -1641,8 +1637,8 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $start_of_week = get_option('start_of_week');
       $day_offset=date('w')-$start_of_week;
       if ($day_offset<0) $day_offset+=7;
-      $limit_start   = eme_date_calc("-$day_offset days");
-      $limit_end = $today;
+      $limit_start = eme_date_calc("-$day_offset days");
+      $limit_end   = $today;
       if ($show_ongoing)
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else

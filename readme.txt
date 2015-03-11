@@ -67,6 +67,10 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.28 =
+* Bugfix: make 2checkout work again
+* Bugfix: fix event scopes today--this_week and today--this_week_plus_one
+
 = 1.5.27 =
 * Bugfix: make #_EDITLOCATIONLINK and #_EDITLOCATIONURL actually work ...
 
