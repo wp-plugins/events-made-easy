@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.1.1
-Stable tag: 1.5.27
+Stable tag: 1.5.28
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,10 @@ Events list and calendars can be added to your blogs through widgets, shortcodes
 See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpress).
 
 == Changelog ==
+
+= 1.5.28 =
+* Bugfix: make 2checkout work again
+* Bugfix: fix event scopes today--this_week and today--this_week_plus_one
 
 = 1.5.27 =
 * Bugfix: make #_EDITLOCATIONLINK and #_EDITLOCATIONURL actually work ...
