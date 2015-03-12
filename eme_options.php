@@ -673,8 +673,8 @@ function eme_options_page() {
    eme_options_input_text ( __ ( 'Notification sender address', 'eme' ), 'eme_mail_sender_address', __ ( "Insert the address of the notification sender. It must correspond with your Gmail account user if you use Gmail to send mails.", 'eme' ), "email" );
    eme_options_input_text ( __ ( 'Notification BCC address', 'eme' ), 'eme_mail_bcc_address', __ ( "Insert an address that will be added in Bcc to all outgoing mails. Can be left empty.", 'eme' ), "email" );
    eme_options_select ( __ ( 'Mail sending method', 'eme' ), 'eme_rsvp_mail_send_method', array ('smtp' => 'SMTP', 'mail' => __ ( 'PHP mail function', 'eme' ), 'sendmail' => 'Sendmail', 'qmail' => 'Qmail', 'wp_mail' => 'WP Mail' ), __ ( 'Select the method to send email notification.', 'eme' ) );
-   eme_options_input_text ( 'SMTP host', 'eme_smtp_host', __ ( "The SMTP host. Usually it corresponds to 'localhost'. If you use Gmail, set this value to 'ssl://smtp.gmail.com:465'.", 'eme' ) );
-   eme_options_input_text ( 'Mail sending port', 'eme_smtp_port', __ ( "The port through which you e-mail notifications will be sent. Make sure the firewall doesn't block this port", 'eme' ) );
+   eme_options_input_text (__( 'SMTP host','eme'), 'eme_smtp_host', __ ( "The SMTP host. Usually it corresponds to 'localhost'. If you use Gmail, set this value to 'ssl://smtp.gmail.com:465'.", 'eme' ) );
+   eme_options_input_text ( __('Mail sending port','eme'), 'eme_smtp_port', __ ( "The port through which you e-mail notifications will be sent. Make sure the firewall doesn't block this port", 'eme' ) );
    eme_options_radio_binary ( __ ( 'Use SMTP authentication?', 'eme' ), 'eme_rsvp_mail_SMTPAuth', __ ( 'SMTP authentication is often needed. If you use Gmail, make sure to set this parameter to Yes', 'eme' ) );
    eme_options_input_text ( __ ( 'SMTP username', 'eme' ), 'eme_smtp_username', __ ( "Insert the username to be used to access your SMTP server.", 'eme' ) );
    eme_options_input_password ( __ ( 'SMTP password', 'eme' ), 'eme_smtp_password', __ ( "Insert the password to be used to access your SMTP server", 'eme' ) );
