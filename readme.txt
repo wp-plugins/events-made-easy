@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.29 =
 * Feature: allow 2Checkout sandbox/test/live modes
+* Improvement: German language updates, thanks to Joerg Knoerchen
 
 = 1.5.28 =
 * Bugfix: make 2checkout work again
