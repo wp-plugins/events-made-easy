@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Events Made Easy 1.5.28\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/events-made-easy\n"
-"POT-Creation-Date: 2015-03-11 21:54:45+00:00\n"
+"POT-Creation-Date: 2015-03-12 09:18:40+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2988,9 +2988,17 @@ msgid "Select the method to send email notification."
 msgstr ""
 
 #: eme_options.php:676
+msgid "SMTP host"
+msgstr ""
+
+#: eme_options.php:676
 msgid ""
 "The SMTP host. Usually it corresponds to 'localhost'. If you use Gmail, set "
 "this value to 'ssl://smtp.gmail.com:465'."
+msgstr ""
+
+#: eme_options.php:677
+msgid "Mail sending port"
 msgstr ""
 
 #: eme_options.php:677
