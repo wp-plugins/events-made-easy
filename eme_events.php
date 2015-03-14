@@ -3434,7 +3434,7 @@ function eme_admin_map_script() {
                <?php } else { ?>
                   eme_displayAddress(0);
                <?php } ?>
-            <?php } elseif (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'addlocation' || $_REQUEST['eme_admin_action'] == 'editlocation')) { ?>
+            <?php } elseif (isset($_REQUEST['eme_admin_action']) && ($_REQUEST['eme_admin_action'] == 'add_location' || $_REQUEST['eme_admin_action'] == 'edit_location')) { ?>
                eme_displayAddress(0);
             <?php } ?>
 

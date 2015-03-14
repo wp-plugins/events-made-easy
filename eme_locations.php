@@ -53,7 +53,7 @@ function eme_locations_page() {
          $message = __('You have no right to copy this location!','eme');
          eme_locations_table_layout($message);
       }
-    } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "addlocation") { 
+    } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "add_location") { 
       if (current_user_can( get_option('eme_cap_add_locations'))) {
          $location = eme_new_location();
          eme_locations_edit_layout($location);
@@ -61,7 +61,7 @@ function eme_locations_page() {
          $message = __('You have no right to add a location!','eme');
          eme_locations_table_layout($message);
       }
-   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "deletelocation" && isset($_POST['locations'])) { 
+   } elseif (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "delete_location" && isset($_POST['locations'])) { 
       $locations = $_POST['locations'];
       foreach($locations as $location_id) {
          $location = eme_get_location(intval($location_id));
@@ -403,7 +403,7 @@ function eme_locations_table_layout($message = "") {
          <?php } ?>
          <div class="wrap">
          <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
-            <input type="hidden" name="eme_admin_action" value="addlocation" />
+            <input type="hidden" name="eme_admin_action" value="add_location" />
             <input type="submit" class="button-primary" name="submit" value="<?php _e('Add location', 'eme');?>" />
          </form>
          </div>
@@ -412,7 +412,7 @@ function eme_locations_table_layout($message = "") {
          <div id="col-container">
              <div class="col-wrap">
                 <form id="locations-filter" method="post" action="<?php echo admin_url("admin.php?page=eme-locations"); ?>">
-                  <input type="hidden" name="eme_admin_action" value="deletelocation" />
+                  <input type="hidden" name="eme_admin_action" value="delete_location" />
                   <?php if (count($locations)>0) : ?>
                   <table class="widefat">
                      <thead>
