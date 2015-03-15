@@ -17,6 +17,7 @@ function eme_new_event() {
       "use_webmoney" => get_option('eme_webmoney_purse')? 1:0,
       "use_fdgg" => get_option('eme_fdgg_store_name')? 1:0,
       "use_mollie" => get_option('eme_mollie_api_key')? 1:0,
+      "use_sagepay" => get_option('eme_sagpay_vendor_name')? 1:0,
       "price" => get_option('eme_default_price'),
       "currency" => get_option('eme_default_currency'),
       "rsvp_number_days" => get_option('eme_rsvp_number_days'),
@@ -286,6 +287,7 @@ function eme_events_page() {
       $event['use_webmoney'] = (isset ($_POST['use_webmoney']) && is_numeric($_POST['use_webmoney'])) ? $_POST['use_webmoney']:0;
       $event['use_fdgg'] = (isset ($_POST['use_fdgg']) && is_numeric($_POST['use_fdgg'])) ? $_POST['use_fdgg']:0;
       $event['use_mollie'] = (isset ($_POST['use_mollie']) && is_numeric($_POST['use_mollie'])) ? $_POST['use_mollie']:0;
+      $event['use_sagepay'] = (isset ($_POST['use_sagepay']) && is_numeric($_POST['use_sagepay'])) ? $_POST['use_sagepay']:0;
       $event['price'] = isset ($_POST['price']) ? $_POST['price']:0;
       if (preg_match("/\|\|/",$event['price'])) {
          $multiprice=preg_split("/\|\|/",$event['price']);
@@ -2274,6 +2276,7 @@ function eme_event_form($event, $title, $element) {
    $use_webmoney_checked = ($event['use_webmoney']) ? "checked='checked'" : "";
    $use_fdgg_checked = ($event['use_fdgg']) ? "checked='checked'" : "";
    $use_mollie_checked = ($event['use_mollie']) ? "checked='checked'" : "";
+   $use_sagepay_checked = ($event['use_sagepay']) ? "checked='checked'" : "";
 
    // all properties
    $eme_prop_auto_approve_checked = ($event['event_properties']['auto_approve']) ? "checked='checked'" : "";
@@ -2553,6 +2556,7 @@ function eme_event_form($event, $title, $element) {
                               <input id="webmoney-checkbox" name='use_webmoney' value='1' type='checkbox' <?php echo $use_webmoney_checked; ?> /><?php _e ( 'Webmoney','eme' ); ?><br />
                               <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'First Data','eme' ); ?><br />
                               <input id="mollie-checkbox" name='use_mollie' value='1' type='checkbox' <?php echo $use_mollie_checked; ?> /><?php _e ( 'Mollie','eme' ); ?><br />
+                              <input id="sagepay-checkbox" name='use_sagepay' value='1' type='checkbox' <?php echo $use_sagepay_checked; ?> /><?php _e ( 'Sage Pay','eme' ); ?><br />
                            </p>
                            <?php if ($event['event_rsvp'] && $pref != "recurrence") {
                                  // show the compact bookings table only when not editing a recurrence

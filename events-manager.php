@@ -99,7 +99,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 75);
+define('EME_DB_VERSION', 77);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -196,6 +196,8 @@ define("GOOGLE_LIVE","production");
 define("GOOGLE_SANDBOX","sandbox");
 define("FDGG_SANDBOX_URL","https://connect.merchanttest.firstdataglobalgateway.com/IPGConnect/gateway/processing");
 define("FDGG_LIVE_URL","https://connect.firstdataglobalgateway.com/IPGConnect/gateway/processing");
+define("SAGEPAY_SANDBOX_URL","https://test.sagepay.com/gateway/service/vspform-register.vsp");
+define("SAGEPAY_LIVE_URL","https://live.sagepay.com/gateway/service/vspform-register.vsp");
 
 // make sure the locale is set correct asap
 add_filter('locale','eme_redefine_locale',10);  
@@ -538,6 +540,7 @@ function eme_create_events_table($charset,$collate) {
          use_webmoney bool DEFAULT 0,
          use_fdgg bool DEFAULT 0,
          use_mollie bool DEFAULT 0,
+         use_sagepay bool DEFAULT 0,
          price text DEFAULT NULL,
          currency text DEFAULT NULL,
          rsvp_number_days tinyint unsigned DEFAULT 0,
@@ -604,6 +607,7 @@ function eme_create_events_table($charset,$collate) {
       maybe_add_column($table_name, 'use_webmoney', "alter table $table_name add use_webmoney bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_fdgg', "alter table $table_name add use_fdgg bool DEFAULT 0;");
       maybe_add_column($table_name, 'use_mollie', "alter table $table_name add use_mollie bool DEFAULT 0;");
+      maybe_add_column($table_name, 'use_sagepay', "alter table $table_name add use_sagepay bool DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_days', "alter table $table_name add rsvp_number_days tinyint DEFAULT 0;");
       maybe_add_column($table_name, 'rsvp_number_hours', "alter table $table_name add rsvp_number_hours tinyint DEFAULT 0;");
       maybe_add_column($table_name, 'price', "alter table $table_name add price text DEFAULT NULL;");

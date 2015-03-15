@@ -103,6 +103,11 @@ function eme_actions_init() {
       eme_fdgg_notification();
       exit();
    }
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="sagepay_notification") {
+      eme_sagepay_notification();
+      // sagepay doesn't use a notification url, but sends the status along as part of the return url, so we just check
+      // the status and set payed or not, but then we continue regular flow of events
+   }
    if (isset($_GET['eme_cancel_booking']) && is_user_logged_in()) {
 	   $booking_id=intval($_GET['eme_cancel_booking']);
 	   $booking=eme_get_booking($booking_id);

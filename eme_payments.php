@@ -42,6 +42,8 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
          $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,$booking['lang']);
       if ($event['use_mollie'])
          $ret_string .= eme_mollie_form($event,$payment_id, $total_price,$booking['lang']);
+      if ($event['use_sagepay'])
+         $ret_string .= eme_sagepay_form($event,$payment_id, $total_price,$booking['lang']);
       $ret_string .= "</div>";
 
       $eme_payment_form_footer_format=get_option('eme_payment_form_footer_format');
@@ -98,6 +100,8 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
       $ret_string .= eme_fdgg_form($event,$payment_id, $total_price,$booking['lang'],1);
    if ($event['use_mollie'])
       $ret_string .= eme_mollie_form($event,$payment_id, $total_price,$booking['lang'],1);
+   if ($event['use_sagepay'])
+      $ret_string .= eme_sagepay_form($event,$payment_id, $total_price,$booking['lang'],1);
    $ret_string .= "</div>";
 
    $eme_multipayment_form_footer_format=get_option('eme_multipayment_form_footer_format');
@@ -278,6 +282,71 @@ function eme_fdgg_form($event,$payment_id,$price,$lang,$multi_booking=0) {
    $form_html.="<input type='hidden' name='responseSuccessURL' value='$success_link' />";
    $form_html.="<input type='hidden' name='responseFailURL' value='$fail_link' />";
    $form_html.="<input type='hidden' name='eme_eventAction' value='fdgg_notification' />";
+   $button_label=htmlentities($button_label);
+   if (!empty($button_img_url))
+      $form_html.="<input type='image' src='$button_img_url' alt='$button_label' title='$button_label' />";
+   else
+      $form_html.="<input type='submit' value='$button_label' />";
+   $form_html.="</form>";
+   $form_html.= $button_below;
+   return $form_html;
+}
+
+function eme_sagepay_form($event,$payment_id,$price,$lang,$multi_booking=0) {
+   global $post;
+   $charge=eme_payment_provider_extra_charge($price,'fdgg');
+   $price+=$charge;
+   $events_page_link = eme_get_events_page(true, false);
+   if ($multi_booking) {
+      $success_link = get_permalink($post->ID);
+      $fail_link = $success_link;
+      $name = __("Multiple booking request","eme");
+   } else {
+      $success_link = eme_payment_return_url($event,$payment_id,1);
+      $fail_link = eme_payment_return_url($event,$payment_id,2);
+      $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
+   }
+   // sagepay doesn't use a notification url, but sends the status along as part of the return url
+   // so we add the notification info to it too, so we can process payed info as usual
+   $success_link = add_query_arg(array('eme_eventAction'=>'sagepay_notification'),$success_link);
+   $fail_link = add_query_arg(array('eme_eventAction'=>'sagepay_notification'),$fail_link);
+
+   $vendor_name = get_option('eme_sagepay_vendor_name');
+   // the live or sandbox url
+   $sagepay_demo = get_option('eme_sagepay_demo');
+   if ($sagepay_demo == 1) {
+      $sagepay_pwd = get_option('eme_sagepay_test_pwd');
+      $url = SAGEPAY_SANDBOX_URL;
+   } else {
+      $sagepay_pwd = get_option('eme_sagepay_live_pwd');
+      $url = SAGEPAY_LIVE_URL;
+   }
+   $cur=$event['currency'];
+   $payment=eme_get_payment($payment_id);
+
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_sagepay_button_above'),$charge,$event['currency'],$lang);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_sagepay_button_label'),$charge,$event['currency'],$lang);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_sagepay_button_below'),$charge,$event['currency'],$lang);
+   $button_img_url = get_option('eme_sagepay_button_img_url');
+
+   $query = array(
+         'VendorTxCode' => $payment_id,
+         'Amount' => number_format($price, 2, '.', ''),
+         'Currency' => $cur,
+         'Description' => $name,
+         'SuccessURL' => $success_link,
+         'FailureURL' => $fail_link
+            );
+
+   require_once 'payment_gateways/sagepay/eme-sagepay-util.php';
+   $crypt = SagepayUtil::encryptAes(SagepayUtil::arrayToQueryString($query),$sagepay_pwd);
+
+   $form_html = $button_above;
+   $form_html.="<form action='$url' method='post'>";
+   $form_html.="<input type='hidden' name='VPSProtocol' value='3.00' />";
+   $form_html.="<input type='hidden' name='TxType' value='PAYMENT' />";
+   $form_html.="<input type='hidden' name='Vendor' value='$vendor_name' />";
+   $form_html.="<input type='hidden' name='Crypt' value='$crypt' />";
    $button_label=htmlentities($button_label);
    if (!empty($button_img_url))
       $form_html.="<input type='image' src='$button_img_url' alt='$button_label' title='$button_label' />";
@@ -567,6 +636,25 @@ function eme_mollie_notification() {
    $payment_id = $payment->metadata->payment_id;
    if ($payment->isPaid()) {
       eme_update_payment_payed($payment_id);
+   }
+}
+
+function eme_sagepay_notification() {
+   $sagepay_demo = get_option('eme_sagepay_demo');
+   if ($sagepay_demo == 1) {
+      $sagepay_pwd = get_option('eme_sagepay_test_pwd');
+   } else {
+      $sagepay_pwd = get_option('eme_sagepay_live_pwd');
+   }
+
+   require_once 'payment_gateways/sagepay/eme-sagepay-util.php';
+   $decrypt = SagepayUtil::decryptAes($crypt, $sagepay_pwd);
+   $decryptArr = SagepayUtil::queryStringToArray($decrypt);
+   if ($decrypt && !empty($decryptArr)) {
+      if ($decryptArr['Status']=='OK') {
+         $payment_id=$decryptArr['VendorTxCode'];
+         eme_update_payment_payed($payment_id);
+      }
    }
 }
 
