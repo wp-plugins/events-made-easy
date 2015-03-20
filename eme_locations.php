@@ -861,7 +861,9 @@ function eme_global_map($atts) {
 
       $id_base = preg_replace("/\D/","_",microtime(1));
       $id_base = rand()."_".$id_base;
-      $result = "<div id='eme_global_map_$id_base' class='eme_global_map' style='width: {$width}px; height: {$height}px'>map</div>";
+      if (!preg_match('/\%$/',$width)) $width=$width."px";
+      if (!preg_match('/\%$/',$height)) $height=$height."px";
+      $result = "<div id='eme_global_map_$id_base' class='eme_global_map' style='width: $width; height: $height'>map</div>";
       // get the paging output ready
       if ($paging==1) {
          $pagination_top = "<div id='locations-pagination-top'> ";
@@ -1423,10 +1425,13 @@ function eme_single_location_map($location,$width=0,$height=0) {
       #$latitude_string="latitude";
       #$longitude_string="longitude";
          //$map_div = "<div id='$id' style=' background: green; width: 400px; height: 300px'></div>" ;
-      if ($width>0 && $height>0)
-         $map_div = "<div id='$id' style='width: {$width}px; height: {$height}px' ></div>" ;
-      else
+      if (!empty($width) && !empty($height)) {
+	 if (!preg_match('/\%$/',$width)) $width=$width."px";
+	 if (!preg_match('/\%$/',$height)) $height=$height."px";
+         $map_div = "<div id='$id' style='width: $width; height: $height' ></div>" ;
+      } else {
          $map_div = "<div id='$id' class='eme-location-map'></div>" ;
+      }
       $map_div .= "<script type='text/javascript'>
       <!--// 
       $latitude_string = parseFloat('".$location['location_latitude']."');
