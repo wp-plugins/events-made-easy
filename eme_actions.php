@@ -182,7 +182,7 @@ function eme_register_scripts() {
    wp_register_script( 'eme-jquery-plugin', EME_PLUGIN_URL.'js/jquery-datepick/jquery.plugin.min.js');
    wp_register_script( 'eme-jquery-datepick',EME_PLUGIN_URL.'js/jquery-datepick/jquery.datepick.js',array( 'jquery','eme-jquery-plugin' ));
    wp_register_style('eme_stylesheet',EME_PLUGIN_URL."events_manager.css");
-   if (get_option('eme_use_client_clock')) {
+   if (get_option('eme_use_client_clock') && !isset($_SESSION['eme_client_unixtime'])) {
    	wp_register_script( 'eme-client_clock_submit', EME_PLUGIN_URL.'js/client-clock.js', array('jquery'));
 	wp_enqueue_script('eme-client_clock_submit');
    }
