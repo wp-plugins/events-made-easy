@@ -3645,6 +3645,7 @@ function eme_general_head() {
    $gmap_is_active = get_option('eme_gmap_is_active' );
    $load_js_in_header = get_option('eme_load_js_in_header' );
    if ($gmap_is_active && $load_js_in_header) {
+      echo "<script type='text/javascript' src='//maps.google.com/maps/api/js?v=3.16&amp;sensor=false'></script>\n";
       echo "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_location_map.js'></script>\n";
    }
 }
@@ -3661,6 +3662,7 @@ function eme_general_footer() {
    $load_js_in_header = get_option('eme_load_js_in_header' );
    // we only include the map js if wanted/needed
    if (!$load_js_in_header && $gmap_is_active && $eme_need_gmap_js) {
+      echo "<script type='text/javascript' src='//maps.google.com/maps/api/js?v=3.16&amp;sensor=false'></script>\n";
       echo "<script type='text/javascript' src='".EME_PLUGIN_URL."js/eme_location_map.js'></script>\n";
    }
    $extra_html_footer=get_option('eme_html_footer');
