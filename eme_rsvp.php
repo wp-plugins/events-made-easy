@@ -1920,7 +1920,7 @@ function eme_get_bookings_list_for_person($person,$future=0,$template="",$templa
    return $res;
 }
 
-function eme_replace_booking_placeholders($format, $event, $booking, $target="html",$lang='') {
+function eme_replace_booking_placeholders($format, $event, $booking, $is_multibooking, $target="html",$lang='') {
    $deprecated=get_option('eme_deprecated');
 
    preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
@@ -2073,25 +2073,31 @@ function eme_replace_booking_placeholders($format, $event, $booking, $target="ht
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
       } elseif (preg_match('/#_MULTIBOOKING_SEATS$/', $result)) {
-         // returns the total of all seats for all bookings in the payment id related to this booking
-         $replacement = eme_bookings_total_booking_seats($bookings);
+         if ($is_multibooking) {
+            // returns the total of all seats for all bookings in the payment id related to this booking
+            $replacement = eme_bookings_total_booking_seats($bookings);
+         }
       } elseif (preg_match('/#_MULTIBOOKING_TOTALPRICE$/', $result)) {
-         // returns the price for all bookings in the payment id related to this booking
-         $price = eme_bookings_total_booking_price($bookings);
-         $replacement = sprintf("%01.2f",$price);
+         if ($is_multibooking) {
+            // returns the price for all bookings in the payment id related to this booking
+            $price = eme_bookings_total_booking_price($bookings);
+            $replacement = sprintf("%01.2f",$price);
+         }
       } elseif (preg_match('/#_MULTIBOOKING_DETAILS_TEMPLATE\{(\d+)\}$/', $result, $matches)) {
          $template_id = intval($matches[1]);
          $template=eme_get_template_format($template_id);
          $res="";
-         if ($template) {
+         if ($template && $is_multibooking) {
             // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
             foreach ($bookings as $tmp_booking) {
                $tmp_event=eme_get_event_by_booking_id($tmp_booking['booking_id']);
                $tmp_res= eme_replace_placeholders($template, $tmp_event, "text", 0);
-               $res.= eme_replace_booking_placeholders($tmp_res,$tmp_event,$tmp_booking,"text")."\n";
+               $res.= eme_replace_booking_placeholders($tmp_res,$tmp_event,$is_multibooking, $tmp_booking,"text")."\n";
             }
          }
          $replacement = $res;
+      } elseif (preg_match('/#_IS_MULTIBOOKING/', $result)) {
+         $replacement=$is_multibooking;
        } else {
          $found = 0;
       }
@@ -2142,7 +2148,7 @@ function eme_replace_attendees_placeholders($format, $event, $attendee, $target=
    return do_shortcode($format);   
 }
 
-function eme_email_rsvp_booking($booking,$action="") {
+function eme_email_rsvp_booking($booking,$action, $is_multibooking=0) {
    // first check if a mail should be send at all
    $mailing_is_active = get_option('eme_rsvp_mail_notify_is_active');
    if (!$mailing_is_active) {
@@ -2206,19 +2212,19 @@ function eme_email_rsvp_booking($booking,$action="") {
    // replace needed placeholders
    foreach ($contact_subject_vars as $var) {
       $$var = eme_replace_placeholders($$var, $event, "text",0);
-      $$var = eme_replace_booking_placeholders($$var, $event, $booking, "text");
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $is_multibooking, "text");
    }
    foreach ($contact_body_vars as $var) {
       $$var = eme_replace_placeholders($$var, $event, $mail_text_html,0);
-      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $mail_text_html);
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $is_multibooking, $mail_text_html);
    }
    foreach ($booker_subject_vars as $var) {
       $$var = eme_replace_placeholders($$var, $event, "text",0,$booking['lang']);
-      $$var = eme_replace_booking_placeholders($$var, $event, $booking, "text",$booking['lang']);
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $is_multibooking, "text",$booking['lang']);
    }
    foreach ($booker_body_vars as $var) {
       $$var = eme_replace_placeholders($$var, $event, $mail_text_html,0,$booking['lang']);
-      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $mail_text_html,$booking['lang']);
+      $$var = eme_replace_booking_placeholders($$var, $event, $booking, $is_multibooking, $mail_text_html,$booking['lang']);
    }
 
    // possible translations are handled last 
