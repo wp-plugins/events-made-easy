@@ -2787,7 +2787,6 @@ function eme_admin_event_script() {
 var show24Hours = <?php echo $show24Hours;?>;
 var locale_code = '<?php echo $locale_code;?>';
 var firstDayOfWeek = <?php echo get_option('start_of_week');?>;
-var eme_locations_search_url = "<?php echo EME_PLUGIN_URL; ?>locations-search.php";
 var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
 var use_select_for_locations = <?php echo $use_select_for_locations; ?>;
 
@@ -3857,13 +3856,11 @@ function eme_admin_enqueue_js(){
         add_action('admin_head', 'eme_admin_map_script');
       }
    }
-   //if ( in_array( $plugin_page, array('eme-locations', 'eme-new_event', 'events-manager','eme-options') ) ) {
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager','eme-options') ) ) {
       // both datepick and timeentry need jquery.plugin, so let's include it upfront
       wp_enqueue_script('eme-jquery-datepick');
       //wp_enqueue_style('jquery-ui-autocomplete',EME_PLUGIN_URL."js/jquery-autocomplete/jquery.autocomplete.css");
       wp_enqueue_style('eme-jquery-datepick',EME_PLUGIN_URL."js/jquery-datepick/jquery.datepick.css");
-      wp_enqueue_script('jquery-ui-autocomplete');
       // jquery ui locales are with dashes, not underscores
       $locale_code = get_locale();
       $locale_code = preg_replace( "/_/","-", $locale_code );
@@ -3881,6 +3878,7 @@ function eme_admin_enqueue_js(){
       }
    }
    if ( in_array( $plugin_page, array('eme-new_event', 'events-manager') ) ) {
+      wp_enqueue_script('jquery-ui-autocomplete');
       wp_enqueue_script( 'eme-jquery-timeentry');
       // Now we can localize the script with our data.
       // in our case: replace in the registered script "eme-events" the string eme.translate_name, eme.translate_date, eme.translate_fields_missing and
@@ -3899,6 +3897,10 @@ function eme_admin_enqueue_js(){
    }
    if ( in_array( $plugin_page, array('eme-options') ) ) {
       wp_enqueue_script('eme-options');
+   }
+   if ( in_array( $plugin_page, array('eme-registration-seats', 'eme-registration-approval') ) ) {
+      wp_enqueue_script('jquery-ui-autocomplete');
+      wp_enqueue_script('eme-registrations');
    }
    if ( in_array( $plugin_page, array('eme-send-mails') ) ) {
       wp_enqueue_script('eme-sendmails');

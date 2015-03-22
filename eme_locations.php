@@ -1461,3 +1461,50 @@ function eme_events_in_location_list($location, $scope = "") {
    }
    return $list;
 }
+
+function eme_locations_search_ajax() {
+   if(isset($_GET['id']) && $_GET['id'] != "") {
+      $item = eme_get_location($_GET['id']);
+      $record = array();
+      $record['id']      = $item['location_id'];
+      $record['name']    = eme_trans_sanitize_html($item['location_name']); 
+      $record['address'] = eme_trans_sanitize_html($item['location_address']);
+      $record['town']    = eme_trans_sanitize_html($item['location_town']); 
+      $record['latitude']    = eme_trans_sanitize_html($item['location_latitude']); 
+      $record['longitude']    = eme_trans_sanitize_html($item['location_longitude']); 
+      echo json_encode($record);
+
+   } else {
+
+      $locations = eme_get_locations();
+      $return = array();
+
+      if (!isset($_GET["q"])) {
+         echo json_encode($return);
+         return;
+      }
+
+      foreach($locations as $item) {
+         $record = array();
+         $record['id']      = $item['location_id'];
+         $record['name']    = eme_trans_sanitize_html($item['location_name']); 
+         $record['address'] = eme_trans_sanitize_html($item['location_address']);
+         $record['town']    = eme_trans_sanitize_html($item['location_town']); 
+         $record['latitude']    = eme_trans_sanitize_html($item['location_latitude']); 
+         $record['longitude']    = eme_trans_sanitize_html($item['location_longitude']); 
+         $return[]  = $record;
+      }
+
+      $q = strtolower($_GET["q"]);
+      if (!$q) return;
+
+      $result=array();
+      foreach($return as $row) {
+         if (strpos(strtolower($row['name']), $q) !== false)
+            $result[]=$row;
+      }
+      echo json_encode($result);
+   }
+}
+
+?>

@@ -760,4 +760,31 @@ function eme_get_indexed_users() {
       $indexed_users[$user['ID']] = $user['display_name'];
    return $indexed_users;
 }
+
+function eme_people_search_ajax() {
+   $locations = eme_get_persons();
+   $return = array();
+
+   if (!isset($_GET["q"])) {
+      echo json_encode($return);
+      return;
+   }
+   foreach($locations as $item) {
+      $record = array();
+      $record['name']    = eme_trans_sanitize_html($item['person_name']); 
+      $record['email'] = eme_trans_sanitize_html($item['person_email']);
+      $record['phone']    = eme_trans_sanitize_html($item['person_phone']); 
+      $return[]  = $record;
+   }
+
+   $q = strtolower($_GET["q"]);
+   if (!$q) return;
+
+   $result=array();
+   foreach($return as $row) {
+      if (strpos(strtolower($row['name']), $q) !== false)
+         $result[]=$row;
+   }
+   echo json_encode($result);
+}
 ?>

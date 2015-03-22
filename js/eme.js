@@ -1,3 +1,6 @@
+function htmlDecode(value){ 
+   return jQuery('<div/>').html(value).text(); 
+}
 
 function isoStringToDate(s) {
   var b = s.split(/[-t:+]/ig);

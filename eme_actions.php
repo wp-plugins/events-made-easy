@@ -54,6 +54,14 @@ function eme_actions_init() {
       echo '{"bookedSeats":'.eme_get_booked_seats(intval($_GET['event_id'])).',"availableSeats":'.eme_get_available_seats(intval($_GET['event_id'])).'}';
       exit();
    }
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'autocomplete_locations' && is_admin()) {
+      eme_locations_search_ajax();
+      exit;
+   }
+   if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'autocomplete_people' && is_admin()) {
+      eme_people_search_ajax();
+      exit;
+   }
    if (isset($_GET['eme_admin_action']) && $_GET['eme_admin_action'] == 'booking_printable' && is_admin() && isset($_GET['event_id'])) {
       eme_printable_booking_report(intval($_GET['event_id']));
       exit();
@@ -171,6 +179,7 @@ function eme_admin_register_scripts() {
    wp_register_script( 'eme-google-maps', '//maps.google.com/maps/api/js?v=3.1&sensor=false');
    wp_register_script( 'eme', EME_PLUGIN_URL.'js/eme.js', array('jquery'));
    wp_register_script( 'eme-events', EME_PLUGIN_URL.'js/eme_admin_events.js',array( 'jquery' ));
+   wp_register_script( 'eme-registrations', EME_PLUGIN_URL.'js/eme_admin_registrations.js',array( 'jquery' ));
    wp_register_script( 'eme-options', EME_PLUGIN_URL.'js/eme_admin_options.js',array( 'jquery' ));
    wp_register_script( 'eme-sendmails', EME_PLUGIN_URL.'js/eme_admin_send_mails.js',array( 'jquery' ));
    eme_admin_enqueue_js();

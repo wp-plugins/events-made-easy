@@ -1,7 +1,3 @@
-function htmlDecode(value){ 
-   return jQuery('<div/>').html(value).text(); 
-}
-
 function updateIntervalDescriptor () { 
    jQuery(".interval-desc").hide();
    var number = "-plural";
@@ -86,8 +82,10 @@ function eme_event_location_info () {
     if (!use_select_for_locations && jQuery("input[name=location_name]").length) {
           jQuery("input[name=location_name]").autocomplete({
             source: function(request, response) {
-                         jQuery.ajax({ url: eme_locations_search_url,
-                                  data: { q: request.term},
+                         jQuery.ajax({ url: self.location.href,
+                                  data: { q: request.term,
+                                          eme_admin_action: 'autocomplete_locations'
+                                        },
                                   dataType: "json",
                                   type: "GET",
                                   success: function(data){
@@ -105,7 +103,7 @@ function eme_event_location_info () {
                                  });
                     },
             select:function(evt, ui) {
-                         // when a product is selected, populate related fields in this form
+                         // when a location is selected, populate related fields in this form
                          jQuery('input[name=location_name]').val(ui.item.name);
                          jQuery('input#location_address').val(ui.item.address);
                          jQuery('input#location_town').val(ui.item.town);
@@ -124,7 +122,7 @@ function eme_event_location_info () {
           };
     } else {
           jQuery('#location-select-id').change(function() {
-            jQuery.getJSON(eme_locations_search_url,{id: jQuery(this).val()}, function(item){
+            jQuery.getJSON(self.location.href,{eme_admin_action: 'autocomplete_locations',id: jQuery(this).val()}, function(item){
                jQuery("input[name='location-select-name']").val(item.name);
                jQuery("input[name='location-select-address']").val(item.address); 
                jQuery("input[name='location-select-town']").val(item.town); 
