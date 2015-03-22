@@ -867,7 +867,8 @@ function eme_multibook_seats($events, $send_mail, $format) {
          eme_create_payment($booking_ids_done);
 
       $booking = eme_get_booking ($booking_ids[0]);
-      if ($send_mail) eme_email_rsvp_booking($booking,$action);
+      $is_multibooking=1;
+      if ($send_mail) eme_email_rsvp_booking($booking,$action,$is_multibooking);
    }
 
    $res = array(0=>$result,1=>$booking_ids_done);
