@@ -666,11 +666,6 @@ function eme_update_location($location) {
       unset($location['location_id']);
    }
 
-   // we can't check the return code for wpdb->update,
-   // since sometimes the update returns 0 because of no rows
-   // updated (eg, when you just add an image)
-   // DONE: add modif timestamps, so that changes for each update,
-   // and then we can check for the return code again (as for events)
    if (!is_serialized($location['location_attributes']))
       $location['location_attributes'] = serialize($location['location_attributes']);
       

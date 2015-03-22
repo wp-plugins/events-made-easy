@@ -99,7 +99,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 77);
+define('EME_DB_VERSION', 78);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -843,19 +843,38 @@ function eme_create_people_table($charset,$collate) {
    if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
       $sql = "CREATE TABLE ".$table_name." (
          person_id mediumint(9) NOT NULL AUTO_INCREMENT,
-         person_name tinytext NOT NULL, 
-         person_email tinytext NOT NULL,
-         person_phone tinytext DEFAULT NULL,
+         lastname tinytext NOT NULL, 
+         firstname tinytext DEFAULT '', 
+         email tinytext NOT NULL,
+         phone tinytext DEFAULT NULL,
          wp_id bigint(20) unsigned DEFAULT NULL,
+         address1 tinytext DEFAULT '', 
+         address2 tinytext DEFAULT '', 
+         city tinytext DEFAULT '', 
+         state tinytext DEFAULT '', 
+         zip tinytext DEFAULT '', 
+         country tinytext DEFAULT '', 
          lang varchar(10) DEFAULT '',
          UNIQUE KEY (person_id)
          ) $charset $collate;";
       maybe_create_table($table_name,$sql);
    } else {
       maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
-      maybe_add_column($table_name, 'lang', "ALTER TABLE $table_name add lang varchar(10) DEFAULT '';"); 
+      maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
+      maybe_add_column($table_name, 'firstname', "ALTER TABLE $table_name add firstname tinytext DEFAULT '';"); 
+      maybe_add_column($table_name, 'address1', "ALTER TABLE $table_name add address1 tinytext DEFAULT '';"); 
+      maybe_add_column($table_name, 'address2', "ALTER TABLE $table_name add address2 tinytext DEFAULT '';"); 
+      maybe_add_column($table_name, 'city', "ALTER TABLE $table_name add city tinytext DEFAULT '';"); 
+      maybe_add_column($table_name, 'state', "ALTER TABLE $table_name add state tinytext DEFAULT '';"); 
+      maybe_add_column($table_name, 'zip', "ALTER TABLE $table_name add zip tinytext DEFAULT '';"); 
+      maybe_add_column($table_name, 'country', "ALTER TABLE $table_name add country tinytext DEFAULT '';"); 
       if ($db_version<10) {
          $wpdb->query("ALTER TABLE $table_name MODIFY person_phone tinytext DEFAULT 0;");
+      }
+      if ($db_version<78) {
+         $wpdb->query("ALTER TABLE $table_name CHANGE person_phone phone tinytext DEFAULT NULL;");
+         $wpdb->query("ALTER TABLE $table_name CHANGE person_name lastname tinytext NOT NULL;");
+         $wpdb->query("ALTER TABLE $table_name CHANGE person_email email tinytext NOT NULL;");
       }
    }
 } 
