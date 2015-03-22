@@ -782,8 +782,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
       if (empty($bookerLastName)) {
          // if any required field is empty: return an error
          $result .= __('Please fill out your last name','eme');
-      } elseif (empty($bookerFirsName)) {
-         $result .= __('Please fill out your first name','eme');
+         // to be backwards compatible, don't require bookerFirstName here: it can be empty for forms that just use #_NAME
       } elseif (empty($bookerEmail)) {
          // if any required field is empty: return an error
          $result .= __('Please fill out your e-mail','eme');
@@ -1045,8 +1044,7 @@ function eme_book_seats($event, $send_mail) {
    if (empty($bookerLastName)) {
       // if any required field is empty: return an error
       $result = __('Please fill out your last name','eme');
-   } elseif (empty($bookerFirstName)) {
-      $result = __('Please fill out your first name','eme');
+      // to be backwards compatible, don't require bookerFirstName here: it can be empty for forms that just use #_NAME
    } elseif (empty($bookerEmail)) {
       // if any required field is empty: return an error
       $result = __('Please fill out your e-mail','eme');
