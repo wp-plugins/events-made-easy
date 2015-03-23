@@ -1950,11 +1950,8 @@ function eme_get_bookings_list_for_person($person,$future=0,$template="",$templa
    return $res;
 }
 
-function eme_replace_booking_placeholders($format, $event, $booking, $is_multibooking, $target="html",$lang='') {
+function eme_replace_booking_placeholders($format, $event, $booking, $is_multibooking=0, $target="html",$lang='') {
    $deprecated=get_option('eme_deprecated');
-
-   // RESPNAME is now an alternative for RESPLASTNAME
-   $format = preg_replace("/#_RESPNAME/","#_RESPLASTNAME",$format);
 
    preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
    $person  = eme_get_person ($booking['person_id']);
@@ -1985,9 +1982,10 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
-      } elseif (preg_match('/#_RESP(LASTNAME|FIRSTNAME|ZIP|CITY|STATE|COUNTRY|ADDRESS1|ADDRESS2|PHONE|EMAIL)/', $result)) {
+      } elseif (preg_match('/#_RESP(NAME|LASTNAME|FIRSTNAME|ZIP|CITY|STATE|COUNTRY|ADDRESS1|ADDRESS2|PHONE|EMAIL)/', $result)) {
          $field = preg_replace("/#_RESP/","",$result);
          $field = strtolower($field);
+         if ($field=="name") $field="lastname";
          $replacement = $person[$field];
          $replacement = eme_sanitize_html($replacement);
          if ($target == "html")
@@ -2163,9 +2161,17 @@ function eme_replace_attendees_placeholders($format, $event, $attendee, $target=
       $replacement='';
       $found = 1;
       $orig_result = $result;
-      if (preg_match('/#_(ATTEND)?(NAME|PHONE|ID|EMAIL)/', $result)) {
+      if (preg_match('/#_(ATTEND)?ID/', $result)) {
+         $replacement = $attendee['person_id'];
+         $replacement = eme_sanitize_html($replacement);
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
+      } elseif (preg_match('/#_(ATTEND)?(NAME|LASTNAME|FIRSTNAME|ZIP|CITY|STATE|COUNTRY|ADDRESS1|ADDRESS2|PHONE|EMAIL)/', $result)) {
          $field = preg_replace("/#_ATTEND|#_/","",$result);
-         $field = "person_".strtolower($field);
+         $field = strtolower($field);
+         if ($field=="name") $field="lastname";
          $replacement = $attendee[$field];
          $replacement = eme_sanitize_html($replacement);
          if ($target == "html")

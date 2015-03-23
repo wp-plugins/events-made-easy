@@ -900,7 +900,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       if (isset($_POST['state'])) $bookerState = eme_sanitize_html(stripslashes_deep($_POST['state']));
       if (isset($_POST['zip'])) $bookerZip = eme_sanitize_html(stripslashes_deep($_POST['zip']));
       if (isset($_POST['country'])) $bookerCountry = eme_sanitize_html(stripslashes_deep($_POST['country']));
-      if (isset($_POST['email'])) $bookerEmail = eme_sanitize_html(stripslashes_deep($_POST['zmail']));
+      if (isset($_POST['email'])) $bookerEmail = eme_sanitize_html(stripslashes_deep($_POST['email']));
       if (isset($_POST['phone'])) $bookerPhone = eme_sanitize_html(stripslashes_deep($_POST['phone']));
       if (isset($_POST['comment'])) $bookerComment = eme_sanitize_html(stripslashes_deep($_POST['comment']));
       if (isset($_POST['Seats'])) $bookedSeats = eme_sanitize_html(stripslashes_deep($_POST['Seats']));

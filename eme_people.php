@@ -634,10 +634,10 @@ function eme_people_table($message="") {
    }
 } 
 
-function eme_get_person_by_name_and_email($lastname, $firtsname, $email) {
+function eme_get_person_by_name_and_email($lastname, $firstname, $email) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
-   $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE lastname = %s AND firstname = %s AND person_email = %s",$lastname,$firstname,$email);
+   $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE lastname = %s AND firstname = %s AND email = %s",$lastname,$firstname,$email);
    $result = $wpdb->get_row($sql, ARRAY_A);
    return $result;
 }
@@ -654,7 +654,7 @@ function eme_get_person_by_wp_id($wp_id) {
       if (empty($result['lastname']))
          $result['lastname']=$user_info->display_name;
       $result['firstname']=$user_info->user_firstname;
-      $result['person_email']=$user_info->user_email;
+      $result['email']=$user_info->user_email;
    }
    return $result;
 }
@@ -735,16 +735,16 @@ function eme_add_person($lastname, $firstname, $email, $wp_id, $lang) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    $person=array();
-   $person['name'] = eme_sanitize_request($lastname);
+   $person['lastname'] = eme_sanitize_request($lastname);
    $person['firstname'] = eme_sanitize_request($firstname);
    $person['email'] = eme_sanitize_request($email);
-   if (isset($_POST['Address1'])) $person['Address1'] = eme_sanitize_request(stripslashes_deep($_POST['Address1']));
-   if (isset($_POST['Address2'])) $person['Address2'] = eme_sanitize_request(stripslashes_deep($_POST['Address2']));
-   if (isset($_POST['City'])) $person['City'] = eme_sanitize_request(stripslashes_deep($_POST['City']));
-   if (isset($_POST['State'])) $person['State'] = eme_sanitize_request(stripslashes_deep($_POST['State']));
-   if (isset($_POST['Zip'])) $person['Zip'] = eme_sanitize_request(stripslashes_deep($_POST['Zip']));
-   if (isset($_POST['Country'])) $person['Country'] = eme_sanitize_request(stripslashes_deep($_POST['Country']));
-   if (isset($_POST['Phone'])) $person['phone'] = eme_sanitize_request(stripslashes_deep($_POST['Phone']));
+   if (isset($_POST['address1'])) $person['address1'] = eme_sanitize_request(stripslashes_deep($_POST['address1']));
+   if (isset($_POST['address2'])) $person['address2'] = eme_sanitize_request(stripslashes_deep($_POST['address2']));
+   if (isset($_POST['city'])) $person['city'] = eme_sanitize_request(stripslashes_deep($_POST['city']));
+   if (isset($_POST['state'])) $person['state'] = eme_sanitize_request(stripslashes_deep($_POST['state']));
+   if (isset($_POST['zip'])) $person['zip'] = eme_sanitize_request(stripslashes_deep($_POST['zip']));
+   if (isset($_POST['country'])) $person['country'] = eme_sanitize_request(stripslashes_deep($_POST['country']));
+   if (isset($_POST['phone'])) $person['phone'] = eme_sanitize_request(stripslashes_deep($_POST['phone']));
    $person['wp_id'] = eme_sanitize_request($wp_id);
    $person['lang'] = eme_sanitize_request($lang);
    $wpdb->insert($people_table,$person);

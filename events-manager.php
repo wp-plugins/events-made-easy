@@ -860,7 +860,6 @@ function eme_create_people_table($charset,$collate) {
       maybe_create_table($table_name,$sql);
    } else {
       maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
-      maybe_add_column($table_name, 'wp_id', "ALTER TABLE $table_name add wp_id bigint(20) unsigned DEFAULT NULL;"); 
       maybe_add_column($table_name, 'firstname', "ALTER TABLE $table_name add firstname tinytext DEFAULT '';"); 
       maybe_add_column($table_name, 'address1', "ALTER TABLE $table_name add address1 tinytext DEFAULT '';"); 
       maybe_add_column($table_name, 'address2', "ALTER TABLE $table_name add address2 tinytext DEFAULT '';"); 
