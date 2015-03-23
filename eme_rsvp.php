@@ -1953,6 +1953,9 @@ function eme_get_bookings_list_for_person($person,$future=0,$template="",$templa
 function eme_replace_booking_placeholders($format, $event, $booking, $is_multibooking, $target="html",$lang='') {
    $deprecated=get_option('eme_deprecated');
 
+   // RESPNAME is now an alternative for RESPLASTNAME
+   $format = preg_replace("/#_RESPNAME/","#_RESPLASTNAME",$format);
+
    preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
    $person  = eme_get_person ($booking['person_id']);
    $current_userid=get_current_user_id();
@@ -1975,9 +1978,16 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
          $result = str_replace("#ESC","#",$result);
          $need_escape=1;
       }
-      if (preg_match('/#_RESP(NAME|PHONE|ID|EMAIL)/', $result)) {
+      if (preg_match('/#_RESPID/', $result)) {
+         $replacement = $person['person_id'];
+         $replacement = eme_sanitize_html($replacement);
+         if ($target == "html")
+            $replacement = apply_filters('eme_general', $replacement); 
+         else 
+            $replacement = apply_filters('eme_general_rss', $replacement); 
+      } elseif (preg_match('/#_RESP(LASTNAME|FIRSTNAME|ZIP|CITY|STATE|COUNTRY|ADDRESS1|ADDRESS2|PHONE|EMAIL)/', $result)) {
          $field = preg_replace("/#_RESP/","",$result);
-         $field = "person_".strtolower($field);
+         $field = strtolower($field);
          $replacement = $person[$field];
          $replacement = eme_sanitize_html($replacement);
          if ($target == "html")
