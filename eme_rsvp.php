@@ -723,7 +723,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
             } elseif (preg_match ("/PHONE/",$required_field)) {
                // PHONE regex also catches _HTML5_PHONE
                if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
-            } elseif (preg_match ("/(ADDRESS1|ADDRESS2|CITY|STATE|ZIP|CONTRY)/",$required_field, $matches)) {
+            } elseif (preg_match ("/(ADDRESS1|ADDRESS2|CITY|STATE|ZIP|COUNTRY)/",$required_field, $matches)) {
                $fieldname=strtolower($matches[1]);
                $fieldname_ucfirst=ucfirst($fieldname);
                if (!isset($_POST[$fieldname])) array_push($missing_required_fields, __($fieldname_ucfirst,'eme'));
@@ -985,7 +985,7 @@ function eme_book_seats($event, $send_mail) {
          } elseif (preg_match ("/PHONE/",$required_field)) {
             // PHONE regex also catches _HTML5_PHONE
             if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
-         } elseif (preg_match ("/(ADDRESS1|ADDRESS2|CITY|STATE|ZIP|CONTRY)/",$required_field, $matches)) {
+         } elseif (preg_match ("/(ADDRESS1|ADDRESS2|CITY|STATE|ZIP|COUNTRY)/",$required_field, $matches)) {
             $fieldname=strtolower($matches[1]);
             $fieldname_ucfirst=ucfirst($fieldname);
             if (!isset($_POST[$fieldname])) array_push($missing_required_fields, __($fieldname_ucfirst,'eme'));
