@@ -1254,13 +1254,25 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
       } elseif ($event && preg_match('/#_EVENTPRINTBOOKINGSLINK/', $result)) { 
          if (current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
-            $replacement = "<a href=' ".admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event['event_id'])."'>".__('Printable view of bookings','eme')."</a>";
+            $replacement = "<a href=' ".admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id'])."'>".__('Printable view of bookings','eme')."</a>";
          }
 
       } elseif ($event && preg_match('/#_EVENTPRINTBOOKINGSURL/', $result)) { 
          if (current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
              (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
             $replacement = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_printable&amp;event_id=".$event['event_id']);
+         }
+
+      } elseif ($event && preg_match('/#_EVENTCSVBOOKINGSLINK/', $result)) { 
+         if (current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
+             (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
+            $replacement = "<a href=' ".admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id'])."'>".__('Printable view of bookings','eme')."</a>";
+         }
+
+      } elseif ($event && preg_match('/#_EVENTCSVBOOKINGSURL/', $result)) { 
+         if (current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
+             (current_user_can( get_option('eme_cap_author_event')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {
+            $replacement = admin_url("admin.php?page=eme-people&amp;eme_admin_action=booking_csv&amp;event_id=".$event['event_id']);
          }
 
       } elseif ($event && preg_match('/#_STARTDATE/', $result)) { 
@@ -2026,6 +2038,24 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#_IS_ATTENDANCE/', $result)) {
          if ($event['event_properties']['take_attendance'])
+            $replacement = 1;
+         else
+            $replacement = 0;
+
+      } elseif ($event && preg_match('/#_IS_AUTHOR$/', $result)) {
+         if ($event['event_author']==$current_userid)
+            $replacement = 1;
+         else
+            $replacement = 0;
+
+      } elseif ($event && preg_match('/#_IS_CONTACTPERSON/', $result)) {
+         if ($event['event_contactperson_id']==$current_userid)
+            $replacement = 1;
+         else
+            $replacement = 0;
+
+      } elseif ($event && preg_match('/#_IS_AUTHOR_OR_CONTACTPERSON/', $result)) {
+         if ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid)
             $replacement = 1;
          else
             $replacement = 0;
