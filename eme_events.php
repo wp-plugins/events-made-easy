@@ -2045,12 +2045,12 @@ function eme_events_table($message="",$scope="future") {
          <th class='manage-column column-cb check-column' scope='col'><input
             class='select-all' type="checkbox" value='1' /></th>
          <th><?php _e ('ID','eme'); ?></th>
-         <th><?php _e ( 'Name', 'eme' ); ?></th>
-         <th><?php _e ( 'Status', 'eme' ); ?></th>
-         <th></th>
-         <th><?php _e ( 'Location', 'eme' ); ?></th>
-         <th><?php _e ( 'Date and time', 'eme' ); ?></th>
-         <th></th>
+         <th><?php _e ('Name', 'eme' ); ?></th>
+         <th><?php _e ('Status', 'eme' ); ?></th>
+         <th><?php _e ('Copy', 'eme' ); ?></th>
+         <th><?php _e ('Location', 'eme' ); ?></th>
+         <th><?php _e ('Date and time', 'eme' ); ?></th>
+         <th><?php _e ('Recurrence info', 'eme' ); ?></th>
       </tr>
    </thead>
    <tbody>
@@ -2129,7 +2129,7 @@ function eme_events_table($message="",$scope="future") {
          ?> 
          </td>
          <td>
-         <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=duplicate_event&amp;event_id=".$event['event_id']); ?>" title="<?php _e ( 'Duplicate this event', 'eme' ); ?>"><strong>+</strong></a>
+         <a href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=duplicate_event&amp;event_id=".$event['event_id']); ?>" title="<?php _e ( 'Duplicate this event', 'eme' ); ?>"><img src='<?php echo EME_PLUGIN_URL."images/copy_24.png";?>'/></a>
          </td>
          <td>
              <?php echo $location_summary; ?>
@@ -2172,6 +2172,7 @@ function eme_events_table($message="",$scope="future") {
    <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#eme_admin_events').dataTable( {
+            "dom": 'CT<"clear">Rlfrtip',
 <?php
    $locale_code = get_locale();
    $locale_file = EME_PLUGIN_DIR. "js/jquery-datatables/i18n/$locale_code.json";
@@ -2188,7 +2189,16 @@ function eme_events_table($message="",$scope="future") {
             "pagingType": "full",
             "columnDefs": [
                { "sortable": false, "targets": [0,4,7] }
-            ]
+            ],
+            "colVis": {
+               "exclude": [0]
+            },
+            "tableTools": {
+               "aButtons": [ { "sExtends": "csv", "mColumns": "visible"},
+                             "print"
+                           ],
+               "sSwfPath": "<?php echo EME_PLUGIN_URL;?>js/jquery-datatables/extensions/TableTools-2.2.4-dev/swf/copy_csv_xls.swf"
+            }
          } );
 
          jQuery('form').on('click','input:submit[name=doaction2]',function() {
