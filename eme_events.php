@@ -2018,13 +2018,10 @@ function eme_events_table($message="",$scope="future") {
    </select>
    <input id="post-query-submit" class="button-secondary" type="submit" value="<?php _e ( 'Filter' )?>" />
    </form>
-   <br />
-   <br />
 
    <?php
    if ($events_count>0) {
    ?>
-
    <form id="eme_events_listform" action="" method="get">
    <input type='hidden' name='page' value='events-manager' />
    <select name="eme_admin_action">
@@ -2079,7 +2076,7 @@ function eme_events_table($message="",$scope="future") {
          <td><input type='checkbox' class='row-selector' value='<?php echo $event['event_id']; ?>' name='events[]' /></td>
          <td><?php echo $event['event_id']; ?></td>
          <td><strong>
-         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event['event_id']); ?>"><?php echo eme_trans_sanitize_html($event['event_name']); ?></a>
+         <a class="row-title" href="<?php echo admin_url("admin.php?page=events-manager&amp;eme_admin_action=edit_event&amp;event_id=".$event['event_id']); ?>" title="<?php _e('Edit event','eme');?>"><?php echo eme_trans_sanitize_html($event['event_name']); ?></a>
          </strong>
          <?php
          $categories = explode(',', $event['event_category_ids']);
@@ -2172,7 +2169,7 @@ function eme_events_table($message="",$scope="future") {
    <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#eme_admin_events').dataTable( {
-            "dom": 'CT<"clear">Rlfrtip',
+            "dom": 'CTRlfrtip',
 <?php
    $locale_code = get_locale();
    $locale_file = EME_PLUGIN_DIR. "js/jquery-datatables/i18n/$locale_code.json";
