@@ -2676,6 +2676,7 @@ function eme_registration_seats_form_table($pending=0) {
 <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#<?php print "$table_id";?>').dataTable( {
+            "dom": 'CT<"clear">Rlfrtip',
             <?php
             // jquery datatables locale loading
             $locale_code = get_locale();
@@ -2709,7 +2710,16 @@ function eme_registration_seats_form_table($pending=0) {
             "columnDefs": [
                { "sortable": false, "targets": 0 },
                { "visible": false, "targets": 1 }
-            ]
+            ],
+            "colVis": {
+               "exclude": [0,1]
+            },
+            "tableTools": {
+               "aButtons": [ { "sExtends": "csv", "mColumns": "visible"},
+                             "print"
+                           ],
+               "sSwfPath": "<?php echo EME_PLUGIN_URL;?>js/jquery-datatables/extensions/TableTools-2.2.4-dev/swf/copy_csv_xls.swf"
+            }
          } );
    } );
 </script>

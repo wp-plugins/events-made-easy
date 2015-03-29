@@ -3908,7 +3908,13 @@ function eme_admin_enqueue_js(){
    if ( in_array( $plugin_page, array('eme-registration-approval','eme-registration-seats','events-manager','eme-people') ) ) {
       wp_enqueue_script('eme-jquery-datatables');
       wp_enqueue_script('eme-datatables-clearsearch');
-      wp_enqueue_style('eme-jquery-datatables',EME_PLUGIN_URL.'js/jquery-datatables/css/jquery.dataTables.css');
+      wp_enqueue_script('eme-datatables-colvis');
+      wp_enqueue_script('eme-datatables-colreorder');
+      wp_enqueue_script('eme-datatables-tabletools');
+      wp_enqueue_style('eme-jquery-datatables-css',EME_PLUGIN_URL.'js/jquery-datatables/css/jquery.dataTables.css');
+      wp_enqueue_style('eme-datatables-colvis-css',EME_PLUGIN_URL.'js/jquery-datatables/extensions/ColVis-1.1.1/css/dataTables.colVis.css');
+      wp_enqueue_style('eme-datatables-colreorder-css',EME_PLUGIN_URL.'js/jquery-datatables/extensions/ColReorder-1.1.3-dev/css/dataTables.colReorder.css');
+      wp_enqueue_style('eme-datatables-tabletools-css',EME_PLUGIN_URL.'js/jquery-datatables/extensions/TableTools-2.2.4-dev/css/dataTables.tableTools.css');
    }
 }
 
