@@ -593,6 +593,7 @@ function eme_people_table($message="") {
 <script type="text/javascript">
    jQuery(document).ready( function() {
             jQuery('#eme-people-table').dataTable( {
+               "dom": 'CT<"clear">Rlfrtip',
                <?php
                // jquery datatables locale loading
                $locale_code = get_locale();
@@ -624,10 +625,19 @@ function eme_people_table($message="") {
                ?> 
                "pagingType": "full",
                "columnDefs": [
-               { "sortable": false, "targets": 0 },
-               { "visible": false, "targets": 1 }
-               ]
-               } );
+                  { "sortable": false, "targets": 0 },
+                  { "visible": false, "targets": 1 }
+               ],
+               "colVis": {
+                  "exclude": [0,1,2,6]
+               },
+               "tableTools": {
+                  "aButtons": [ { "sExtends": "csv", "mColumns": "visible"},
+                                "print"
+                              ],
+                  "sSwfPath": "<?php echo EME_PLUGIN_URL;?>js/jquery-datatables/extensions/TableTools-2.2.4-dev/swf/copy_csv_xls.swf"
+               }
+           });
    } );
 </script>
 <?php
