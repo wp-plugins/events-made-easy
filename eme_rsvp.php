@@ -44,7 +44,6 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $form_result_message = $booking_res[0];
          $booking_id_done=$booking_res[1];
       }
-      $eme_message_nonce=wp_create_nonce('eme_message'.$form_result_message);
       $post_string="{";
       if ($booking_id_done && eme_event_can_pay_online($event)) {
          $payment_id = eme_get_booking_payment_id($booking_id_done);
@@ -58,7 +57,6 @@ function eme_add_booking_form($event_id,$show_message=1) {
                   "eme_eventAction" => 'pay_booking',
                   "eme_message" => $form_result_message,
                   "eme_payment_id" => $payment_id,
-                  "eme_message_nonce" => $eme_message_nonce,
                   "eme_payment_nonce" => $eme_payment_nonce
                   );
          } else {
@@ -66,7 +64,6 @@ function eme_add_booking_form($event_id,$show_message=1) {
             $post_arr = array (
                   "eme_eventAction" => 'message',
                   "eme_message" => $form_result_message,
-                  "eme_message_nonce" => $eme_message_nonce,
                   "booking_done" => 1
                   );
          }
@@ -74,7 +71,6 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $post_arr = array (
                "eme_eventAction" => 'message',
                "eme_message" => $form_result_message,
-               "eme_message_nonce" => $eme_message_nonce,
                "booking_done" => 1
                );
       } else {
@@ -82,7 +78,6 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $post_arr = stripslashes_deep($_POST);
          $post_arr['eme_eventAction'] = 'message';
          $post_arr['eme_message'] = $form_result_message;
-         $post_arr['eme_message_nonce'] = $eme_message_nonce;
       }
       $post_string=json_encode($post_arr);
       ?>
@@ -115,8 +110,6 @@ function eme_add_booking_form($event_id,$show_message=1) {
       // verify the nonce, to make sure people didn't mess with the booking id
       if (!isset($_POST['eme_payment_nonce']) || !wp_verify_nonce($_POST['eme_payment_nonce'], 'eme_payment_id'.$payment_id)) {
          return;
-      } elseif (!isset($_POST['eme_message_nonce']) || !wp_verify_nonce($_POST['eme_message_nonce'], 'eme_message'.$form_result_message)) {
-         return;
       } else {
          return eme_payment_form($event,$payment_id,$form_result_message);
       }
@@ -127,8 +120,6 @@ function eme_add_booking_form($event_id,$show_message=1) {
       // due to the double POST javascript, the eme_message is escaped again, so we need stripslashes
       // but the message may contain html, so no html sanitize
       $form_result_message = eme_translate(stripslashes_deep($_POST['eme_message']));
-      if (!isset($_POST['eme_message_nonce']) || !wp_verify_nonce($_POST['eme_message_nonce'], 'eme_message'.$form_result_message))
-         $form_result_message = "";
       if (isset($_POST['booking_done']))
          $message_is_result_of_booking=1;
    }
@@ -240,7 +231,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
          $booking_ids_done=$booking_res[1];
       }
 
-      $eme_message_nonce=wp_create_nonce('eme_message'.$form_result_message);
       $post_string="{";
       // let's decide for the first event wether or not payment is needed
       if ($booking_ids_done && eme_event_can_pay_online($events[0])) {
@@ -255,7 +245,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
                   "eme_eventAction" => 'pay_bookings',
                   "eme_message" => $form_result_message,
                   "eme_payment_id" => $payment_id,
-                  "eme_message_nonce" => $eme_message_nonce,
                   "eme_payment_nonce" => $eme_payment_nonce
                   );
          } else {
@@ -263,7 +252,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
             $post_arr = array (
                   "eme_eventAction" => 'message',
                   "eme_message" => $form_result_message,
-                  "eme_message_nonce" => $eme_message_nonce,
                   "booking_done" => 1
                   );
          }
@@ -271,7 +259,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
          $post_arr = array (
                "eme_eventAction" => 'message',
                "eme_message" => $form_result_message,
-               "eme_message_nonce" => $eme_message_nonce,
                "booking_done" => 1
                );
       } else {
@@ -279,7 +266,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
          $post_arr = stripslashes_deep($_POST);
          $post_arr['eme_eventAction'] = 'message';
          $post_arr['eme_message'] = $form_result_message;
-         $post_arr['eme_message_nonce'] = $eme_message_nonce;
       }
       $post_string=json_encode($post_arr);
       ?>
@@ -312,8 +298,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       // verify the nonce, to make sure people didn't mess with the booking id
       if (!isset($_POST['eme_payment_nonce']) || !wp_verify_nonce($_POST['eme_payment_nonce'], 'eme_payment_id'.$payment_id)) {
          return;
-      } elseif (!isset($_POST['eme_message_nonce']) || !wp_verify_nonce($_POST['eme_message_nonce'], 'eme_message'.$form_result_message)) {
-         return;
       } else {
          return eme_multipayment_form($payment_id,$form_result_message);
       }
@@ -324,8 +308,6 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       // due to the double POST javascript, the eme_message is escaped again, so we need stripslashes
       // but the message may contain html, so no html sanitize
       $form_result_message = eme_translate(stripslashes_deep($_POST['eme_message']));
-      if (!isset($_POST['eme_message_nonce']) || !wp_verify_nonce($_POST['eme_message_nonce'], 'eme_message'.$form_result_message))
-         $form_result_message="";
       if (isset($_POST['booking_done']))
          $message_is_result_of_booking=1;
    }
@@ -477,7 +459,6 @@ function eme_delete_booking_form($event_id,$show_message=1) {
       $post_arr = array (
             "eme_eventAction" => 'message',
             "eme_message" => $form_result_message,
-            "eme_message_nonce" => $eme_message_nonce
             );
       $post_string=json_encode($post_arr);
       ?>
@@ -503,8 +484,6 @@ function eme_delete_booking_form($event_id,$show_message=1) {
    }
    if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction'] == 'message' && isset($_POST['eme_message'])) {
       $form_result_message = eme_sanitize_html($_POST['eme_message']);
-      if (!isset($_POST['eme_message_nonce']) || !wp_verify_nonce($_POST['eme_message_nonce'], 'eme_message'.$form_result_message))
-         $form_result_message = "";
    }
 
    $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
