@@ -647,7 +647,10 @@ function eme_people_table($message="") {
 function eme_get_person_by_name_and_email($lastname, $firstname, $email) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
-   $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE lastname = %s AND firstname = %s AND email = %s",$lastname,$firstname,$email);
+   if (!empty($firstname))
+      $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE lastname = %s AND firstname = %s AND email = %s",$lastname,$firstname,$email);
+   else
+      $sql = $wpdb->prepare("SELECT * FROM $people_table WHERE lastname = %s AND email = %s",$lastname,$email);
    $result = $wpdb->get_row($sql, ARRAY_A);
    return $result;
 }
