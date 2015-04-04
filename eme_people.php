@@ -745,18 +745,18 @@ function eme_add_person($lastname, $firstname, $email, $wp_id, $lang) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
    $person=array();
-   $person['lastname'] = eme_sanitize_request($lastname);
-   $person['firstname'] = eme_sanitize_request($firstname);
-   $person['email'] = eme_sanitize_request($email);
-   if (isset($_POST['address1'])) $person['address1'] = eme_sanitize_request(stripslashes_deep($_POST['address1']));
-   if (isset($_POST['address2'])) $person['address2'] = eme_sanitize_request(stripslashes_deep($_POST['address2']));
-   if (isset($_POST['city'])) $person['city'] = eme_sanitize_request(stripslashes_deep($_POST['city']));
-   if (isset($_POST['state'])) $person['state'] = eme_sanitize_request(stripslashes_deep($_POST['state']));
-   if (isset($_POST['zip'])) $person['zip'] = eme_sanitize_request(stripslashes_deep($_POST['zip']));
-   if (isset($_POST['country'])) $person['country'] = eme_sanitize_request(stripslashes_deep($_POST['country']));
-   if (isset($_POST['phone'])) $person['phone'] = eme_sanitize_request(stripslashes_deep($_POST['phone']));
-   $person['wp_id'] = eme_sanitize_request($wp_id);
-   $person['lang'] = eme_sanitize_request($lang);
+   $person['lastname'] = eme_strip_tags($lastname);
+   $person['firstname'] = eme_strip_tags($firstname);
+   $person['email'] = eme_strip_tags($email);
+   if (isset($_POST['address1'])) $person['address1'] = eme_strip_tags($_POST['address1']);
+   if (isset($_POST['address2'])) $person['address2'] = eme_strip_tags($_POST['address2']);
+   if (isset($_POST['city'])) $person['city'] = eme_strip_tags($_POST['city']);
+   if (isset($_POST['state'])) $person['state'] = eme_strip_tags($_POST['state']);
+   if (isset($_POST['zip'])) $person['zip'] = eme_strip_tags($_POST['zip']);
+   if (isset($_POST['country'])) $person['country'] = eme_strip_tags($_POST['country']);
+   if (isset($_POST['phone'])) $person['phone'] = eme_strip_tags($_POST['phone']);
+   $person['wp_id'] = intval($wp_id);
+   $person['lang'] = eme_strip_tags($lang);
    $wpdb->insert($people_table,$person);
    $person_id = $wpdb->insert_id;
    return eme_get_person($person_id);
@@ -767,20 +767,20 @@ function eme_update_person_with_postinfo($person_id,$basic_info_too=0) {
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;
 
    $where = array();
-   $where['person_id'] = $person_id;
+   $where['person_id'] = intval($person_id);
    $fields = array();
-   if (isset($_POST['address1'])) $fields['address1'] = eme_sanitize_request(stripslashes_deep($_POST['address1']));
-   if (isset($_POST['address2'])) $fields['address2'] = eme_sanitize_request(stripslashes_deep($_POST['address2']));
-   if (isset($_POST['city'])) $fields['city'] = eme_sanitize_request(stripslashes_deep($_POST['city']));
-   if (isset($_POST['state'])) $fields['state'] = eme_sanitize_request(stripslashes_deep($_POST['state']));
-   if (isset($_POST['zip'])) $fields['zip'] = eme_sanitize_request(stripslashes_deep($_POST['zip']));
-   if (isset($_POST['country'])) $fields['country'] = eme_sanitize_request(stripslashes_deep($_POST['country']));
-   if (isset($_POST['phone'])) $fields['phone'] = eme_sanitize_request(stripslashes_deep($_POST['phone']));
+   if (isset($_POST['address1'])) $fields['address1'] = eme_strip_tags($_POST['address1']);
+   if (isset($_POST['address2'])) $fields['address2'] = eme_strip_tags($_POST['address2']);
+   if (isset($_POST['city'])) $fields['city'] = eme_strip_tags($_POST['city']);
+   if (isset($_POST['state'])) $fields['state'] = eme_strip_tags($_POST['state']);
+   if (isset($_POST['zip'])) $fields['zip'] = eme_strip_tags($_POST['zip']);
+   if (isset($_POST['country'])) $fields['country'] = eme_strip_tags($_POST['country']);
+   if (isset($_POST['phone'])) $fields['phone'] = eme_strip_tags($_POST['phone']);
    if ($basic_info_too) {
-      $fields['lastname'] = trim(stripslashes($_POST['lastname']));
-      $fields['firstname'] = trim(stripslashes($_POST['firstname']));
-      $fields['email'] = trim(stripslashes($_POST['email']));
-      $fields['phone'] = trim(stripslashes($_POST['phone']));
+      $fields['lastname'] = eme_strip_tags($_POST['lastname']);
+      $fields['firstname'] = eme_strip_tags($_POST['firstname']);
+      $fields['email'] = eme_strip_tags($_POST['email']);
+      $fields['phone'] = eme_strip_tags($_POST['phone']);
    }
 
    if ($wpdb->update($people_table, $fields, $where) === false)
