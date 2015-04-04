@@ -701,11 +701,6 @@ function eme_multibook_seats($events, $send_mail, $format) {
          }
       }
 
-      if (isset($_POST['phone']))
-         $bookerPhone = eme_strip_tags($_POST['phone']); 
-      else
-         $bookerPhone = "";
-
       if (isset($_POST['bookings'][$event_id]['comment']))
          $bookerComment = eme_strip_tags($_POST['bookings'][$event_id]['comment']);
       elseif (isset($_POST['comment']))
@@ -722,7 +717,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
                continue;
             } elseif (preg_match ("/PHONE/",$required_field)) {
                // PHONE regex also catches _HTML5_PHONE
-               if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
+               if (!isset($_POST['phone']) || empty($_POST['phone'])) array_push($missing_required_fields, __('Phone number','eme'));
             } elseif (preg_match ("/(ADDRESS1|ADDRESS2|CITY|STATE|ZIP|COUNTRY)/",$required_field, $matches)) {
                $fieldname=strtolower($matches[1]);
                $fieldname_ucfirst=ucfirst($fieldname);
@@ -758,21 +753,22 @@ function eme_multibook_seats($events, $send_mail, $format) {
          $bookerFirstName = $current_user->user_firstname;
          $bookerEmail = $current_user->user_email;
          $booker = eme_get_person_by_wp_id($booker_wp_id);
-      } elseif (!is_admin() && is_user_logged_in() && isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
+      } elseif (!is_admin() && is_user_logged_in() && isset($_POST['lastname']) && isset($_POST['email'])) {
          $booker_wp_id=get_current_user_id();
          $bookerLastName = eme_strip_tags($_POST['lastname']);
-         $bookerFirstName = eme_strip_tags($_POST['firstname']);
+         if (isset($_POST['firstname']))
+            $bookerFirstName = eme_strip_tags($_POST['firstname']);
          $bookerEmail = eme_strip_tags($_POST['email']);
          $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
       } elseif (isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
          // when called from the admin backend, we don't care about registration_wp_users_only
          $booker_wp_id=0;
          $bookerLastName = eme_strip_tags($_POST['lastname']);
-         $bookerFirstName = eme_strip_tags($_POST['firstname']);
+         if (isset($_POST['firstname']))
+            $bookerFirstName = eme_strip_tags($_POST['firstname']);
          $bookerEmail = eme_strip_tags($_POST['email']);
          $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
       }
-      $booker = eme_update_person_with_postinfo($booker['person_id']);
 
       if (has_filter('eme_eval_booking_filter'))
          $eval_filter_return=apply_filters('eme_eval_booking_filter',$event);
@@ -816,9 +812,10 @@ function eme_multibook_seats($events, $send_mail, $format) {
          else
             $seats_available=eme_are_seats_available_for($event_id, $bookedSeats);
          if ($seats_available) {
-            if (empty($booker)) {
+            if (empty($booker))
                $booker = eme_add_person($bookerLastName, $bookerFirstName, $bookerEmail, $booker_wp_id,$language);
-            }
+            else
+               $booker = eme_update_person_with_postinfo($booker['person_id']);
 
             // ok, just to be safe: check the person_id of the booker
             if ($booker['person_id']>0) {
@@ -965,11 +962,6 @@ function eme_book_seats($event, $send_mail) {
       }
    }
 
-   if (isset($_POST['phone']))
-      $bookerPhone = eme_strip_tags($_POST['phone']); 
-   else
-      $bookerPhone = "";
-
    if (isset($_POST['comment']))
       $bookerComment = eme_strip_tags($_POST['comment']);
    else
@@ -984,7 +976,7 @@ function eme_book_seats($event, $send_mail) {
             continue;
          } elseif (preg_match ("/PHONE/",$required_field)) {
             // PHONE regex also catches _HTML5_PHONE
-            if (empty($bookerPhone)) array_push($missing_required_fields, __('Phone number','eme'));
+            if (!isset($_POST['phone']) || empty($_POST['phone'])) array_push($missing_required_fields, __('Phone number','eme'));
          } elseif (preg_match ("/(ADDRESS1|ADDRESS2|CITY|STATE|ZIP|COUNTRY)/",$required_field, $matches)) {
             $fieldname=strtolower($matches[1]);
             $fieldname_ucfirst=ucfirst($fieldname);
@@ -1020,21 +1012,22 @@ function eme_book_seats($event, $send_mail) {
       $bookerFirstName = $current_user->user_firstname;
       $bookerEmail = $current_user->user_email;
       $booker = eme_get_person_by_wp_id($booker_wp_id);
-   } elseif (!is_admin() && is_user_logged_in() && isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
+   } elseif (!is_admin() && is_user_logged_in() && isset($_POST['lastname']) && isset($_POST['email'])) {
       $booker_wp_id=get_current_user_id();
       $bookerLastName = eme_strip_tags($_POST['lastname']);
-      $bookerFirstName = eme_strip_tags($_POST['firstname']);
+      if (isset($_POST['firstname']))
+         $bookerFirstName = eme_strip_tags($_POST['firstname']);
       $bookerEmail = eme_strip_tags($_POST['email']);
       $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
-   } elseif (isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
+   } elseif (isset($_POST['lastname']) && isset($_POST['email'])) {
       // when called from the admin backend, we don't care about registration_wp_users_only
       $booker_wp_id=0;
       $bookerLastName = eme_strip_tags($_POST['lastname']);
-      $bookerFirstName = eme_strip_tags($_POST['firstname']);
+      if (isset($_POST['firstname']))
+         $bookerFirstName = eme_strip_tags($_POST['firstname']);
       $bookerEmail = eme_strip_tags($_POST['email']);
       $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
    }
-   $booker = eme_update_person_with_postinfo($booker['person_id']);
    
    if (has_filter('eme_eval_booking_filter'))
       $eval_filter_return=apply_filters('eme_eval_booking_filter',$event);
@@ -1078,9 +1071,10 @@ function eme_book_seats($event, $send_mail) {
       else
          $seats_available=eme_are_seats_available_for($event_id, $bookedSeats);
       if ($seats_available) {
-         if (empty($booker)) {
+         if (empty($booker))
             $booker = eme_add_person($bookerLastName, $bookerFirstName, $bookerEmail, $booker_wp_id,$language);
-         }
+         else
+            $booker = eme_update_person_with_postinfo($booker['person_id']);
 
          // ok, just to be safe: check the person_id of the booker
          if ($booker['person_id']>0) {
@@ -2676,6 +2670,7 @@ function eme_registration_seats_form_table($pending=0) {
 <script type="text/javascript">
    jQuery(document).ready( function() {
          jQuery('#<?php print "$table_id";?>').dataTable( {
+            "dom": 'CT<"clear">Rlfrtip',
             <?php
             // jquery datatables locale loading
             $locale_code = get_locale();
@@ -2709,7 +2704,16 @@ function eme_registration_seats_form_table($pending=0) {
             "columnDefs": [
                { "sortable": false, "targets": 0 },
                { "visible": false, "targets": 1 }
-            ]
+            ],
+            "colVis": {
+               "exclude": [0,1]
+            },
+            "tableTools": {
+               "aButtons": [ { "sExtends": "csv", "mColumns": "visible"},
+                             "print"
+                           ],
+               "sSwfPath": "<?php echo EME_PLUGIN_URL;?>js/jquery-datatables/extensions/TableTools-2.2.4-dev/swf/copy_csv_xls.swf"
+            }
          } );
    } );
 </script>
