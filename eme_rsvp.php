@@ -1020,17 +1020,19 @@ function eme_book_seats($event, $send_mail) {
       $bookerFirstName = $current_user->user_firstname;
       $bookerEmail = $current_user->user_email;
       $booker = eme_get_person_by_wp_id($booker_wp_id);
-   } elseif (!is_admin() && is_user_logged_in() && isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
+   } elseif (!is_admin() && is_user_logged_in() && isset($_POST['lastname']) && isset($_POST['email'])) {
       $booker_wp_id=get_current_user_id();
       $bookerLastName = eme_strip_tags($_POST['lastname']);
-      $bookerFirstName = eme_strip_tags($_POST['firstname']);
+      if (isset($_POST['firstname']))
+         $bookerFirstName = eme_strip_tags($_POST['firstname']);
       $bookerEmail = eme_strip_tags($_POST['email']);
       $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
-   } elseif (isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
+   } elseif (isset($_POST['lastname']) && isset($_POST['email'])) {
       // when called from the admin backend, we don't care about registration_wp_users_only
       $booker_wp_id=0;
       $bookerLastName = eme_strip_tags($_POST['lastname']);
-      $bookerFirstName = eme_strip_tags($_POST['firstname']);
+      if (isset($_POST['firstname']))
+         $bookerFirstName = eme_strip_tags($_POST['firstname']);
       $bookerEmail = eme_strip_tags($_POST['email']);
       $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
    }

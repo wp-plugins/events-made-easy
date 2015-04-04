@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.30 =
+* Bugfix: don't make firstname required when submitting, to preserver backward compatibility
+
 = 1.5.29 =
 * Feature: allow 2Checkout sandbox/test/live modes
 * Feature: added Sage Pay payment gateway
