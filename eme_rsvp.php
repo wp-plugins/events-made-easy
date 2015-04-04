@@ -599,9 +599,12 @@ function eme_cancel_seats($event) {
       $bookerFirstName = $current_user->user_firstname;
       $bookerEmail = $current_user->user_email;
       $booker = eme_get_person_by_wp_id($booker_wp_id);
-   } elseif (isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
+   } elseif (isset($_POST['lastname']) && isset($_POST['email'])) {
       $bookerLastName = eme_strip_tags($_POST['lastname']);
-      $bookerFirstName = eme_strip_tags($_POST['firstname']);
+      if (isset($_POST['firstname']))
+         $bookerFirstName = eme_strip_tags($_POST['firstname']);
+      else
+         $bookerFirstName = "";
       $bookerEmail = eme_strip_tags($_POST['email']);
       $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
    }
