@@ -781,12 +781,12 @@ function eme_update_person_with_postinfo($person_id,$basic_info_too=0) {
    if (isset($_POST['phone'])) $fields['phone'] = eme_strip_tags($_POST['phone']);
    if ($basic_info_too) {
       $fields['lastname'] = eme_strip_tags($_POST['lastname']);
-      $fields['firstname'] = eme_strip_tags($_POST['firstname']);
       $fields['email'] = eme_strip_tags($_POST['email']);
-      $fields['phone'] = eme_strip_tags($_POST['phone']);
+      if (isset($_POST['firstname'])) $fields['firstname'] = eme_strip_tags($_POST['firstname']);
    }
 
-   if ($wpdb->update($people_table, $fields, $where) === false)
+   // take into account that $fields can be empty too (if $basic_info_too=0 and the other fields are not set)
+   if (!empty($fields) && $wpdb->update($people_table, $fields, $where) === false)
       return false;
    else
       return eme_get_person($person_id);
