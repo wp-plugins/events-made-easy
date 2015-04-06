@@ -2197,15 +2197,6 @@ function eme_events_table($message="",$scope="future") {
                "sSwfPath": "<?php echo EME_PLUGIN_URL;?>js/jquery-datatables/extensions/TableTools-2.2.4-dev/swf/copy_csv_xls.swf"
             }
          } );
-
-         jQuery('form').on('click','input:submit[name=doaction2]',function() {
-             if (jQuery('select[name=eme_admin_action]').val() == "deleteEvents" ||
-                 jQuery('select[name=eme_admin_action]').val() == "deleteRecurrence") {
-               return window.confirm(this.title || 'Do you really want to delete these events?');
-             } else {
-               return true;
-             }
-         });
    } );
    </script>
 
