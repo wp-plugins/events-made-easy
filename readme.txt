@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.34 =
 * Bugfix: make #_FIELDVALUE actually work ..
+* Bugfix: show the user display name as lastname if the lastname is empty for a user in forms
 
 = 1.5.33 =
 * Bugfix: in a borderline case new reservations were not possible
