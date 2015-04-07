@@ -2081,7 +2081,16 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
       } elseif (preg_match('/#_FIELDVALUE\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[1]);
          $formfield = eme_get_formfield_byid($field_id);
-         $replacement = eme_convert_array2multi($answers);
+         foreach ($answers as $answer) {
+            if ($answer['field_name'] == $formfield['field_name']) {
+               if (is_array($answer['answer']))
+                  $tmp_answer=eme_convert_array2multi($answer['answer']);
+               else
+                  $tmp_answer=$answer['answer'];
+               $field_replace=$tmp_answer;
+            }
+         }
+         $replacement = eme_trans_sanitize_html($field_replace,$lang);
          if ($target == "html")
             $replacement = apply_filters('eme_general', $replacement); 
          else 

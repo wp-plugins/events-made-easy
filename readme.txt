@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.34 =
+* Bugfix: make #_FIELDVALUE actually work ..
+
 = 1.5.33 =
 * Bugfix: in a borderline case new reservations were not possible
 
