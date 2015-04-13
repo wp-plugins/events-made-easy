@@ -432,7 +432,7 @@ function eme_locations_table_layout($message = "") {
                            <th><?php _e('Name', 'eme') ?></th>
                            <th><?php _e('Address', 'eme') ?></th>
                            <th><?php _e('Town', 'eme') ?></th>
-                           <th></th>
+                           <th><?php _e('Copy', 'eme') ?></th>
                         </tr>
                      </tfoot>
                      <tbody>
@@ -440,10 +440,10 @@ function eme_locations_table_layout($message = "") {
                         <tr>
                            <td><input type="checkbox" class ="row-selector" value="<?php echo $this_location['location_id']; ?>" name="locations[]" /></td>
                            <td><?php echo $this_location['location_id']; ?></td>
-                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$this_location['location_id']); ?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$this_location['location_id']); ?>" title="<?php _e('Edit location','eme');?>"><?php echo eme_trans_sanitize_html($this_location['location_name']); ?></a></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_address']); ?></td>
                            <td><?php echo eme_trans_sanitize_html($this_location['location_town']); ?></td>
-                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=copy_location&amp;location_id=".$this_location['location_id']); ?>" title="<?php _e('Duplicate this location','eme'); ?>">+</a></td>
+                           <td><a href="<?php echo admin_url("admin.php?page=eme-locations&amp;eme_admin_action=copy_location&amp;location_id=".$this_location['location_id']); ?>" title="<?php _e('Duplicate this location','eme'); ?>"><img src='<?php echo EME_PLUGIN_URL."images/copy_16.png";?>'/></a></td>
                         </tr>
                         <?php endforeach; ?>
                      </tbody>

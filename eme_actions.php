@@ -176,6 +176,9 @@ function eme_admin_register_scripts() {
    wp_register_script( 'eme-jquery-timeentry', EME_PLUGIN_URL.'js/timeentry/jquery.timeentry.js', array('jquery','eme-jquery-plugin','eme-jquery-mousewheel'));
    wp_register_script( 'eme-jquery-datatables', EME_PLUGIN_URL."js/jquery-datatables/js/jquery.dataTables.min.js",array( 'jquery' ));
    wp_register_script( 'eme-datatables-clearsearch', EME_PLUGIN_URL."js/jquery-datatables/plugins/datatables_clearsearch.js");
+   wp_register_script( 'eme-datatables-colvis', EME_PLUGIN_URL."js/jquery-datatables/extensions/ColVis-1.1.1/js/dataTables.colVis.min.js");
+   wp_register_script( 'eme-datatables-colreorder', EME_PLUGIN_URL."js/jquery-datatables/extensions/ColReorder-1.1.3-dev/js/dataTables.colReorder.js");
+   wp_register_script( 'eme-datatables-tabletools', EME_PLUGIN_URL."js/jquery-datatables/extensions/TableTools-2.2.4-dev/js/dataTables.tableTools.js");
    wp_register_script( 'eme-google-maps', '//maps.google.com/maps/api/js?v=3.1&sensor=false');
    wp_register_script( 'eme', EME_PLUGIN_URL.'js/eme.js', array('jquery'));
    wp_register_script( 'eme-events', EME_PLUGIN_URL.'js/eme_admin_events.js',array( 'jquery' ));
