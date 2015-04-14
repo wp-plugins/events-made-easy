@@ -2113,9 +2113,9 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
          if ($template && $is_multibooking) {
             // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
             foreach ($bookings as $tmp_booking) {
-               $tmp_event=eme_get_event_by_booking_id($tmp_booking['booking_id']);
-               $tmp_res= eme_replace_placeholders($template, $tmp_event, "text", 0);
-               $res.= eme_replace_booking_placeholders($tmp_res,$tmp_event,$is_multibooking, $tmp_booking,"text")."\n";
+               $tmp_event = eme_get_event_by_booking_id($tmp_booking['booking_id']);
+               $tmp_res = eme_replace_placeholders($template, $tmp_event, "text", 0);
+               $res .= eme_replace_booking_placeholders($tmp_res,$tmp_event,$tmp_booking,$is_multibooking,"text")."\n";
             }
          }
          $replacement = $res;
