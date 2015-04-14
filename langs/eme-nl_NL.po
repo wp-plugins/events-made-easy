@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Events Made Easy v1.1.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/events-made-easy\n"
 "POT-Creation-Date: 2015-02-22 08:50:44+00:00\n"
-"PO-Revision-Date: 2015-02-23 23:58+0100\n"
+"PO-Revision-Date: 2015-04-07 00:52+0100\n"
 "Last-Translator: Franky Van Liedekerke <liedekef@telenet.be>\n"
 "Language-Team: Nederlandse Vertaling\n"
 "MIME-Version: 1.0\n"
@@ -52,12 +52,12 @@ msgstr "Waarde"
 # @ eme
 #: eme_attributes.php:71
 msgid "Add new tag"
-msgstr "Voeg nieuwe tag toe"
+msgstr "Voeg nieuw tag toe"
 
 # @ eme
 #: eme_attributes.php:85
 msgid "Not defined in templates"
-msgstr "Niet in sjablonen gedefineerd"
+msgstr "Niet in templates gedefineerd"
 
 # @ eme
 #: eme_attributes.php:96 eme_attributes.php:117
@@ -71,7 +71,7 @@ msgid ""
 "otherwise they'll never show. Go to Events > Settings to add attribute "
 "placeholders."
 msgstr ""
-"Om attributen gebruiken, moet je een aantal definiëren in je sjablonen, "
+"Om attributen gebruiken, moet je een aantal definiëren in je templates, "
 "anders zullen ze niet zichtbaar zijn. Ga naar Evenementen > Instellingen om "
 "het attribuut placeholder toe te voegen."
 
@@ -266,7 +266,7 @@ msgstr "Evenement(en) ingesteld als concept!"
 # @ eme
 #: eme_events.php:172 eme_events.php:192
 msgid "Event(s) deleted!"
-msgstr "Event(s) verwijderd!"
+msgstr "Evenement(en) verwijderd!"
 
 # @ eme
 #: eme_events.php:174 eme_events.php:194
@@ -462,7 +462,7 @@ msgstr "Komende evenementen"
 # @ eme
 #: eme_events.php:1996
 msgid "New Event ..."
-msgstr "Nieuw Event ..."
+msgstr "Nieuw Evenement ..."
 
 # @ eme
 #: eme_events.php:2019 eme_events.php:2364
@@ -563,7 +563,7 @@ msgstr "CSV export"
 # @ eme
 #: eme_events.php:2142
 msgid "Preview event"
-msgstr "Event bekijken"
+msgstr "Evenement bekijken"
 
 # @ eme
 #: eme_events.php:2144
@@ -810,7 +810,7 @@ msgstr "Contact"
 # @ eme
 #: eme_events.php:2486 eme_options.php:585
 msgid "Event author"
-msgstr "Event auteur"
+msgstr "Evenement auteur"
 
 #: eme_events.php:2490
 msgid ""
@@ -2411,7 +2411,7 @@ msgstr ""
 # @ eme
 #: eme_options.php:444
 msgid "Events permalink prefix"
-msgstr "Events permalink prefix"
+msgstr "Evenementen permalink prefix"
 
 # @ eme
 #: eme_options.php:444
@@ -2455,7 +2455,7 @@ msgstr "Rechten benodigd om een nieuw evenement toe te voegen. Standaard: %s"
 # @ eme
 #: eme_options.php:459
 msgid "Author event"
-msgstr "Auteur Event"
+msgstr "Auteur Evenement"
 
 # @ eme
 #: eme_options.php:459
@@ -2631,7 +2631,7 @@ msgstr "Rechten benodigd om instellingen te bewerken. Standaard: %s"
 # @ default
 #: eme_options.php:484 eme_options.php:487 events-manager.php:2205
 msgid "Events page"
-msgstr "Event pagina"
+msgstr "Evenementen pagina"
 
 # @ eme
 #: eme_options.php:487
@@ -5039,7 +5039,7 @@ msgstr "Voeg een registratie voor een evenement toe."
 # @ eme
 #: eme_rsvp.php:2409
 msgid "Event"
-msgstr "Event"
+msgstr "Evenement"
 
 # @ eme
 #: eme_rsvp.php:2424
@@ -5223,7 +5223,7 @@ msgstr "Je kunt alle hier genoemde placeholders gebruiken:"
 # @ eme
 #: eme_rsvp.php:2843
 msgid "Event placeholders"
-msgstr "Event placeholders"
+msgstr "Evenement placeholders"
 
 # @ eme
 #: eme_rsvp.php:2844
@@ -5397,7 +5397,6 @@ msgstr "Doorlopende evenementen tonen?"
 msgid "Show Recurrent Events Only Once?"
 msgstr "Toon weerkerende evenementen slechts 1 keer?"
 
-# @ eme
 #: eme_widgets.php:167
 msgid "List header format<br />(if empty &lt;ul&gt; is used)"
 msgstr ""
@@ -5464,12 +5463,12 @@ msgstr "Bewerken"
 # @ eme
 #: events-manager.php:1039
 msgid "Add new"
-msgstr "Voeg nieuwe toe"
+msgstr "Nieuw evenement"
 
 # @ eme
 #: events-manager.php:1044
 msgid "Event Categories"
-msgstr "Event Categorieën"
+msgstr "Evenement Categorieën"
 
 # @ eme
 #: events-manager.php:1048
