@@ -78,6 +78,22 @@ function eme_get_contact($event) {
    return $userinfo;
 }
 
+function eme_get_author($event) {
+   $author_id = $event['event_author'];
+   if ($author_id < 1) {
+      if (function_exists('is_multisite') && is_multisite()) {
+         $thisblog = get_current_blog_id();
+         $userinfo = get_user_by('email', get_blog_option($thisblog, 'admin_email'));
+      } else {
+         $userinfo = get_user_by('email', get_option('admin_email'));
+      }
+      #$contact_id = get_current_user_id();
+   } else {
+      $userinfo=get_userdata($author_id);
+   }
+   return $userinfo;
+}
+
 function eme_get_user_phone($user_id) {
    return get_user_meta($user_id, 'eme_phone',true);
 }

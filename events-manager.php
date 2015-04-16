@@ -1745,6 +1745,49 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
+      } elseif ($event && preg_match('/#_AUTHORNAME/', $result)) {
+         $author = eme_get_author($event);
+         if ($author)
+            $replacement = $author->display_name;
+         $replacement = eme_trans_sanitize_html($replacement,$lang);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
+      } elseif ($event && preg_match('/#_AUTHOREMAIL/', $result)) {
+         $author = eme_get_author($event);
+         if ($author) {
+            $replacement = $author->user_email;
+            if ($target == "html") {
+               // ascii encode for primitive harvesting protection ...
+               $replacement = eme_ascii_encode($replacement);
+               $replacement = apply_filters('eme_general', $replacement); 
+            } elseif ($target == "rss")  {
+               $replacement = apply_filters('eme_general_rss', $replacement);
+            } else {
+               $replacement = apply_filters('eme_text', $replacement);
+            }
+         }
+
+      } elseif ($event && preg_match('/#_AUTHORPHONE/', $result)) {
+         $author = eme_get_author($event);
+         if ($author) {
+            $phone = eme_get_user_phone($author->ID);
+            // ascii encode for primitive harvesting protection ...
+            $replacement=eme_ascii_encode($phone);
+         }
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
       } elseif ($event && preg_match('/#[A-Za-z]$/', $result)) {
          // matches all PHP date placeholders for startdate-time
          $replacement=eme_localised_date($event['event_start_date']." ".$event['event_start_time'],ltrim($result,"#"));
