@@ -1788,6 +1788,15 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
+      } elseif (preg_match('/#_EVENTCREATIONDATE/', $result)) {
+         $replacement = eme_localised_date($event['creation_date']);
+      } elseif (preg_match('/#_EVENTMODIFDATE/', $result)) {
+         $replacement = eme_localised_date($event['modif_date']);
+      } elseif (preg_match('/#_EVENTCREATIONTIME/', $result)) {
+         $replacement = eme_localised_time($event['creation_date']);
+      } elseif (preg_match('/#_EVENTMODIFTIME/', $result)) {
+         $replacement = eme_localised_time($event['modif_date']);
+
       } elseif ($event && preg_match('/#[A-Za-z]$/', $result)) {
          // matches all PHP date placeholders for startdate-time
          $replacement=eme_localised_date($event['event_start_date']." ".$event['event_start_time'],ltrim($result,"#"));

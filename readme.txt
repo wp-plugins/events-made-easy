@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.36 =
 * Feature: added event placeholders #_AUTHORNAME, #_AUTHOREMAIL and #_AUTHORPHONE
+* Feature: added event placeholders #_EVENTCREATIONDATE, #_EVENTMODIFDATE, #_EVENTCREATIONTIME, #_EVENTMODIFTIME
 
 = 1.5.35 =
 * Bugfix: RSVP placeholders in multibooking mails were not being correctly replaced
