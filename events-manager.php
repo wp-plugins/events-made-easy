@@ -99,7 +99,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 78);
+define('EME_DB_VERSION', 79);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -887,12 +887,14 @@ function eme_create_categories_table($charset,$collate) {
       $sql = "CREATE TABLE ".$table_name." (
          category_id int(11) NOT NULL auto_increment,
          category_name tinytext NOT NULL,
+         description text DEFAULT NULL,
          category_slug text default NULL,
          UNIQUE KEY  (category_id)
          ) $charset $collate;";
       maybe_create_table($table_name,$sql);
    } else {
       maybe_add_column($table_name, 'category_slug', "alter table $table_name add category_slug text DEFAULT NULL;"); 
+      maybe_add_column($table_name, 'description', "alter table $table_name add description text DEFAULT NULL;"); 
       if ($db_version<66) {
          $categories = $wpdb->get_results("SELECT * FROM $table_name", ARRAY_A);
          foreach ($categories as $this_category) {
@@ -1826,6 +1828,20 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif ($event && preg_match('/#_(EVENT)?CATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_category_names($event['event_id']);
+         if ($target == "html") {
+            $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = eme_translate(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = eme_translate(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
+
+      } elseif ($event && preg_match('/#_EVENTCATEGORYDESCRIPTIONS$/', $result) && get_option('eme_categories_enabled')) {
+         $categories = eme_get_event_category_descriptions($event['event_id']);
          if ($target == "html") {
             $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement); 

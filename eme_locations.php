@@ -1264,7 +1264,18 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          }
 
       } elseif (preg_match('/#_CATEGORIES|#_LOCATIONCATEGORIES/', $result) && get_option('eme_categories_enabled')) {
-         $categories = eme_get_location_categories($location['location_id']);
+         $categories = eme_get_location_category_names($location['location_id']);
+         $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
+      } elseif (preg_match('/#_LOCATIONCATEGORYDESCRIPTIONS/', $result) && get_option('eme_categories_enabled')) {
+         $categories = eme_get_location_category_descriptions($location['location_id']);
          $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);

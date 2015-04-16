@@ -24,6 +24,7 @@ function eme_categories_page() {
          // category update required  
          $category = array();
          $category['category_name'] = trim(stripslashes($_POST['category_name']));
+         $category['description'] = trim(stripslashes($_POST['description']));
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->update( $categories_table, $category, array('category_id' => intval($_POST['category_id'])) );
          if ($validation_result !== false && !empty($validation_result) ) {
@@ -35,6 +36,7 @@ function eme_categories_page() {
          // Add a new category
          $category = array();
          $category['category_name'] = trim(stripslashes($_POST['category_name']));
+         $category['description'] = trim(stripslashes($_POST['description']));
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->insert($categories_table, $category);
          if ($validation_result !== false && !empty($validation_result) ) {
@@ -151,6 +153,8 @@ EOT;
                            <label for='category_name'>".__('Category name', 'eme')."</label>
                            <input name='category_name' id='category_name' type='text' value='' size='40' />
                             <p>".__('The name of the category', 'eme').".</p>
+                            <label for='description'>".__('Category description', 'eme')."</label>
+                            <textarea name='description' id='description' rows='5' /></textarea>
                          </div>
                          <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Add category', 'eme')."' /></p>
                       </form>
@@ -193,6 +197,11 @@ function eme_categories_edit_layout($message = "") {
                <th scope='row' valign='top'><label for='category_name'>".__('Category name', 'eme')."</label></th>
                <td><input name='category_name' id='category_name' type='text' value='".eme_sanitize_html($category['category_name'])."' size='40' /><br />
                  ".__('The name of the category', 'eme')."</td>
+            </tr>
+            <tr class='form-field form-required'>
+               <th scope='row' valign='top'><label for='description'>".__('Category description', 'eme')."</label></th>
+               <td><textarea name='description' id='description' rows='5' />".eme_sanitize_html($category['description'])."</textarea><br />
+                 ".__('The description of the category', 'eme')."</td>
             </tr>
          </table>
       <p class='submit'><input type='submit' class='button-primary' name='submit' value='".__('Update category', 'eme')."' /></p>
@@ -253,6 +262,16 @@ function eme_get_event_category_names($event_id,$extra_conditions="") {
    return $wpdb->get_col($sql);
 }
 
+function eme_get_event_category_descriptions($event_id,$extra_conditions="") { 
+   global $wpdb;
+   $event_table = $wpdb->prefix.EVENTS_TBNAME; 
+   $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
+   if ($extra_conditions !="")
+      $extra_conditions = " AND ($extra_conditions)";
+   $sql = $wpdb->prepare("SELECT description FROM $categories_table, $event_table where event_id = %d AND FIND_IN_SET(category_id,event_category_ids) $extra_conditions",$event_id);
+   return $wpdb->get_col($sql);
+}
+
 function eme_get_event_categories($event_id,$extra_conditions="") { 
    global $wpdb;
    $event_table = $wpdb->prefix.EVENTS_TBNAME; 
@@ -276,11 +295,19 @@ function eme_get_category_eventids($category_id,$future=0) {
    return $wpdb->get_col($sql);
 }
 
-function eme_get_location_categories($location_id) { 
+function eme_get_location_category_names($location_id) { 
    global $wpdb;
    $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
    $sql = $wpdb->prepare("SELECT category_name FROM $categories_table, $locations_table where location_id = %d AND FIND_IN_SET(category_id,location_category_ids)",$location_id);
+   return $wpdb->get_col($sql);
+}
+
+function eme_get_location_category_descriptions($location_id) { 
+   global $wpdb;
+   $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
+   $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
+   $sql = $wpdb->prepare("SELECT description FROM $categories_table, $locations_table where location_id = %d AND FIND_IN_SET(category_id,location_category_ids)",$location_id);
    return $wpdb->get_col($sql);
 }
 
