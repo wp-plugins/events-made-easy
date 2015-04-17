@@ -71,6 +71,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added event placeholders #_AUTHORNAME, #_AUTHOREMAIL and #_AUTHORPHONE
 * Feature: added event placeholders #_EVENTCREATIONDATE, #_EVENTMODIFDATE, #_EVENTCREATIONTIME, #_EVENTMODIFTIME
 * Feature: added description for categories, together with placeholders #_EVENTCATEGORYDESCRIPTIONS and #_LOCATIONCATEGORYDESCRIPTIONS
+* Feature: added option "approval_status" to shortcode eme_mybookings. Values: 0=all, 1=approved, 2=pending. Default: 0
 
 = 1.5.35 =
 * Bugfix: RSVP placeholders in multibooking mails were not being correctly replaced

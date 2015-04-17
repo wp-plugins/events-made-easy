@@ -406,12 +406,12 @@ function eme_booking_list_shortcode($atts) {
 }
 
 function eme_mybooking_list_shortcode($atts) {
-   extract ( shortcode_atts ( array ('template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0,'future'=>1), $atts));
+   extract ( shortcode_atts ( array ('template_id'=>0,'template_id_header'=>0,'template_id_footer'=>0,'future'=>1,'approval_status'=>0), $atts));
    if (is_user_logged_in()) {
 	$booker_wp_id=get_current_user_id();
 	$person=eme_get_person_by_wp_id($booker_wp_id);
 	if ($person)
-		return eme_get_bookings_list_for_person($person,$future,'',$template_id,$template_id_header,$template_id_footer);
+		return eme_get_bookings_list_for_person($person,$future,'',$template_id,$template_id_header,$template_id_footer,$approval_status);
    }
 }
 
@@ -1136,14 +1136,17 @@ function eme_get_event_price($event_id) {
    return $result;
    }
 
-function eme_get_bookings_by_person_id($person_id,$future) {
+function eme_get_bookings_by_person_id($person_id,$future,$approval_status=0) {
    global $wpdb; 
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    if ($future) {
       $today = date("Y-m-d");
       $this_time = date("H:i:00");
-	   $sql= $wpdb->prepare("select bookings.* from $bookings_table as bookings,$events_table as events where person_id = %d AND bookings.event_id=events.event_id AND CONCAT(events.event_start_date,' ',events.event_start_time)>'$today $this_time'",$person_id);
+      if ($approval_status==1) $extra_condition="bookings.approved=1 AND ";
+      elseif ($approval_status==2) $extra_condition="bookings.approved=0 AND ";
+      else $extra_condition="";
+	   $sql= $wpdb->prepare("select bookings.* from $bookings_table as bookings,$events_table as events where $extra_condition person_id = %d AND bookings.event_id=events.event_id AND CONCAT(events.event_start_date,' ',events.event_start_time)>'$today $this_time'",$person_id);
    } else {
 	   $sql = $wpdb->prepare("SELECT * FROM $bookings_table WHERE person_id = %d",$person_id);
    }
@@ -1885,8 +1888,8 @@ function eme_get_bookings_list_for_event($event,$template_id=0,$template_id_head
    return $res;
 }
 
-function eme_get_bookings_list_for_person($person,$future=0,$template="",$template_id=0,$template_id_header=0,$template_id_footer=0) {
-   $bookings=eme_get_bookings_by_person_id($person['person_id'], $future);
+function eme_get_bookings_list_for_person($person,$future=0,$template="",$template_id=0,$template_id_header=0,$template_id_footer=0,$approval_status=0) {
+   $bookings=eme_get_bookings_by_person_id($person['person_id'], $future,$approval_status);
 
    if ($template) {
       $format=$template;
