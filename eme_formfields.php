@@ -521,7 +521,10 @@ function eme_replace_cancelformfields_placeholders ($event) {
          // #_NAME is always required
          $required=1;
       } elseif (preg_match('/#_FIRSTNAME/', $result)) {
-         $replacement = "<input required='required' type='text' name='firstname' id='firstname' value='$bookerFirstName' $readonly />";
+         if (!empty($bookerFirstName))
+            $replacement = "<input required='required' type='text' name='firstname' id='firstname' value='$bookerFirstName' $readonly />";
+         else
+            $replacement = "<input required='required' type='text' name='firstname' id='firstname' value='$bookerFirstName' />";
       } elseif (preg_match('/#_HTML5_EMAIL/', $result)) {
          $replacement = "<input required='required' type='email' name='email' id='email' value='$bookerEmail' $readonly />";
          $required_fields_count++;
@@ -1021,7 +1024,10 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
             $required=1;
          }
       } elseif (preg_match('/#_FIRSTNAME/', $result)) {
-         $replacement = "<input required='required' type='text' name='${var_prefix}firstname${var_postfix}' value='$bookerFirstName' $readonly />";
+         if (!empty($bookerFirstName))
+            $replacement = "<input required='required' type='text' name='${var_prefix}firstname${var_postfix}' value='$bookerFirstName' $readonly />";
+         else
+            $replacement = "<input required='required' type='text' name='${var_prefix}firstname${var_postfix}' value='$bookerFirstName' />";
       } elseif (preg_match('/#_ADDRESS1/', $result)) {
          $replacement = "<input $required_att type='text' name='${var_prefix}address1${var_postfix}' value='$bookerAddress1' />";
       } elseif (preg_match('/#_ADDRESS2/', $result)) {
