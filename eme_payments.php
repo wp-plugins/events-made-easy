@@ -677,6 +677,7 @@ function eme_create_payment($booking_ids) {
    $payment_id = false;
    $payment=array();
    $payment['booking_ids']=$booking_ids;
+   $payment['random_id']=eme_payment_random_id();
    $payment['creation_date_gmt']=current_time('mysql', true);
    if ($wpdb->insert($payments_table,$payment)) {
       $payment_id = $wpdb->insert_id;
@@ -765,4 +766,9 @@ function eme_replace_payment_provider_placeholders($format, $charge, $currency, 
 
    return do_shortcode($format);
 }
+
+function eme_payment_random_id() {
+   return uniqid() . '_' . md5(mt_rand());
+}
+
 ?>

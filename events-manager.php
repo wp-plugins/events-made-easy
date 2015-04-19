@@ -99,7 +99,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 79);
+define('EME_DB_VERSION', 80);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -972,8 +972,8 @@ function eme_create_formfields_table($charset,$collate) {
       }
       if ($db_version<44) {
          $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (5,'RadioBox (Vertical)')");
-	 $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (6,'CheckBox')");
-	 $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (7,'CheckBox (Vertical)')");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (6,'CheckBox')");
+         $wpdb->query("INSERT INTO ".$table_name." (type_id,type_info) VALUES (7,'CheckBox (Vertical)')");
       }
       if ($db_version<54) {
          maybe_add_column($table_name, 'is_multi', "ALTER TABLE $table_name add is_multi int(1) DEFAULT 0;"); 
@@ -1020,9 +1020,19 @@ function eme_create_payments_table($charset,$collate) {
          id int(11) NOT NULL auto_increment,
          creation_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00', 
          booking_ids text NOT NULL,
+         random_id tinytext NOT NULL,
          UNIQUE KEY  (id)
          ) $charset $collate;";
       maybe_create_table($table_name,$sql);
+   } else {
+      if ($db_version<80) {
+         $payment_ids = $wpdb->get_col("SELECT id FROM $table_name");
+         foreach ($payment_ids as $payment_id) {
+            $random_id=eme_payment_random_id();
+            $sql = $wpdb->prepare("UPDATE $table_name SET random_id = %s WHERE id = %d",$random_id,$payment_id);
+            $wpdb->query($sql);
+         }
+      }
    }
 }
 
