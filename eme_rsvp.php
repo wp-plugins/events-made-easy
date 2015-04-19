@@ -592,9 +592,11 @@ function eme_cancel_seats($event) {
       $booking_ids=eme_get_booking_ids_by_person_event_id($person_id,$event_id);
       if (!empty($booking_ids)) {
          foreach ($booking_ids as $booking_id) {
+            // first get the booking details, then delete it and then send the mail
+            // the mail needs to be sent after the deletion, otherwise the count of free spaces is wrong
             $booking = eme_get_booking ($booking_id);
-            eme_email_rsvp_booking($booking,"cancelRegistration");
             eme_delete_booking($booking_id);
+            eme_email_rsvp_booking($booking,"cancelRegistration");
          }
          $result = __('Booking deleted', 'eme');
       } else {
@@ -2037,12 +2039,12 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
          if ($payment_id && eme_event_can_pay_online($event))
             $replacement = eme_payment_url($payment_id);
       } elseif (preg_match('/#_CANCEL_LINK$/', $result)) {
-	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
-		 $url = eme_cancel_booking_url($booking['booking_id']);
-	 $replacement="<a href='$url'>".__('Cancel booking','eme')."</a>";
+         if (is_user_logged_in() && $booking['wp_id']==$current_userid)
+            $url = eme_cancel_booking_url($booking['booking_id']);
+         $replacement="<a href='$url'>".__('Cancel booking','eme')."</a>";
       } elseif (preg_match('/#_CANCEL_URL$/', $result)) {
-	 if (is_user_logged_in() && $booking['wp_id']==$current_userid)
-		 $replacement = eme_cancel_booking_url($booking['booking_id']);
+         if (is_user_logged_in() && $booking['wp_id']==$current_userid)
+            $replacement = eme_cancel_booking_url($booking['booking_id']);
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {
