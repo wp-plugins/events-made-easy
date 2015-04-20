@@ -859,16 +859,16 @@ function eme_people_search_ajax() {
    }
    foreach($persons as $item) {
       $record = array();
-      $record['lastname']    = eme_trans_sanitize_html($item['lastname']); 
-      $record['firstname']    = eme_trans_sanitize_html($item['firstname']); 
-      $record['address1']    = eme_trans_sanitize_html($item['address1']); 
-      $record['address2']    = eme_trans_sanitize_html($item['address2']); 
-      $record['city']    = eme_trans_sanitize_html($item['city']); 
-      $record['state']    = eme_trans_sanitize_html($item['state']); 
-      $record['zip']    = eme_trans_sanitize_html($item['zip']); 
-      $record['country']    = eme_trans_sanitize_html($item['country']); 
-      $record['email'] = eme_trans_sanitize_html($item['email']);
-      $record['phone']    = eme_trans_sanitize_html($item['phone']); 
+      $record['lastname']  = eme_trans_sanitize_html($item['lastname']); 
+      $record['firstname'] = eme_trans_sanitize_html($item['firstname']); 
+      $record['address1']  = eme_trans_sanitize_html($item['address1']); 
+      $record['address2']  = eme_trans_sanitize_html($item['address2']); 
+      $record['city']      = eme_trans_sanitize_html($item['city']); 
+      $record['state']     = eme_trans_sanitize_html($item['state']); 
+      $record['zip']       = eme_trans_sanitize_html($item['zip']); 
+      $record['country']   = eme_trans_sanitize_html($item['country']); 
+      $record['email']     = eme_trans_sanitize_html($item['email']);
+      $record['phone']     = eme_trans_sanitize_html($item['phone']); 
       $return[]  = $record;
    }
 
