@@ -307,7 +307,7 @@ function eme_category_url($category) {
    return $the_link;
 }
 
-function eme_payment_return_url($event,$payment_id,$resultcode) {
+function eme_payment_return_url($event,$payment,$resultcode) {
    $the_link=eme_event_url($event);
    if (get_option('eme_payment_show_custom_return_page')) {
       if ($resultcode==1) {
@@ -316,11 +316,9 @@ function eme_payment_return_url($event,$payment_id,$resultcode) {
          $res="fail";
       }
       $the_link = add_query_arg( array( 'eme_pmt_result' => $res ), $the_link );
-      $event_id=$event['event_id'];
-      $the_link = add_query_arg( array( 'event_id' => $event_id ), $the_link );
-      if (get_option('eme_payment_add_bookingid_to_return')) {
-         $the_link = add_query_arg( array( 'eme_pmt_id' => $payment_id ), $the_link );
-      }
+      $the_link = add_query_arg( array( 'event_id' => $event['event_id'] ), $the_link );
+      if (get_option('eme_payment_add_bookingid_to_return'))
+         $the_link = add_query_arg( array( 'eme_pmt_id' => $payment['id'] ), $the_link );
    }
    return $the_link;
 }

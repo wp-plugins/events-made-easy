@@ -1025,6 +1025,7 @@ function eme_create_payments_table($charset,$collate) {
          ) $charset $collate;";
       maybe_create_table($table_name,$sql);
    } else {
+      maybe_add_column($table_name, 'random_id', "alter table $table_name add random_id tinytext NOT NULL;"); 
       if ($db_version<80) {
          $payment_ids = $wpdb->get_col("SELECT id FROM $table_name");
          foreach ($payment_ids as $payment_id) {
