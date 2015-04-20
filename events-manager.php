@@ -1957,7 +1957,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif ($event && preg_match('/#_LINKED(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]/', $result, $matches) && get_option('eme_categories_enabled')) {
+      } elseif ($legacy && $event && preg_match('/#_LINKED(EVENT)?CATEGORIES\[(.*?)\]\[(.*?)\]/', $result, $matches) && get_option('eme_categories_enabled')) {
          $include_cats=$matches[2];
          $exclude_cats=$matches[3];
          $extra_conditions_arr = array();

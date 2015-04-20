@@ -2766,50 +2766,53 @@ function eme_send_mails_page() {
 			   $contact = eme_get_contact ($event);
 			   $contact_email = $contact->user_email;
 			   $contact_name = $contact->display_name;
-            $mail_text_html=get_option('eme_rsvp_send_html')?"html":"text";
+			   $mail_text_html=get_option('eme_rsvp_send_html')?"html":"text";
 
-            if ($eme_mail_type == 'attendees') {
-               $attendees = eme_get_attendees_for($event_id,$pending_approved,$only_unpayed);
-               foreach ( $attendees as $attendee ) {
-                  $tmp_subject = eme_replace_placeholders($mail_subject, $event, "text",0,$attendee['lang']);
-                  $tmp_message = eme_replace_placeholders($mail_message, $event, $mail_text_html,0,$attendee['lang']);
-                  $tmp_subject = eme_replace_attendees_placeholders($tmp_subject, $event, $attendee, "text",0,$attendee['lang']);
-                  $tmp_message = eme_replace_attendees_placeholders($tmp_message, $event, $attendee, $mail_text_html,0,$attendee['lang']);
-                  $tmp_subject = eme_translate($tmp_subject,$attendee['lang']);
-                  $tmp_message = eme_translate($tmp_message,$attendee['lang']);
-                  $person_name=$attendee['lastname'].' '.$attendee['firstname'];
-                  eme_send_mail($tmp_subject,$tmp_message, $attendee['email'], $person_name, $contact_email, $contact_name);
-               }
-            } elseif ($eme_mail_type == 'bookings') {
-               $bookings = eme_get_bookings_for($event_id,$pending_approved,$only_unpayed);
-               foreach ( $bookings as $booking ) {
-                  $attendee = eme_get_person($booking['person_id']);
-                  if ($attendee && is_array($attendee)) {
-                     $tmp_subject = eme_replace_booking_placeholders($mail_subject, $event, $booking, "text",0,$booking['lang']);
-                     $tmp_message = eme_replace_booking_placeholders($mail_message, $event, $booking, $mail_text_html,0,$booking['lang']);
-                     $tmp_subject = eme_translate($tmp_subject,$booking['lang']);
-                     $tmp_message = eme_translate($tmp_message,$booking['lang']);
-                     $person_name=$attendee['lastname'].' '.$attendee['firstname'];
-                     eme_send_mail($tmp_subject,$tmp_message, $attendee['email'], $person_name, $contact_email, $contact_name);
-                  }
-               }
-            } elseif ($eme_mail_type == 'all_wp') {
-               $wp_users = get_users();
-               $mail_subject = eme_replace_placeholders($mail_subject, $event, "text");
-               $mail_message = eme_replace_placeholders($mail_message, $event, $mail_text_html);
-               foreach ( $wp_users as $wp_user ) {
-                  eme_send_mail($mail_subject,$mail_message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
-               }
-            } elseif ($eme_mail_type == 'all_wp_not_registered') {
-               $wp_users = get_users();
-               $attendee_wp_ids = eme_get_wp_ids_for($event_id);
-               $mail_subject = eme_replace_placeholders($mail_subject, $event, "text");
-               $mail_message = eme_replace_placeholders($mail_message, $event, $mail_text_html);
-               foreach ( $wp_users as $wp_user ) {
-                  if (!in_array($wp_user->ID,$attendee_wp_ids))
-                     eme_send_mail($mail_subject,$mail_message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
-               }
-            }
+			   if ($eme_mail_type == 'attendees') {
+				   $attendees = eme_get_attendees_for($event_id,$pending_approved,$only_unpayed);
+				   foreach ( $attendees as $attendee ) {
+					   $tmp_subject = eme_replace_placeholders($mail_subject, $event, "text",0,$attendee['lang']);
+					   $tmp_message = eme_replace_placeholders($mail_message, $event, $mail_text_html,0,$attendee['lang']);
+					   $tmp_subject = eme_replace_attendees_placeholders($tmp_subject, $event, $attendee, "text",0,$attendee['lang']);
+					   $tmp_message = eme_replace_attendees_placeholders($tmp_message, $event, $attendee, $mail_text_html,0,$attendee['lang']);
+					   $tmp_subject = eme_translate($tmp_subject,$attendee['lang']);
+					   $tmp_message = eme_translate($tmp_message,$attendee['lang']);
+					   $person_name=$attendee['lastname'].' '.$attendee['firstname'];
+					   eme_send_mail($tmp_subject,$tmp_message, $attendee['email'], $person_name, $contact_email, $contact_name);
+				   }
+			   } elseif ($eme_mail_type == 'bookings') {
+				   $bookings = eme_get_bookings_for($event_id,$pending_approved,$only_unpayed);
+				   foreach ( $bookings as $booking ) {
+					   // we use the language done in the booking for the mails, not the attendee lang in this case
+					   $attendee = eme_get_person($booking['person_id']);
+					   if ($attendee && is_array($attendee)) {
+						   $tmp_subject = eme_replace_placeholders($mail_subject, $event, "text",0,$booking['lang']);
+						   $tmp_message = eme_replace_placeholders($mail_message, $event, $mail_text_html,0,$booking['lang']);
+						   $tmp_subject = eme_replace_booking_placeholders($tmp_subject, $event, $booking, "text",0,$booking['lang']);
+						   $tmp_message = eme_replace_booking_placeholders($tmp_message, $event, $booking, $mail_text_html,0,$booking['lang']);
+						   $tmp_subject = eme_translate($tmp_subject,$booking['lang']);
+						   $tmp_message = eme_translate($tmp_message,$booking['lang']);
+						   $person_name=$attendee['lastname'].' '.$attendee['firstname'];
+						   eme_send_mail($tmp_subject,$tmp_message, $attendee['email'], $person_name, $contact_email, $contact_name);
+					   }
+				   }
+			   } elseif ($eme_mail_type == 'all_wp') {
+				   $wp_users = get_users();
+				   $tmp_subject = eme_replace_placeholders($mail_subject, $event, "text");
+				   $tmp_message = eme_replace_placeholders($mail_message, $event, $mail_text_html);
+				   foreach ( $wp_users as $wp_user ) {
+					   eme_send_mail($tmp_subject,$tmp_message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
+				   }
+			   } elseif ($eme_mail_type == 'all_wp_not_registered') {
+				   $wp_users = get_users();
+				   $attendee_wp_ids = eme_get_wp_ids_for($event_id);
+				   $tmp_subject = eme_replace_placeholders($mail_subject, $event, "text");
+				   $tmp_message = eme_replace_placeholders($mail_message, $event, $mail_text_html);
+				   foreach ( $wp_users as $wp_user ) {
+					   if (!in_array($wp_user->ID,$attendee_wp_ids))
+						   eme_send_mail($tmp_subject,$tmp_message, $wp_user->user_email, $wp_user->display_name, $contact_email, $contact_name);
+				   }
+			   }
 			   print "<div id='message' class='updated'><p>".__('The mail has been sent.','eme')."</p></div>";
 		   } else {
 			   print "<div id='message' class='error'><p>".__('You do not have the permission to send mails for this event.','eme')."</p></div>";
