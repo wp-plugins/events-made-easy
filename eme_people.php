@@ -644,6 +644,21 @@ function eme_people_table($message="") {
    }
 } 
 
+// API function for people wanting to check if somebody is already registered
+function eme_get_person_by_post() {
+   $booker=array();
+   if (isset($_POST['lastname']) && isset($_POST['email'])) {
+      $bookerLastName = eme_strip_tags($_POST['lastname']);
+      if (isset($_POST['firstname']))
+         $bookerFirstName = eme_strip_tags($_POST['firstname']);
+      else
+         $bookerFirstName = "";
+      $bookerEmail = eme_strip_tags($_POST['email']);
+      $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail);
+   }
+   return $booker;
+}
+
 function eme_get_person_by_name_and_email($lastname, $firstname, $email) {
    global $wpdb; 
    $people_table = $wpdb->prefix.PEOPLE_TBNAME;

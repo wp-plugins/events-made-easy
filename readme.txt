@@ -72,6 +72,11 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: added event placeholders #_EVENTCREATIONDATE, #_EVENTMODIFDATE, #_EVENTCREATIONTIME, #_EVENTMODIFTIME
 * Feature: added description for categories, together with placeholders #_EVENTCATEGORYDESCRIPTIONS and #_LOCATIONCATEGORYDESCRIPTIONS
 * Feature: added option "approval_status" to shortcode eme_mybookings. Values: 0=all, 1=approved, 2=pending. Default: 0
+* Feature: added function eme_get_person_by_post(), so people can call this to check if somebody is registered without needing to now the internals:
+  $booker = eme_get_person_by_post();
+  if (!empty($booker)) {
+     $already_registered=1;
+  }
 * Bugfix: when canceling a booking via the cancel url, the mail being sent contained the free spaces info from before the cancel, it was sent too early in the process
 * Bugfix: event placeholders were not being replaced in booking mails (they were replaced in attendee mails)
 
