@@ -111,6 +111,10 @@ function eme_actions_init() {
       eme_fdgg_notification();
       exit();
    }
+   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction']=="worldpay_notification") {
+      eme_worldpay_notification();
+      exit();
+   }
    if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="sagepay_notification") {
       eme_sagepay_notification();
       // sagepay doesn't use a notification url, but sends the status along as part of the return url, so we just check

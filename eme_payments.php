@@ -237,6 +237,66 @@ function eme_2co_form($event,$payment,$price,$lang,$multi_booking=0) {
    return $form_html;
 }
 
+function eme_worldpay_form($event,$payment,$price,$lang,$multi_booking=0) {
+   global $post;
+   $charge=eme_payment_provider_extra_charge($price,'worldpay');
+   $price+=$charge;
+   $events_page_link = eme_get_events_page(true, false);
+   $payment_id=$payment['id'];
+   if ($multi_booking) {
+      $success_link = get_permalink($post->ID);
+      $fail_link = $success_link;
+      $name = __("Multiple booking request","eme");
+   } else {
+      $success_link = eme_payment_return_url($event,$payment,1);
+      $fail_link = eme_payment_return_url($event,$payment,2);
+      $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
+   }
+   $worldpay_instid=get_option('eme_worldpay_instid');
+   $worldpay_md5=get_option('eme_worldpay_md5');
+   $notification_link = add_query_arg(array('eme_eventAction'=>'worldpay_notification'),$events_page_link);
+   if (get_option('eme_worldpay_demo')==1)
+      $url=WORLDPAY_SANDBOX_URL;
+   else
+      $url=WORLDPAY_LIVE_URL;
+   $quantity=1;
+   $cur=$event['currency'];
+
+   $button_above = eme_replace_payment_provider_placeholders(get_option('eme_worldpay_button_above'),$charge,$event['currency'],$lang);
+   $button_label = eme_replace_payment_provider_placeholders(get_option('eme_worldpay_button_label'),$charge,$event['currency'],$lang);
+   $button_below = eme_replace_payment_provider_placeholders(get_option('eme_worldpay_button_below'),$charge,$event['currency'],$lang);
+   $button_img_url = get_option('eme_worldpay_button_img_url');
+   $form_html = $button_above;
+   $form_html.="<form action='$url' method='post'>";
+   $form_html.="<input type='hidden' name='instId' value='$worldpay_instid' />";
+   $form_html.="<input type='hidden' name='cartId' value='$payment_id' />";
+   $form_html.="<input type='hidden' name='desc' value='$name' />";
+   $form_html.="<input type='hidden' name='amount' value='$price' />";
+   $form_html.="<input type='hidden' name='currency' value='$cur' />";
+   // for worldpay notifications to work: enable dynamic payment response in your worldpay setup, using the param MC_callback
+   // also: set the Payment Response password and if wanted, the MD5 secret and field combo
+   $form_html.="<input type='hidden' name='MC_callback' value='$notification_link' />";
+
+   if ($worldpay_md5) {
+      require_once 'payment_gateways/worldpay/eme-worldpay.php';
+      $params_arr=explode(':',get_option('eme_worldpay_md5_parameters'));
+      $signature=eme_generate_worldpay_signature($worldpay_md5,$params_arr,$worldpay_instid,$payment_id,$cur,$price);
+      $form_html.="<input type='hidden' name='signature' value='$signature' />";
+   }
+
+   $button_label=htmlentities($button_label);
+   if (!empty($button_img_url))
+      $form_html.="<input type='image' alt='$button_label' title='$button_label' src='$button_img_url' />";
+   else
+      $form_html.="<input type='submit' value='$button_label' />";
+   if (get_option('eme_worldpay_demo')==1) {
+      $form_html.="<input type='hidden' name='testMode' value='100' />";
+   }
+   $form_html.="</form>";
+   $form_html.= $button_below;
+   return $form_html;
+}
+
 function eme_fdgg_form($event,$payment,$price,$lang,$multi_booking=0) {
    global $post;
    $charge=eme_payment_provider_extra_charge($price,'fdgg');
@@ -641,6 +701,26 @@ function eme_mollie_notification() {
    $payment = $mollie->payments->get($_POST["id"]);
    $payment_id = $payment->metadata->payment_id;
    if ($payment->isPaid()) {
+      eme_update_payment_payed($payment_id);
+   }
+}
+
+function eme_worldpay_notification() {
+   // for worldpay notifications to work: enable dynamic payment response in your worldpay setup, using the param MC_callback
+   $worldpay_demo = get_option('eme_worldpay_demo');
+   if ($worldpay_demo == 1) {
+      $worldpay_pwd = get_option('eme_worldpay_test_pwd');
+   } else {
+      $worldpay_pwd = get_option('eme_worldpay_live_pwd');
+   }
+
+   $post_pwd=$_POST["callbackPW"];
+   $trans_status=$_POST["transStatus"];
+   $test_mode=isset($_POST ['testMode']) ? $_POST ['testMode'] : 0;
+   $post_instid=$_POST["instId"];
+   $worldpay_instid=get_option('eme_worldpay_instid');
+   $payment_id=intval($_POST["cartId"]);
+   if ($post_pwd==$worldpay_pwd && $trans_status=='Y' && $test_mode==0 && $post_instid==$worldpay_instid) {
       eme_update_payment_payed($payment_id);
    }
 }
