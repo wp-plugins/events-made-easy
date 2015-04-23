@@ -111,7 +111,7 @@ function eme_actions_init() {
       eme_fdgg_notification();
       exit();
    }
-   if (isset($_POST['eme_eventAction']) && $_POST['eme_eventAction']=="worldpay_notification") {
+   if (isset($_GET['eme_eventAction']) && $_GET['eme_eventAction']=="worldpay_notification") {
       eme_worldpay_notification();
       exit();
    }
