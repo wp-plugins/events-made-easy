@@ -45,6 +45,8 @@ function eme_payment_form($event,$payment_id,$form_result_message="") {
          $ret_string .= eme_mollie_form($event,$payment, $total_price,$booking['lang']);
       if ($event['use_sagepay'])
          $ret_string .= eme_sagepay_form($event,$payment, $total_price,$booking['lang']);
+      if ($event['event_properties']['use_worldpay'])
+         $ret_string .= eme_worldpay_form($event,$payment, $total_price,$booking['lang']);
       $ret_string .= "</div>";
 
       $eme_payment_form_footer_format=get_option('eme_payment_form_footer_format');
@@ -104,6 +106,8 @@ function eme_multipayment_form($payment_id,$form_result_message="") {
       $ret_string .= eme_mollie_form($event,$payment, $total_price,$booking['lang'],1);
    if ($event['use_sagepay'])
       $ret_string .= eme_sagepay_form($event,$payment, $total_price,$booking['lang'],1);
+   if ($event['event_properties']['use_worldpay'])
+      $ret_string .= eme_worldpay_form($event,$payment, $total_price,$booking['lang'],1);
    $ret_string .= "</div>";
 
    $eme_multipayment_form_footer_format=get_option('eme_multipayment_form_footer_format');
@@ -253,7 +257,7 @@ function eme_worldpay_form($event,$payment,$price,$lang,$multi_booking=0) {
       $name = eme_sanitize_html(sprintf(__("Booking for '%s'","eme"),$event['event_name']));
    }
    $worldpay_instid=get_option('eme_worldpay_instid');
-   $worldpay_md5=get_option('eme_worldpay_md5');
+   $worldpay_md5_secret=get_option('eme_worldpay_md5_secret');
    $notification_link = add_query_arg(array('eme_eventAction'=>'worldpay_notification'),$events_page_link);
    if (get_option('eme_worldpay_demo')==1)
       $url=WORLDPAY_SANDBOX_URL;
@@ -277,10 +281,10 @@ function eme_worldpay_form($event,$payment,$price,$lang,$multi_booking=0) {
    // also: set the Payment Response password and if wanted, the MD5 secret and field combo
    $form_html.="<input type='hidden' name='MC_callback' value='$notification_link' />";
 
-   if ($worldpay_md5) {
+   if ($worldpay_md5_secret) {
       require_once 'payment_gateways/worldpay/eme-worldpay.php';
       $params_arr=explode(':',get_option('eme_worldpay_md5_parameters'));
-      $signature=eme_generate_worldpay_signature($worldpay_md5,$params_arr,$worldpay_instid,$payment_id,$cur,$price);
+      $signature=eme_generate_worldpay_signature($worldpay_md5_secret,$params_arr,$worldpay_instid,$payment_id,$cur,$price);
       $form_html.="<input type='hidden' name='signature' value='$signature' />";
    }
 
@@ -745,7 +749,7 @@ function eme_sagepay_notification() {
 }
 
 function eme_event_can_pay_online ($event) {
-   if ($event['use_paypal'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'] || $event['use_mollie'])
+   if ($event['use_paypal'] || $event['use_2co'] || $event['use_webmoney'] || $event['use_fdgg'] || $event['use_mollie'] || $event['use_sagepay'] || $event['event_properties']['use_worldpay'])
       return 1;
    else
       return 0;

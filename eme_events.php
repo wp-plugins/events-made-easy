@@ -66,6 +66,8 @@ function eme_init_event_props($props) {
       $props['max_allowed']=get_option('eme_rsvp_addbooking_max_spaces');
    if (!isset($props['rsvp_end_target']))
       $props['rsvp_end_target']=get_option('eme_rsvp_end_target');
+   if (!isset($props['use_worldpay']))
+      $props['use_worldpay']=get_option('eme_worldpay_instid')? 1:0;
 
    $template_override=array('event_page_title_format_tpl','event_single_event_format_tpl','event_contactperson_email_body_tpl','event_registration_recorded_ok_html_tpl','event_respondent_email_body_tpl','event_registration_pending_email_body_tpl','event_registration_updated_email_body_tpl','event_registration_form_format_tpl','event_cancel_form_format_tpl');
    foreach ($template_override as $template) {
@@ -2281,6 +2283,7 @@ function eme_event_form($event, $title, $element) {
    $eme_prop_ignore_pending_checked = ($event['event_properties']['ignore_pending']) ? "checked='checked'" : "";
    $eme_prop_take_attendance = ($event['event_properties']['take_attendance']) ? "checked='checked'" : "";
    $eme_prop_all_day_checked = ($event['event_properties']['all_day']) ? "checked='checked'" : "";
+   $eme_prop_use_worldpay = ($event['event_properties']['use_worldpay']) ? "checked='checked'" : "";
 
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
    ?>
@@ -2555,6 +2558,7 @@ function eme_event_form($event, $title, $element) {
                               <input id="fdgg-checkbox" name='use_fdgg' value='1' type='checkbox' <?php echo $use_fdgg_checked; ?> /><?php _e ( 'First Data','eme' ); ?><br />
                               <input id="mollie-checkbox" name='use_mollie' value='1' type='checkbox' <?php echo $use_mollie_checked; ?> /><?php _e ( 'Mollie','eme' ); ?><br />
                               <input id="sagepay-checkbox" name='use_sagepay' value='1' type='checkbox' <?php echo $use_sagepay_checked; ?> /><?php _e ( 'Sage Pay','eme' ); ?><br />
+                              <input id="eme_prop_use_worldpay" name='eme_prop_use_worldpay' value='1' type='checkbox' <?php echo $eme_prop_use_worldpay; ?> /><?php _e ( 'Worldpay','eme' ); ?><br />
                            </p>
                            <?php if ($event['event_rsvp'] && $pref != "recurrence") {
                                  // show the compact bookings table only when not editing a recurrence

@@ -192,6 +192,18 @@ function eme_add_options($reset=0) {
    'eme_webmoney_button_img_url' => '',
    'eme_webmoney_button_above' => sprintf($eme_payment_button_above_localizable,"Webmoney"),
    'eme_webmoney_button_below' => '',
+   'eme_worldpay_demo' => 1,
+   'eme_worldpay_instid' => '',
+   'eme_worldpay_md5_secret' => '',
+   'eme_worldpay_md5_parameters' => 'instId:cartId:currency:amount',
+   'eme_worldpay_test_pwd' => '',
+   'eme_worldpay_live_pwd' => '',
+   'eme_worldpay_cost' => 0,
+   'eme_worldpay_cost2' => 0,
+   'eme_worldpay_button_label' => sprintf($eme_payment_button_label_localizable,"Worldpay"),
+   'eme_worldpay_button_img_url' => '',
+   'eme_worldpay_button_above' => sprintf($eme_payment_button_above_localizable,"Worldpay"),
+   'eme_worldpay_button_below' => '',
    'eme_sagepay_demo' => 1,
    'eme_sagepay_vendor_name' => '',
    'eme_sagepay_test_pwd' => '',
@@ -822,6 +834,24 @@ function eme_options_page() {
       eme_options_input_text (__('Text above payment button','eme'),'eme_sagepay_button_above', __('The text shown just above the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
       eme_options_input_text (__('Text below payment button','eme'),'eme_sagepay_button_below', __('The text shown just below the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
       echo "<tr><td colspan='2'>".__('Info: for Sage Pay to work, your PHP installation must have the mcrypt module installed and activated. Search the internet for which extra PHP package to install and/or which line in php.ini to change.','eme').'</td></tr>';
+   ?>
+</table>
+
+<h3><?php _e ( 'RSVP: Worldpay options', 'eme' ); ?></h3>
+<table class='form-table'>
+   <?php
+      eme_options_select ( __('Worldpay live or test','eme'), 'eme_worldpay_demo', array (1 => __('Worldpay Sandbox (for testing)','eme'), 0 => __ ( 'Worldpay Live', 'eme' )), __('Choose wether you want to test Worldpay in a sandbox or go live and really use Worldpay.','eme') );
+      eme_options_input_text (__('Worldpay installation ID','eme'),'eme_worldpay_instid', __("Worldpay installation ID",'eme'));
+      eme_options_input_text (__('Worldpay MD5 secret','eme'),'eme_worldpay_md5_secret', __("Worldpay MD5 secret used when submitting payments",'eme'));
+      eme_options_input_text (__('Worldpay MD5 parameters','eme'),'eme_worldpay_md5_parameters', __("Worldpay parameters used to generate the MD5 signature, separated by ':'. Only use these 4 in the order of your choice: instId,cartId,currency and/or amount",'eme'));
+      eme_options_input_password (__('Worldpay Test Password','eme'),'eme_worldpay_test_pwd', __("Worldpay password for payment notifications when testing",'eme'));
+      eme_options_input_password (__('Worldpay Live Password','eme'),'eme_worldpay_live_pwd', __("Worldpay password for payment notifications when using Worldpay for real",'eme'));
+      eme_options_input_text (__('Extra charge','eme'),'eme_worldpay_cost', __("Extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
+      eme_options_input_text (__('Extra charge 2','eme'),'eme_worldpay_cost2', __("Second extra charge added when paying for an event. Can either be an absolute number or a percentage. E.g. 2 or 5%",'eme'));
+      eme_options_input_text (__('Payment button label','eme'),'eme_worldpay_button_label', __('The text shown inside the payment button','eme'));
+      eme_options_input_text (__('Payment button image','eme'),'eme_worldpay_button_img_url', __('The url to an image for the payment button that replaces the standard submit button with the label mentioned above.','eme'));
+      eme_options_input_text (__('Text above payment button','eme'),'eme_worldpay_button_above', __('The text shown just above the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
+      eme_options_input_text (__('Text below payment button','eme'),'eme_worldpay_button_below', __('The text shown just below the payment button, you can use #_EXTRACHARGE and #_CURRENCY to indicate the extra charge calculated if wanted','eme'));
    ?>
 </table>
 

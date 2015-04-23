@@ -192,6 +192,8 @@ define("CO_LIVE_URL","https://www.2checkout.com/checkout/purchase");
 define("CO_SANDBOX_URL","https://sandbox.2checkout.com/checkout/purchase");
 define("PAYPAL_LIVE_URL","https://www.paypal.com/cgi-bin/webscr");
 define("PAYPAL_SANDBOX_URL","https://www.sandbox.paypal.com/cgi-bin/webscr");
+define("WORLDPAY_SANDBOX_URL","https://secure-test.worldpay.com/wcc/purchase");
+define("WORLDPAY_LIVE_URL","https://secure.worldpay.com/wcc/purchase");
 define("GOOGLE_LIVE","production");
 define("GOOGLE_SANDBOX","sandbox");
 define("FDGG_SANDBOX_URL","https://connect.merchanttest.firstdataglobalgateway.com/IPGConnect/gateway/processing");
