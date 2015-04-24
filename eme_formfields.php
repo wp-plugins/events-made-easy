@@ -503,11 +503,13 @@ function eme_replace_cancelformfields_placeholders ($event) {
       $orig_result = $result;
       $found=1;
       $required=0;
+      $required_att="";
       $html5_wanted=0;
       $replacement = "";
       if (strstr($result,'#REQ')) {
          $result = str_replace("#REQ","#",$result);
          $required=1;
+         $required_att="required='required'";
       }
 
       // also support RESPNAME, RESPEMAIL, ...
@@ -522,9 +524,9 @@ function eme_replace_cancelformfields_placeholders ($event) {
          $required=1;
       } elseif (preg_match('/#_FIRSTNAME/', $result)) {
          if (!empty($bookerFirstName))
-            $replacement = "<input required='required' type='text' name='firstname' id='firstname' value='$bookerFirstName' $readonly />";
+            $replacement = "<input $required_att type='text' name='firstname' id='firstname' value='$bookerFirstName' $readonly />";
          else
-            $replacement = "<input required='required' type='text' name='firstname' id='firstname' value='$bookerFirstName' />";
+            $replacement = "<input $required_att type='text' name='firstname' id='firstname' value='$bookerFirstName' />";
       } elseif (preg_match('/#_HTML5_EMAIL/', $result)) {
          $replacement = "<input required='required' type='email' name='email' id='email' value='$bookerEmail' $readonly />";
          $required_fields_count++;
@@ -645,7 +647,7 @@ function eme_replace_multibooking_formfields_placeholders ($format) {
          // #_NAME is always required
          $required=1;
       } elseif (preg_match('/#_FIRSTNAME/', $result)) {
-         $replacement = "<input required='required' type='text' name='firstname' id='firstname' value='$bookerFirstName' />";
+         $replacement = "<input $required_att type='text' name='firstname' id='firstname' value='$bookerFirstName' />";
       } elseif (preg_match('/#_ADDRESS1/', $result)) {
          $replacement = "<input $required_att type='text' name='address1' id=address1' value='$bookerAddress1' />";
       } elseif (preg_match('/#_ADDRESS2/', $result)) {
@@ -1025,9 +1027,9 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
          }
       } elseif (preg_match('/#_FIRSTNAME/', $result)) {
          if (!empty($bookerFirstName))
-            $replacement = "<input required='required' type='text' name='${var_prefix}firstname${var_postfix}' value='$bookerFirstName' $readonly />";
+            $replacement = "<input $required_att type='text' name='${var_prefix}firstname${var_postfix}' value='$bookerFirstName' $readonly />";
          else
-            $replacement = "<input required='required' type='text' name='${var_prefix}firstname${var_postfix}' value='$bookerFirstName' />";
+            $replacement = "<input $required_att type='text' name='${var_prefix}firstname${var_postfix}' value='$bookerFirstName' />";
       } elseif (preg_match('/#_ADDRESS1/', $result)) {
          $replacement = "<input $required_att type='text' name='${var_prefix}address1${var_postfix}' value='$bookerAddress1' />";
       } elseif (preg_match('/#_ADDRESS2/', $result)) {
@@ -1171,14 +1173,13 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
 }
 
 function eme_find_required_formfields ($format) {
-   if (empty($format)) {
-      $format = get_option('eme_registration_form_format');
-   }
    preg_match_all("/#REQ_?[A-Z0-9_]+(\{[A-Z0-9_]+\})?/", $format, $placeholders);
    usort($placeholders[0],'sort_stringlenth');
+   // #_NAME and #REQ_NAME should be using _LASTNAME
+   $result=preg_replace("/_NAME/","_LASTNAME",$placeholders[0]);
    // We just want the fieldnames: FIELD1, FIELD2, ... like they are POST'd via the form
-   $result=preg_replace("/#REQ_|\{|\}/","",$placeholders[0]);
-   // just to be sure: remove leadinf zeros in the names: FIELD01 should be FIELD1
+   $result=preg_replace("/#REQ_|\{|\}/","",$result);
+   // just to be sure: remove leading zeros in the names: FIELD01 should be FIELD1
    $result=preg_replace("/FIELD0+/","FIELD",$result);
    return $result;
 }

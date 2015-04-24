@@ -696,11 +696,12 @@ function eme_multibook_seats($events, $send_mail, $format) {
       // check all required fields
       if (!is_admin() && get_option('eme_rsvp_check_required_fields')) {
          foreach ($all_required_fields as $required_field) {
-            if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
+            if (preg_match ("/LASTNAME|EMAIL|SEATS/",$required_field)) {
                // we already check these seperately, and EMAIL regex also catches _HTML5_EMAIL
+               // since NAME would also match FIRSTNAME (which is not necessarily required), we check the beginning too
                continue;
             } elseif (preg_match ("/PHONE/",$required_field)) {
-               // PHONE regex also catches _HTML5_PHONE
+               // PHONE regex also catches HTML5_PHONE
                if (!isset($_POST['phone']) || empty($_POST['phone'])) array_push($missing_required_fields, __('Phone number','eme'));
             } elseif (preg_match ("/(ADDRESS1|ADDRESS2|CITY|STATE|ZIP|COUNTRY)/",$required_field, $matches)) {
                $fieldname=strtolower($matches[1]);
@@ -955,7 +956,7 @@ function eme_book_seats($event, $send_mail) {
    // check all required fields
    if (!is_admin() && get_option('eme_rsvp_check_required_fields')) {
       foreach ($all_required_fields as $required_field) {
-         if (preg_match ("/NAME|EMAIL|SEATS/",$required_field)) {
+         if (preg_match ("/LASTNAME|EMAIL|SEATS/",$required_field)) {
             // we already check these seperately, and EMAIL regex also catches _HTML5_EMAIL
             continue;
          } elseif (preg_match ("/PHONE/",$required_field)) {

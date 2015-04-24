@@ -20,7 +20,7 @@ function eme_add_options($reset=0) {
    $registration_recorded_ok_html_localizable = __('Your booking has been recorded','eme');
    $registration_form_format_localizable = "<table class='eme-rsvp-form'>
             <tr><th scope='row'>".__('Last Name', 'eme')."*:</th><td>#_LASTNAME</td></tr>
-            <tr><th scope='row'>".__('First Name', 'eme')."*:</th><td>#_FIRSTNAME</td></tr>
+            <tr><th scope='row'>".__('First Name', 'eme')."*:</th><td>#REQ_FIRSTNAME</td></tr>
             <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_EMAIL</td></tr>
             <tr><th scope='row'>".__('Phone number', 'eme').":</th><td>#_PHONE</td></tr>
             <tr><th scope='row'>".__('Seats', 'eme')."*:</th><td>#_SPACES</td></tr>
@@ -31,7 +31,7 @@ function eme_add_options($reset=0) {
             ";
    $cancel_form_format_localizable = "<table class='eme-rsvp-form'>
             <tr><th scope='row'>".__('Last Name', 'eme')."*:</th><td>#_LASTNAME</td></tr>
-            <tr><th scope='row'>".__('First Name', 'eme')."*:</th><td>#_FIRSTNAME</td></tr>
+            <tr><th scope='row'>".__('First Name', 'eme')."*:</th><td>#REQ_FIRSTNAME</td></tr>
             <tr><th scope='row'>".__('E-Mail', 'eme')."*:</th><td>#_EMAIL</td></tr>
             #_CAPTCHAHTML{<tr><th scope='row'>Please fill in the code displayed here:</th><td>#_CAPTCHA</td></tr>}
             </table>
