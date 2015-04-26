@@ -98,6 +98,7 @@ function eme_add_options($reset=0) {
    'eme_registration_recorded_ok_html' => $registration_recorded_ok_html_localizable,
    'eme_registration_form_format' => $registration_form_format_localizable,
    'eme_cancel_form_format' => $cancel_form_format_localizable,
+   'eme_cancel_rsvp_days' => 0,
    'eme_deny_mail_event_edit' => 0,
    'eme_smtp_host' => 'localhost',
    'eme_smtp_port' => 25,
@@ -329,7 +330,7 @@ function eme_options_register() {
                  $options = array ('eme_rss_main_title','eme_rss_main_description','eme_rss_title_format','eme_rss_description_format','eme_rss_show_pubdate','eme_rss_pubdate_startdate','eme_ical_description_format','eme_ical_title_format');
 	         break;
 	      case 'rsvp' :
-                 $options = array ('eme_default_contact_person','eme_rsvp_registered_users_only','eme_rsvp_reg_for_new_events','eme_rsvp_require_approval','eme_rsvp_default_number_spaces','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_captcha_for_booking','eme_rsvp_hide_full_events','eme_rsvp_hide_rsvp_ended_events','eme_rsvp_show_form_after_booking','eme_rsvp_addbooking_submit_string','eme_rsvp_delbooking_submit_string','eme_attendees_list_format','eme_attendees_list_ignore_pending','eme_bookings_list_ignore_pending','eme_bookings_list_header_format','eme_bookings_list_format','eme_bookings_list_footer_format','eme_registration_recorded_ok_html','eme_registration_form_format', 'eme_cancel_form_format', 'eme_rsvp_number_days', 'eme_rsvp_number_hours','eme_rsvp_end_target','eme_rsvp_check_required_fields');
+                 $options = array ('eme_default_contact_person','eme_rsvp_registered_users_only','eme_rsvp_reg_for_new_events','eme_rsvp_require_approval','eme_rsvp_default_number_spaces','eme_rsvp_addbooking_min_spaces','eme_rsvp_addbooking_max_spaces','eme_captcha_for_booking','eme_rsvp_hide_full_events','eme_rsvp_hide_rsvp_ended_events','eme_rsvp_show_form_after_booking','eme_rsvp_addbooking_submit_string','eme_rsvp_delbooking_submit_string','eme_attendees_list_format','eme_attendees_list_ignore_pending','eme_bookings_list_ignore_pending','eme_bookings_list_header_format','eme_bookings_list_format','eme_bookings_list_footer_format','eme_registration_recorded_ok_html','eme_registration_form_format', 'eme_cancel_form_format', 'eme_rsvp_number_days', 'eme_rsvp_number_hours','eme_rsvp_end_target','eme_rsvp_check_required_fields','eme_cancel_rsvp_days');
 	         break;
 	      case 'mail' :
                  $options = array ('eme_rsvp_mail_notify_is_active','eme_deny_mail_event_edit','eme_contactperson_email_subject', 'eme_contactperson_cancelled_email_subject', 'eme_contactperson_pending_email_subject','eme_contactperson_email_body','eme_contactperson_cancelled_email_body','eme_contactperson_pending_email_body','eme_respondent_email_subject','eme_respondent_email_body','eme_registration_pending_email_subject','eme_registration_pending_email_body','eme_registration_cancelled_email_subject','eme_registration_cancelled_email_body','eme_registration_denied_email_subject','eme_registration_denied_email_body','eme_registration_updated_email_subject','eme_registration_updated_email_body','eme_mail_sender_name','eme_mail_sender_address','eme_rsvp_mail_send_method','eme_smtp_host','eme_smtp_port','eme_rsvp_mail_SMTPAuth','eme_smtp_username','eme_smtp_password', 'eme_smtp_debug','eme_rsvp_send_html','eme_mail_bcc_address');
@@ -637,6 +638,7 @@ function eme_options_page() {
       </td>
    </tr>
    <?php
+   eme_options_input_text ( __ ( 'RSVP cancel cutoff', 'eme' ), 'eme_cancel_rsvp_days', __ ( 'Allow RSVP cancellation until this many days before the event starts.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'Use captcha for booking form?', 'eme' ), 'eme_captcha_for_booking', __ ( 'Check this option if you want to use a captcha on the booking form, to thwart spammers a bit.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'Hide fully booked events?', 'eme' ), 'eme_rsvp_hide_full_events', __ ( 'Check this option if you want to hide events that are fully booked from the calendar and events listing in the front.', 'eme' ) );
    eme_options_radio_binary ( __ ( 'Hide RSVP ended events?', 'eme' ), 'eme_rsvp_hide_rsvp_ended_events', __ ( 'Check this option if you want to hide events which RSVP registration period has already ended.', 'eme' ) );

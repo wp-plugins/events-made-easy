@@ -120,16 +120,6 @@ function eme_actions_init() {
       // sagepay doesn't use a notification url, but sends the status along as part of the return url, so we just check
       // the status and set payed or not, but then we continue regular flow of events
    }
-   if (isset($_GET['eme_cancel_booking']) && is_user_logged_in()) {
-	   $booking_id=intval($_GET['eme_cancel_booking']);
-	   $booking=eme_get_booking($booking_id);
-      $event=eme_get_event($booking['event_id']);
-      $future=strtotime($event['event_start_date']." ".$event['event_start_time']) > time()?1:0;
-	   $current_userid=get_current_user_id();
-	   if ($booking['wp_id']==$current_userid && $future) {
-		   eme_delete_booking($booking_id);
-	   }
-   }
 
 }
 add_action('init','eme_actions_init');

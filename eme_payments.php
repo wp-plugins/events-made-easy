@@ -783,10 +783,13 @@ function eme_create_payment($booking_ids) {
    #return $payment_id;
 }
 
-function eme_get_payment($payment_id) {
+function eme_get_payment($payment_id,$payment_randomid=0) {
    global $wpdb;
    $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
-   $sql = $wpdb->prepare("SELECT * FROM $payments_table WHERE id=%d",$payment_id);
+   if ($payment_id)
+      $sql = $wpdb->prepare("SELECT * FROM $payments_table WHERE id=%d",$payment_id);
+   else
+      $sql = $wpdb->prepare("SELECT * FROM $payments_table WHERE random_id=%s",$payment_randomid);
    return $wpdb->get_row($sql, ARRAY_A);
 }
 
@@ -802,6 +805,13 @@ function eme_get_booking_payment_id($booking_id) {
    global $wpdb;
    $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
    $sql = $wpdb->prepare("SELECT id FROM $payments_table WHERE FIND_IN_SET(%d,booking_ids) ORDER BY id DESC LIMIT 1",$booking_id);
+   return $wpdb->get_var($sql);
+}
+
+function eme_delete_payment($payment_id) {
+   global $wpdb;
+   $payments_table = $wpdb->prefix.PAYMENTS_TBNAME;
+   $sql = $wpdb->prepare("DELETE FROM $payments_table WHERE id=%d",$payment_id);
    return $wpdb->get_var($sql);
 }
 

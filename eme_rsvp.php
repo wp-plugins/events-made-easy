@@ -271,10 +271,12 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
       // this should not be reposted
       unset($post_arr['eme_event_ids']);
       // and some parts should be formatted differently in the name
-      foreach ($post_arr['bookings'] as $key=>$val) {
-	 $post_arr['bookings['.$key.'][bookedSeats]']=$val['bookedSeats'];
+      if (isset($post_arr['bookings'])) {
+         foreach ($post_arr['bookings'] as $key=>$val) {
+            $post_arr['bookings['.$key.'][bookedSeats]']=$val['bookedSeats'];
+         }
+         unset($post_arr['bookings']);
       }
-      unset($post_arr['bookings']);
 
       $post_string=json_encode($post_arr);
       ?>
@@ -533,6 +535,42 @@ function eme_delete_booking_form($event_id,$show_message=1) {
 function eme_delete_booking_form_shortcode($atts) {
    extract ( shortcode_atts ( array ('id' => 0), $atts));
    return eme_delete_booking_form($id);
+}
+
+function eme_cancel_form($payment_randomid) {
+   $destination = eme_get_events_page(true, false);
+   $payment=eme_get_payment(0,$payment_randomid);
+   $booking_ids=eme_get_payment_booking_ids($payment['id']);
+   if ($booking_ids) {
+      $format="#_STARTDATE #_STARTTIME: #_EVENTNAME (#_RESPSPACES places) <br />";
+      $eme_format_header=get_option('eme_bookings_list_header_format');
+      $eme_format_footer=get_option('eme_bookings_list_footer_format');
+
+      $res=__("You're about to cancel the following bookings:","eme").$eme_format_header;
+      foreach ($booking_ids as $booking_id) {
+         // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+         $booking=eme_get_booking($booking_id);
+         $event=eme_get_event($booking['event_id']);
+         $cancel_cutofftime=strtotime($event['event_start_date']." ".$event['event_start_time'])-get_option('eme_cancel_rsvp_days')*24*60;
+         if ($cancel_cutofftime < time()) {
+            $res="<p class='eme_no_booking'>".__("You're no longer allowed to cancel this booking","eme")."</p>";
+            return $res;
+         }
+         $tmp_format = eme_replace_placeholders($format, $event, "html", 0);
+         $res.= eme_replace_booking_placeholders($tmp_format,$event,$booking);
+      }
+      $res.=$eme_format_footer;
+      $res .= "<form id='booking-cancel-form' name='booking-cancel-form' method='post' action='$destination'>
+         <input type='hidden' name='eme_confirm_cancel_booking' value='1' />
+         <input type='hidden' name='eme_pmt_rndid' value='$payment_randomid' />";
+      $res .= wp_nonce_field("cancel booking $payment_randomid",'eme_rsvp_nonce',false,false);
+      $res .= "<input name='eme_submit_button' type='submit' value='Cancel the booking' />";
+      $res .= "</form>";
+
+   } else {
+      $res="<p class='eme_no_booking'>".__('No such booking found!','eme')."</p>";
+   }
+   return $res;
 }
 
  // eme_cancel_seats is NOT called from the admin backend, but to be sure: we check for it
@@ -1949,6 +1987,7 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
    $current_userid=get_current_user_id();
    $answers = eme_get_answers($booking['booking_id']);
    $payment_id = eme_get_booking_payment_id($booking['booking_id']);
+   $payment = eme_get_payment($payment_id);
    $booking_ids=array();
    $bookings=array();
    if ($payment_id) {
@@ -2049,12 +2088,10 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
          if ($payment_id && eme_event_can_pay_online($event))
             $replacement = eme_payment_url($payment_id);
       } elseif (preg_match('/#_CANCEL_LINK$/', $result)) {
-         if (is_user_logged_in() && $booking['wp_id']==$current_userid)
-            $url = eme_cancel_booking_url($booking['booking_id']);
+         $url = eme_cancel_url($payment['random_id']);
          $replacement="<a href='$url'>".__('Cancel booking','eme')."</a>";
       } elseif (preg_match('/#_CANCEL_URL$/', $result)) {
-         if (is_user_logged_in() && $booking['wp_id']==$current_userid)
-            $replacement = eme_cancel_booking_url($booking['booking_id']);
+         $replacement = eme_cancel_url($payment['random_id']);
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {

@@ -573,7 +573,24 @@ function eme_events_page_content() {
    $format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
    $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
 
-   if (get_query_var('eme_pmt_result') && get_option('eme_payment_show_custom_return_page')) {
+   if (isset($_GET['eme_cancel_booking'])) {
+	   $payment_randomid=eme_strip_tags($_GET['eme_cancel_booking']);
+      return eme_cancel_form($payment_randomid);
+
+   } elseif (isset($_POST['eme_confirm_cancel_booking']) && isset($_POST['eme_pmt_rndid'])) {
+      $payment_randomid=eme_strip_tags($_POST['eme_pmt_rndid']);
+      $payment=eme_get_payment(0,$payment_randomid);
+      $booking_ids=eme_get_payment_booking_ids($payment['id']);
+      if (isset($_POST['eme_rsvp_nonce']) && wp_verify_nonce($_POST['eme_rsvp_nonce'],"cancel booking $payment_randomid")) {
+         foreach ($booking_ids as $booking_id) {
+            $booking=eme_get_booking($booking_id);
+            eme_delete_booking($booking_id);
+            eme_email_rsvp_booking($booking,"cancelRegistration");
+         }
+         eme_delete_payment($payment['id']);
+      }
+      return "<div class='eme-rsvp-message'>".__("The bookings have been cancelled",'eme')."</div>";
+   } elseif (get_query_var('eme_pmt_result') && get_option('eme_payment_show_custom_return_page')) {
       // show the result of a payment, but not for a multi-booking payment result
       $result=get_query_var('eme_pmt_result');
       if ($result == 'succes') {
@@ -641,6 +658,7 @@ function eme_events_page_content() {
       }
       return $page_body;
    }
+
    //if (isset ( $_REQUEST['event_id'] ) && $_REQUEST['event_id'] != '') {
    if (eme_is_single_event_page()) {
       // single event page

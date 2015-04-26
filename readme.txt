@@ -77,6 +77,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
   if (!empty($booker)) {
      $already_registered=1;
   }
+* Feature: now everybody can cancel a booking (even non-wp users) via a special link. Cancel urls in mails and user profile use these links now.
 * Bugfix: when canceling a booking via the cancel url, the mail being sent contained the free spaces info from before the cancel, it was sent too early in the process
 * Bugfix: event placeholders were not being replaced in booking mails (they were replaced in attendee mails)
 * Bugfix: make sure you can require the first name to be completed if wanted
