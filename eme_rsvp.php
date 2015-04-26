@@ -267,6 +267,15 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
          $post_arr['eme_eventAction'] = 'message';
          $post_arr['eme_message'] = $form_result_message;
       }
+
+      // this should not be reposted
+      unset($post_arr['eme_event_ids']);
+      // and some parts should be formatted differently in the name
+      foreach ($post_arr['bookings'] as $key=>$val) {
+	 $post_arr['bookings['.$key.'][bookedSeats]']=$val['bookedSeats'];
+      }
+      unset($post_arr['bookings']);
+
       $post_string=json_encode($post_arr);
       ?>
       <script type="text/javascript">

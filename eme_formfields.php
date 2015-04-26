@@ -711,6 +711,7 @@ function eme_replace_multibooking_formfields_placeholders ($format) {
 function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme_multibooking=0) {
    global $current_user;
 
+   $event_id=$event['event_id'];
    $registration_wp_users_only=$event['registration_wp_users_only'];
    $is_admin=is_admin();
    if ($is_admin && $booking) {
@@ -753,7 +754,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       }
    } else {
       // the next gives the number of available seats, even for multiprice
-      $avail_seats = eme_get_available_seats($event['event_id']);
+      $avail_seats = eme_get_available_seats($event_id);
    }
 
    $booked_places_options = array();
@@ -775,7 +776,7 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       if ($editing_booking_from_backend)
          $multi_avail = eme_convert_multi2array($event['event_seats']);
       else
-         $multi_avail = eme_get_available_multiseats($event['event_id']);
+         $multi_avail = eme_get_available_multiseats($event_id);
 
       foreach ($multi_avail as $key => $avail_seats) {
          $booked_places_options[$key] = array();
@@ -912,7 +913,6 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       if (isset($_POST['email'])) $bookerEmail = eme_sanitize_html(stripslashes_deep($_POST['email']));
       if (isset($_POST['phone'])) $bookerPhone = eme_sanitize_html(stripslashes_deep($_POST['phone']));
       if (isset($_POST['comment'])) $bookerComment = eme_sanitize_html(stripslashes_deep($_POST['comment']));
-      if (isset($_POST['Seats'])) $bookedSeats = eme_sanitize_html(stripslashes_deep($_POST['Seats']));
    }
 
    // first we do the custom attributes, since these can contain other placeholders
@@ -1011,8 +1011,8 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       }
 
       if ($eme_multibooking) {
-         $var_prefix='bookings['.$event['event_id'].'][';
-         $var_postfix=']';
+         $var_prefix="bookings[$event_id][";
+         $var_postfix="]";
       } else {
          $var_prefix='';
          $var_postfix='';
@@ -1061,20 +1061,32 @@ function eme_replace_formfields_placeholders ($event,$booking="",$format="",$eme
       } elseif (preg_match('/#_PHONE/', $result)) {
          $replacement = "<input $required_att type='text' name='${var_prefix}phone${var_postfix}' value='$bookerPhone' />";
       } elseif (preg_match('/#_SEATS$|#_SPACES$/', $result)) {
-         if ($event['event_properties']['take_attendance'])
-            $replacement = eme_ui_select_binary($bookedSeats,"${var_prefix}bookedSeats${var_postfix}");
+         $postfield_name="${var_prefix}bookedSeats${var_postfix}";
+         if ($editing_booking_from_backend && isset($bookedSeats))
+            $entered_val=$bookedSeats;
+         elseif ($eme_multibooking && isset($_POST['bookings'][$event_id]) && isset($_POST['bookings'][$event_id]['bookedSeats']))
+            $entered_val = intval($_POST['bookings'][$event_id]['bookedSeats']);
+         elseif (isset($_POST['bookedSeats']))
+            $entered_val = intval($_POST['bookedSeats']);
          else
-            $replacement = eme_ui_select($bookedSeats,"${var_prefix}bookedSeats${var_postfix}",$booked_places_options);
+            $entered_val=0;
+         if ($event['event_properties']['take_attendance'])
+            $replacement = eme_ui_select_binary($entered_val,$postfield_name);
+         else
+            $replacement = eme_ui_select($entered_val,$postfield_name,$booked_places_options);
          $required_fields_count++;
+
       } elseif (($deprecated && preg_match('/#_(SEATS|SPACES)(\d+)/', $result, $matches)) ||
                  preg_match('/#_(SEATS|SPACES)\{(\d+)\}/', $result, $matches)) {
          $field_id = intval($matches[2]);
          $postfield_name="${var_prefix}bookedSeats".$field_id.$var_postfix;
 
-         if ($booking && isset(${"bookedSeats".$field_id}))
+         if ($editing_booking_from_backend && isset(${"bookedSeats".$field_id}))
             $entered_val=${"bookedSeats".$field_id};
-         elseif (isset($_POST[$postfield_name]))
-            $entered_val = eme_trans_sanitize_html(stripslashes_deep($_POST[$postfield_name]));
+         elseif ($eme_multibooking && isset($_POST['bookings'][$event_id]) && isset($_POST['bookings'][$event_id]['bookedSeats'.$field_id]))
+            $entered_val = intval($_POST['bookings'][$event_id]['bookedSeats'.$field_id]);
+         elseif (isset($_POST['bookedSeats'.$field_id]))
+            $entered_val = intval($_POST['bookedSeats'.$field_id]);
          else
             $entered_val=0;
 
