@@ -23,8 +23,8 @@ function eme_categories_page() {
       if ($_POST['eme_admin_action'] == "do_editcategory" ) {
          // category update required  
          $category = array();
-         $category['category_name'] = eme_strip_tags($_POST['category_name']);
-         $category['description'] = eme_strip_tags($_POST['description']);
+         $category['category_name'] =  trim(stripslashes($_POST['category_name']));
+         $category['description'] =  trim(stripslashes($_POST['description']));
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->update( $categories_table, $category, array('category_id' => intval($_POST['category_id'])) );
          if ($validation_result !== false && !empty($validation_result) ) {
@@ -35,8 +35,8 @@ function eme_categories_page() {
       } elseif ($_POST['eme_admin_action'] == "do_addcategory" ) {
          // Add a new category
          $category = array();
-         $category['category_name'] = eme_strip_tags($_POST['category_name']);
-         $category['description'] = eme_strip_tags($_POST['description']);
+         $category['category_name'] =  trim(stripslashes($_POST['category_name']));
+         $category['description'] =  trim(stripslashes($_POST['description']));
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->insert($categories_table, $category);
          if ($validation_result !== false && !empty($validation_result) ) {
