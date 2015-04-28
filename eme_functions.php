@@ -300,7 +300,8 @@ function eme_category_url($category) {
       $the_link = eme_get_events_page(true, false);
       // some plugins add the lang info to the home_url, remove it so we don't get into trouble or add it twice
       $the_link = remove_query_arg('lang',$the_link);
-      $the_link = add_query_arg( array( 'eme_event_cat' => $category['category_name'] ), $the_link );
+      $slug = $category['category_slug'] ? $category['category_slug'] : $category['category_name'];
+      $the_link = add_query_arg( array( 'eme_event_cat' => $slug ), $the_link );
       if (!empty($language))
          $the_link = add_query_arg( array( 'lang' => $language ), $the_link );
    }

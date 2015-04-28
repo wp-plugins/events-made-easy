@@ -23,8 +23,8 @@ function eme_categories_page() {
       if ($_POST['eme_admin_action'] == "do_editcategory" ) {
          // category update required  
          $category = array();
-         $category['category_name'] = trim(stripslashes($_POST['category_name']));
-         $category['description'] = trim(stripslashes($_POST['description']));
+         $category['category_name'] = eme_strip_tags($_POST['category_name']);
+         $category['description'] = eme_strip_tags($_POST['description']);
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->update( $categories_table, $category, array('category_id' => intval($_POST['category_id'])) );
          if ($validation_result !== false && !empty($validation_result) ) {
@@ -35,8 +35,8 @@ function eme_categories_page() {
       } elseif ($_POST['eme_admin_action'] == "do_addcategory" ) {
          // Add a new category
          $category = array();
-         $category['category_name'] = trim(stripslashes($_POST['category_name']));
-         $category['description'] = trim(stripslashes($_POST['description']));
+         $category['category_name'] = eme_strip_tags($_POST['category_name']);
+         $category['description'] = eme_strip_tags($_POST['description']);
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->insert($categories_table, $category);
          if ($validation_result !== false && !empty($validation_result) ) {
@@ -115,7 +115,7 @@ function eme_categories_table_layout($message = "") {
                            <tr>
                            <td><input type='checkbox' class ='row-selector' value='".$this_category['category_id']."' name='categories[]' /></td>
                            <td><a href='".admin_url("admin.php?page=eme-categories&amp;eme_admin_action=edit_category&amp;category_id=".$this_category['category_id'])."'>".$this_category['category_id']."</a></td>
-                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;eme_admin_action=edit_category&amp;category_id=".$this_category['category_id'])."'>".$this_category['category_name']."</a></td>
+                           <td><a href='".admin_url("admin.php?page=eme-categories&amp;eme_admin_action=edit_category&amp;category_id=".$this_category['category_id'])."'>".eme_trans_sanitize_html($this_category['category_name'])."</a></td>
                            </tr>
                         ";
                      }
@@ -315,12 +315,8 @@ function eme_get_category_ids($cat_slug) {
    global $wpdb;
    $categories_table = $wpdb->prefix.CATEGORIES_TBNAME; 
    $cat_ids = array();
-   $conditions="";
    if (!empty($cat_slug)) {
-      $conditions = " category_slug = '$cat_slug'";
-   }
-   if (!empty($conditions)) {
-      $sql = "SELECT DISTINCT category_id FROM $categories_table WHERE ".$conditions;
+      $sql = $wpdb->prepare("SELECT DISTINCT category_id FROM $categories_table WHERE category_slug = %s",$cat_slug);
       $cat_ids = $wpdb->get_col($sql);
    }
    return $cat_ids;
