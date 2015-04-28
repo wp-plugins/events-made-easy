@@ -268,9 +268,9 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
          $post_arr['eme_message'] = $form_result_message;
       }
 
-      // this should not be reposted
+      // this should not be reposted (useless list of event ids now)
       unset($post_arr['eme_event_ids']);
-      // and some parts should be formatted differently in the name
+      // and some parts should be formatted differently in the name (php makes arrays, but we need it as names for javascript)
       if (isset($post_arr['bookings'])) {
          foreach ($post_arr['bookings'] as $key=>$val) {
             $post_arr['bookings['.$key.'][bookedSeats]']=$val['bookedSeats'];
@@ -339,7 +339,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 		   <input type='hidden' name='eme_register_empty_seats' value='$eme_register_empty_seats' />
 		   ";
 
-	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_header);
+	   $form_html .= eme_replace_extra_multibooking_formfields_placeholders($format_header);
 
 	   $cur_time=time();
 	   foreach ($events as $event) {
@@ -378,7 +378,7 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 			   $form_html .= eme_replace_formfields_placeholders ($event,"",$format_entry,1);
 		   }
 	   }
-	   $form_html .= eme_replace_multibooking_formfields_placeholders($format_footer);
+	   $form_html .= eme_replace_extra_multibooking_formfields_placeholders($format_footer);
 	   $form_html .= "</form>";
 	   if (has_filter('eme_add_booking_form_filter')) $form_html=apply_filters('eme_add_booking_form_filter',$form_html);
    }

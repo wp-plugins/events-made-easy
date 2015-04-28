@@ -568,7 +568,7 @@ function eme_replace_cancelformfields_placeholders ($event) {
    }
 }
 
-function eme_replace_multibooking_formfields_placeholders ($format) {
+function eme_replace_extra_multibooking_formfields_placeholders ($format) {
    global $current_user;
    $bookerLastName="";
    $bookerFirstName="";
