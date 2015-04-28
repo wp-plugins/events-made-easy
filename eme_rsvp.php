@@ -792,7 +792,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
             $bookerFirstName = eme_strip_tags($_POST['firstname']);
          $bookerEmail = eme_strip_tags($_POST['email']);
          $booker = eme_get_person_by_name_and_email($bookerLastName, $bookerFirstName, $bookerEmail); 
-      } elseif (isset($_POST['lastname']) && isset($_POST['firstname']) && isset($_POST['email'])) {
+      } elseif (isset($_POST['lastname']) && isset($_POST['email'])) {
          // when called from the admin backend, we don't care about registration_wp_users_only
          $booker_wp_id=0;
          $bookerLastName = eme_strip_tags($_POST['lastname']);

@@ -81,6 +81,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Bugfix: when canceling a booking via the cancel url, the mail being sent contained the free spaces info from before the cancel, it was sent too early in the process
 * Bugfix: event placeholders were not being replaced in booking mails (they were replaced in attendee mails)
 * Bugfix: make sure you can require the first name to be completed if wanted
+* Bugfix: a redundant check was made for firstname in multibooking events, so people filling in their last name still received an error that the last name was not filled out
 
 = 1.5.35 =
 * Bugfix: RSVP placeholders in multibooking mails were not being correctly replaced
