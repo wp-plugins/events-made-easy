@@ -326,7 +326,7 @@ jQuery(document).ready(function($){
                  $selected = "";
               }
            ?>
-              <input type="checkbox" name="location_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo $category['category_name']; ?><br />
+              <input type="checkbox" name="location_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo eme_trans_sanitize_html($category['category_name']); ?><br />
            <?php
            }
            ?>
