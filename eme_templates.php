@@ -14,7 +14,6 @@ function eme_templates_page() {
       return;
    }
 
-   $validation_result = '';
    $message = '';
    if (isset($_POST['eme_admin_action'])) {
       // Insert/Update/Delete Record
@@ -25,7 +24,7 @@ function eme_templates_page() {
          $template['format'] = trim(stripslashes($_POST['format']));
          $template['description'] = trim(stripslashes($_POST['description']));
          $validation_result = $wpdb->update( $templates_table, $template, array('id' => intval($_POST['template_id'])) );
-         if ($validation_result !== false && !empty($validation_result) ) {
+         if ($validation_result !== false) {
             $message = __("Successfully edited the template.", "eme");
          } else {
             $message = __("There was a problem editing your template, please try again.","eme");
@@ -36,7 +35,7 @@ function eme_templates_page() {
          $template['format'] = trim(stripslashes($_POST['format']));
          $template['description'] = trim(stripslashes($_POST['description']));
          $validation_result = $wpdb->insert($templates_table, $template);
-         if ($validation_result !== false && !empty($validation_result) ) {
+         if ($validation_result !== false) {
             $message = __("Successfully added the template.", "eme");
          } else {
             $message = __("There was a problem adding your template, please try again.","eme");
@@ -48,16 +47,14 @@ function eme_templates_page() {
             //Run the query if we have an array of template ids
             if (count($templates > 0)) {
                $validation_result = $wpdb->query( "DELETE FROM $templates_table WHERE id IN (". implode(",",$templates) .")" );
-               if ($validation_result !== false )
+               if ($validation_result !== false)
                   $message = __("Successfully deleted the selected template(s).","eme");
                else
                   $message = __("There was a problem deleting the selected template(s), please try again.","eme");
             } else {
-               $validation_result = false;
                $message = __("Couldn't delete the templates. Incorrect template IDs supplied. Please try again.","eme");
             }
          } else {
-            $validation_result = false;
             $message = __("Couldn't delete the templates. Incorrect template IDs supplied. Please try again.","eme");
          }
       }

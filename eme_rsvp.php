@@ -1455,7 +1455,7 @@ function eme_transfer_all_bookings($person_id,$to_person_id) {
    $fields['person_id'] = $to_person_id;
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
-   if ($wpdb->update($bookings_table, $fields, $where)===false)
+   if ($wpdb->update($bookings_table, $fields, $where) === false)
       return false;
    else return true;
 }
