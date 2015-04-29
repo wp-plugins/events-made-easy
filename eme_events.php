@@ -1300,11 +1300,12 @@ function eme_get_events_list_shortcode($atts) {
    return $result;
 }
 
-function eme_display_single_event($event_id,$template_id=0) {
+function eme_display_single_event($event_id,$template_id=0,$ignore_url=0) {
    $event = eme_get_event ( intval($event_id) );
    if ($event['event_url'] != '') {
       // url not empty, so we redirect to it
       $page_body = '<script type="text/javascript">window.location.href="'.$event['event_url'].'";</script>';
+      return $page_body;
    } elseif ($template_id) {
       $single_event_format= eme_get_template_format($template_id);
    } else {
@@ -1317,13 +1318,11 @@ function eme_display_single_event($event_id,$template_id=0) {
    }
    if ($event['event_status'] == STATUS_PRIVATE && is_user_logged_in() || $event['event_status'] != STATUS_PRIVATE)
       $page_body = eme_replace_placeholders ($single_event_format, $event);
-   else
-      $page_body = "";
    return $page_body;
 }
 
 function eme_display_single_event_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id'=>'','template_id'=>0), $atts ) );
+   extract ( shortcode_atts ( array ('id'=>'','template_id'=>0,'ignore_url'=>0), $atts ) );
    return eme_display_single_event($id,$template_id);
 }
 
