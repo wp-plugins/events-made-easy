@@ -42,7 +42,7 @@ function eme_people_page() {
                      $to_person=eme_get_person($to_person_id);
                      $to_person_name=$to_person['lastname'].' '.$to_person['firstname'];
                      $res=eme_transfer_all_bookings($person_id,$to_person_id);
-                     if ($res) {
+                     if ($res===true) {
                         $message.=__("Transferred all bookings made by '".$person_name."' to '".$to_person_name."'", 'eme');
                         $message.="<br />";
                      }
@@ -55,7 +55,6 @@ function eme_people_page() {
                }
             }
          } else {
-               $validation_result = false;
                $message = __("Couldn't delete the people. Please try again.","eme");
          }
    }

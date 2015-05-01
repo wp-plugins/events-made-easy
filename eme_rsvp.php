@@ -537,7 +537,7 @@ function eme_delete_booking_form_shortcode($atts) {
    return eme_delete_booking_form($id);
 }
 
-function eme_cancel_form($payment_randomid) {
+function eme_cancel_confirm_form($payment_randomid) {
    $destination = eme_get_events_page(true, false);
    $payment=eme_get_payment(0,$payment_randomid);
    $booking_ids=eme_get_payment_booking_ids($payment['id']);
@@ -1455,7 +1455,7 @@ function eme_transfer_all_bookings($person_id,$to_person_id) {
    $fields['person_id'] = $to_person_id;
    $fields['modif_date']=current_time('mysql', false);
    $fields['modif_date_gmt']=current_time('mysql', true);
-   if ($wpdb->update($bookings_table, $fields, $where)===false)
+   if ($wpdb->update($bookings_table, $fields, $where) === false)
       return false;
    else return true;
 }
@@ -2092,6 +2092,8 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
          $replacement="<a href='$url'>".__('Cancel booking','eme')."</a>";
       } elseif (preg_match('/#_CANCEL_URL$/', $result)) {
          $replacement = eme_cancel_url($payment['random_id']);
+      } elseif (preg_match('/#_CANCEL_CODE$/', $result)) {
+         $replacement = $payment['random_id'];
       } elseif (preg_match('/#_FIELDS/', $result)) {
          $field_replace = "";
          foreach ($answers as $answer) {

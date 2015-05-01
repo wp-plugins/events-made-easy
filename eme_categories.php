@@ -15,7 +15,6 @@ function eme_categories_page() {
       return;
    }
 
-   $validation_result = '';
    $message = '';
    if (isset($_POST['eme_admin_action'])) {
       // Insert/Update/Delete Record
@@ -27,7 +26,7 @@ function eme_categories_page() {
          $category['description'] =  trim(stripslashes($_POST['description']));
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->update( $categories_table, $category, array('category_id' => intval($_POST['category_id'])) );
-         if ($validation_result !== false && !empty($validation_result) ) {
+         if ($validation_result !== false) {
             $message = __("Successfully edited the category", "eme");
          } else {
             $message = __("There was a problem editing your category, please try again.","eme");
@@ -39,7 +38,7 @@ function eme_categories_page() {
          $category['description'] =  trim(stripslashes($_POST['description']));
          $category['category_slug'] = untrailingslashit(eme_permalink_convert($category['category_name']));
          $validation_result = $wpdb->insert($categories_table, $category);
-         if ($validation_result !== false && !empty($validation_result) ) {
+         if ($validation_result !== false) {
             $message = __("Successfully added the category", "eme");
          } else {
             $message = __("There was a problem adding your category, please try again.","eme");
@@ -56,11 +55,9 @@ function eme_categories_page() {
                else
                   $message = __("There was a problem deleting the selected categories, please try again.","eme");
             } else {
-               $validation_result = false;
                $message = __("Couldn't delete the categories. Incorrect category IDs supplied. Please try again.","eme");
             }
          } else {
-            $validation_result = false;
             $message = __("Couldn't delete the categories. Incorrect category IDs supplied. Please try again.","eme");
          }
       }

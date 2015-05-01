@@ -573,9 +573,10 @@ function eme_events_page_content() {
    $format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
    $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
 
-   if (isset($_GET['eme_cancel_booking'])) {
-	   $payment_randomid=eme_strip_tags($_GET['eme_cancel_booking']);
-      return eme_cancel_form($payment_randomid);
+   if (isset($_REQUEST['eme_cancel_booking'])) {
+      // GET for cancel links, POST for the cancel form
+	   $payment_randomid=eme_strip_tags($_REQUEST['eme_cancel_booking']);
+      return eme_cancel_confirm_form($payment_randomid);
 
    } elseif (isset($_POST['eme_confirm_cancel_booking']) && isset($_POST['eme_pmt_rndid'])) {
       $payment_randomid=eme_strip_tags($_POST['eme_pmt_rndid']);
@@ -1300,11 +1301,12 @@ function eme_get_events_list_shortcode($atts) {
    return $result;
 }
 
-function eme_display_single_event($event_id,$template_id=0) {
+function eme_display_single_event($event_id,$template_id=0,$ignore_url=0) {
    $event = eme_get_event ( intval($event_id) );
-   if ($event['event_url'] != '') {
+   if ($event['event_url'] != '' && !$ignore_url) {
       // url not empty, so we redirect to it
       $page_body = '<script type="text/javascript">window.location.href="'.$event['event_url'].'";</script>';
+      return $page_body;
    } elseif ($template_id) {
       $single_event_format= eme_get_template_format($template_id);
    } else {
@@ -1317,14 +1319,12 @@ function eme_display_single_event($event_id,$template_id=0) {
    }
    if ($event['event_status'] == STATUS_PRIVATE && is_user_logged_in() || $event['event_status'] != STATUS_PRIVATE)
       $page_body = eme_replace_placeholders ($single_event_format, $event);
-   else
-      $page_body = "";
    return $page_body;
 }
 
 function eme_display_single_event_shortcode($atts) {
-   extract ( shortcode_atts ( array ('id'=>'','template_id'=>0), $atts ) );
-   return eme_display_single_event($id,$template_id);
+   extract ( shortcode_atts ( array ('id'=>'','template_id'=>0,'ignore_url'=>0), $atts ) );
+   return eme_display_single_event($id,$template_id,$ignore_url);
 }
 
 function eme_get_events_page($justurl = 0, $echo = 1, $text = '') {
