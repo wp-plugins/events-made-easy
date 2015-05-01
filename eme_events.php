@@ -573,9 +573,10 @@ function eme_events_page_content() {
    $format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
    $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
 
-   if (isset($_GET['eme_cancel_booking'])) {
-	   $payment_randomid=eme_strip_tags($_GET['eme_cancel_booking']);
-      return eme_cancel_form($payment_randomid);
+   if (isset($_REQUEST['eme_cancel_booking'])) {
+      // GET for cancel links, POST for the cancel form
+	   $payment_randomid=eme_strip_tags($_REQUEST['eme_cancel_booking']);
+      return eme_cancel_confirm_form($payment_randomid);
 
    } elseif (isset($_POST['eme_confirm_cancel_booking']) && isset($_POST['eme_pmt_rndid'])) {
       $payment_randomid=eme_strip_tags($_POST['eme_pmt_rndid']);

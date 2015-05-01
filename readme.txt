@@ -67,7 +67,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.36 =
+= 1.5.36 (2015/05/01) =
+* Feature: added Worldpay payment gateway
 * Feature: added event placeholders #_AUTHORNAME, #_AUTHOREMAIL and #_AUTHORPHONE
 * Feature: added event placeholders #_EVENTCREATIONDATE, #_EVENTMODIFDATE, #_EVENTCREATIONTIME, #_EVENTMODIFTIME
 * Feature: added description for categories, together with placeholders #_EVENTCATEGORYDESCRIPTIONS and #_LOCATIONCATEGORYDESCRIPTIONS
@@ -78,6 +79,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
      $already_registered=1;
   }
 * Feature: now everybody can cancel a booking (even non-wp users) via a special link. Cancel urls in mails and user profile use these links now.
+           The old booking cancel form will be deprecated in the future, as using this link/form is more secure and easier to maintain
+           For this #_CANCEL_LINK and #_CANCEL_URL have been adapted already. And a new placeholder #_CANCEL_CODE has been added that
+           returns the cancel code to be used in the new cancel booking form (to be implemented)
 * Feature: added option ignore_url to shortcode eme_event: in a number of cases (like when using this shortcode in the calendar format for an event entry), the url would case the page to be redirected. Using this, you can ignore that url.
 * Bugfix: when canceling a booking via the cancel url, the mail being sent contained the free spaces info from before the cancel, it was sent too early in the process
 * Bugfix: event placeholders were not being replaced in booking mails (they were replaced in attendee mails)
