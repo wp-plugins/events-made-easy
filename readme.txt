@@ -70,6 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.5.37 (xxx/xx/xx) =
 * CSS Bugfix for chrome (the fix got added in 1.3.4 and removed later on):
   datatable CSS fix so the footer doesn't overlap with the table in some browsers
+* Improvement: German language updates, thanks to Joerg Knoerchen
 
 = 1.5.36 (2015/05/01) =
 * Feature: added Worldpay payment gateway
