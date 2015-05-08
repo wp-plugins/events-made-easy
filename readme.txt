@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.37 (xxx/xx/xx) =
+* Bugfix: cancel url was not correctly shown (and was also not working for bookings with no price)
 * CSS Bugfix for chrome (the fix got added in 1.3.4 and removed later on):
   datatable CSS fix so the footer doesn't overlap with the table in some browsers
 * Improvement: German language updates, thanks to Joerg Knoerchen
