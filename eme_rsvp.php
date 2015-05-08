@@ -861,30 +861,11 @@ function eme_multibook_seats($events, $send_mail, $format) {
                   $result .= $eval_filter_return[1];
                } else {
                   $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
-                  $booking = eme_get_booking ($booking_id);
-                  $total_price += eme_get_total_booking_price($event,$booking);
-
-                  if (!empty($event['event_registration_recorded_ok_html']))
-                     $ok_format = $event['event_registration_recorded_ok_html'];
-                  elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
-                     $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
-                  else
-                     $ok_format = get_option('eme_registration_recorded_ok_html' );
-
-                  // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-                  $result = eme_replace_placeholders($ok_format, $event, "html", 0);
-                  $result = eme_replace_booking_placeholders($result, $event, $booking);
-                  if (is_admin()) {
-                     $action="approveRegistration";
-                  } else {
-                     $action="";
-                  }
-
+                  $booking_ids[]=$booking_id;
                   // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
                   foreach($_POST['bookings'][$event_id] as $key=>$value) {
                      unset($_POST['bookings'][$event_id][$key]);
                   }
-                  $booking_ids[]=$booking_id;
                }
             } else {
                $result .= __('No booker ID found, something is wrong here','eme');
@@ -901,10 +882,30 @@ function eme_multibook_seats($events, $send_mail, $format) {
    $booking_ids_done=join(',',$booking_ids);
 
    if (!empty($booking_ids_done)) {
-      // the payment needs to be created before the mail is sent, otherwise you can't send a link to the payment ...
-      if ($total_price>0)
-         eme_create_payment($booking_ids_done);
+      // the payment needs to be created before the mail is sent or placeholders replaced, otherwise you can't send a link to the payment ...
+      eme_create_payment($booking_ids_done);
 
+      foreach ($booking_ids_done as $booking_id) {
+         $booking = eme_get_booking ($booking_id);
+         $total_price += eme_get_total_booking_price($event,$booking);
+
+         if (!empty($event['event_registration_recorded_ok_html']))
+            $ok_format = $event['event_registration_recorded_ok_html'];
+         elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
+            $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
+         else
+            $ok_format = get_option('eme_registration_recorded_ok_html' );
+
+         // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+         $result = eme_replace_placeholders($ok_format, $event, "html", 0);
+         $result = eme_replace_booking_placeholders($result, $event, $booking);
+         if (is_admin()) {
+            $action="approveRegistration";
+         } else {
+            $action="";
+         }
+      }
+      // send the mail based on the first booking done in the series
       $booking = eme_get_booking ($booking_ids[0]);
       $is_multibooking=1;
       if ($send_mail) eme_email_rsvp_booking($booking,$action,$is_multibooking);
@@ -1120,24 +1121,6 @@ function eme_book_seats($event, $send_mail) {
                $result = $eval_filter_return[1];
             } else {
                $booking_id=eme_record_booking($event, $booker['person_id'], $bookedSeats,$bookedSeats_mp,$bookerComment,$language);
-               $booking = eme_get_booking ($booking_id);
-               $total_price = eme_get_total_booking_price($event,$booking);
-               if (!empty($event['event_registration_recorded_ok_html']))
-                  $ok_format = $event['event_registration_recorded_ok_html'];
-               elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
-                  $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
-               else
-                  $ok_format = get_option('eme_registration_recorded_ok_html' );
-
-               // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
-               $result = eme_replace_placeholders($ok_format, $event, "html", 0);
-               $result = eme_replace_booking_placeholders($result, $event, $booking);
-               if (is_admin()) {
-                  $action="approveRegistration";
-               } else {
-                  $action="";
-               }
-
                // everything ok, so we unset the variables entered, so when the form is shown again, all is defaulted again
                foreach($_POST as $key=>$value) {
                   unset($_POST[$key]);
@@ -1154,12 +1137,27 @@ function eme_book_seats($event, $send_mail) {
       }
    }
 
-   // the payment needs to be created before the mail is sent, otherwise you can't send a link to the payment ...
    if ($booking_id) {
-      if ($total_price>0)
-         eme_create_payment($booking_id);
+      // the payment needs to be created before the mail is sent or placeholders replaced, otherwise you can't send a link to the payment ...
+      eme_create_payment($booking_id);
 
       $booking = eme_get_booking ($booking_id);
+      $total_price = eme_get_total_booking_price($event,$booking);
+      if (!empty($event['event_registration_recorded_ok_html']))
+         $ok_format = $event['event_registration_recorded_ok_html'];
+      elseif ($event['event_properties']['event_registration_recorded_ok_html_tpl']>0)
+         $ok_format = eme_get_template_format($event['event_properties']['event_registration_recorded_ok_html_tpl']);
+      else
+         $ok_format = get_option('eme_registration_recorded_ok_html' );
+
+      // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
+      $result = eme_replace_placeholders($ok_format, $event, "html", 0);
+      $result = eme_replace_booking_placeholders($result, $event, $booking);
+      if (is_admin()) {
+         $action="approveRegistration";
+      } else {
+         $action="";
+      }
       if ($send_mail) eme_email_rsvp_booking($booking,$action);
    }
 

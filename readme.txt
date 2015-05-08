@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.2.1
-Stable tag: 1.5.36
+Stable tag: 1.5.37
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.37 (xxx/xx/xx) =
+= 1.5.37 (2015/05/08) =
+* Bugfix: cancel url was not correctly shown (and was also not working for bookings with no price)
 * CSS Bugfix for chrome (the fix got added in 1.3.4 and removed later on):
   datatable CSS fix so the footer doesn't overlap with the table in some browsers
 * Improvement: German language updates, thanks to Joerg Knoerchen
