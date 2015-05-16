@@ -69,6 +69,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.38 (2015//) =
 * Bugfix: multibooking fix for mails
+* Bugfix: allow firstname to be required too
 
 = 1.5.37 (2015/05/08) =
 * Bugfix: cancel url was not correctly shown (and was also not working for bookings with no price)
