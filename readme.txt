@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.38 (2015//) =
+* Bugfix: multibooking fix for mails
+
 = 1.5.37 (2015/05/08) =
 * Bugfix: cancel url was not correctly shown (and was also not working for bookings with no price)
 * CSS Bugfix for chrome (the fix got added in 1.3.4 and removed later on):

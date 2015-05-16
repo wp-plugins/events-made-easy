@@ -880,12 +880,11 @@ function eme_multibook_seats($events, $send_mail, $format) {
    }
 
    $booking_ids_done=join(',',$booking_ids);
-
    if (!empty($booking_ids_done)) {
       // the payment needs to be created before the mail is sent or placeholders replaced, otherwise you can't send a link to the payment ...
       eme_create_payment($booking_ids_done);
 
-      foreach ($booking_ids_done as $booking_id) {
+      foreach ($booking_ids as $booking_id) {
          $booking = eme_get_booking ($booking_id);
          $total_price += eme_get_total_booking_price($event,$booking);
 
