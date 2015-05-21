@@ -3,8 +3,8 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
-Tested up to: 4.2.1
-Stable tag: 1.5.37
+Tested up to: 4.2.2
+Stable tag: 1.5.38
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.38 (2015//) =
+= 1.5.38 (2015/05/21) =
 * Bugfix: multibooking fix for mails
 * Bugfix: allow firstname to be required too
 
