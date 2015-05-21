@@ -644,6 +644,8 @@ function eme_cancel_seats($event) {
             $booking = eme_get_booking ($booking_id);
             eme_delete_booking($booking_id);
             eme_email_rsvp_booking($booking,"cancelRegistration");
+            // delete the booking answers after the mail is sent, so the answers can still be used in the mail
+            eme_delete_answers($booking_id);
          }
          $result = __('Booking deleted', 'eme');
       } else {
@@ -1459,10 +1461,7 @@ function eme_transfer_all_bookings($person_id,$to_person_id) {
 
 function eme_delete_booking($booking_id) {
    global $wpdb;
-   // first delete all the answers
-   eme_delete_answers($booking_id);
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
-   //eme_delete_payment_booking_id($booking_id);
    $sql = $wpdb->prepare("DELETE FROM $bookings_table WHERE booking_id = %d",$booking_id);
    return $wpdb->query($sql);
 }
@@ -2471,8 +2470,11 @@ function eme_registration_seats_page($pending=0) {
                   eme_update_booking_payed($booking_id,intval($bookings_payed[$key]));
                if ($send_mail) eme_email_rsvp_booking($booking,$action);
             } elseif ($action == 'denyRegistration') {
+               // the mail needs to be sent after the deletion, otherwise the count of free spaces is wrong
                eme_delete_booking($booking_id);
                if ($send_mail) eme_email_rsvp_booking($booking,$action);
+               // delete the booking answers after the mail is sent, so the answers can still be used in the mail
+               eme_delete_answers($booking_id);
             }
          }
       }
