@@ -36,7 +36,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
          $eval_filter_return=array(0=>1,1=>'');
       if (is_array($eval_filter_return) && !$eval_filter_return[0]) {
          // the result of own eval rules failed, so let's use that as a result
-         $booking_ids_done = 0;
+         $booking_id_done = 0;
          $form_result_message = $eval_filter_return[1];
       } else {
          $send_mail=1;
