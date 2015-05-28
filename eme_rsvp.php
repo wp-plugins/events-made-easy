@@ -1278,11 +1278,16 @@ function eme_get_booked_multiseats_by_person_event_id($person_id,$event_id) {
    return $result;
 }
 
-function eme_get_event_by_booking_id($booking_id) {
+function eme_get_event_id_by_booking_id($booking_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT DISTINCT event_id FROM $bookings_table WHERE booking_id = %d",$booking_id);
    $event_id = $wpdb->get_var($sql);
+   return $event_id;
+}
+
+function eme_get_event_by_booking_id($booking_id) {
+   $event_id = eme_get_event_id_by_booking_id($booking_id);
    if ($event_id)
       $event = eme_get_event($event_id);
    else
@@ -1327,20 +1332,21 @@ function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $la
    if ($wpdb->insert($bookings_table,$booking)) {
 	   $booking_id = $wpdb->insert_id;
 	   $booking['booking_id'] = $booking_id;
-	   eme_record_answers($booking_id,$booking['event_id']);
+	   eme_record_answers($booking_id);
 	   // now that everything is (or should be) correctly entered in the db, execute possible actions for the new booking
 	   if (has_action('eme_insert_rsvp_action')) do_action('eme_insert_rsvp_action',$booking);
-	   return $booking['booking_id'];
+	   return $booking_id;
    } else {
 	   return false;
    }
 }
 
-function eme_record_answers($booking_id,$event_id) {
+function eme_record_answers($booking_id) {
    global $wpdb;
    $answers_table = $wpdb->prefix.ANSWERS_TBNAME; 
    $fields_seen=array();
 
+   $event_id=eme_get_event_id_by_booking_id($booking_id);
    // first do the multibooking answers if any
    if (isset($_POST['bookings'][$event_id])) {
 	   foreach($_POST['bookings'][$event_id] as $key =>$value) {

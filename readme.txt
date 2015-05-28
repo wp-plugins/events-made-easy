@@ -70,6 +70,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 = 1.5.40 (2015//) =
 * Bugfix: when deleting a booking, the extra field answers were deleted before the mail was sent, resulting in some placeholders not being replaced in that mail
 * Bugfix: fix untranslated and unescaped category names when creating/editing events
+* Bugfix: fix edit and update bookings (missing argument for a function)
 
 = 1.5.39 (2015/05/21) =
 * Bugfix: small fix for undefined variable
