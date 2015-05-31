@@ -585,8 +585,11 @@ function eme_events_page_content() {
       if (isset($_POST['eme_rsvp_nonce']) && wp_verify_nonce($_POST['eme_rsvp_nonce'],"cancel booking $payment_randomid")) {
          foreach ($booking_ids as $booking_id) {
             $booking=eme_get_booking($booking_id);
+            // delete the booking before the mail is sent, so free spaces are correct
             eme_delete_booking($booking_id);
             eme_email_rsvp_booking($booking,"cancelRegistration");
+            // delete the booking answers after the mail is sent, so the answers can still be used in the mail
+            eme_delete_answers($booking_id);
          }
          eme_delete_payment($payment['id']);
       }
@@ -2604,7 +2607,7 @@ function eme_event_form($event, $title, $element) {
                            $selected = "";
                         }
                      ?>
-            <input type="checkbox" name="event_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo $category['category_name']; ?><br />
+            <input type="checkbox" name="event_category_ids[]" value="<?php echo $category['category_id']; ?>" <?php echo $selected ?> /><?php echo eme_trans_sanitize_html($category['category_name']); ?><br />
                      <?php
                      }
                      ?>

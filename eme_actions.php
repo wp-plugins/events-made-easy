@@ -75,10 +75,13 @@ function eme_actions_init() {
        $_REQUEST['eme_admin_action'] == 'remove_booking' && isset($_REQUEST['booking_id'])) {
       $booking_id=intval($_REQUEST['booking_id']);
       $booking = eme_get_booking ($booking_id);
+      // delete the booking before the mail is sent, so free spaces are correct
       eme_delete_booking($booking_id);
       if (get_option('eme_deny_mail_event_edit')) {
          eme_email_rsvp_booking($booking,"denyRegistration");
       }
+      // delete the booking answers after the mail is sent, so the answers can still be used in the mail
+      eme_delete_answers($booking_id);
       exit();
    }
 
