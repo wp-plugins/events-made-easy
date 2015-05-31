@@ -4,7 +4,7 @@ Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
 Tested up to: 4.2.2
-Stable tag: 1.5.39
+Stable tag: 1.5.40
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.40 (2015//) =
+= 1.5.40 (2015/05/31) =
 * Bugfix: when deleting a booking, the extra field answers were deleted before the mail was sent, resulting in some placeholders not being replaced in that mail
 * Bugfix: fix untranslated and unescaped category names when creating/editing events
 * Bugfix: fix edit and update bookings (missing argument for a function)
