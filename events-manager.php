@@ -1856,6 +1856,18 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_text', $replacement);
          }
 
+      } elseif ($event && preg_match('/#_EVENTCATEGORIES_CSS$/', $result) && get_option('eme_categories_enabled')) {
+         $categories = eme_get_event_category_names($event['event_id']);
+         if ($target == "html") {
+            $replacement = eme_trans_sanitize_html(join(" ",$categories),$lang);
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = eme_translate(join(" ",$categories),$lang);
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = eme_translate(join(" ",$categories),$lang);
+            $replacement = apply_filters('eme_text', $replacement);
+         }
 
       } elseif ($event && preg_match('/#_EVENTCATEGORYDESCRIPTIONS$/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_event_category_descriptions($event['event_id']);
@@ -1910,6 +1922,27 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
             $replacement = eme_translate(join(", ",$categories),$lang);
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
+      } elseif ($event && preg_match('/^#_EVENTCATEGORIES_CSS\{(.*?)\}\{(.*?)\}/', $result, $matches) && get_option('eme_categories_enabled')) {
+         $include_cats=$matches[1];
+         $exclude_cats=$matches[2];
+         $extra_conditions_arr = array();
+         if (!empty($include_cats))
+            array_push($extra_conditions_arr, "category_id IN ($include_cats)");
+         if (!empty($exclude_cats))
+            array_push($extra_conditions_arr, "category_id NOT IN ($exclude_cats)");
+         $extra_conditions = join(" AND ",$extra_conditions_arr);
+         $categories = eme_get_event_category_names($event['event_id'],$extra_conditions);
+         if ($target == "html") {
+            $replacement = eme_trans_sanitize_html(join(" ",$categories),$lang);
+            $replacement = apply_filters('eme_general', $replacement); 
+         } elseif ($target == "rss")  {
+            $replacement = eme_translate(join(" ",$categories),$lang);
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = eme_translate(join(" ",$categories),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 

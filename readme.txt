@@ -67,6 +67,11 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.41 (2015//) =
+* Feature: added placeholder #_EVENTCATEGORIES_CSS, returning a space-separated list of categories.
+           Also, excluding categories is possible, like in #_EVENTCATEGORIES
+           Also added #_LOCATIONCATEGORIES_CSS
+
 = 1.5.40 (2015/05/31) =
 * Bugfix: when deleting a booking, the extra field answers were deleted before the mail was sent, resulting in some placeholders not being replaced in that mail
 * Bugfix: fix untranslated and unescaped category names when creating/editing events

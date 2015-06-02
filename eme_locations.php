@@ -1232,7 +1232,6 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       } elseif (preg_match('/#_LATITUDE/', $result)) {
          $field = "location_latitude";
          $replacement = $location[$field];
-         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1244,7 +1243,6 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
       } elseif (preg_match('/#_LONGITUDE/', $result)) {
          $field = "location_longitude";
          $replacement = $location[$field];
-         $replacement = eme_trans_sanitize_html($replacement,$lang);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
@@ -1254,34 +1252,47 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
          }
 
       } elseif (preg_match('/#_DIRECTIONS/', $result)) {
-         $replacement = eme_add_directions_form($location);
          if ($target == "html") {
+            $replacement = eme_add_directions_form($location);
+            $replacement = apply_filters('eme_general', $replacement);
+         }
+
+      } elseif (preg_match('/#_CATEGORIES|#_LOCATIONCATEGORIES$/', $result) && get_option('eme_categories_enabled')) {
+         $categories = eme_get_location_category_names($location['location_id']);
+         if ($target == "html") {
+	    $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
+	    $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
+	    $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
-      } elseif (preg_match('/#_CATEGORIES|#_LOCATIONCATEGORIES/', $result) && get_option('eme_categories_enabled')) {
+      } elseif (preg_match('/#_LOCATIONCATEGORIES_CSS/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_location_category_names($location['location_id']);
-         $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
          if ($target == "html") {
+	    $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
+	    $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
+	    $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_LOCATIONCATEGORYDESCRIPTIONS/', $result) && get_option('eme_categories_enabled')) {
          $categories = eme_get_location_category_descriptions($location['location_id']);
-         $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
          if ($target == "html") {
+            $replacement = eme_trans_sanitize_html(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general', $replacement);
          } elseif ($target == "rss")  {
+	    $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_general_rss', $replacement);
          } else {
+	    $replacement = eme_translate(join(", ",$categories),$lang);
             $replacement = apply_filters('eme_text', $replacement);
          }
 
