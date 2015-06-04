@@ -2024,6 +2024,18 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
             $replacement = apply_filters('eme_general', $replacement); 
          else 
             $replacement = apply_filters('eme_general_rss', $replacement); 
+      } elseif (preg_match('/#_RESPNICKNAME$/', $result)) {
+         if ($person['wp_id']>0) {
+            $user = get_userdata( $person['wp_id']);
+            if ($user)
+               $replacement=eme_sanitize_html($user->user_nicename);
+         }
+      } elseif (preg_match('/#_RESPDISPNAME$/', $result)) {
+         if ($person['wp_id']>0) {
+            $user = get_userdata( $person['wp_id']);
+            if ($user)
+               $replacement=eme_sanitize_html($user->display_name);
+         }
       } elseif (preg_match('/#_(RESPCOMMENT|COMMENT)/', $result)) {
          $replacement = $booking['booking_comment'];
          $replacement = eme_sanitize_html($replacement);
@@ -2222,6 +2234,18 @@ function eme_replace_attendees_placeholders($format, $event, $attendee, $target=
 
       } elseif (preg_match('/#_ATTENDSPACES$/', $result)) {
          $replacement = eme_get_booked_seats_by_person_event_id($attendee['person_id'],$event['event_id']);
+      } elseif (preg_match('/#_ATTENDNICKNAME$/', $result)) {
+         if ($attendee['wp_id']>0) {
+            $user = get_userdata( $attendee['wp_id']);
+            if ($user)
+               $replacement=eme_sanitize_html($user->user_nicename);
+         }
+      } elseif (preg_match('/#_ATTENDDISPNAME$/', $result)) {
+         if ($attendee['wp_id']>0) {
+            $user = get_userdata( $attendee['wp_id']);
+            if ($user)
+               $replacement=eme_sanitize_html($user->display_name);
+         }
       } else {
          $found = 0;
       }
