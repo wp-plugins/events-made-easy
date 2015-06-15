@@ -99,7 +99,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 80);
+define('EME_DB_VERSION', 81);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -869,6 +869,7 @@ function eme_create_people_table($charset,$collate) {
       maybe_add_column($table_name, 'state', "ALTER TABLE $table_name add state tinytext DEFAULT '';"); 
       maybe_add_column($table_name, 'zip', "ALTER TABLE $table_name add zip tinytext DEFAULT '';"); 
       maybe_add_column($table_name, 'country', "ALTER TABLE $table_name add country tinytext DEFAULT '';"); 
+      maybe_add_column($table_name, 'lang', "ALTER TABLE $table_name add lang varchar(10) DEFAULT '';"); 
       if ($db_version<10) {
          $wpdb->query("ALTER TABLE $table_name MODIFY person_phone tinytext DEFAULT 0;");
       }
