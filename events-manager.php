@@ -99,7 +99,7 @@ function eme_client_clock_callback() {
 }
 
 // Setting constants
-define('EME_DB_VERSION', 81);
+define('EME_DB_VERSION', 82);
 define('EME_PLUGIN_URL', plugins_url('',plugin_basename(__FILE__)).'/'); //PLUGIN URL
 define('EME_PLUGIN_DIR', ABSPATH.PLUGINDIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/'); //PLUGIN DIRECTORY
 define('EVENTS_TBNAME','eme_events');
@@ -138,6 +138,8 @@ define('DEFAULT_CAP_SEND_OTHER_MAILS','edit_others_posts');
 define('DEFAULT_EVENT_LIST_HEADER_FORMAT',"<ul class='eme_events_list'>");
 define('DEFAULT_EVENT_LIST_ITEM_FORMAT', '<li>#_STARTDATE - #_STARTTIME<br /> #_LINKEDNAME<br />#_TOWN </li>');
 define('DEFAULT_EVENT_LIST_FOOTER_FORMAT','</ul>');
+define('DEFAULT_CAT_EVENT_LIST_HEADER_FORMAT',"<ul class='eme_events_list'>");
+define('DEFAULT_CAT_EVENT_LIST_FOOTER_FORMAT','</ul>');
 define('DEFAULT_SINGLE_EVENT_FORMAT', '<p>#_STARTDATE - #_STARTTIME</p><p>#_TOWN</p><p>#_NOTES</p><p>#_ADDBOOKINGFORM</p><p>#_MAP</p>'); 
 define('DEFAULT_EVENTS_PAGE_TITLE',__('Events','eme') ) ;
 define('DEFAULT_EVENT_PAGE_TITLE_FORMAT', '#_EVENTNAME'); 

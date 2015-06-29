@@ -72,6 +72,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
            Also, excluding categories is possible, like in #_EVENTCATEGORIES
            Also added #_LOCATIONCATEGORIES_CSS
 * Feature: added rsvp placeholders #_RESPNICKNAME, #_RESPNICKNAME and attendee placeholders #_ATTENDNICKNAME and #_ATTENDDISPNAME (displays the nickname or displayname for a booker or attendee if the user is a wordpress user)
+* Feature: add extra header/footer format settings when showing the list of events for a specific category
 * Bugfix: add db column 'lang' for the peoples table if missing
 
 = 1.5.40 (2015/05/31) =

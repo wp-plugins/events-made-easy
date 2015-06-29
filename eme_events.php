@@ -652,6 +652,10 @@ function eme_events_page_content() {
       return $page_body;
    }
    if (!get_query_var('calendar_day') && get_query_var('eme_event_cat')) {
+      $format_header = eme_replace_placeholders(get_option('eme_cat_event_list_item_format_header' ));
+      $format_header = ( $format_header != '' ) ?  $format_header : DEFAULT_CAT_EVENT_LIST_HEADER_FORMAT;
+      $format_footer = eme_replace_placeholders(get_option('eme_cat_event_list_item_format_footer' ));
+      $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_CAT_EVENT_LIST_FOOTER_FORMAT;
       $eme_event_cat=eme_sanitize_request(get_query_var('eme_event_cat'));
       $cat_ids = join(',',eme_get_category_ids($eme_event_cat));
       $stored_format = get_option('eme_event_list_item_format');
