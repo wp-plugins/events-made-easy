@@ -1126,11 +1126,6 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
          else
             $show_excerpt=1;
 
-         // when on the single event page, never show just the excerpt
-         if (eme_is_single_event_page() && $target == "html") {
-            $show_excerpt=0;
-         }
-
          // If excerpt, we use more link text
          if ($show_excerpt) {
             if (isset($event['event_notes'])) {
