@@ -75,6 +75,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Feature: add extra header/footer format settings when showing the list of events for a specific category
 * Bugfix: for some reason, in the older plugin code I added the logic that the excerpt was never to be shown on single event pages. This has been corrected now.
 * Bugfix: add db column 'lang' for the peoples table if missing
+* Bugfix: the booker firstname/lastname was not correctly replaced in the cancel form for WP users
 
 = 1.5.40 (2015/05/31) =
 * Bugfix: when deleting a booking, the extra field answers were deleted before the mail was sent, resulting in some placeholders not being replaced in that mail

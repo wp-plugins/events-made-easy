@@ -451,10 +451,10 @@ function eme_replace_cancelformfields_placeholders ($event) {
    $bookerEmail="";
    if (is_user_logged_in()) {
       get_currentuserinfo();
-      $bookerLastName=$current_user->lastname;
+      $bookerLastName=$current_user->user_lastname;
       if (empty($bookerLastName))
                $bookerLastName=$current_user->display_name;
-      $bookerFirstName=$current_user->firstname;
+      $bookerFirstName=$current_user->user_firstname;
       $bookerEmail=$current_user->user_email;
    }
    // check for previously filled in data
