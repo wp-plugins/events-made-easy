@@ -73,6 +73,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
            Also added #_LOCATIONCATEGORIES_CSS
 * Feature: added rsvp placeholders #_RESPNICKNAME, #_RESPNICKNAME and attendee placeholders #_ATTENDNICKNAME and #_ATTENDDISPNAME (displays the nickname or displayname for a booker or attendee if the user is a wordpress user)
 * Feature: add extra header/footer format settings when showing the list of events for a specific category
+* Feature: allow attributes to be text areas now, so you can do more with them
 * Bugfix: for some reason, in the older plugin code I added the logic that the excerpt was never to be shown on single event pages. This has been corrected now.
 * Bugfix: add db column 'lang' for the peoples table if missing
 * Bugfix: the booker firstname/lastname was not correctly replaced in the cancel form for WP users

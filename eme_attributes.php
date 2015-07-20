@@ -96,7 +96,7 @@ function eme_attributes_form($eme_array) {
                         <a href="#" rel="<?php echo $count ?>"><?php _e('Remove','eme'); ?></a>
                      </td>
                      <td>
-                        <input type="text" size="40" name="mtm_<?php echo $count; ?>_name" value="<?php echo eme_sanitize_html($value); ?>" />
+			<textarea rows="2" cols="40" name="mtm_<?php echo $count; ?>_name"><?php echo eme_sanitize_html($value); ?></textarea>
                      </td>
                   </tr>
                   <?php
@@ -117,7 +117,7 @@ function eme_attributes_form($eme_array) {
                         <a href="#" rel="<?php echo $count ?>"><?php _e('Remove','eme'); ?></a>
                      </td>
                      <td>
-                        <input type="text" size="40" name="mtm_<?php echo $count; ?>_name" value="" />
+			<textarea rows="2" cols="40" name="mtm_<?php echo $count; ?>_name"></textarea>
                      </td>
                   </tr>
                   <?php
