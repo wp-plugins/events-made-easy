@@ -1,6 +1,9 @@
 <?php
 // phpmailer support
-function eme_send_mail($subject="no title",$body="No message specified", $receiveremail, $receivername='', $replytoemail='', $replytoname='') {
+function eme_send_mail($subject,$body, $receiveremail, $receivername='', $replytoemail='', $replytoname='') {
+
+   // don't send empty mails
+   if (empty($body) || empty($subject)) return;
 
    $eme_rsvp_mail_send_method = get_option('eme_rsvp_mail_send_method');
    if (get_option('eme_mail_sender_address') == "") {
