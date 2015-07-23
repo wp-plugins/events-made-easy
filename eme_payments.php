@@ -554,6 +554,10 @@ function eme_paypal_form($event,$payment,$price,$lang,$multi_booking=0) {
    $p->add_field('currency_code',$event['currency']);
    $p->add_field('amount', $price);
    $p->add_field('quantity', $quantity);
+   $p->add_field('no_shipping', 1);
+   if (get_option('eme_paypal_no_tax')) {
+      $p->add_field('tax', 0);
+   }
 
    $form_html = $button_above;
    $form_html .= $p->get_button();
