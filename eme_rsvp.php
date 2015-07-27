@@ -1210,16 +1210,14 @@ function eme_get_booking_ids_by_person_event_id($person_id,$event_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    $sql = $wpdb->prepare("SELECT booking_id FROM $bookings_table WHERE person_id = %d AND event_id = %d",$person_id,$event_id);
-   $result = $wpdb->get_col($sql);
-   return $result;
+   return $wpdb->get_col($sql);
 }
 
 function eme_get_booking_ids_by_wp_id($wp_id,$event_id) {
    global $wpdb;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME; 
    $sql = $wpdb->prepare("SELECT booking_id FROM $bookings_table WHERE wp_id = %d AND event_id = %d",$wp_id,$event_id);
-   $result = $wpdb->get_col($sql);
-   return $result;
+   return $wpdb->get_col($sql);
 }
 
 function eme_get_booked_seats_by_wp_event_id($wp_id,$event_id) {
@@ -1299,8 +1297,7 @@ function eme_get_event_ids_by_booker_id($person_id) {
    global $wpdb; 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $sql = $wpdb->prepare("SELECT DISTINCT event_id FROM $bookings_table WHERE person_id = %d",$person_id);
-   $result = $wpdb->get_col($sql);
-   return $result;
+   return $wpdb->get_col($sql);
 }
 
 function eme_record_booking($event, $person_id, $seats, $seats_mp, $comment, $lang) {

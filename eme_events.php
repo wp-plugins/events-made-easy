@@ -387,10 +387,10 @@ function eme_events_page() {
          if (empty($location['location_name']) && empty($location['location_address']) && empty($location['location_town'])) {
             $event['location_id'] = 0;
          } else {
-            $related_location = eme_get_identical_location ( $location );
+            $related_location_id = eme_get_identical_location_id ($location['location_name'],$location['location_address'],$location['location_town']);
             // print_r($related_location); 
-            if ($related_location) {
-               $event['location_id'] = $related_location['location_id'];
+            if ($related_location_id) {
+               $event['location_id'] = $related_location_id;
             } else {
                $new_location = eme_insert_location ( $location );
                if (!$new_location) {

@@ -622,13 +622,12 @@ function eme_image_url_for_location_id($location_id) {
    return '';
 }
 
-function eme_get_identical_location($location) { 
+function eme_get_identical_location_id($name,$address,$town) { 
    global $wpdb;
    $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
    //$sql = "SELECT * FROM $locations_table WHERE location_name ='".$location['location_name']."' AND location_address ='".$location['location_address']."' AND location_town ='".$location['location_town']."';";
-  $prepared_sql=$wpdb->prepare("SELECT * FROM $locations_table WHERE location_name = %s AND location_address = %s AND location_town = %s", stripcslashes($location['location_name']), stripcslashes($location['location_address']), stripcslashes($location['location_town']) );
-   $cached_location = $wpdb->get_row($prepared_sql, ARRAY_A);
-   return $cached_location;
+  $prepared_sql=$wpdb->prepare("SELECT * FROM $locations_table WHERE location_name = %s AND location_address = %s AND location_town = %s LIMIT 1", stripcslashes($name), stripcslashes($address), stripcslashes($town) );
+   return $wpdb->get_col($prepared_sql);
 }
 
 function eme_validate_location($location) {
