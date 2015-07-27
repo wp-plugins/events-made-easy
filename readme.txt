@@ -3,8 +3,8 @@ Contributors: liedekef
 Donate link: http://www.e-dynamics.be/wordpress
 Tags: events, manager, booking, calendar, gigs, concert, maps, geotagging, paypal, rsvp  
 Requires at least: 4.0
-Tested up to: 4.2.2
-Stable tag: 1.5.40
+Tested up to: 4.2.3
+Stable tag: 1.5.41
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
-= 1.5.41 (2015//) =
+= 1.5.41 (2015/7/27) =
 * Feature: added placeholder #_EVENTCATEGORIES_CSS, returning a space-separated list of categories.
            Also, excluding categories is possible, like in #_EVENTCATEGORIES
            Also added #_LOCATIONCATEGORIES_CSS
