@@ -820,7 +820,7 @@ function eme_multibook_seats($events, $send_mail, $format) {
          // if any required field is empty: return an error
          $missing_required_fields_string=join(", ",$missing_required_fields);
          $result .= sprintf(__('Please make sure all of the following required fields are filled out correctly: %s','eme'),$missing_required_fields_string);
-      } elseif (!filter_var($bookerEmail,FILTER_VALIDATE_EMAIL)) {
+      } elseif (!is_email($bookerEmail)) {
          $result .= __('Please enter a valid mail address','eme');
       } elseif (!eme_is_multi($min_allowed) && $bookedSeats < $min_allowed) {
          $result .= __('Please enter a correct number of spaces to reserve','eme');
@@ -1079,7 +1079,7 @@ function eme_book_seats($event, $send_mail) {
       // if any required field is empty: return an error
       $missing_required_fields_string=join(", ",$missing_required_fields);
       $result = sprintf(__('Please make sure all of the following required fields are filled out correctly: %s','eme'),$missing_required_fields_string);
-   } elseif (!filter_var($bookerEmail,FILTER_VALIDATE_EMAIL)) {
+   } elseif (!is_email($bookerEmail)) {
       $result = __('Please enter a valid mail address','eme');
    } elseif (!eme_is_multi($min_allowed) && $bookedSeats < $min_allowed) {
       $result = __('Please enter a correct number of spaces to reserve','eme');

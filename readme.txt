@@ -67,6 +67,9 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 == Changelog ==
 
+= 1.5.42 (2015//) =
+* Improvement: use wordpress is_email function to check for valid email addresses
+
 = 1.5.41 (2015/7/27) =
 * Feature: added placeholder #_EVENTCATEGORIES_CSS, returning a space-separated list of categories.
            Also, excluding categories is possible, like in #_EVENTCATEGORIES
