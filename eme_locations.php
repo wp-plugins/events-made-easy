@@ -626,8 +626,8 @@ function eme_get_identical_location_id($name,$address,$town) {
    global $wpdb;
    $locations_table = $wpdb->prefix.LOCATIONS_TBNAME; 
    //$sql = "SELECT * FROM $locations_table WHERE location_name ='".$location['location_name']."' AND location_address ='".$location['location_address']."' AND location_town ='".$location['location_town']."';";
-  $prepared_sql=$wpdb->prepare("SELECT * FROM $locations_table WHERE location_name = %s AND location_address = %s AND location_town = %s LIMIT 1", stripcslashes($name), stripcslashes($address), stripcslashes($town) );
-   return $wpdb->get_col($prepared_sql);
+  $prepared_sql=$wpdb->prepare("SELECT location_id FROM $locations_table WHERE location_name = %s AND location_address = %s AND location_town = %s LIMIT 1", stripcslashes($name), stripcslashes($address), stripcslashes($town) );
+   return $wpdb->get_var($prepared_sql);
 }
 
 function eme_validate_location($location) {
