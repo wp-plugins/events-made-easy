@@ -69,6 +69,8 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 
 = 1.5.42 (2015//) =
 * Improvement: use wordpress is_email function to check for valid email addresses
+* Improvement: small visual improvement when showing the username in the registration overview
+* Bugfix: when updating a registration, the old info was still being shown in the mail sent
 
 = 1.5.41 (2015/7/27) =
 * Feature: added placeholder #_EVENTCATEGORIES_CSS, returning a space-separated list of categories.

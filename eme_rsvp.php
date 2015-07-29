@@ -2434,9 +2434,6 @@ function eme_registration_seats_page($pending=0) {
       } elseif ($action == 'updateRegistration') {
          $booking_id = intval($_POST['booking_id']);
          $booking = eme_get_booking ($booking_id);
-         $deprecated=get_option('eme_deprecated');
-         //$event_id = $booking['event_id'];
-         //$event = eme_get_event($event_id);
 
          if (isset($_POST['comment']))
             $bookerComment = eme_strip_tags($_POST['comment']);
@@ -2473,6 +2470,8 @@ function eme_registration_seats_page($pending=0) {
          }
          eme_update_person_with_postinfo($booking['person_id']);
 
+         // now get the changed booking and send mail if wanted
+         $booking = eme_get_booking ($booking_id);
          if ($send_mail) eme_email_rsvp_booking($booking,$action);
          print "<div id='message' class='updated'><p>".__("Booking updated","eme")."</p></div>";
 
@@ -2663,6 +2662,10 @@ function eme_registration_seats_form_table($pending=0) {
       $search_dest=admin_url("admin.php?page=eme-people");
       foreach ( $bookings as $event_booking ) {
          $person = eme_get_person ($event_booking['person_id']);
+         $person_info_shown = eme_sanitize_html($person['lastname']);
+         if ($person['firstname'])
+            $person_info_shown .= " ".eme_sanitize_html($person['firstname']);
+         $person_info_shown .= " (". eme_sanitize_html($person['email']).")";
          $search_url=add_query_arg(array('search'=>$person['person_id']),$search_dest);
          $event = eme_get_event($event_booking['event_id']);
          $payment_id = eme_get_booking_payment_id($event_booking ['booking_id']);
@@ -2705,7 +2708,7 @@ function eme_registration_seats_form_table($pending=0) {
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>
-         <td><a href="<?php echo $search_url; ?>" title="<?php _e('Click the name of the booker in order to see and/or edit the details of the booker.','eme')?>"><?php echo eme_sanitize_html($person['lastname']) ."(".eme_sanitize_html($person['phone']).", ". eme_sanitize_html($person['email']).")";?></a>
+         <td><a href="<?php echo $search_url; ?>" title="<?php _e('Click the name of the booker in order to see and/or edit the details of the booker.','eme')?>"><?php print $person_info_shown;?></a>
          </td>
          <td data-sort="<?php echo $bookingtimestamp; ?>">
             <?php echo $localised_booking_date ." ". $localised_booking_time;?>
