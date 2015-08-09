@@ -1,7 +1,7 @@
 <?php
 
 function eme_cleanup_page() {
-   global $wpdb;
+   global $wpdb, $eme_timezone;
 
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
@@ -13,9 +13,21 @@ function eme_cleanup_page() {
       if (isset($_POST['eme_admin_action']) && $_POST['eme_admin_action'] == "eme_cleanup" && isset($_POST['eme_number']) && isset($_POST['eme_period'])) {
          $eme_number = intval($_POST['eme_number']);
          $eme_period = $_POST['eme_period'];
+         $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
          if ( !in_array( $eme_period, array( 'day', 'week', 'month' ) ) ) 
             $eme_period = "month";
-         $end_date=date('Y-m-d', strtotime("-$eme_number $eme_period"));
+         switch ($eme_period) {
+            case 'day':
+               $eme_date_obj->minusDays($eme_number);
+               break;
+            case 'week':
+               $eme_date_obj->minusWeeks($eme_number);
+               break;
+            default:
+               $eme_date_obj->minusMonths($eme_number);
+               break;
+         }
+         $end_date=$eme_date_obj->getDate();
          $wpdb->query("DELETE FROM $bookings_table where event_id in (SELECT event_id from $events_table where event_end_date<'$end_date')");
          $wpdb->query("DELETE FROM $events_table where event_end_date<'$end_date'");
          $wpdb->query("DELETE FROM $recurrence_table where recurence_freq <> 'specific' AND recurrence_end_date<'$end_date'");

@@ -430,13 +430,6 @@ function eme_daydifference($date1,$date2) {
    return intval($interval->format('%r%a'));
 }
 
-function eme_hourdifference($date1,$date2) {
-   $ConvertToTimeStamp_Date1 = strtotime($date1);
-   $ConvertToTimeStamp_Date2 = strtotime($date2);
-   $DateDifference = intval($ConvertToTimeStamp_Date2) - intval($ConvertToTimeStamp_Date1);
-   return round($DateDifference/3600);
-}
-
 function eme_delete_image_files($image_basename) {
    $mime_types = array(1 => 'gif', 2 => 'jpg', 3 => 'png');
    foreach($mime_types as $type) {
@@ -454,21 +447,23 @@ function eme_status_array() {
 }
 
 function eme_localised_unixdatetime($mydate,$format='') {
+   global $eme_date_format;
    if (empty($format))
-      $format = get_option('date_format');
+      $format = $eme_date_format;
    return date_i18n ( $format, $mydate);
 }
 function eme_localised_date($mydate,$date_format='') {
-   return eme_localised_unixdatetime (strtotime($mydate), $date_format);
+   global $eme_timezone;
+   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+   $eme_date_obj->setTimestampFromString($mydate);
+   return eme_localised_unixdatetime ($eme_date_obj->format('U'), $date_format);
 }
 
-function eme_localised_unixtime($mydate) {
-   $time_format = get_option('time_format');
-   return eme_localised_unixdatetime ($mydate, $time_format);
-}
 function eme_localised_time($mydate) {
-   $time_format = get_option('time_format');
-   return eme_localised_unixdatetime (strtotime($mydate), $time_format);
+   global $eme_timezone, $eme_time_format;
+   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+   $eme_date_obj->setTimestampFromString($mydate);
+   return eme_localised_unixdatetime ($eme_date_obj->format('U'), $eme_time_format);
 }
 
 function eme_currency_array() {
@@ -519,19 +514,6 @@ function eme_transfer_nbr_be97($my_nbr) {
    $transfer_nbr_be97 = $transfer_nbr_be97_main.$transfer_nbr_be97_check;
    $transfer_nbr_be97 = substr($transfer_nbr_be97,0,3)."/".substr($transfer_nbr_be97,3,4)."/".substr($transfer_nbr_be97,7,5);
    return $transfer_nbr_be97_main.$transfer_nbr_be97_check;
-}
-
-function eme_unixdate_calc($calc,$unixdate="") {
-   if (empty($unixdate))
-      return strtotime($calc);
-   else
-      return strtotime($calc,$unixdate);
-}
-function eme_date_calc($calc,$date="") {
-   if (empty($date))
-      return date("Y-m-d",strtotime($calc));
-   else
-      return date("Y-m-d",strtotime($calc,strtotime($date)));
 }
 
 function eme_redefine_locale($locale) {

@@ -284,7 +284,8 @@ function eme_get_category_eventids($category_id,$future=0) {
    global $wpdb;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    if ($future_only) {
-      $today = date("Y-m-d");
+      $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+      $today = $eme_date_obj->format('Y-m-d');
       $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE FIND_IN_SET(%d,event_category_ids) AND event_start_date > %s ORDER BY event_start_date ASC, event_start_time ASC",$category_id,$today);
    } else {
       $sql = $wpdb->prepare("SELECT event_id FROM $events_table WHERE FIND_IN_SET(%d,event_category_ids) ORDER BY event_start_date ASC, event_start_time ASC",$category_id);

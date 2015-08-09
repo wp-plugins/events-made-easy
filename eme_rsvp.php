@@ -1,6 +1,7 @@
 <?php
 
 function eme_add_booking_form($event_id,$show_message=1) {
+   global $eme_timezone;
    $form_result_message = "";
    $event = eme_get_event($event_id);
    // rsvp not active or no rsvp for this event, then return
@@ -128,16 +129,16 @@ function eme_add_booking_form($event_id,$show_message=1) {
    if ($show_message && !empty($form_result_message))
       $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
 
-   $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-   $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
+   $event_rsvp_startdatetime = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+   $event_rsvp_enddatetime = new ExpressiveDate($event['event_end_date']." ".$event['event_end_time'],$eme_timezone);
    if ($event['event_properties']['rsvp_end_target']=='start')
-      $event_rsvp_datetime = $event_rsvp_startdatetime;
+      $event_rsvp_datetime = $event_rsvp_startdatetime->copy();
    else
-      $event_rsvp_datetime = $event_rsvp_enddatetime;
+      $event_rsvp_datetime = $event_rsvp_enddatetime->copy();
 
-   $cur_time=time();
-   if ($cur_time+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ||
-       $cur_time>=$event_rsvp_enddatetime) {
+   $eme_date_obj_now = new ExpressiveDate(null,$eme_timezone);
+   if ($event_rsvp_datetime->lessThan($eme_date_obj_now->copy()->modifyDays($event['rsvp_number_days'])->modifyHours($event['rsvp_number_hours'])) ||
+       $event_rsvp_enddatetime->lessOrEqualTo($eme_date_obj_now)) {
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
@@ -179,6 +180,7 @@ function eme_add_booking_form($event_id,$show_message=1) {
 }
 
 function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id_entry,$template_id_footer=0,$eme_register_empty_seats=0,$show_message=1) {
+   global $eme_timezone;
    // we need template ids
    $format_header = eme_get_template_format($template_id_header);
    $format_entry = eme_get_template_format($template_id_entry);
@@ -341,19 +343,18 @@ function eme_add_multibooking_form($event_ids,$template_id_header=0,$template_id
 
 	   $form_html .= eme_replace_extra_multibooking_formfields_placeholders($format_header);
 
-	   $cur_time=time();
+      $eme_date_obj_now = new ExpressiveDate(null,$eme_timezone);
 	   foreach ($events as $event) {
 		   $event_id=$event['event_id'];
-		   $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-		   $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
-		   if ($event['event_properties']['rsvp_end_target']=='start')
-			   $event_rsvp_datetime = $event_rsvp_startdatetime;
-		   else
-			   $event_rsvp_datetime = $event_rsvp_enddatetime;
+         $event_rsvp_startdatetime = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+         $event_rsvp_enddatetime = new ExpressiveDate($event['event_end_date']." ".$event['event_end_time'],$eme_timezone);
+         if ($event['event_properties']['rsvp_end_target']=='start')
+            $event_rsvp_datetime = $event_rsvp_startdatetime->copy();
+         else
+            $event_rsvp_datetime = $event_rsvp_enddatetime->copy();
 
-		   if ($cur_time+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime ||
-				   $cur_time>=$event_rsvp_enddatetime) {
-			   //$form_html.="<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
+         if ($event_rsvp_datetime->lessThan($eme_date_obj_now->copy()->modifyDays($event['rsvp_number_days'])->modifyHours($event['rsvp_number_hours'])) ||
+               $event_rsvp_enddatetime->lessOrEqualTo($eme_date_obj_now)) {
 			   continue;
 		   }
 
@@ -434,7 +435,7 @@ function eme_attendee_list_shortcode($atts) {
 }
 
 function eme_delete_booking_form($event_id,$show_message=1) {
-   global $current_user;
+   global $current_user, $eme_timezone;
    
    $form_html = "";
    $form_result_message = "";
@@ -497,23 +498,22 @@ function eme_delete_booking_form($event_id,$show_message=1) {
       $form_result_message = eme_sanitize_html($_POST['eme_message']);
    }
 
-   $event_rsvp_startdatetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-   $event_rsvp_enddatetime = strtotime($event['event_end_date']." ".$event['event_end_time']);
+   $event_rsvp_startdatetime = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+   $event_rsvp_enddatetime = new ExpressiveDate($event['event_end_date']." ".$event['event_end_time'],$eme_timezone);
    if ($event['event_properties']['rsvp_end_target']=='start')
-      $event_rsvp_datetime = $event_rsvp_startdatetime;
+      $event_rsvp_datetime = $event_rsvp_startdatetime->copy();
    else
-      $event_rsvp_datetime = $event_rsvp_enddatetime;
+      $event_rsvp_datetime = $event_rsvp_enddatetime->copy();
 
-   $cur_time=time();
-   if ($cur_time+$event['rsvp_number_days']*60*60*24+$event['rsvp_number_hours']*60*60 > $event_rsvp_datetime || 
-       $cur_time>=$event_rsvp_enddatetime) {
-      $ret_string = "<div id='eme-rsvp-message'>";
+   $eme_date_obj_now = new ExpressiveDate(null,$eme_timezone);
+   if ($event_rsvp_datetime->lessThan($eme_date_obj_now->copy()->modifyDays($event['rsvp_number_days'])->modifyHours($event['rsvp_number_hours'])) ||
+       $event_rsvp_enddatetime->lessOrEqualTo($eme_date_obj_now)) {
       if(!empty($form_result_message))
          $ret_string .= "<div class='eme-rsvp-message'>$form_result_message</div>";
       return $ret_string."<div class='eme-rsvp-message'>".__('Bookings no longer allowed on this date.', 'eme')."</div></div>";
    }
 
-   if($show_message && !empty($form_result_message)) {
+   if ($show_message && !empty($form_result_message)) {
       $form_html = "<div id='eme-rsvp-message'>";
       $form_html .= "<div class='eme-rsvp-message'>$form_result_message</div>";
       $form_html .= "</div>";
@@ -538,6 +538,8 @@ function eme_delete_booking_form_shortcode($atts) {
 }
 
 function eme_cancel_confirm_form($payment_randomid) {
+   global $eme_timezone;
+
    $destination = eme_get_events_page(true, false);
    $payment=eme_get_payment(0,$payment_randomid);
    $booking_ids=eme_get_payment_booking_ids($payment['id']);
@@ -547,12 +549,15 @@ function eme_cancel_confirm_form($payment_randomid) {
       $eme_format_footer=get_option('eme_bookings_list_footer_format');
 
       $res=__("You're about to cancel the following bookings:","eme").$eme_format_header;
+      $eme_date_obj_now=new ExpressiveDate(null,$eme_timezone);
       foreach ($booking_ids as $booking_id) {
          // don't let eme_replace_placeholders replace other shortcodes yet, let eme_replace_booking_placeholders finish and that will do it
          $booking=eme_get_booking($booking_id);
          $event=eme_get_event($booking['event_id']);
-         $cancel_cutofftime=strtotime($event['event_start_date']." ".$event['event_start_time'])-get_option('eme_cancel_rsvp_days')*24*60;
-         if ($cancel_cutofftime < time()) {
+         $cancel_cutofftime=new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+         $eme_cancel_rsvp_days=-1*get_option('eme_cancel_rsvp_days');
+         $cancel_cutofftime->modifyDays($eme_cancel_rsvp_days);
+         if ($cancel_cutofftime->lessThan($eme_date_obj_now)) {
             $res="<p class='eme_no_booking'>".__("You're no longer allowed to cancel this booking","eme")."</p>";
             return $res;
          }
@@ -1190,12 +1195,12 @@ function eme_get_bookings_by_person_id($person_id,$future,$approval_status=0) {
    $events_table = $wpdb->prefix . EVENTS_TBNAME;
    $bookings_table = $wpdb->prefix.BOOKINGS_TBNAME;
    if ($future) {
-      $today = date("Y-m-d");
-      $this_time = date("H:i:00");
+      $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+      $this_time = $eme_date_obj->format('Y-m-d H:i:00');
       if ($approval_status==1) $extra_condition="bookings.approved=1 AND ";
       elseif ($approval_status==2) $extra_condition="bookings.approved=0 AND ";
       else $extra_condition="";
-	   $sql= $wpdb->prepare("select bookings.* from $bookings_table as bookings,$events_table as events where $extra_condition person_id = %d AND bookings.event_id=events.event_id AND CONCAT(events.event_start_date,' ',events.event_start_time)>'$today $this_time'",$person_id);
+	   $sql= $wpdb->prepare("select bookings.* from $bookings_table as bookings,$events_table as events where $extra_condition person_id = %d AND bookings.event_id=events.event_id AND CONCAT(events.event_start_date,' ',events.event_start_time)>'$this_time'",$person_id);
    } else {
 	   $sql = $wpdb->prepare("SELECT * FROM $bookings_table WHERE person_id = %d",$person_id);
    }
@@ -2511,7 +2516,7 @@ function eme_registration_seats_page($pending=0) {
 }
 
 function eme_registration_seats_form_table($pending=0) {
-   global $plugin_page;
+   global $plugin_page, $eme_timezone;
 
    $scope_names = array ();
    $scope_names['past'] = __ ( 'Past events', 'eme' );
@@ -2675,10 +2680,11 @@ function eme_registration_seats_form_table($pending=0) {
          $localised_end_time = eme_localised_time($event['event_end_time']);
          $localised_booking_date = eme_localised_date($event_booking['creation_date']);
          $localised_booking_time = eme_localised_time($event_booking['creation_date']);
-         $startstring=strtotime($event['event_start_date']." ".$event['event_start_time']);
-         $bookingtimestamp=strtotime($event_booking['creation_date']);
          $style = "";
-         $today = date ( "Y-m-d" );
+         $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+         $today=$eme_date_obj->format('Y-m-d');
+         $datasort_startstring=$eme_date_obj->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time'])->format('U');
+         $bookingtimestamp=$eme_date_obj->copy()->setTimestampFromString($event_booking['creation_date'])->format('U');
          
          if ($event['event_start_date'] < $today)
             $style = "style ='background-color: #FADDB7;'";
@@ -2704,7 +2710,7 @@ function eme_registration_seats_form_table($pending=0) {
              }
          ?>
          </td>
-         <td data-sort="<?php echo $startstring; ?>">
+         <td data-sort="<?php echo $datasort_startstring; ?>">
             <?php echo $localised_start_date; if ($localised_end_date !='' && $localised_end_date != $localised_start_date) echo " - " . $localised_end_date; ?><br />
             <?php echo "$localised_start_time - $localised_end_time"; ?>
          </td>

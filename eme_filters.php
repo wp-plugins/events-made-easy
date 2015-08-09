@@ -27,45 +27,54 @@ function eme_filter_form_shortcode($atts) {
 }
 
 function eme_create_week_scope($count) {
+   global $eme_timezone;
    $start_of_week = get_option('start_of_week');
-   $day_offset=date('w')-$start_of_week;
-   if ($day_offset<0) $day_offset+=7;
+   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+   $eme_date_obj->setWeekStartDay($start_of_week);
    $scope=array();
    $scope[0] = __('Select Week','eme');
    for ( $i = 0; $i < $count; $i++) {
-      $limit_start=eme_date_calc("-$day_offset days +$i weeks");
-      $limit_end=eme_date_calc("+6 days",$limit_start);
+      $limit_start=$eme_date_obj->copy()->startOfWeek()->format('Y-m-d');
+      $limit_end=$eme_date_obj->copy()->endOfWeek()->format('Y-m-d');
       $this_scope=$limit_start."--".$limit_end;
       $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
       $scope[$this_scope] = $scope_text;
+      $eme_date_obj->addOneWeek();
    }
    return $scope;
 }
 
 function eme_create_month_scope($count) {
+   global $eme_timezone;
    $scope=array();
    $scope[0] = __('Select Month','eme');
+   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
    for ( $i = 0; $i < $count; $i++) {
-      $limit_start= eme_date_calc("first day of $i month");
-      $limit_end= eme_date_calc("last day of $i month");
+      $limit_start= $eme_date_obj->format('Y-m-01');
+      $days_in_month=$eme_date_obj->getDaysInMonth();
+      $limit_end= $eme_date_obj->format("Y-m-$days_in_month");
       $this_scope = "$limit_start--$limit_end";
       $scope_text = eme_localised_date ($limit_start,get_option('eme_show_period_monthly_dateformat'));
       $scope[$this_scope] = $scope_text;
+      $eme_date_obj->addOneMonth();
    }
    return $scope;
 }
 
 function eme_create_year_scope($count) {
-   $day_offset=date('j')-1;
+   global $eme_timezone;
    $scope=array();
    $scope[0] = __('Select Year','eme');
+
+   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
    for ( $i = 0; $i < $count; $i++) {
-      $year=date('Y', strtotime("$i year -$day_offset days"));
+      $year=$eme_date_obj->getYear();
       $limit_start = "$year-01-01";
       $limit_end   = "$year-12-31";
       $this_scope = "$limit_start--$limit_end";
       $scope_text = eme_localised_date ($limit_start,get_option('eme_show_period_yearly_dateformat'));
       $scope[$this_scope] = $scope_text;
+      $eme_date_obj->addOneYear();
    }
    return $scope;
 }

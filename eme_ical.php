@@ -12,14 +12,15 @@ function eme_sanitize_ical($value, $keep_html=0) {
 }
 
 function eme_ical_single_event($event, $title_format, $description_format) {
+   global $eme_timezone;
    $title = eme_sanitize_ical (eme_replace_placeholders ( $title_format, $event, "text" ));
    $description = eme_sanitize_ical (eme_replace_placeholders ( $description_format, $event, "text" ));
    $html_description = eme_sanitize_ical (eme_replace_placeholders ( $description_format, $event, "html" ),1);
 
    $event_link = eme_event_url($event);
-   $startstring=$event['event_start_date']." ".$event['event_start_time'];
-   $dtstartdate=eme_localised_date($startstring,"Ymd");
-   $dtstarthour=eme_localised_date($startstring,"His");
+   $startstring=new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+   $dtstartdate=$startstring->format("Ymd");
+   $dtstarthour=$startstring->format("His");
    //$dtstart=$dtstartdate."T".$dtstarthour."Z";
    // we'll use localtime, so no "Z"
    $dtstart=$dtstartdate."T".$dtstarthour;
@@ -28,8 +29,9 @@ function eme_ical_single_event($event, $title_format, $description_format) {
    if ($event['event_end_time'] == "")
       $event['event_end_time'] = $event['event_start_time'];
    $endstring=$event['event_end_date']." ".$event['event_end_time'];
-   $dtenddate=eme_localised_date($endstring,"Ymd");
-   $dtendhour=eme_localised_date($endstring,"His");
+   $endstring=new ExpressiveDate($event['event_end_date']." ".$event['event_end_time'],$eme_timezone);
+   $dtenddate=$endstring->format("Ymd");
+   $dtendhour=$endstring->format("His");
    //$dtend=$dtenddate."T".$dtendhour."Z";
    // we'll use localtime, so no "Z"
    $dtend=$dtenddate."T".$dtendhour;
@@ -44,7 +46,7 @@ function eme_ical_single_event($event, $title_format, $description_format) {
       // an 'all day' event is flagged as starting at the beginning of one day and lasting until the beginning of the next
       // so it is the same as adding "T000000" as time spec to the start/end datestring
       // But since it "ends" at the beginning of the next day, we should add 24 hours, otherwise the event ends one day too soon
-      $dtenddate=eme_localised_date(eme_date_calc("+1 day",$endstring),"Ymd");
+      $dtenddate=$endstring->addOneDay()->format('Ymd');
       $res .= "DTSTART;VALUE=DATE:$dtstartdate\r\n";
       $res .= "DTEND;VALUE=DATE:$dtenddate\r\n";
    } else {

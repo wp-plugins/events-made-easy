@@ -190,7 +190,7 @@ class WP_Widget_eme_calendar extends WP_Widget {
    }
 
    public function widget( $args, $instance ) {
-      global $wp_query;
+      global $wp_query, $eme_timezone;
       //extract($args);
       //$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( 'Calendar','eme' ) : $instance['title'], $instance, $this->id_base);
       //$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
@@ -217,12 +217,12 @@ class WP_Widget_eme_calendar extends WP_Widget {
       $options['notcategory'] = $notcategory;
       // the month shown depends on the calendar day clicked
       if (get_query_var('calendar_day')) {
-          $options['month'] = date("m", strtotime(get_query_var('calendar_day')));
-          $options['year'] = date("Y", strtotime(get_query_var('calendar_day')));
+          $eme_date_obj=new ExpressiveDate(get_query_var('calendar_day'),$eme_timezone);
       } else {
-          $options['month'] = date("m");
-          $options['year'] = date("Y");
+          $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
       }
+      $options['month'] = $eme_date_obj->format('m');
+      $options['year'] = $eme_date_obj->format('Y');
       $options['author'] = $author;
 
       echo $args['before_widget'];

@@ -761,7 +761,7 @@ function eme_location_has_events($location_id) {
 }
 
 function eme_global_map($atts) {
-   global $eme_need_gmap_js;
+   global $eme_need_gmap_js, $eme_timezone;
 
    if (get_option('eme_gmap_is_active') == '1') {
       // the locations shortcode has been deteced, so we indicate
@@ -791,32 +791,35 @@ function eme_global_map($atts) {
       $scope_offset=0;
       // for browsing: if paging=1 and only for this_week,this_month or today
       if ($eventful && $paging==1) {
+         $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+
          if (isset($_GET['eme_offset']))
             $scope_offset=$_GET['eme_offset'];
          $prev_offset=$scope_offset-1;
          $next_offset=$scope_offset+1;
          if ($scope=="this_week") {
             $start_of_week = get_option('start_of_week');
-            $day_offset=date('w')-$start_of_week;
-            if ($day_offset<0) $day_offset+=7;
-            $limit_start=eme_date_calc("-$day_offset days +$scope_offset week");
-            $limit_end=eme_date_calc("+6 days",$start_day);
+            $eme_date_obj->setWeekStartDay($start_of_week);
+            $eme_date_obj->modifyWeeks($scope_offset);
+            $limit_start=$eme_date_obj->startOfWeek()->format('Y-m-d');
+            $limit_end=$eme_date_obj->endOfWeek()->format('Y-m-d');
             $scope = "$limit_start--$limit_end";
             $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
-
             $prev_text = __('Previous week','eme');
             $next_text = __('Next week','eme');
 
          } elseif ($scope=="this_month") {
-            $limit_start = eme_date_calc("first day of $scope_offset month");
-            $limit_end   = eme_date_calc("last day of $scope_offset month");
+            $eme_date_obj->modifyMonths($scope_offset);
+            $limit_start = $eme_date_obj->startOfMonth()->format('Y-m-d');
+            $limit_end   = $eme_date_obj->endOfMonth()->format('Y-m-d');
             $scope = "$limit_start--$limit_end";
             $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_monthly_dateformat'));
             $prev_text = __('Previous month','eme');
             $next_text = __('Next month','eme');
 
          } elseif ($scope=="this_year") {
-            $year=date('Y')+$scope_offset;
+            $eme_date_obj->modifyYears($scope_offset);
+            $year=$eme_date_obj->getYear();
             $limit_start = "$year-01-01";
             $limit_end   = "$year-12-31";
             $scope = "$limit_start--$limit_end";
@@ -826,7 +829,7 @@ function eme_global_map($atts) {
             $next_text = __('Next year','eme');
 
          } elseif ($scope=="today") {
-            $scope = date('Y-m-d',strtotime("$scope_offset days"));
+            $scope = $eme_date_obj->modifyDays($scope_offset)->format('Y-m-d');
             $limit_start = $scope;
             $limit_end   = $scope;
             $scope_text = eme_localised_date($limit_start);
@@ -835,7 +838,7 @@ function eme_global_map($atts) {
 
          } elseif ($scope=="tomorrow") {
             $scope_offset++;
-            $scope = date('Y-m-d',strtotime("$scope_offset days"));
+            $scope = $eme_date_obj->modifyDays($scope_offset)->format('Y-m-d');
             $limit_start = $scope;
             $limit_end   = $scope;
             $scope_text = eme_localised_date($limit_start);

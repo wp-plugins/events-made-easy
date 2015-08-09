@@ -324,8 +324,9 @@ function eme_fdgg_form($event,$payment,$price,$lang,$multi_booking=0) {
    //$cur=$event['currency'];
    // First Data only allows USD
    $cur="USD";
-   $datetime=date("Y:m:d-H:i:s",strtotime($payment['creation_date_gmt']));
    $timezone_short="GMT";
+   $eme_date_obj=new ExpressiveDate($payment['creation_date_gmt'],$timezone_short);
+   $datetime=$eme_date_obj->format("Y:m:d-H:i:s");
 
    $button_above = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_above'),$charge,$event['currency'],$lang);
    $button_label = eme_replace_payment_provider_placeholders(get_option('eme_fdgg_button_label'),$charge,$event['currency'],$lang);
@@ -684,8 +685,9 @@ function eme_fdgg_notification() {
    // First Data only allows USD
    $cur="USD";
    $payment=eme_get_payment($payment_id);
-   $datetime=date("Y:m:d-H:i:s",strtotime($payment['creation_date_gmt']));
    $timezone_short="GMT";
+   $eme_date_obj=new ExpressiveDate($payment['creation_date_gmt'],$timezone_short);
+   $datetime=$eme_date_obj->format("Y:m:d-H:i:s");
    $calc_hash=fdgg_createHash($shared_secret.$approval_code.$charge_total.$cur.$datetime.$store_name);
 
    if ($response_hash != $calc_hash) {

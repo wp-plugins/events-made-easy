@@ -35,20 +35,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 function eme_client_clock_callback() {
    // Set php clock values in an array
-   $phptime = getdate();
+   $phptime_obj = new ExpressiveDate(null,$eme_timezone);
    // if clock data not set
    if (!isset($_SESSION['eme_client_unixtime'])) {
       // Preset php clock values in client session variables for fall-back if valid client clock data isn't received.
       $_SESSION['eme_client_clock_valid'] = false; // Will be set true if all client clock data passes sanity tests
       $_SESSION['eme_client_php_difference'] = 0; // Client-php clock difference integer seconds
-      $_SESSION['eme_client_unixtime'] = (int) $phptime['0']; // Integer seconds since 1/1/1970 @ 12:00 AM
-      $_SESSION['eme_client_seconds'] = (int) $phptime['seconds']; // Integer second this minute (0-59)
-      $_SESSION['eme_client_minutes'] = (int) $phptime['minutes']; // Integer minute this hour (0-59)
-      $_SESSION['eme_client_hours'] = (int) $phptime['hours']; // Integer hour this day (0-23)
-      $_SESSION['eme_client_wday'] = (int) $phptime['wday']; // Integer day this week (0-6), 0 = Sunday, ... , 6 = Saturday
-      $_SESSION['eme_client_mday'] = (int) $phptime['mday']; // Integer day this month 1-31)
-      $_SESSION['eme_client_month'] = (int) $phptime['mon']; // Integer month this year (1-12)
-      $_SESSION['eme_client_fullyear'] = (int) $phptime['year']; // Integer year (1970-9999)
+      $_SESSION['eme_client_unixtime'] = (int) $phptime_obj->format('U'); // Integer seconds since 1/1/1970 @ 12:00 AM
+      $_SESSION['eme_client_seconds'] = (int) $phptime_obj->format('s'); // Integer second this minute (0-59)
+      $_SESSION['eme_client_minutes'] = (int) $phptime_obj->format('i'); // Integer minute this hour (0-59)
+      $_SESSION['eme_client_hours'] = (int) $phptime_obj->format('h'); // Integer hour this day (0-23)
+      $_SESSION['eme_client_wday'] = (int) $phptime_obj->format('w'); // Integer day this week (0-6), 0 = Sunday, ... , 6 = Saturday
+      $_SESSION['eme_client_mday'] = (int) $phptime_obj->format('j'); // Integer day this month 1-31)
+      $_SESSION['eme_client_month'] = (int) $phptime_obj->format('n'); // Integer month this year (1-12)
+      $_SESSION['eme_client_fullyear'] = (int) $phptime_obj->format('Y'); // Integer year (1970-9999)
       $ret = '1'; // reload from server
    } else {
       $ret = '0';
@@ -87,11 +87,9 @@ function eme_client_clock_callback() {
       $_SESSION['eme_client_fullyear'] = $client_fullyear;
       $_SESSION['eme_client_clock_valid'] = true;
       // Set  date & time clock strings
-      $php_clock_str = $phptime['year'] . "-" . $phptime['mon'] . "-" . $phptime['mday'] . " ";
-      $php_clock_str .= $phptime['hours'] . ":" . $phptime['minutes'] . ":" . $phptime['seconds'];
-      $client_clock_str = $_SESSION['eme_client_fullyear'] . "-" . $_SESSION['eme_client_month'] . "-" . $_SESSION['eme_client_mday'] . " ";
-      $client_clock_str .= $_SESSION['eme_client_hours'] . ":" . $_SESSION['eme_client_minutes'] . ":" . $_SESSION['eme_client_seconds'];
-      $_SESSION['eme_client_php_difference'] = (int) (strtotime($client_clock_str) - strtotime($php_clock_str));
+      $client_clock_str = "$client_fullyear-$client_month-$client_mday $client_hours:$client_minutes:$client_seconds";
+      $client_clock_obj = new ExpressiveDate($client_clock_str,$eme_timezone);
+      $_SESSION['eme_client_php_difference'] = (int) $client_clock_obj->getDifferenceInSeconds($phptime_obj);
    }
    
    echo $ret;
@@ -254,11 +252,10 @@ $eme_need_gmap_js=0;
 // we only want the jquery for the calendar to load if/when needed
 $eme_need_calendar_js=0;
 
-// set the timezone
-$tzstring = get_option('timezone_string');
-if (!empty($tzstring) ) {
-   @date_default_timezone_set ($tzstring);
-}
+// set some vars
+$eme_timezone = get_option('timezone_string');
+$eme_date_format = get_option('date_format');
+$eme_time_format = get_option('time_format');
 
 // enable shortcodes in widgets, if wanted
 if (!is_admin() && get_option('eme_shortcodes_in_widgets')) {
@@ -330,6 +327,7 @@ include("eme_formfields.php");
 include("eme_shortcodes.php");
 include("eme_actions.php");
 include("eme_payments.php");
+include("ExpressiveDate.php");
 
 require_once("phpmailer/eme_phpmailer.php") ;
 //require_once("phpmailer/language/phpmailer.lang-en.php") ;
@@ -515,7 +513,7 @@ function eme_rename_tables() {
 }
 
 function eme_create_events_table($charset,$collate) {
-   global $wpdb;
+   global $wpdb, $eme_timezone;
    $db_version = get_option('eme_version');
    
    $table_name = $wpdb->prefix.EVENTS_TBNAME;
@@ -576,21 +574,15 @@ function eme_create_events_table($charset,$collate) {
       maybe_create_table($table_name,$sql);
       // insert a few events in the new table
       // get the current timestamp into an array
-      $timestamp = time();
-      $date_time_array = getdate($timestamp);
-
-      $hours = $date_time_array['hours'];
-      $minutes = $date_time_array['minutes'];
-      $seconds = $date_time_array['seconds'];
-      $month = $date_time_array['mon'];
-      $day = $date_time_array['mday'];
-      $year = $date_time_array['year'];
-
-      // use mktime to recreate the unix timestamp
-      // adding 19 hours to $hours
-      $in_one_week = strftime('%Y-%m-%d', mktime($hours,$minutes,$seconds,$month,$day+7,$year));
-      $in_four_weeks = strftime('%Y-%m-%d',mktime($hours,$minutes,$seconds,$month,$day+28,$year)); 
-      $in_one_year = strftime('%Y-%m-%d',mktime($hours,$minutes,$seconds,$month,$day,$year+1)); 
+      $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+      $eme_date_obj->addDays(7);
+      $in_one_week = $eme_date_obj->getDate();
+      $eme_date_obj->minusDays(7);
+      $eme_date_obj->addWeeks(4);
+      $in_four_weeks = $eme_date_obj->getDate();
+      $eme_date_obj->minusWeeks(4);
+      $eme_date_obj->addOneYear();
+      $in_one_year = $eme_date_obj->getDate();
       
       $wpdb->query("INSERT INTO ".$table_name." (event_name, event_start_date, event_start_time, event_end_time, location_id)
             VALUES ('Orality in James Joyce Conference', '$in_one_week', '16:00:00', '18:00:00', 1)");
@@ -1161,7 +1153,7 @@ function eme_replace_notes_placeholders($format, $event="", $target="html") {
 
 function eme_replace_placeholders($format, $event="", $target="html", $do_shortcode=1, $lang='') {
    global $wp_query;
-   global $eme_need_gmap_js, $booking_id_done;
+   global $eme_need_gmap_js, $booking_id_done, $eme_timezone;
 
    // an initial filter for the format, in case people want to change anything before the placeholders get replaced
    if (has_filter('eme_events_format_prefilter')) $format=apply_filters('eme_events_format_prefilter',$format, $event);
@@ -1238,6 +1230,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $show_message_on_add=0;
    }
 
+   $eme_date_obj_now=new ExpressiveDate(null,$eme_timezone);
    foreach($placeholders[0] as $result) {
       $need_escape = 0;
       $need_urlencode = 0;
@@ -1307,28 +1300,30 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $replacement = substr($event['event_end_time'], 0,5);
 
       } elseif ($event && preg_match('/#_PAST_FUTURE_CLASS/', $result)) { 
-         if (strtotime($event['event_start_date']." ".$event['event_start_time']) > time()) {
+         $eme_start_obj = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+         $eme_end_obj = new ExpressiveDate($event['event_end_date']." ".$event['event_end_time'],$eme_timezone);
+         if ($eme_start_obj->greaterThan($eme_date_obj_now)) {
             $replacement="eme-future-event";
-         } elseif (strtotime($event['event_end_date']." ".$event['event_end_time']) > time()) {
+         } elseif ($eme_start_obj->lessOrEqualTo($eme_date_obj_now) && $eme_end_obj->greaterOrEqualTo($eme_date_obj_now)) {
             $replacement="eme-ongoing-event";
          } else {
             $replacement="eme-past-event";
          }
 
       } elseif ($event && preg_match('/#_12HSTARTTIME$/', $result)) {
-         $replacement = date("h:i A", strtotime($event['event_start_time']));
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time'])->format('h:i A');
 
       } elseif ($event && preg_match('/#_12HENDTIME$/', $result)) {
-         $replacement = date("h:i A", strtotime($event['event_end_time']));
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_end_date']." ".$event['event_end_time'])->format('h:i A');
 
       } elseif ($event && preg_match('/#_12HSTARTTIME_NOLEADINGZERO/', $result)) {
-         $replacement = date("g:i A", strtotime($event['event_start_time']));
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time'])->format('g:i A');
          if (get_option('eme_time_remove_leading_zeros')) {
             $replacement = str_replace(":0",":",$replacement);
          }
 
       } elseif ($event && preg_match('/#_12HENDTIME_NOLEADINGZERO/', $result)) {
-         $replacement = date("g:i A", strtotime($event['event_end_time']));
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_end_date']." ".$event['event_end_time'])->format('g:i A');
          if (get_option('eme_time_remove_leading_zeros')) {
             $replacement = str_replace(":0",":",$replacement);
          }
@@ -1642,20 +1637,20 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_DAYS_TILL_START/', $result)) {
-         $now = date("Y-m-d");
-         $replacement = eme_daydifference($now,$event['event_start_date']);
+         $eme_date_obj = new ExpressiveDate($event['event_start_date'],$eme_timezone);
+         $replacement = intval($eme_date_obj->getDifferenceInDays());
 
       } elseif ($event && preg_match('/#_DAYS_TILL_END/', $result)) {
-         $now = date("Y-m-d");
-         $replacement = eme_daydifference($now,$event['event_end_date']);
+         $eme_date_obj = new ExpressiveDate($event['event_end_date'],$eme_timezone);
+         $replacement = intval($eme_date_obj->getDifferenceInDays());
 
       } elseif ($event && preg_match('/#_HOURS_TILL_START/', $result)) {
-         $now = date("Y-m-d H:i");
-         $replacement = eme_hourdifference($now,$event['event_start_date']." ".$event['event_start_time']);
+         $eme_date_obj = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+         $replacement = round($eme_date_obj->getDifferenceInHours());
 
       } elseif ($event && preg_match('/#_HOURS_TILL_END/', $result)) {
-         $now = date("Y-m-d H:i");
-         $replacement = eme_hourdifference($now,$event['event_end_date']." ".$event['event_end_time']);
+         $eme_date_obj = new ExpressiveDate($event['event_end_date']." ".$event['event_end_time'],$eme_timezone);
+         $replacement = round($eme_date_obj->getDifferenceInHours());
 
       } elseif ($event && preg_match('/#_EVENTPRICE$|#_PRICE$/', $result)) {
          $field = "price";
@@ -2063,17 +2058,22 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          if (eme_is_event_rsvp($event)) {
                $rsvp_number_days=$event['rsvp_number_days'];
                $rsvp_number_hours=$event['rsvp_number_hours'];
-               $rsvp_end_datetime = strtotime("-$rsvp_number_days days -$rsvp_number_hours hours",strtotime($event['event_start_date']." ".$event['event_start_time']));
-               $rsvp_end_date = eme_localised_unixdatetime($rsvp_end_datetime);
-               $rsvp_end_time = eme_localised_unixtime($rsvp_end_datetime);
+               $rsvp_end_obj = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+               $rsvp_end_obj->minusDays($rsvp_number_days);
+               $rsvp_end_obj->minusHours($rsvp_number_hours);
+               $rsvp_end_date = eme_localised_date($rsvp_end_obj->getDateTime());
+               $rsvp_end_time = eme_localised_time($rsvp_end_obj->getDateTime());
                $replacement = $rsvp_end_date." ".$rsvp_end_time;
          }
 
       } elseif (preg_match('/#_IS_RSVP_ENDED/', $result)) {
          if (eme_is_event_rsvp($event)) {
-            $event_start_datetime = strtotime($event['event_start_date']." ".$event['event_start_time']);
-            $rsvp_end_datetime = $event_start_datetime - $event['rsvp_number_days']*60*60*24 - $event['rsvp_number_hours']*60*60;
-            if ($rsvp_end_datetime<time())
+            $rsvp_number_days=$event['rsvp_number_days'];
+            $rsvp_number_hours=$event['rsvp_number_hours'];
+            $rsvp_end_obj = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+            $rsvp_end_obj->minusDays($rsvp_number_days);
+            $rsvp_end_obj->minusHours($rsvp_number_hours);
+            if ($rsvp_end_obj->lessThan($eme_date_obj_now))
                $replacement = 1;
             else
                $replacement = 0;
@@ -2122,8 +2122,10 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = 0;
 
       } elseif ($event && preg_match('/#_IS_ONGOING_EVENT/', $result)) {
-         if (strtotime($event['event_start_date']." ".$event['event_start_time']) <= time() &&
-             strtotime($event['event_end_date']." ".$event['event_end_time']) >= time())
+         $eme_start_obj = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
+         $eme_end_obj = new ExpressiveDate($event['event_end_date']." ".$event['event_end_time'],$eme_timezone);
+         if ($eme_start_obj->lessOrEqualTo($eme_date_obj_now) &&
+             $eme_end_obj->greaterOrEqualTo($eme_date_obj_now))
             $replacement = 1;
          else
             $replacement = 0;
@@ -2177,7 +2179,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
             $replacement = 0;
 
       } elseif ($event && preg_match('/#_IS_MULTIDAY/', $result)) {
-         if (strtotime($event['event_start_date']) != strtotime($event['event_end_date']))
+         if ($event['event_start_date'] != $event['event_end_date'])
             $replacement = 1;
          else
             $replacement = 0;

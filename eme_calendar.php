@@ -64,7 +64,7 @@ function eme_get_calendar_shortcode($atts) {
 
 function eme_get_calendar($args="") {
    global $wp_locale;
-   global $wpdb;
+   global $wpdb, $eme_timezone;
    // the calendar is being used, so we need the jquery for the calendar
    global $eme_need_calendar_js;
    $eme_need_calendar_js=1;
@@ -94,6 +94,8 @@ function eme_get_calendar($args="") {
    // this comes from global wordpress preferences
    $start_of_week = get_option('start_of_week');
 
+   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
+
    if (get_option('eme_use_client_clock') && isset($_SESSION['eme_client_mday']) && isset($_SESSION['eme_client_month']) && isset($_SESSION['eme_client_fullyear'])) {
       // these come from client unless their clock is wrong
       $iNowDay= sprintf("%02d",$_SESSION['eme_client_mday']);
@@ -101,7 +103,7 @@ function eme_get_calendar($args="") {
       $iNowYear= sprintf("%04d",$_SESSION['eme_client_fullyear']);
    } else {
       // Get current year, month and day
-      list($iNowYear, $iNowMonth, $iNowDay) = explode('-', date('Y-m-d'));
+      list($iNowYear, $iNowMonth, $iNowDay) = explode('-', $eme_date_obj->getDate());
    }
 
    $iSelectedYear = $year;
@@ -111,13 +113,14 @@ function eme_get_calendar($args="") {
    $iSelectedMonth = sprintf("%02d",$iSelectedMonth);
 
    // Get name and number of days of specified month
-   $iTimestamp = mktime(0, 0, 0, $iSelectedMonth, 1, $iSelectedYear);
-   list($sMonthName, $iDaysInMonth) = explode('-', date('F-t', $iTimestamp));
+   $eme_date_obj->setDay(1);
+   $eme_date_obj->setMonth($iSelectedMonth);
+   $eme_date_obj->setYear($iSelectedYear);
    // Get friendly month name
    if ($full) {
-      list($sMonthName, $iDaysInMonth) = explode('-', eme_localised_unixdatetime($iTimestamp,'F-t'));
+      list($sMonthName, $iDaysInMonth) = explode('-', $eme_date_obj->format('F-t'));
    } else {
-      list($sMonthName, $iDaysInMonth) = explode('-', eme_localised_unixdatetime($iTimestamp,'M-t'));
+      list($sMonthName, $iDaysInMonth) = explode('-', $eme_date_obj->format('M-t'));
    }
    // take into account some locale info: some always best show full month name, some show month after year, some have a year suffix
    $locale_code = substr ( get_locale (), 0, 2 );
@@ -125,9 +128,9 @@ function eme_get_calendar($args="") {
    $yearSuffix="";
    switch($locale_code) { 
       case "hu": $showMonthAfterYear=1;break;
-      case "ja": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdatetime($iTimestamp,'F');$yearSuffix="年";break;
-      case "ko": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdatetime($iTimestamp,'F');$yearSuffix="년";break;
-      case "zh": $showMonthAfterYear=1;$sMonthName = eme_localised_unixdatetime($iTimestamp,'F');$yearSuffix="年";break;
+      case "ja": $showMonthAfterYear=1;$sMonthName = $eme_date_obj->format('F');$yearSuffix="年";break;
+      case "ko": $showMonthAfterYear=1;$sMonthName = $eme_date_obj->format('F');$yearSuffix="년";break;
+      case "zh": $showMonthAfterYear=1;$sMonthName = $eme_date_obj->format('F');$yearSuffix="年";break;
    }
    if ($showMonthAfterYear)
          $cal_datestring="$iSelectedYear$yearSuffix $sMonthName";
@@ -153,13 +156,17 @@ function eme_get_calendar($args="") {
    $iNextMonth = sprintf("%02d",$iNextMonth);
 
    // Get number of days of previous month
-   $iPrevDaysInMonth = (int)date('t', mktime(0, 0, 0, $iPrevMonth, 1, $iPrevYear));
+   $eme_date_obj2=new ExpressiveDate(null,$eme_timezone);
+   $eme_date_obj2->setDay(1);
+   $eme_date_obj2->setMonth($iPrevMonth);
+   $eme_date_obj2->setYear($iPrevYear);
+   $iPrevDaysInMonth = (int)$eme_date_obj2->getDaysInMonth();
 
    // Get numeric representation of the day of the week of the first day of specified (current) month
    // remember: first day of week is a Sunday
    // if you want the day of the week to begin on Monday: start_of_week=1, Tuesday: start_of_week=2, etc ...
    // So, if e.g. the month starts on a Sunday and start_of_week=1 (Monday), then $iFirstDayDow is 6
-   $iFirstDayDow = (int)date('w', mktime(0, 0, 0, $iSelectedMonth, 1, $iSelectedYear)) - $start_of_week;
+   $iFirstDayDow = (int)$eme_date_obj->getDayOfWeekAsNumeric() - $start_of_week;
    if ($iFirstDayDow<0) $iFirstDayDow+=7;
 
    // On what day the previous month begins
@@ -177,30 +184,27 @@ function eme_get_calendar($args="") {
          if ($event ['event_status'] == STATUS_PRIVATE && !is_user_logged_in()) {
             continue;
          }
-         if (get_option('eme_cal_hide_past_events') && strtotime($event['event_end_date'])<time()) {
+         $eme_date_obj_end=new ExpressiveDate($event['event_end_date'],$eme_timezone);
+         $eme_date_obj_now=new ExpressiveDate(null,$eme_timezone);
+         if (get_option('eme_cal_hide_past_events') && $eme_date_obj_end->lessThan($eme_date_obj_now)) {
             continue;
          }
 
          if( $long_events ) {
             //If $long_events is set then show a date as eventful if there is an multi-day event which runs during that day
-            $event_start_date = strtotime($event['event_start_date']);
-            $event_end_date = strtotime($event['event_end_date']);
-            if ($event_end_date < $event_start_date)
-               $event_end_date=$event_start_date;
-            $event_date=$event_start_date;
+            $eme_date_obj_tmp=new ExpressiveDate($event['event_start_date'],$eme_timezone);
+            if ($eme_date_obj_end->lessThan($eme_date_obj_tmp))
+                $eme_date_obj_end=$eme_date_obj_tmp->copy();
             $day_count=0;
-            while( $event_date <= $event_end_date ) {
-               $day_count++;
-               $event_eventful_date = date('Y-m-d', $event_date);
+            while( $eme_date_obj_tmp->lessOrEqualTo($eme_date_obj_end)) {
+               $event_eventful_date = $eme_date_obj_tmp->getDate();
                //Only show events on the day that they start
                if(isset($eventful_days[$event_eventful_date]) &&  is_array($eventful_days[$event_eventful_date]) ) {
                   $eventful_days[$event_eventful_date][] = $event;
                } else {
                   $eventful_days[$event_eventful_date] = array($event);
                }  
-               //don't add 24 hours, because that doesn't work for days with 23 or 25 hours (daylight saving time)
-               //$event_date += (60*60*24);
-               $event_date = strtotime($event['event_start_date']." + $day_count days");
+               $eme_date_obj_tmp->addOneDay();
             }
          } else {
             //Only show events on the day that they start
@@ -279,7 +283,8 @@ function eme_get_calendar($args="") {
          else $calstring="$iSelectedYear-$iSelectedMonth-$iCalendarDay_padded";
 
 		   // each day in the calendar has the name of the day as a class by default
-		   $sClass = date('D', strtotime($calstring));
+         $eme_date_obj=new ExpressiveDate($callstring,$eme_timezone);
+		   $sClass = $eme_date_obj->format('D');
 
 		   if (isset($cells[$calstring])) {
 			   if ($isPreviousMonth)
@@ -372,10 +377,6 @@ function eme_get_calendar($args="") {
    else
       return $output;
 
-}
-
-function eme_days_in_month($month, $year) {
-   return (date("t",mktime(0,0,0, (int) $month, 1, (int) $year)));
 }
 
 function eme_ajaxize_calendar() {
