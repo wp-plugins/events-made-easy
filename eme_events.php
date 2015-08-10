@@ -2304,7 +2304,6 @@ function eme_event_form($event, $title, $element) {
    $eme_prop_use_worldpay = ($event['event_properties']['use_worldpay']) ? "checked='checked'" : "";
 
    $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
-            $event_start_time = $eme_date_obj->setTimestampFromString($event['event_start_time'])->format('h:iA');
 
 // the next javascript will fill in the values for localised-start-date, ... form fields and jquery datepick will fill in also to "to_submit" form fields
    ?>
