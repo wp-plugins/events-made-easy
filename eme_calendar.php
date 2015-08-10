@@ -283,7 +283,7 @@ function eme_get_calendar($args="") {
          else $calstring="$iSelectedYear-$iSelectedMonth-$iCalendarDay_padded";
 
 		   // each day in the calendar has the name of the day as a class by default
-         $eme_date_obj=new ExpressiveDate($callstring,$eme_timezone);
+         $eme_date_obj=new ExpressiveDate($calstring,$eme_timezone);
 		   $sClass = $eme_date_obj->format('D');
 
 		   if (isset($cells[$calstring])) {
