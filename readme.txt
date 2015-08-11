@@ -72,6 +72,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 * Improvement: small visual improvement when showing the username in the registration overview
 * Bugfix/improvement: don't set the timezone globally anymore, use class ExpressDate (should help with some time conflicts in other plugins)
 * Bugfix: when updating a registration, the old info was still being shown in the mail sent
+* Bugfix: when showing a calendar day, not always the single event was shown if only 1 event was on that day
 
 = 1.5.41 (2015/7/27) =
 * Feature: added placeholder #_EVENTCATEGORIES_CSS, returning a space-separated list of categories.

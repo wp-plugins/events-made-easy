@@ -677,12 +677,15 @@ function eme_events_page_content() {
       return eme_display_single_event($event_id);
    } elseif (get_query_var('calendar_day')) {
       $scope = eme_sanitize_request(get_query_var('calendar_day'));
-      $events_count = eme_events_count_for ( $scope );
       $location_id = isset( $_GET['location_id'] ) ? urldecode($_GET['location_id']) : '';
       $category = isset( $_GET['category'] ) ? urldecode($_GET['category']) : '';
       $notcategory = isset( $_GET['notcategory'] ) ? urldecode($_GET['notcategory']) : '';
       $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
       $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
+      #$events_count = eme_events_count_for ( $scope );
+      // don't use eme_events_count_for, since it doesn't take $location_id, $category, $author, $contact_person, $notcategory into account
+      $events = eme_get_events(0, $scope, "ASC", 0, $location_id, $category, $author, $contact_person, $notcategory);
+      $events_count = count ( $events );
 
       if ($events_count > 1) {
          // more than one event, so we show the list
@@ -691,7 +694,6 @@ function eme_events_page_content() {
          $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
       } else {
          // only one event for that day, so we show that event
-         $events = eme_get_events ( 0, $scope);
          $event = $events[0];
          $page_body =  eme_display_single_event($event['event_id']);
       }
