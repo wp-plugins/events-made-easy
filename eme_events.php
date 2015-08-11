@@ -1,7 +1,7 @@
 <?php
 
 function eme_new_event() {
-   global $$eme_timezone;
+   global $eme_timezone;
    $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
    $today = $eme_date_obj->format('Y-m-d');
    $event = array (
