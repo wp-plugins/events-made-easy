@@ -331,6 +331,10 @@ class ExpressiveDate extends DateTime {
 	 */
 	protected function modifyDays($amount, $invert = false)
 	{
+      if ($amount<0) {
+         $amount=abs($amount);
+         $invert=true;
+      }
 		if ($this->isFloat($amount))
 		{
 			return $this->modifyHours($amount * 24, $invert);
