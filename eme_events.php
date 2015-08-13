@@ -571,10 +571,10 @@ function eme_get_all_pages() {
 function eme_events_page_content() {
    global $wpdb;
 
-   $format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
-   $format_header = ( $format_header != '' ) ?  $format_header : DEFAULT_EVENT_LIST_HEADER_FORMAT;
-   $format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
-   $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
+   $format_header = get_option('eme_event_list_item_format_header' );
+   if (empty($format_header)) $format_header = DEFAULT_EVENT_LIST_HEADER_FORMAT;
+   $format_footer = get_option('eme_event_list_item_format_footer' );
+   if (empty($format_footer)) $format_footer = DEFAULT_EVENT_LIST_FOOTER_FORMAT;
 
    if (isset($_REQUEST['eme_cancel_booking'])) {
       // GET for cancel links, POST for the cancel form
@@ -638,11 +638,11 @@ function eme_events_page_content() {
       $location_ids = join(',',eme_get_town_location_ids($eme_town));
       $stored_format = get_option('eme_event_list_item_format');
       if (count($location_ids)>0) {
-         $format_header = eme_replace_placeholders(get_option('eme_location_list_item_format_header' ));
-         $format_header = ( $format_header != '' ) ?  $format_header : DEFAULT_EVENT_LIST_HEADER_FORMAT;
-         $format_footer = eme_replace_placeholders(get_option('eme_location_list_item_format_footer' ));
-         $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
-         $page_body = $format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, '','',0,'','',0,$location_ids) .  $format_footer;
+         $format_header = get_option('eme_location_list_item_format_header' );
+         if (empty($format_header)) $format_header = DEFAULT_EVENT_LIST_HEADER_FORMAT;
+         $format_footer = get_option('eme_location_list_item_format_footer' );
+         if (empty($format_footer)) $format_footer = DEFAULT_EVENT_LIST_FOOTER_FORMAT;
+         $page_body = eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, $format_header,$format_footer, 0, '','',0,'','',0,$location_ids);
       } else {
          $page_body = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
       }
@@ -655,15 +655,15 @@ function eme_events_page_content() {
       return $page_body;
    }
    if (!get_query_var('calendar_day') && get_query_var('eme_event_cat')) {
-      $format_header = eme_replace_placeholders(get_option('eme_cat_event_list_item_format_header' ));
-      $format_header = ( $format_header != '' ) ?  $format_header : DEFAULT_CAT_EVENT_LIST_HEADER_FORMAT;
-      $format_footer = eme_replace_placeholders(get_option('eme_cat_event_list_item_format_footer' ));
-      $format_footer = ( $format_footer != '' ) ?  $format_footer : DEFAULT_CAT_EVENT_LIST_FOOTER_FORMAT;
+      $format_header = get_option('eme_cat_event_list_item_format_header' );
+      if (empty($format_header)) $format_header = DEFAULT_CAT_EVENT_LIST_HEADER_FORMAT;
+      $format_footer = get_option('eme_cat_event_list_item_format_footer' );
+      if (empty($format_footer)) $format_footer = DEFAULT_CAT_EVENT_LIST_FOOTER_FORMAT;
       $eme_event_cat=eme_sanitize_request(get_query_var('eme_event_cat'));
       $cat_ids = join(',',eme_get_category_ids($eme_event_cat));
       $stored_format = get_option('eme_event_list_item_format');
       if (!empty($cat_ids)) {
-         $page_body = $format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, 0, $cat_ids) .  $format_footer;
+         $page_body = eme_get_events_list ( get_option('eme_event_list_number_items' ), "future", "ASC", $stored_format, $format_header,$format_footer, 0, $cat_ids);
       } else {
          $page_body = "<div id='events-no-events'>" . get_option('eme_no_events_message') . "</div>";
       }
@@ -682,21 +682,9 @@ function eme_events_page_content() {
       $notcategory = isset( $_GET['notcategory'] ) ? urldecode($_GET['notcategory']) : '';
       $author = isset( $_GET['author'] ) ? urldecode($_GET['author']) : '';
       $contact_person = isset( $_GET['contact_person'] ) ? urldecode($_GET['contact_person']) : '';
-      #$events_count = eme_events_count_for ( $scope );
-      // don't use eme_events_count_for, since it doesn't take $location_id, $category, $author, $contact_person, $notcategory into account
-      $events = eme_get_events(0, $scope, "ASC", 0, $location_id, $category, $author, $contact_person, $notcategory);
-      $events_count = count ( $events );
-
-      if ($events_count > 1) {
-         // more than one event, so we show the list
-         $event_list_item_format = get_option('eme_event_list_item_format' );
-         //Add headers and footers to the events list
-         $page_body = $format_header . eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory ) . $format_footer;
-      } else {
-         // only one event for that day, so we show that event
-         $event = $events[0];
-         $page_body =  eme_display_single_event($event['event_id']);
-      }
+      $event_list_item_format = get_option('eme_event_list_item_format' );
+      $show_single_event=1;
+      $page_body = eme_get_events_list( 0, $scope, "ASC", $event_list_item_format, $format_header,$format_footer, $location_id,$category,'',0, $author, $contact_person, 0,'',0,1,0, $notcategory, 0,0,0,0,"",$show_single_event );
       return $page_body;
    } else {
       // Multiple events page
@@ -705,7 +693,7 @@ function eme_events_page_content() {
       if (get_option('eme_display_calendar_in_events_page' )){
          $page_body = eme_get_calendar ('full=1');
       }else{
-         $page_body = $format_header . eme_get_events_list ( get_option('eme_event_list_number_items' ), $scope, "ASC", $stored_format, 0 ) . $format_footer;
+         $page_body = eme_get_events_list ( get_option('eme_event_list_number_items' ), $scope, "ASC", $stored_format,$format_header,$format_footer, 0 );
       }
       return $page_body;
    }
@@ -934,7 +922,7 @@ function exclude_this_page( $query ) {
 
 // exposed function, for theme  makers
    //Added a category option to the get events list method and shortcode
-function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format = '', $echo = 1, $category = '',$showperiod = '', $long_events = 0, $author = '', $contact_person='', $paging=0, $location_id = "", $user_registered_only = 0, $show_ongoing=1, $link_showperiod=0, $notcategory = '', $show_recurrent_events_once= 0, $template_id = 0, $template_id_header=0, $template_id_footer=0, $no_events_message="") {
+function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format = '', $format_header='', $format_footer='', $echo = 1, $category = '',$showperiod = '', $long_events = 0, $author = '', $contact_person='', $paging=0, $location_id = "", $user_registered_only = 0, $show_ongoing=1, $link_showperiod=0, $notcategory = '', $show_recurrent_events_once= 0, $template_id = 0, $template_id_header=0, $template_id_footer=0, $no_events_message="", $show_single_event=0) {
    global $post, $eme_timezone;
    if ($limit === "") {
       $limit = get_option('eme_event_list_number_items' );
@@ -963,29 +951,24 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    if ($order != "DESC")
       $order = "ASC";
 
-   $eme_format_header="";
-   $eme_format_footer="";
-
    if ($template_id) {
       $format = eme_get_template_format($template_id);
    }
    if ($template_id_header) {
       $format_header = eme_get_template_format($template_id_header);
-      $eme_format_header=eme_replace_placeholders($format_header);
    }
    if ($template_id_footer) {
       $format_footer = eme_get_template_format($template_id_footer);
-      $eme_format_footer=eme_replace_placeholders($format_footer);
    }
    if (empty($format)) {
       $format = get_option('eme_event_list_item_format' );
       if (empty($eme_format_header)) {
-	      $eme_format_header = eme_replace_placeholders(get_option('eme_event_list_item_format_header' ));
-	      $eme_format_header = ( $eme_format_header != '' ) ? $eme_format_header : DEFAULT_EVENT_LIST_HEADER_FORMAT;
+	      $format_header = get_option('eme_event_list_item_format_header' );
+         if (empty($format_header)) $format_header = DEFAULT_EVENT_LIST_HEADER_FORMAT;
       }
       if (empty($eme_format_footer)) {
-	      $eme_format_footer = eme_replace_placeholders(get_option('eme_event_list_item_format_footer' ));
-	      $eme_format_footer = ( $eme_format_footer != '' ) ? $eme_format_footer : DEFAULT_EVENT_LIST_FOOTER_FORMAT;
+	      $format_footer = get_option('eme_event_list_item_format_footer' );
+         if (empty($format_footer)) $format_footer = DEFAULT_EVENT_LIST_FOOTER_FORMAT;
       }
    }
 
@@ -1083,7 +1066,12 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       $events = eme_get_events ( $limit+1, $scope, $order, $limit_offset, $location_id, $category, $author, $contact_person, $show_ongoing, $notcategory, $show_recurrent_events_once, $extra_conditions );
    }
    $events_count=count($events);
-
+   
+   if ($events_count==1 && $show_single_event) {
+      $event = $events[0];
+      $output =  eme_display_single_event($event['event_id']);
+      return $output;
+   }
    // get the paging output ready
    $pagination_top = "<div id='events-pagination-top'> ";
    $nav_hidden_class="style='visibility:hidden;'";
@@ -1254,7 +1242,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
       } // end if (! empty ( $showperiod )) {
 
       //Add headers and footers to output
-      $output =  $eme_format_header .  $output . $eme_format_footer;
+      $output =  eme_replace_placeholders($format_header) .  $output . eme_replace_placeholders($format_footer);
    } else {
       if (empty($no_events_message))
          $no_events_message=get_option('eme_no_events_message');
@@ -1311,7 +1299,7 @@ function eme_get_events_list_shortcode($atts) {
    // shortcode is interpreted). So we add the option that people can use "#OTHER_", and we replace this with
    // "#_" here
    $format = preg_replace('/#OTHER/', "#", $format);
-   $result = eme_get_events_list ( $limit,$scope,$order,$format,0,$category,$showperiod,$long_events,$author,$contact_person,$paging,$location_id,$user_registered_only,$show_ongoing,$link_showperiod,$notcategory,$show_recurrent_events_once,$template_id,$template_id_header,$template_id_footer,$no_events_message);
+   $result = eme_get_events_list ( $limit,$scope,$order,$format,'','',0,$category,$showperiod,$long_events,$author,$contact_person,$paging,$location_id,$user_registered_only,$show_ongoing,$link_showperiod,$notcategory,$show_recurrent_events_once,$template_id,$template_id_header,$template_id_footer,$no_events_message);
    return $result;
 }
 
