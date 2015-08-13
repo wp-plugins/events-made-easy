@@ -962,11 +962,11 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
    }
    if (empty($format)) {
       $format = get_option('eme_event_list_item_format' );
-      if (empty($eme_format_header)) {
+      if (empty($format_header)) {
 	      $format_header = get_option('eme_event_list_item_format_header' );
          if (empty($format_header)) $format_header = DEFAULT_EVENT_LIST_HEADER_FORMAT;
       }
-      if (empty($eme_format_footer)) {
+      if (empty($format_footer)) {
 	      $format_footer = get_option('eme_event_list_item_format_footer' );
          if (empty($format_footer)) $format_footer = DEFAULT_EVENT_LIST_FOOTER_FORMAT;
       }
