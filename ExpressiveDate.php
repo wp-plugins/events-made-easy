@@ -329,7 +329,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifyDays($amount, $invert = false)
+	public function modifyDays($amount, $invert = false)
 	{
       if ($amount<0) {
          $amount=abs($amount);
@@ -397,7 +397,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifyMonths($amount, $invert = false)
+	public function modifyMonths($amount, $invert = false)
 	{
       if ($amount<0) {
          $amount=abs($amount);
@@ -465,7 +465,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifyYears($amount, $invert = false)
+	public function modifyYears($amount, $invert = false)
 	{
       if ($amount<0) {
          $amount=abs($amount);
@@ -533,7 +533,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifyHours($amount, $invert = false)
+	public function modifyHours($amount, $invert = false)
 	{
       if ($amount<0) {
          $amount=abs($amount);
@@ -601,7 +601,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifyMinutes($amount, $invert = false)
+	public function modifyMinutes($amount, $invert = false)
 	{
       if ($amount<0) {
          $amount=abs($amount);
@@ -669,7 +669,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifySeconds($amount, $invert = false)
+	public function modifySeconds($amount, $invert = false)
 	{
       if ($amount<0) {
          $amount=abs($amount);
@@ -732,7 +732,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifyWeeks($amount, $invert = false)
+	public function modifyWeeks($amount, $invert = false)
 	{
       if ($amount<0) {
          $amount=abs($amount);
@@ -757,7 +757,7 @@ class ExpressiveDate extends DateTime {
 	 * @param  bool  $invert
 	 * @return ExpressiveDate
 	 */
-	protected function modifyFromInterval($interval, $invert = false)
+	public function modifyFromInterval($interval, $invert = false)
 	{
 		if ($invert)
 		{
