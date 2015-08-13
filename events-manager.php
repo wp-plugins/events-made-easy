@@ -2066,7 +2066,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = $rsvp_end_date." ".$rsvp_end_time;
          }
 
-      } elseif (preg_match('/#_IS_RSVP_ENDED/', $result)) {
+      } elseif ($event && preg_match('/#_IS_RSVP_ENDED/', $result)) {
          if (eme_is_event_rsvp($event)) {
             $rsvp_number_days=$event['rsvp_number_days'];
             $rsvp_number_hours=$event['rsvp_number_hours'];
@@ -2077,6 +2077,16 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $replacement = 1;
             else
                $replacement = 0;
+         }
+
+      } elseif ($event && preg_match('/#_EVENT_EXTERNAL_REF/', $result)) {
+         $replacement=$event['event_external_ref'];
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
          }
 
       } elseif (preg_match('/#_IS_SINGLE_DAY/', $result)) {

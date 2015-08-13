@@ -1310,6 +1310,16 @@ function eme_replace_locations_placeholders($format, $location="", $target="html
             $replacement = admin_url("admin.php?page=eme-locations&amp;eme_admin_action=edit_location&amp;location_id=".$location['location_id']);
          }
 
+      } elseif ($location && preg_match('/#_LOCATION_EXTERNAL_REF/', $result)) {
+         $replacement=$location['location_external_ref'];
+         if ($target == "html") {
+            $replacement = apply_filters('eme_general', $replacement);
+         } elseif ($target == "rss")  {
+            $replacement = apply_filters('eme_general_rss', $replacement);
+         } else {
+            $replacement = apply_filters('eme_text', $replacement);
+         }
+
       } elseif (preg_match('/#_IS_SINGLE_LOC/', $result)) {
          if (eme_is_single_location_page())
             $replacement = 1;

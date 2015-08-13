@@ -68,6 +68,7 @@ See the FAQ section at [the documentation site](http://www.e-dynamics.be/wordpre
 == Changelog ==
 
 = 1.5.42 (2015//) =
+* Feature: added placeholders #_EVENT_EXTERNAL_REF and #_LOCATION_EXTERNAL_REF, returning the external reference for an event or location (typically the facebook id)
 * Improvement: use wordpress is_email function to check for valid email addresses
 * Improvement: small visual improvement when showing the username in the registration overview
 * Bugfix/improvement: don't set the timezone globally anymore, use class ExpressDate (should help with some time conflicts in other plugins)
