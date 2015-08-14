@@ -228,14 +228,12 @@ function eme_events_page() {
           $event['event_end_date'] = "";
       $eme_date_obj = new ExpressiveDate(null,$eme_timezone);
       if (isset($_POST['event_start_time']) && !empty($_POST['event_start_time'])) {
-         $start_string=$_POST['event_start_time']." ".$eme_timezone;
-         $event['event_start_time'] = $eme_date_obj->setTimestampFromString($start_string)->format("H:i:00");
+         $event['event_start_time'] = $eme_date_obj->setTimestampFromString($_POST['event_start_time']." ".$eme_timezone)->format("H:i:00");
       } else {
          $event['event_start_time'] = "00:00:00";
       }
       if (isset($_POST['event_end_time']) && !empty($_POST['event_end_time'])) {
-         $end_string=$_POST['event_end_time']." ".$eme_timezone;
-         $event['event_end_time'] = $eme_date_obj->setTimestampFromString($end_string)->format("H:i:00");
+         $event['event_end_time'] = $eme_date_obj->setTimestampFromString($_POST['event_end_time']." ".$eme_timezone)->format("H:i:00");
       } else {
          $event['event_end_time'] = "00:00:00";
       }
@@ -1566,8 +1564,8 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    } elseif (preg_match ( "/^relative\-(\d+)d--([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $scope, $matches )) {
       $days=$matches[1];
       $limit_end=$matches[2];
-      $eme_date_obj->setTimestampFromString($limit_end);
-      $limit_start=$eme_date_obj->minusDays($days)->getDate(). " $eme_timezone";
+      $eme_date_obj->setTimestampFromString($limit_end." ".$eme_timezone);
+      $limit_start=$eme_date_obj->minusDays($days)->getDate(). " ".$eme_timezone;
       if ($show_ongoing)
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
@@ -1575,8 +1573,8 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
    } elseif (preg_match ( "/^([0-9]{4}-[0-9]{2}-[0-9]{2})--relative\+(\d+)d$/", $scope, $matches )) {
       $limit_start=$matches[1];
       $days=$matches[2];
-      $eme_date_obj->setTimestampFromString($limit_start);
-      $limit_end=$eme_date_obj->addDays($days)->getDate(). " $eme_timezone";
+      $eme_date_obj->setTimestampFromString($limit_start." ".$eme_timezone);
+      $limit_end=$eme_date_obj->addDays($days)->getDate(). " ".$eme_timezone;
       if ($show_ongoing)
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
@@ -2066,13 +2064,13 @@ function eme_events_table($message="",$scope="future") {
    <tbody>
    <?php
       $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
-      $today=$eme_date_obj->format('Y-m-d');
+      $today=$eme_date_obj->getDate();
       foreach ( $events as $event ) {
          $localised_start_date = eme_localised_date($event['event_start_date']);
          $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
          $localised_end_time = eme_localised_time($event['event_end_time']);
-         $datasort_startstring=$eme_date_obj->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone)->format('U');
+         $datasort_startstring=strtotime($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone);
 
          $location_summary = "";
          if (isset($event['location_id']) && $event['location_id']) {

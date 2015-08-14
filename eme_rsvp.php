@@ -2682,9 +2682,9 @@ function eme_registration_seats_form_table($pending=0) {
          $localised_booking_time = eme_localised_time($event_booking['creation_date']);
          $style = "";
          $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
-         $today=$eme_date_obj->format('Y-m-d');
-         $datasort_startstring=$eme_date_obj->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone)->format('U');
-         $bookingtimestamp=$eme_date_obj->copy()->setTimestampFromString($event_booking['creation_date']." ".$eme_timezone)->format('U');
+         $today=$eme_date_obj->getDate();
+         $datasort_startstring=strtotime($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone);
+         $bookingtimestamp=strtotime($event_booking['creation_date']." ".$eme_timezone);
          
          if ($event['event_start_date'] < $today)
             $style = "style ='background-color: #FADDB7;'";
