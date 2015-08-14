@@ -450,20 +450,16 @@ function eme_localised_unixdatetime($mydate,$format='') {
    global $eme_date_format;
    if (empty($format))
       $format = $eme_date_format;
-   return date_i18n ( $format, $mydate);
+   // date_i18n and strtotime are in the same timezone, so no need to add our own
+   return date_i18n ( $format, strtotime($mydate));
 }
 function eme_localised_date($mydate,$date_format='') {
-   global $eme_timezone;
-   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
-   $eme_date_obj->setTimestampFromString($mydate." ".$eme_timezone);
-   return eme_localised_unixdatetime ($eme_date_obj->format('U'), $date_format);
+   return eme_localised_unixdatetime ($mydate, $date_format);
 }
 
 function eme_localised_time($mydate) {
-   global $eme_timezone, $eme_time_format;
-   $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
-   $eme_date_obj->setTimestampFromString($mydate." ".$eme_timezone);
-   return eme_localised_unixdatetime ($eme_date_obj->format('U'), $eme_time_format);
+   global $eme_time_format;
+   return eme_localised_unixdatetime ($mydate, $eme_time_format);
 }
 
 function eme_currency_array() {
