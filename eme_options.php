@@ -253,9 +253,9 @@ function eme_add_options($reset=0) {
    'eme_payment_add_bookingid_to_return' => 0,
    'eme_loop_protection' => 'simple',
    'eme_enable_notes_placeholders' => 0,
-   'eme_deprecated' => 1,
+   'eme_deprecated' => 0,
    'eme_legacy' => 0,
-   'eme_legacy_warning' => 1,
+   'eme_legacy_warning' => 0,
    'eme_csv_separator' => EME_DEFAULT_CSV_SEPARATOR
    );
    
