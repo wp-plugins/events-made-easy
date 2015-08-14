@@ -1311,19 +1311,19 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_12HSTARTTIME$/', $result)) {
-         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time'])->format('h:i A');
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone)->format('h:i A');
 
       } elseif ($event && preg_match('/#_12HENDTIME$/', $result)) {
-         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_end_date']." ".$event['event_end_time'])->format('h:i A');
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_end_date']." ".$event['event_end_time']." ".$eme_timezone)->format('h:i A');
 
       } elseif ($event && preg_match('/#_12HSTARTTIME_NOLEADINGZERO/', $result)) {
-         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time'])->format('g:i A');
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone)->format('g:i A');
          if (get_option('eme_time_remove_leading_zeros')) {
             $replacement = str_replace(":0",":",$replacement);
          }
 
       } elseif ($event && preg_match('/#_12HENDTIME_NOLEADINGZERO/', $result)) {
-         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_end_date']." ".$event['event_end_time'])->format('g:i A');
+         $replacement = $eme_date_obj_now->copy()->setTimestampFromString($event['event_end_date']." ".$event['event_end_time']." ".$eme_timezone)->format('g:i A');
          if (get_option('eme_time_remove_leading_zeros')) {
             $replacement = str_replace(":0",":",$replacement);
          }

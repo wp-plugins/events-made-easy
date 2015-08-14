@@ -228,12 +228,14 @@ function eme_events_page() {
           $event['event_end_date'] = "";
       $eme_date_obj = new ExpressiveDate(null,$eme_timezone);
       if (isset($_POST['event_start_time']) && !empty($_POST['event_start_time'])) {
-         $event['event_start_time'] = $eme_date_obj->setTimestampFromString($_POST['event_start_time'])->format("H:i:00");
+         $start_string=$_POST['event_start_time']." ".$eme_timezone;
+         $event['event_start_time'] = $eme_date_obj->setTimestampFromString($start_string)->format("H:i:00");
       } else {
          $event['event_start_time'] = "00:00:00";
       }
       if (isset($_POST['event_end_time']) && !empty($_POST['event_end_time'])) {
-         $event['event_end_time'] = $eme_date_obj->setTimestampFromString($_POST['event_end_time'])->format("H:i:00");
+         $end_string=$_POST['event_end_time']." ".$eme_timezone;
+         $event['event_end_time'] = $eme_date_obj->setTimestampFromString($end_string)->format("H:i:00");
       } else {
          $event['event_end_time'] = "00:00:00";
       }
@@ -1565,7 +1567,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $days=$matches[1];
       $limit_end=$matches[2];
       $eme_date_obj->setTimestampFromString($limit_end);
-      $limit_start=$eme_date_obj->minusDays($days)->getDate();
+      $limit_start=$eme_date_obj->minusDays($days)->getDate(). " $eme_timezone";
       if ($show_ongoing)
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
@@ -1574,7 +1576,7 @@ function eme_get_events($o_limit, $scope = "future", $order = "ASC", $o_offset =
       $limit_start=$matches[1];
       $days=$matches[2];
       $eme_date_obj->setTimestampFromString($limit_start);
-      $limit_end=$eme_date_obj->addDays($days)->getDate();
+      $limit_end=$eme_date_obj->addDays($days)->getDate(). " $eme_timezone";
       if ($show_ongoing)
          $conditions[] = " ((event_start_date BETWEEN '$limit_start' AND '$limit_end') OR (event_end_date BETWEEN '$limit_start' AND '$limit_end') OR (event_start_date <= '$limit_start' AND event_end_date >= '$limit_end'))";
       else
@@ -2070,7 +2072,7 @@ function eme_events_table($message="",$scope="future") {
          $localised_start_time = eme_localised_time($event['event_start_time']);
          $localised_end_date = eme_localised_date($event['event_end_date']);
          $localised_end_time = eme_localised_time($event['event_end_time']);
-         $datasort_startstring=$eme_date_obj->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time'])->format('U');
+         $datasort_startstring=$eme_date_obj->copy()->setTimestampFromString($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone)->format('U');
 
          $location_summary = "";
          if (isset($event['location_id']) && $event['location_id']) {
@@ -2303,10 +2305,10 @@ function eme_event_form($event, $title, $element) {
    jQuery(document).ready( function() {
    var dateFormat = jQuery("#localised-start-date").datepick( "option", "dateFormat" );
 
-   var loc_start_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['event_start_date'])->format('Y,n,j'); ?>);
+   var loc_start_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['event_start_date']." ".$eme_timezone)->format('Y,n,j'); ?>);
    jQuery("#localised-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_start_date));
 
-   var loc_end_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['event_end_date'])->format('Y,n,j'); ?>);
+   var loc_end_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['event_end_date']." ".$eme_timezone)->format('Y,n,j'); ?>);
    jQuery("#localised-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, loc_end_date));
    <?php if ($pref == "recurrence" && $event['recurrence_freq'] == 'specific') { ?>
       var mydates = [];
@@ -2315,10 +2317,10 @@ function eme_event_form($event, $title, $element) {
       <?php } ?>
       jQuery("#localised-rec-start-date").datepick("setDate", mydates);
    <?php } else { ?>
-      var rec_start_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['recurrence_start_date'])->format('Y,n,j'); ?>);
+      var rec_start_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['recurrence_start_date']." ".$eme_timezone)->format('Y,n,j'); ?>);
       jQuery("#localised-rec-start-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_start_date));
    <?php } ?>
-      var rec_end_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['recurrence_end_date'])->format('Y,n,j'); ?>);
+      var rec_end_date = jQuery.datepick.newDate(<?php echo $eme_date_obj->setTimestampFromString($event['recurrence_end_date']." ".$eme_timezone)->format('Y,n,j'); ?>);
    jQuery("#localised-rec-end-date").datepick("setDate", jQuery.datepick.formatDate(dateFormat, rec_end_date));
  });
 </script>
@@ -2975,8 +2977,8 @@ function eme_meta_box_div_event_time($event) {
    $hours_locale = '24';
    $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
    if (preg_match ( "/g|h/", $time_format )) {
-      $event_start_time = $eme_date_obj->setTimestampFromString($event['event_start_time'])->format('h:iA');
-      $event_endt_time = $eme_date_obj->setTimestampFromString($event['event_end_time'])->format('h:iA');
+      $event_start_time = $eme_date_obj->setTimestampFromString($event['event_start_time']." ".$eme_timezone)->format('h:iA');
+      $event_endt_time = $eme_date_obj->setTimestampFromString($event['event_end_time']." ".$eme_timezone)->format('h:iA');
    } else {
       $event_start_time = $event['event_start_time'];
       $event_end_time = $event['event_end_time'];

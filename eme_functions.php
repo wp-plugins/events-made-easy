@@ -455,14 +455,14 @@ function eme_localised_unixdatetime($mydate,$format='') {
 function eme_localised_date($mydate,$date_format='') {
    global $eme_timezone;
    $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
-   $eme_date_obj->setTimestampFromString($mydate);
+   $eme_date_obj->setTimestampFromString($mydate." ".$eme_timezone);
    return eme_localised_unixdatetime ($eme_date_obj->format('U'), $date_format);
 }
 
 function eme_localised_time($mydate) {
    global $eme_timezone, $eme_time_format;
    $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
-   $eme_date_obj->setTimestampFromString($mydate);
+   $eme_date_obj->setTimestampFromString($mydate." ".$eme_timezone);
    return eme_localised_unixdatetime ($eme_date_obj->format('U'), $eme_time_format);
 }
 
