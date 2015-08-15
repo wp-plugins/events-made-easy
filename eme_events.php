@@ -1018,7 +1018,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $limit_start=$eme_date_obj->startOfWeek()->format('Y-m-d');
          $limit_end=$eme_date_obj->endOfWeek()->format('Y-m-d');
          $scope = "$limit_start--$limit_end";
-         $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
+         $scope_text = eme_localised_date($limit_start." ".$eme_timezone)." -- ".eme_localised_date($limit_end." ".$eme_timezone);
          $prev_text = __('Previous week','eme');
          $next_text = __('Next week','eme');
 
@@ -1027,7 +1027,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $limit_start = $eme_date_obj->startOfMonth()->format('Y-m-d');
          $limit_end   = $eme_date_obj->endOfMonth()->format('Y-m-d');
          $scope = "$limit_start--$limit_end";
-         $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_monthly_dateformat'));
+         $scope_text = eme_localised_date($limit_start." ".$eme_timezone,get_option('eme_show_period_monthly_dateformat'));
          $prev_text = __('Previous month','eme');
          $next_text = __('Next month','eme');
 
@@ -1037,7 +1037,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $limit_start = "$year-01-01";
          $limit_end   = "$year-12-31";
          $scope = "$limit_start--$limit_end";
-         $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_yearly_dateformat'));
+         $scope_text = eme_localised_date($limit_start." ".$eme_timezone,get_option('eme_show_period_yearly_dateformat'));
          $prev_text = __('Previous year','eme');
          $next_text = __('Next year','eme');
 
@@ -1045,7 +1045,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $scope = $eme_date_obj->modifyDays($scope_offset)->format('Y-m-d');
          $limit_start = $scope;
          $limit_end   = $scope;
-         $scope_text = eme_localised_date($limit_start);
+         $scope_text = eme_localised_date($limit_start." ".$eme_timezone);
          $prev_text = __('Previous day','eme');
          $next_text = __('Next day','eme');
 
@@ -1054,7 +1054,7 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
          $scope = $eme_date_obj->modifyDays($scope_offset)->format('Y-m-d');
          $limit_start = $scope;
          $limit_end   = $scope;
-         $scope_text = eme_localised_date($limit_start);
+         $scope_text = eme_localised_date($limit_start." ".$eme_timezone);
          $prev_text = __('Previous day','eme');
          $next_text = __('Next day','eme');
       }
@@ -1210,16 +1210,16 @@ function eme_get_events_list($limit, $scope = "future", $order = "ASC", $format 
             $eme_date_obj=new ExpressiveDate($day_key,$eme_timezone);
             list($theyear, $themonth, $theday) = explode('-', $eme_date_obj->getDate());
             if ($showperiod == "yearly" && $theyear != $curyear) {
-               $output .= "<li class='eme_period'>".eme_localised_date ($day_key,get_option('eme_show_period_yearly_dateformat'))."</li>";
+               $output .= "<li class='eme_period'>".eme_localised_date ($day_key." ".$eme_timezone,get_option('eme_show_period_yearly_dateformat'))."</li>";
             } elseif ($showperiod == "monthly" && "$theyear$themonth" != "$curyear$curmonth") {
-               $output .= "<li class='eme_period'>".eme_localised_date ($day_key,get_option('eme_show_period_monthly_dateformat'))."</li>";
+               $output .= "<li class='eme_period'>".eme_localised_date ($day_key." ".$eme_timezone,get_option('eme_show_period_monthly_dateformat'))."</li>";
             } elseif ($showperiod == "daily" && "$theyear$themonth$theday" != "$curyear$curmonth$curday") {
                $output .= "<li class='eme_period'>";
                if ($link_showperiod) {
                   $eme_link=eme_calendar_day_url($theyear."-".$themonth."-".$theday);
-                  $output .= "<a href=\"$eme_link\">".eme_localised_date ($day_key)."</a>";
+                  $output .= "<a href=\"$eme_link\">".eme_localised_date ($day_key." ".$eme_timezone)."</a>";
                } else {
-                  $output .= eme_localised_date ($day_key);
+                  $output .= eme_localised_date ($day_key." ".$eme_timezone);
                }
                $output .= "</li>";
             }
@@ -2066,10 +2066,10 @@ function eme_events_table($message="",$scope="future") {
       $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
       $today=$eme_date_obj->getDate();
       foreach ( $events as $event ) {
-         $localised_start_date = eme_localised_date($event['event_start_date']);
-         $localised_start_time = eme_localised_time($event['event_start_time']);
-         $localised_end_date = eme_localised_date($event['event_end_date']);
-         $localised_end_time = eme_localised_time($event['event_end_time']);
+         $localised_start_date = eme_localised_date($event['event_start_date']." ".$eme_timezone);
+         $localised_start_time = eme_localised_time($event['event_start_time']." ".$eme_timezone);
+         $localised_end_date = eme_localised_date($event['event_end_date']." ".$eme_timezone);
+         $localised_end_time = eme_localised_time($event['event_end_time']." ".$eme_timezone);
          $datasort_startstring=strtotime($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone);
 
          $location_summary = "";
@@ -2787,7 +2787,8 @@ function eme_admin_event_script() {
       $show24Hours = 'false';
    
    // jquery ui locales are with dashes, not underscores
-   $locale_code = get_locale();
+   $datepick_locale_code = get_locale();
+   $datepick_locale_code = preg_replace( "/_/","-", $datepick_locale_code );
    $use_select_for_locations = get_option('eme_use_select_for_locations')?1:0;
    $lang = eme_detect_lang();
    if (!empty($lang)) {
@@ -2798,7 +2799,7 @@ function eme_admin_event_script() {
 <script type="text/javascript">
    //<![CDATA[
 var show24Hours = <?php echo $show24Hours;?>;
-var locale_code = '<?php echo $locale_code;?>';
+var datepick_locale_code = '<?php echo $datepick_locale_code;?>';
 var firstDayOfWeek = <?php echo get_option('start_of_week');?>;
 var gmap_enabled = <?php echo get_option('eme_gmap_is_active')?1:0; ?>;
 var use_select_for_locations = <?php echo $use_select_for_locations; ?>;
@@ -3598,7 +3599,7 @@ Weblog Editor 2.0
                 if (get_option('eme_rss_pubdate_startdate' )) {
                    $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
                    $timezoneoffset=$eme_date_obj->format('O');
-                   echo "<pubDate>".eme_localised_date ($event['event_start_date']." ".$event['event_start_time'],'D, d M Y H:i:s $timezoneoffset')."</pubDate>\n";
+                   echo "<pubDate>".eme_localised_date ($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone,'D, d M Y H:i:s $timezoneoffset')."</pubDate>\n";
                 } else {
                    echo "<pubDate>".eme_localised_date ($event['modif_date_gmt'],'D, d M Y H:i:s +0000')."</pubDate>\n";
                 }

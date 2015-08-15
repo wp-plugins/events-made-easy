@@ -446,20 +446,22 @@ function eme_status_array() {
    return $event_status_array;
 }
 
-function eme_localised_unixdatetime($mydate,$format='') {
-   global $eme_date_format;
-   if (empty($format))
-      $format = $eme_date_format;
-   // date_i18n and strtotime are in the same timezone, so no need to add our own
-   return date_i18n ( $format, strtotime($mydate));
-}
 function eme_localised_date($mydate,$date_format='') {
-   return eme_localised_unixdatetime ($mydate, $date_format);
+   global $eme_date_format, $eme_timezone;
+   if (empty($date_format))
+      $date_format = $eme_date_format;
+   $eme_date_obj = new ExpressiveDate($mydate,$eme_timezone);
+   $result = $eme_date_obj->format($date_format);
+   return $result;
 }
 
 function eme_localised_time($mydate) {
-   global $eme_time_format;
-   return eme_localised_unixdatetime ($mydate, $eme_time_format);
+   global $eme_time_format, $eme_timezone;
+   $eme_date_obj = new ExpressiveDate($mydate,$eme_timezone);
+   $result = $eme_date_obj->format($eme_time_format);
+   if (get_option('eme_time_remove_leading_zeros'))
+      $result = str_replace(":0",":",$result);
+   return $result;
 }
 
 function eme_currency_array() {

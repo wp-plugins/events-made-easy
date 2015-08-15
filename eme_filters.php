@@ -37,7 +37,7 @@ function eme_create_week_scope($count) {
       $limit_start=$eme_date_obj->copy()->startOfWeek()->format('Y-m-d');
       $limit_end=$eme_date_obj->copy()->endOfWeek()->format('Y-m-d');
       $this_scope=$limit_start."--".$limit_end;
-      $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
+      $scope_text = eme_localised_date($limit_start." ".$eme_timezone)." -- ".eme_localised_date($limit_end." ".$eme_timezone);
       $scope[$this_scope] = $scope_text;
       $eme_date_obj->addOneWeek();
    }
@@ -54,7 +54,7 @@ function eme_create_month_scope($count) {
       $days_in_month=$eme_date_obj->getDaysInMonth();
       $limit_end= $eme_date_obj->format("Y-m-$days_in_month");
       $this_scope = "$limit_start--$limit_end";
-      $scope_text = eme_localised_date ($limit_start,get_option('eme_show_period_monthly_dateformat'));
+      $scope_text = eme_localised_date ($limit_start." ".$eme_timezone,get_option('eme_show_period_monthly_dateformat'));
       $scope[$this_scope] = $scope_text;
       $eme_date_obj->addOneMonth();
    }
@@ -72,7 +72,7 @@ function eme_create_year_scope($count) {
       $limit_start = "$year-01-01";
       $limit_end   = "$year-12-31";
       $this_scope = "$limit_start--$limit_end";
-      $scope_text = eme_localised_date ($limit_start,get_option('eme_show_period_yearly_dateformat'));
+      $scope_text = eme_localised_date ($limit_start." ".$eme_timezone,get_option('eme_show_period_yearly_dateformat'));
       $scope[$this_scope] = $scope_text;
       $eme_date_obj->addOneYear();
    }

@@ -1282,16 +1282,16 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif ($event && preg_match('/#_STARTDATE/', $result)) { 
-         $replacement = eme_localised_date($event['event_start_date']);
+         $replacement = eme_localised_date($event['event_start_date']." ".$eme_timezone);
 
       } elseif ($event && preg_match('/#_STARTTIME/', $result)) { 
-         $replacement = eme_localised_time($event['event_start_time']);
+         $replacement = eme_localised_time($event['event_start_time']." ".$eme_timezone);
 
       } elseif ($event && preg_match('/#_ENDDATE/', $result)) { 
-         $replacement = eme_localised_date($event['event_end_date']);
+         $replacement = eme_localised_date($event['event_end_date']." ".$eme_timezone);
 
       } elseif ($event && preg_match('/#_ENDTIME/', $result)) { 
-         $replacement = eme_localised_time($event['event_end_time']);
+         $replacement = eme_localised_time($event['event_end_time']." ".$eme_timezone);
 
       } elseif ($event && preg_match('/#_24HSTARTTIME/', $result)) { 
          $replacement = substr($event['event_start_time'], 0,5);
@@ -1801,24 +1801,24 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          }
 
       } elseif (preg_match('/#_EVENTCREATIONDATE/', $result)) {
-         $replacement = eme_localised_date($event['creation_date']);
+         $replacement = eme_localised_date($event['creation_date']." ".$eme_timezone);
       } elseif (preg_match('/#_EVENTMODIFDATE/', $result)) {
-         $replacement = eme_localised_date($event['modif_date']);
+         $replacement = eme_localised_date($event['modif_date']." ".$eme_timezone);
       } elseif (preg_match('/#_EVENTCREATIONTIME/', $result)) {
-         $replacement = eme_localised_time($event['creation_date']);
+         $replacement = eme_localised_time($event['creation_date']." ".$eme_timezone);
       } elseif (preg_match('/#_EVENTMODIFTIME/', $result)) {
-         $replacement = eme_localised_time($event['modif_date']);
+         $replacement = eme_localised_time($event['modif_date']." ".$eme_timezone);
 
       } elseif ($event && preg_match('/#[A-Za-z]$/', $result)) {
          // matches all PHP date placeholders for startdate-time
-         $replacement=eme_localised_date($event['event_start_date']." ".$event['event_start_time'],ltrim($result,"#"));
+         $replacement=eme_localised_date($event['event_start_date']." ".$event['event_start_time']." ".$eme_timezone,ltrim($result,"#"));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#i") {
             $replacement=ltrim($replacement,"0");
          }
 
       } elseif ($event && preg_match('/#@[A-Za-z]$/', $result)) {
          // matches all PHP time placeholders for enddate-time
-         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time'],ltrim($result,"#@"));
+         $replacement=eme_localised_date($event['event_end_date']." ".$event['event_end_time']." ".$eme_timezone,ltrim($result,"#@"));
          if (get_option('eme_time_remove_leading_zeros') && $result=="#@i") {
             $replacement=ltrim($replacement,"0");
          }
@@ -2022,7 +2022,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
 
       } elseif (preg_match('/#_CALENDAR_DAY/', $result)) {
          $day_key = get_query_var('calendar_day');
-         $replacement=eme_localised_date($day_key);
+         $replacement=eme_localised_date($day_key." ".$eme_timezone);
          if ($target == "html") {
             $replacement = apply_filters('eme_general', $replacement); 
          } elseif ($target == "rss")  {
@@ -2061,8 +2061,8 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
                $rsvp_end_obj = new ExpressiveDate($event['event_start_date']." ".$event['event_start_time'],$eme_timezone);
                $rsvp_end_obj->minusDays($rsvp_number_days);
                $rsvp_end_obj->minusHours($rsvp_number_hours);
-               $rsvp_end_date = eme_localised_date($rsvp_end_obj->getDateTime());
-               $rsvp_end_time = eme_localised_time($rsvp_end_obj->getDateTime());
+               $rsvp_end_date = eme_localised_date($rsvp_end_obj->getDateTime()." ".$eme_timezone);
+               $rsvp_end_time = eme_localised_time($rsvp_end_obj->getDateTime()." ".$eme_timezone);
                $replacement = $rsvp_end_date." ".$rsvp_end_time;
          }
 
@@ -2264,7 +2264,7 @@ function eme_replace_placeholders($format, $event="", $target="html", $do_shortc
          $offset = 3;
       }
 
-      $replacement = eme_localised_date($event[$my_date]." ".$event[$my_time],substr($result, $offset, (strlen($result)-($offset+1)) ));
+      $replacement = eme_localised_date($event[$my_date]." ".$event[$my_time]." ".$eme_timezone,substr($result, $offset, (strlen($result)-($offset+1)) ));
 
       if ($need_escape)
          $replacement = eme_sanitize_request(eme_sanitize_html(preg_replace('/\n|\r/','',$replacement)));

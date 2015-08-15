@@ -804,7 +804,7 @@ function eme_global_map($atts) {
             $limit_start=$eme_date_obj->startOfWeek()->format('Y-m-d');
             $limit_end=$eme_date_obj->endOfWeek()->format('Y-m-d');
             $scope = "$limit_start--$limit_end";
-            $scope_text = eme_localised_date($limit_start)." -- ".eme_localised_date($limit_end);
+            $scope_text = eme_localised_date($limit_start." ".$eme_timezone)." -- ".eme_localised_date($limit_end." ".$eme_timezone);
             $prev_text = __('Previous week','eme');
             $next_text = __('Next week','eme');
 
@@ -813,7 +813,7 @@ function eme_global_map($atts) {
             $limit_start = $eme_date_obj->startOfMonth()->format('Y-m-d');
             $limit_end   = $eme_date_obj->endOfMonth()->format('Y-m-d');
             $scope = "$limit_start--$limit_end";
-            $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_monthly_dateformat'));
+            $scope_text = eme_localised_date($limit_start." ".$eme_timezone,get_option('eme_show_period_monthly_dateformat'));
             $prev_text = __('Previous month','eme');
             $next_text = __('Next month','eme');
 
@@ -824,7 +824,7 @@ function eme_global_map($atts) {
             $limit_end   = "$year-12-31";
             $scope = "$limit_start--$limit_end";
             $scope = "$limit_start--$limit_end";
-            $scope_text = eme_localised_date($limit_start,get_option('eme_show_period_yearly_dateformat'));
+            $scope_text = eme_localised_date($limit_start." ".$eme_timezone,get_option('eme_show_period_yearly_dateformat'));
             $prev_text = __('Previous year','eme');
             $next_text = __('Next year','eme');
 
@@ -832,7 +832,7 @@ function eme_global_map($atts) {
             $scope = $eme_date_obj->modifyDays($scope_offset)->format('Y-m-d');
             $limit_start = $scope;
             $limit_end   = $scope;
-            $scope_text = eme_localised_date($limit_start);
+            $scope_text = eme_localised_date($limit_start." ".$eme_timezone);
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
 
@@ -841,7 +841,7 @@ function eme_global_map($atts) {
             $scope = $eme_date_obj->modifyDays($scope_offset)->format('Y-m-d');
             $limit_start = $scope;
             $limit_end   = $scope;
-            $scope_text = eme_localised_date($limit_start);
+            $scope_text = eme_localised_date($limit_start." ".$eme_timezone);
             $prev_text = __('Previous day','eme');
             $next_text = __('Next day','eme');
          }

@@ -296,7 +296,7 @@ function eme_get_recurrence($recurrence_id) {
 }
 
 function eme_get_recurrence_desc($recurrence_id) {
-   global $wpdb;
+   global $wpdb, $eme_timezone;
    $events_table = $wpdb->prefix.EVENTS_TBNAME;
    $recurrence_table = $wpdb->prefix.RECURRENCE_TBNAME;
    $sql = $wpdb->prepare("SELECT * FROM $recurrence_table WHERE recurrence_id = %d",$recurrence_id);
@@ -304,7 +304,7 @@ function eme_get_recurrence_desc($recurrence_id) {
 
    $weekdays_name = array(__('Monday'),__('Tuesday'),__('Wednesday'),__('Thursday'),__('Friday'),__('Saturday'),__('Sunday'));
    $monthweek_name = array('1' => __('the first %s of the month', 'eme'),'2' => __('the second %s of the month', 'eme'), '3' => __('the third %s of the month', 'eme'), '4' => __('the fourth %s of the month', 'eme'), '5' => __('the fifth %s of the month', 'eme'), '-1' => __('the last %s of the month', 'eme'));
-   $output = sprintf (__('From %1$s to %2$s', 'eme'),  eme_localised_date($recurrence['recurrence_start_date']), eme_localised_date($recurrence['recurrence_end_date'])).", ";
+   $output = sprintf (__('From %1$s to %2$s', 'eme'),  eme_localised_date($recurrence['recurrence_start_date']." ".$eme_timezone), eme_localised_date($recurrence['recurrence_end_date']." ".$eme_timezone)).", ";
    if ($recurrence['recurrence_freq'] == 'daily')  {
       $freq_desc =__('everyday', 'eme');
       if ($recurrence['recurrence_interval'] > 1 ) {
@@ -315,7 +315,7 @@ function eme_get_recurrence_desc($recurrence_id) {
       if (!$recurrence['recurrence_byday']) {
          # no weekdays given for the recurrence, so we use the
          # day of the week of the startdate as reference
-         $recurrence['recurrence_byday']= eme_localised_date($recurrence['recurrence_start_date'],'w');
+         $recurrence['recurrence_byday']= eme_localised_date($recurrence['recurrence_start_date']." ".$eme_timezone,'w');
          # Sunday is 7, not 0
          if ($recurrence['recurrence_byday']==0)
             $recurrence['recurrence_byday']=7; 
@@ -335,7 +335,7 @@ function eme_get_recurrence_desc($recurrence_id) {
       if (!$recurrence['recurrence_byday']) {
          # no monthday given for the recurrence, so we use the
          # day of the month of the startdate as reference
-         $recurrence['recurrence_byday']= eme_localised_date($recurrence['recurrence_start_date'],'e');
+         $recurrence['recurrence_byday']= eme_localised_date($recurrence['recurrence_start_date']." ".$eme_timezone,'e');
       }
       $weekday_array = explode(",", $recurrence['recurrence_byday']);
       $natural_days = array();

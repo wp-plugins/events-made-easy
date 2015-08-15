@@ -1984,6 +1984,7 @@ function eme_get_bookings_list_for_person($person,$future=0,$template="",$templa
 }
 
 function eme_replace_booking_placeholders($format, $event, $booking, $is_multibooking=0, $target="html",$lang='') {
+   global $eme_timezone;
    $deprecated=get_option('eme_deprecated');
 
    preg_match_all("/#(ESC)?_?[A-Za-z0-9_]+(\{[A-Za-z0-9_]+\})?/", $format, $placeholders);
@@ -2089,13 +2090,13 @@ function eme_replace_booking_placeholders($format, $event, $booking, $is_multibo
       } elseif (preg_match('/#_RESPSPACES$/', $result)) {
          $replacement = eme_get_multitotal($booking['booking_seats']);
       } elseif (preg_match('/#_BOOKINGCREATIONDATE/', $result)) {
-         $replacement = eme_localised_date($booking['creation_date']);
+         $replacement = eme_localised_date($booking['creation_date']." ".$eme_timezone);
       } elseif (preg_match('/#_BOOKINGMODIFDATE/', $result)) {
-         $replacement = eme_localised_date($booking['modif_date']);
+         $replacement = eme_localised_date($booking['modif_date']." ".$eme_timezone);
       } elseif (preg_match('/#_BOOKINGCREATIONTIME/', $result)) {
-         $replacement = eme_localised_time($booking['creation_date']);
+         $replacement = eme_localised_time($booking['creation_date']." ".$eme_timezone);
       } elseif (preg_match('/#_BOOKINGMODIFTIME/', $result)) {
-         $replacement = eme_localised_time($booking['modif_date']);
+         $replacement = eme_localised_time($booking['modif_date']." ".$eme_timezone);
       } elseif (preg_match('/#_BOOKINGID/', $result)) {
          $replacement = $booking['booking_id'];
       } elseif (preg_match('/#_TRANSFER_NBR_BE97/', $result)) {
@@ -2548,7 +2549,7 @@ function eme_registration_seats_form_table($pending=0) {
    <?php
    foreach ( $all_events as $event ) {
       if ($event ['event_rsvp']) {
-         $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")"; 
+         $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']." ".$eme_timezone).")"; 
          echo "<option value='".$event['event_id']."' >".$option_text."</option>  ";
       }
    }
@@ -2674,12 +2675,12 @@ function eme_registration_seats_form_table($pending=0) {
          $search_url=add_query_arg(array('search'=>$person['person_id']),$search_dest);
          $event = eme_get_event($event_booking['event_id']);
          $payment_id = eme_get_booking_payment_id($event_booking ['booking_id']);
-         $localised_start_date = eme_localised_date($event['event_start_date']);
-         $localised_start_time = eme_localised_time($event['event_start_time']);
-         $localised_end_date = eme_localised_date($event['event_end_date']);
-         $localised_end_time = eme_localised_time($event['event_end_time']);
-         $localised_booking_date = eme_localised_date($event_booking['creation_date']);
-         $localised_booking_time = eme_localised_time($event_booking['creation_date']);
+         $localised_start_date = eme_localised_date($event['event_start_date']." ".$eme_timezone);
+         $localised_start_time = eme_localised_time($event['event_start_time']." ".$eme_timezone);
+         $localised_end_date = eme_localised_date($event['event_end_date']." ".$eme_timezone);
+         $localised_end_time = eme_localised_time($event['event_end_time']." ".$eme_timezone);
+         $localised_booking_date = eme_localised_date($event_booking['creation_date']." ".$eme_timezone);
+         $localised_booking_time = eme_localised_time($event_booking['creation_date']." ".$eme_timezone);
          $style = "";
          $eme_date_obj=new ExpressiveDate(null,$eme_timezone);
          $today=$eme_date_obj->getDate();
@@ -2937,7 +2938,7 @@ function eme_send_mail_form($event_id=0) {
    <option value='0' ><?php _e('Select the event','eme') ?></option>
    <?php
    foreach ( $all_events as $event ) {
-      $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']).")";
+      $option_text=$event['event_name']." (".eme_localised_date($event['event_start_date']." ".$eme_timezone).")";
       if ($event['event_rsvp'] && current_user_can( get_option('eme_cap_send_other_mails')) ||
             (current_user_can( get_option('eme_cap_send_mails')) && ($event['event_author']==$current_userid || $event['event_contactperson_id']==$current_userid))) {  
          if ($event['event_id'] == $event_id) {

@@ -273,6 +273,7 @@ function fputcsv2 ($fh, $fields, $delimiter = '', $enclosure = '"', $mysql_null 
     fwrite($fh, join($delimiter, $output) . "\n");
 }
 function eme_csv_booking_report($event_id) {
+   global $eme_timezone;
    $event = eme_get_event($event_id);
    $is_multiprice = eme_is_multi($event['price']);
    $current_userid=get_current_user_id();
@@ -317,8 +318,8 @@ function eme_csv_booking_report($event_id) {
    }
    fputcsv2($out,$line);
    foreach($bookings as $booking) {
-      $localised_booking_date = eme_localised_date($booking['creation_date']);
-      $localised_booking_time = eme_localised_time($booking['creation_date']);
+      $localised_booking_date = eme_localised_date($booking['creation_date']." ".$eme_timezone);
+      $localised_booking_time = eme_localised_time($booking['creation_date']." ".$eme_timezone);
       $person = eme_get_person ($booking['person_id']);
       $line=array();
       $pending_string="";
@@ -374,6 +375,7 @@ function eme_csv_booking_report($event_id) {
 }
 
 function eme_printable_booking_report($event_id) {
+   global $eme_timezone;
    $event = eme_get_event($event_id);
    $current_userid=get_current_user_id();
    if (!(current_user_can( get_option('eme_cap_edit_events')) || current_user_can( get_option('eme_cap_list_events')) ||
@@ -419,7 +421,7 @@ function eme_printable_booking_report($event_id) {
       <body id="eme_printable_body">
          <div id="eme_printable_container">
          <h1>Bookings for <?php echo eme_trans_sanitize_html($event['event_name']);?></h1> 
-         <p><?php echo eme_localised_date($event['event_start_date']); ?></p>
+         <p><?php echo eme_localised_date($event['event_start_date']." ".$eme_timezone); ?></p>
          <p><?php if ($event['location_id']) echo eme_replace_placeholders("#_LOCATIONNAME, #_ADDRESS, #_TOWN", $event); ?></p>
          <?php if ($event['price']) ?>
             <p><?php _e ( 'Price: ','eme' ); echo eme_replace_placeholders("#_CURRENCY #_PRICE", $event)?></p>
@@ -448,8 +450,8 @@ function eme_printable_booking_report($event_id) {
             </tr>
             <?php
             foreach($bookings as $booking) {
-               $localised_booking_date = eme_localised_date($booking['creation_date']);
-               $localised_booking_time = eme_localised_time($booking['creation_date']);
+               $localised_booking_date = eme_localised_date($booking['creation_date']." ".$eme_timezone);
+               $localised_booking_time = eme_localised_time($booking['creation_date']." ".$eme_timezone);
                $person = eme_get_person ($booking['person_id']);
                $pending_string="";
                if (eme_event_needs_approval($event_id) && !$booking['booking_approved']) {

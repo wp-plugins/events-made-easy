@@ -1,5 +1,5 @@
 jQuery(document).ready( function() {
-   jQuery.datepick.setDefaults( jQuery.datepick.regionalOptions[locale_code] );
+   jQuery.datepick.setDefaults( jQuery.datepick.regionalOptions[datepick_locale_code] );
    jQuery.datepick.setDefaults({
       changeMonth: true,
       changeYear: true,
